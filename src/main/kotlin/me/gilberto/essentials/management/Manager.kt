@@ -7,4 +7,8 @@ object Manager {
         instance.server.consoleSender.sendMessage(msg)
     }
     fun pluginpastedir() : String = instance.dataFolder.path
+    fun disableplugin() {
+        consoleMessage("§cDesabilitando plugin por algum motivo interno")
+        instance.server.pluginManager.getPlugin(instance.name)
+    }
 }
