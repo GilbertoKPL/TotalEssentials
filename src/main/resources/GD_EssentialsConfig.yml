@@ -1,0 +1,27 @@
+# Este arquivo é a main config do plugin gd_essentials onde influenciará em seu funcionamento...
+# Criador: Gilberto Damim;
+# Github: https://github.com/GilbertoDamim/GD_Essentials;
+# Quaisquer duvidas entrar em contato no discord GDPlugins#5620 ou mesmo pelo github;
+# Este projeto está em desenvolvimento porfavor tenha paciencia do projeto final;
+
+# This file is the main config of the gd_essentials plugin where it will influence its functioning...
+# Creator: Gilberto Damim;
+# Github: https://github.com/GilbertoDamim/GD_Essentials;
+# Any questions get in touch on GDPlugins#5620 or even by github;
+# This project is under development, please be patient with the final project;
+
+Version-file: 1.1
+
+# Escolha o tipo de armazenamento do plugin, disponiveis: sqlite, h2, mysql.
+# futuros tipos de armazenamento: postgresql, mysqlhikari, sqlserver.
+# Choose plugin storage type, available: sqlite, h2, mysql.
+# future storage types: postgresql, mysqlhikari, sqlserver.
+Database:
+  type: "sqlite"
+  teste: "a"
+  mysql:
+    ip: "0.0.0.0"
+    port: "3306"
+    username: "xxxx"
+    database: "xxxx"
+    pass: "xxxx"

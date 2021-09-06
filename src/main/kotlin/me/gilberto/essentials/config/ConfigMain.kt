@@ -10,22 +10,30 @@ import java.nio.file.Files
 object ConfigMain {
     lateinit var econf: YamlConfiguration
     fun startconfig() {
-        copyconfig("GD_EssentialsConfig.yml")
+        copyconfig("GD_EssentialsConfig")
         econf = YamlConfiguration.loadConfiguration(File(pluginpastedir(), "GD_EssentialsConfig.yml"))
         ConfigLoad()
     }
 
-    fun reloadconfig() {
-        startconfig()
-    }
-
     private fun copyconfig(source: String) {
-        val jarPath = File(instance.dataFolder.path, "$source.yml")
-        if (jarPath.exists()) return
-        val resource = instance.javaClass.getResourceAsStream("/$source.yml")
-        if (resource != null) {
-            Files.copy(resource, jarPath.toPath())
+        val configfile = File(pluginpastedir(), "$source.yml")
+        val resource = instance.javaClass.getResourceAsStream("/$source.yml") ?: return
+        if (configfile.exists()) {
+            val v = YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml")).getDouble("Version-file")
+            val checkfile = File(pluginpastedir(), "$source-check.yml")
+            Files.copy(resource, checkfile.toPath())
+            val vc = YamlConfiguration.loadConfiguration(checkfile).getDouble("Version-file")
+            if (vc > v) {
+                ConfigVersionChecker(configfile, checkfile)
+            }
+            else {
+                checkfile.delete()
+            }
+            return
         }
+        else (File(pluginpastedir()).mkdirs())
+        Files.copy(resource, configfile.toPath())
+        return
     }
 
     fun getString(source: YamlConfiguration, path: String): String = source.getString(path)

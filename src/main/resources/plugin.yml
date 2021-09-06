@@ -1,5 +1,5 @@
 name: GD_Essentials
 version: 1.0
 author: Gilberto
-main: me.gilberto.EssentialsMain
+main: me.gilberto.essentials.EssentialsMain
 description: Essentials for minecraft
