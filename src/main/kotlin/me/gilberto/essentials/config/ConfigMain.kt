@@ -1,6 +1,6 @@
 package me.gilberto.essentials.config
 
-import me.gilberto.essentials.EssentialsInstance.instance
+import me.gilberto.essentials.EssentialsMain.instance
 import me.gilberto.essentials.management.Manager.consoleMessage
 import me.gilberto.essentials.management.Manager.disableplugin
 import me.gilberto.essentials.management.Manager.pluginpastedir

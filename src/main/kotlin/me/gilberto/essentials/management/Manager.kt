@@ -1,6 +1,6 @@
 package me.gilberto.essentials.management
 
-import me.gilberto.essentials.EssentialsInstance.instance
+import me.gilberto.essentials.EssentialsMain.instance
 
 object Manager {
     fun consoleMessage(msg: String) {
