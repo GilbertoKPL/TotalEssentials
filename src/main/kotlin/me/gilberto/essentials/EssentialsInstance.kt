@@ -1,7 +1,7 @@
 package me.gilberto.essentials
 
 object EssentialsInstance {
-    fun StartInstance(main: EssentialsMain) {
+    fun startInstance(main: EssentialsMain) {
         instance = main
     }
     lateinit var instance: EssentialsMain
