@@ -31,7 +31,7 @@ tasks {
     }
     shadowJar {
         manifest {
-            attributes["Class-Path"] = "GD_Essentials/lib/kotlin-stdlib-$kotlinversion.jar GD_Essentials/lib/exposed-core-$exposedVersion.jar GD_Essentials/lib/exposed-dao-$exposedVersion.jar GD_Essentials/lib/exposed-jdbc-$exposedVersion.jar GD_Essentials/lib/h2-1.4.200.jar GD_Essentials/lib/mysql-connector-java-8.0.26.jar GD_Essentials/lib/HikariCP-3.4.2.jar GD_Essentials/lib/logback-core-1.2.6.jar GD_Essentials/lib/logback-classic-1.2.6.jar GD_Essentials/lib/slf4j-api-1.7.32.jar"
+            attributes["Class-Path"] = "GD_Essentials/lib/kotlin-stdlib-$kotlinversion.jar GD_Essentials/lib/exposed-core-$exposedVersion.jar GD_Essentials/lib/exposed-dao-$exposedVersion.jar GD_Essentials/lib/exposed-jdbc-$exposedVersion.jar GD_Essentials/lib/h2-1.4.200.jar GD_Essentials/lib/mysql-connector-java-8.0.26.jar GD_Essentials/lib/HikariCP-3.4.2.jar GD_Essentials/lib/slf4j-nop-1.7.32.jar GD_Essentials/lib/slf4j-api-1.7.32.jar"
         }
         classifier = null
         destinationDirectory.set(File("$buildDir/../Minecraft/plugins"))

@@ -4,7 +4,7 @@
 # Quaisquer duvidas entrar em contato no discord GDPlugins#5620 ou mesmo pelo github;
 # Este projeto está em desenvolvimento porfavor tenha paciencia do projeto final;
 # Escolha o tipo de armazenamento do plugin, disponiveis: sqlite, h2, mysql;
-# futuros tipos de armazenamento: postgresql, mysqlhikari, sqlserver.
+# futuros tipos de armazenamento: postgresql, sqlserver.
 Version-file: 1.0
 Database:
   type: "h2"
