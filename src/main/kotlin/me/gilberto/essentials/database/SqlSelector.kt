@@ -30,7 +30,7 @@ class SqlSelector {
                     driverClassName = "com.mysql.cj.jdbc.Driver"
                     username        = mysqlusername
                     password        = mysqlpass
-                    maximumPoolSize = 10
+                    maximumPoolSize = 40
                 }
                 val dataSource = HikariDataSource(config)
                 SqlInstance.SQL = Database.connect(dataSource)
