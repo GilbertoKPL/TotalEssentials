@@ -7,7 +7,7 @@
 # futuros tipos de armazenamento: postgresql, mysqlhikari, sqlserver.
 Version-file: 1.0
 Database:
-  type: "sqlite"
+  type: "h2"
   mysql:
     ip: "0.0.0.0"
     port: "3306"
