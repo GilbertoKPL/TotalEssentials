@@ -6,7 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
 
-class ConfigVersionChecker(file: File, newfile: File, version: String?) {
+class ConfigVersionChecker(file: File, newfile: File, version: String?, lang:Boolean) {
     private var map = HashMap<String, Int>()
     private var map1 = HashMap<String, Int>()
 
@@ -54,7 +54,11 @@ class ConfigVersionChecker(file: File, newfile: File, version: String?) {
                     consoleMessage("$pluginName §eAtualizado a Version-file do arquivo ${file.name} para $version")
                 }
                 else {
-                    consoleMessage("$pluginName §cDetectado modificação na config executando Checker!")
+                    if (lang) {
+                        consoleMessage("$pluginName §cDetectado modificação na lang executando Checker!")
+                    } else {
+                        consoleMessage("$pluginName §cDetectado modificação na config executando Checker!")
+                    }
                 }
                 val header = conffile.options()!!
                 val newheader = confnewfile.options()!!

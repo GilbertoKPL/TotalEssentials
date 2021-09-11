@@ -6,6 +6,7 @@
 # Escolha o tipo de armazenamento do plugin, disponiveis: sqlite, h2, mysql;
 # futuros tipos de armazenamento: postgresql, sqlserver.
 Version-file: 1.0
+Lang: pt_br
 Database:
   type: "h2"
   mysql:

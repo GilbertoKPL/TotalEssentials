@@ -2,6 +2,7 @@ package me.gilberto.essentials.config
 
 import me.gilberto.essentials.EssentialsMain.instance
 import me.gilberto.essentials.EssentialsMain.pluginName
+import me.gilberto.essentials.config.configs.lang.langname
 import me.gilberto.essentials.management.Manager.consoleMessage
 import me.gilberto.essentials.management.Manager.disableplugin
 import me.gilberto.essentials.management.Manager.pluginlangdir
@@ -23,13 +24,27 @@ object ConfigMain {
         consoleMessage("$pluginName §eVerificação completa!")
         consoleMessage("$pluginName §eIniciando verificação da lang...")
         startlang()
+        val padlang = YamlConfiguration.loadConfiguration(File(pluginlangdir(), "pt_BR.yml"))
+        try {
+            val a = File(pluginlangdir(), "$langname.yml")
+            if (a.exists()) {
+                lang = YamlConfiguration.loadConfiguration(a)
+                consoleMessage("$pluginName §eLang selecionada -> ${langname}!")
+            }
+            else {
+                lang = padlang
+                consoleMessage("$pluginName §eUtilizando lang padrão por error!")
+            }
+        } catch (ex: Exception) {
+            lang = padlang
+            consoleMessage("$pluginName §eUtilizando lang padrão por error!")
+        }
         consoleMessage("$pluginName §eVerificação completa!")
     }
     fun addtoconfig (source: YamlConfiguration, path: String, value: Any) {
         source.addDefault(path, value)
         reloadconfig()
     }
-
     fun reloadconfig() {
         fun test(source: YamlConfiguration) {
             val check: YamlConfiguration
@@ -100,41 +115,35 @@ object ConfigMain {
             Files.copy(resource, checkfile.toPath())
             val vc = YamlConfiguration.loadConfiguration(checkfile).getDouble("Version-file")
             if (vc > v) {
-                ConfigVersionChecker(configfile, checkfile, vc.toString())
+                ConfigVersionChecker(configfile, checkfile, vc.toString(), lang)
             }
             else {
-                ConfigChecker(configfile, checkfile)
+                ConfigChecker(configfile, checkfile, lang)
             }
-            val b = if (lang) {
-                YamlConfiguration.loadConfiguration(File(pluginlangdir(), "$source.yml"))
-            } else {
-                YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
-            }
+        }
+        else {
             if (lang) {
-                langs.add(b)
+                (File(pluginlangdir()).mkdirs())
+            } else {
+                (File(pluginpastedir()).mkdirs())
             }
-            else {
-                configs.add(b)
+            Files.copy(resource, configfile.toPath())
+            if (lang) {
+                consoleMessage("$pluginName §eCriado arquivo de lang ${configfile.name}")
+            } else {
+                consoleMessage("$pluginName §eCriado arquivo de config ${configfile.name}")
             }
-            return b
         }
-        else if(lang) {
-            (File(pluginlangdir()).mkdirs())
+        return if (lang) {
+            val b = YamlConfiguration.loadConfiguration(File(pluginlangdir(), "$source.yml"))
+            langs.add(b)
+            b
+        } else {
+            val b = YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
+            configs.add(b)
+            b
         }
-        else {
-            (File(pluginpastedir()).mkdirs())
-        }
-        Files.copy(resource, configfile.toPath())
-        if (lang) {
-            consoleMessage("$pluginName §eCriado arquivo de lang ${configfile.name}")
-        }
-        else {
-            consoleMessage("$pluginName §eCriado arquivo de config ${configfile.name}")
-        }
-        consoleMessage("$pluginName §eVerificação completa!")
-        return YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
     }
-
     fun getString(source: YamlConfiguration, path: String): String = source.getString(path)
     fun getStringList(source: YamlConfiguration, path: String): List<String> = source.getStringList(path)
     fun getInt(source: YamlConfiguration, path: String): Int = source.getInt(path)
