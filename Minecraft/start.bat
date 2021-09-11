@@ -1,2 +1,2 @@
 @chcp 1252
-java -jar server.jar
+"C:\Program Files\Java\jdk1.8.0_301\bin\java.exe" -jar server.jar

@@ -1,6 +1,7 @@
 package me.gilberto.essentials.config
 
 import me.gilberto.essentials.EssentialsMain.instance
+import me.gilberto.essentials.EssentialsMain.pluginName
 import me.gilberto.essentials.management.Manager.consoleMessage
 import me.gilberto.essentials.management.Manager.disableplugin
 import me.gilberto.essentials.management.Manager.pluginpastedir
@@ -40,15 +41,15 @@ object ConfigMain {
     }
 
     private fun copyconfig(source: String) : YamlConfiguration? {
+        consoleMessage("$pluginName §eIniciando verificação da config...")
         val configfile = File(pluginpastedir(), "$source.yml")
         val resource = instance.javaClass.getResourceAsStream("/$source.yml") ?: return YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
         if (configfile.exists()) {
             val check : YamlConfiguration
             try {
                 check = YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
-            }
-            catch (Ex: Exception) {
-                consoleMessage("§cProblema na config $source.")
+            } catch (Ex: Exception) {
+                consoleMessage("$pluginName §cProblema na config $source.")
                 disableplugin()
                 Ex.printStackTrace()
                 return null
@@ -66,10 +67,13 @@ object ConfigMain {
             }
             val b = YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
             configs.add(b)
+            consoleMessage("$pluginName §eVerificação completa!")
             return b
         }
         else (File(pluginpastedir()).mkdirs())
         Files.copy(resource, configfile.toPath())
+        consoleMessage("$pluginName §eCriado arquivo de config ${configfile.name}")
+        consoleMessage("$pluginName §eVerificação completa!")
         return YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
     }
 

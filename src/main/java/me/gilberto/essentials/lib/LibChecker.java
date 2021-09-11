@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.concurrent.Executors;
@@ -21,7 +20,6 @@ import static me.gilberto.essentials.EssentialsMain.pluginName;
 @SuppressWarnings( "deprecation" )
 public class LibChecker {
     public static ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-    public static double porcentage = 0;
     private static InputStream dowloader(String url) throws IOException {
         URLConnection stream = new URL(url).openConnection();
         stream.connect();
@@ -31,34 +29,29 @@ public class LibChecker {
         EssentialsMain.instance().getServer().getConsoleSender().sendMessage(msg);
     }
     private static final String libloc = EssentialsMain.instance().getDataFolder().getPath() +"/lib";
+    static int todow = 0;
+    static int dow = 0;
+    static boolean termined = false;
     public static void checkversion() {
         YamlConfiguration versionfile;
         consoleMessage(pluginName + " §eIniciando verificação da lib...");
         HashSet<File> noremove = new HashSet<>();
         exec.scheduleAtFixedRate(() -> {
-            if (porcentage == 0) return;
-            if (porcentage == 101) {
-                consoleMessage(pluginName + " §eVerificação completa!");
+            if (termined) {
                 exec.shutdown();
             }
             else {
-                consoleMessage(pluginName + " §eProgresso: " + (int) porcentage + "%");
+                if (todow != 0 && dow != 0) {
+                    consoleMessage(pluginName + " §eProgresso: " + (100 - (((todow - dow) * 100) / todow)) + "%");
+                }
             }
         }, 1, 1,  TimeUnit.SECONDS);
         try {
             versionfile = YamlConfiguration.loadConfiguration(dowloader("https://www.dropbox.com/s/34gzmbcs61gbu3d/versionchecker.yml?dl=1"));
-            double value = 0;
+            todow = versionfile.getInt("version-lib.size");
             for (String i : versionfile.getKeys(true)) {
                 String[] a = i.split("\\.");
-                if (Objects.equals(a[0], "version-lib") && a.length > 1) {
-                    value += 1;
-                }
-            }
-            double value1 = 100 / value;
-            for (String i : versionfile.getKeys(true)) {
-                String[] a = i.split("\\.");
-                if (Objects.equals(a[0], "version-lib") && a.length > 1) {
-                    porcentage += value1;
+                if (Objects.equals(a[0], "version-lib") && a.length > 1 && !Objects.equals(a[1], "size")) {
                     String version = versionfile.getString(i);
                     File lib = new File(libloc, version + ".jar");
                     if (!lib.exists()) {
@@ -80,6 +73,7 @@ public class LibChecker {
                             InputStream filelib = dowloader(versionfile.getString(i.replace("version-lib", "repo")));
                             Files.copy(filelib, lib.toPath());
                             noremove.add(lib);
+                            dow += (int) lib.length();
                         } catch (Exception e) {
                             consoleMessage(pluginName + " §cErro ao baixar modulo: " + version + ", por favor reporte ao dono do plugin!");
                         }
@@ -96,7 +90,8 @@ public class LibChecker {
                     }
                 }
             }
-            porcentage = 101;
+            consoleMessage(pluginName + " §eVerificação completa!");
+            termined = true;
         } catch (Exception e) {
             consoleMessage(pluginName + " §cErro na verificação de atualização, pulando...");
         }

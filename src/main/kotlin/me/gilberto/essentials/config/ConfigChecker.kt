@@ -15,11 +15,13 @@ class ConfigChecker(file : File, newfile: File) {
                 break
             }
         }
-        for (i in conffile.getKeys(true)) {
-            if (confnewfile.get(i) == null) {
-                ConfigVersionChecker(file, newfile, null)
-                delete = false
-                break
+        if (delete) {
+            for (i in conffile.getKeys(true)) {
+                if (confnewfile.get(i) == null) {
+                    ConfigVersionChecker(file, newfile, null)
+                    delete = false
+                    break
+                }
             }
         }
         if (delete) {

@@ -1,5 +1,6 @@
 package me.gilberto.essentials.config
 
+import me.gilberto.essentials.EssentialsMain.pluginName
 import me.gilberto.essentials.management.Manager.consoleMessage
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
@@ -48,18 +49,18 @@ class ConfigVersionChecker(file: File, newfile: File, version: String?) {
         val newconfig = YamlConfiguration.loadConfiguration(newfile)
         for (i in confnewfile.getKeys(true)) {
             if (i == "Version-file") {
-                conffile.set(i, confnewfile.get(i))
+                newconfig.set(i, confnewfile.get(i))
                 if (version != null) {
-                    consoleMessage("§aAtualizado a Version-file do arquivo ${file.name} para $version")
+                    consoleMessage("$pluginName §eAtualizado a Version-file do arquivo ${file.name} para $version")
                 }
                 else {
-                    consoleMessage("§cDetectado modificação na config executando Checker!")
+                    consoleMessage("$pluginName §cDetectado modificação na config executando Checker!")
                 }
-                val header = conffile.options()
-                val newheader = confnewfile.options()
+                val header = conffile.options()!!
+                val newheader = confnewfile.options()!!
                 if (header.header().toString() != newheader.header().toString()) {
                     newconfig.options().header(newheader.header().toString())
-                    consoleMessage("§aAtualizado a Header do arquivo ${file.name}")
+                    consoleMessage("$pluginName §eAtualizado a Header do arquivo ${file.name}")
                 }
                 continue
             }
@@ -73,7 +74,7 @@ class ConfigVersionChecker(file: File, newfile: File, version: String?) {
         val putsorted = sortMapByValuesWithDuplicates(map1)
         for (i in putsorted) {
             newconfig.set(i.key, confnewfile.get(i.key))
-            consoleMessage("§aAdicionado path ${i.key} no arquivo ${file.name}")
+            consoleMessage("$pluginName §eAdicionado path ${i.key} no arquivo ${file.name}")
         }
         for (i in conffile.getKeys(true)) {
             if (i == "Version-file") continue
@@ -84,7 +85,7 @@ class ConfigVersionChecker(file: File, newfile: File, version: String?) {
         val removesorted = reverse(sortMapByValuesWithDuplicates(map))
         for (i in removesorted) {
             newconfig.set(i.key, null)
-            consoleMessage("§cRetirado path ${i.key} no arquivo ${file.name}")
+            consoleMessage("$pluginName §cRetirado path ${i.key} no arquivo ${file.name}")
         }
         newconfig.save(file)
         newfile.delete()
