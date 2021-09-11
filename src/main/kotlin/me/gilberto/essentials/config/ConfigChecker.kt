@@ -4,8 +4,8 @@ import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
 class ConfigChecker(file : File, newfile: File) {
-    private val conffile: YamlConfiguration = YamlConfiguration.loadConfiguration(file)
-    private val confnewfile: YamlConfiguration = YamlConfiguration.loadConfiguration(newfile)
+    private val conffile = YamlConfiguration.loadConfiguration(file)
+    private val confnewfile = YamlConfiguration.loadConfiguration(newfile)
     init {
         var delete = true
         for (i in confnewfile.getKeys(true)) {

@@ -1,4 +1,4 @@
 package me.gilberto.essentials.commands
 
-class Kit {
+class Essentials {
 }

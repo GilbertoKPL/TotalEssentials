@@ -4,18 +4,26 @@ import me.gilberto.essentials.EssentialsMain.instance
 import me.gilberto.essentials.EssentialsMain.pluginName
 import me.gilberto.essentials.management.Manager.consoleMessage
 import me.gilberto.essentials.management.Manager.disableplugin
+import me.gilberto.essentials.management.Manager.pluginlangdir
 import me.gilberto.essentials.management.Manager.pluginpastedir
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
-import java.nio.file.Files
-
+import java.io.InputStream
+import java.nio.file.*
 
 object ConfigMain {
     var configs = HashSet<YamlConfiguration>()
+    var langs = HashSet<YamlConfiguration>()
     lateinit var econf: YamlConfiguration
+    lateinit var lang: YamlConfiguration
     fun startconfig() {
-        econf = copyconfig("GD_EssentialsConfig") ?: return
-        ConfigLoad()
+        consoleMessage("$pluginName §eIniciando verificação da config...")
+        econf = copyconfig("GD_EssentialsConfig", false) ?: return
+        ConfigReload()
+        consoleMessage("$pluginName §eVerificação completa!")
+        consoleMessage("$pluginName §eIniciando verificação da lang...")
+        startlang()
+        consoleMessage("$pluginName §eVerificação completa!")
     }
     fun addtoconfig (source: YamlConfiguration, path: String, value: Any) {
         source.addDefault(path, value)
@@ -38,24 +46,56 @@ object ConfigMain {
         for (i in configs) {
             test(i)
         }
+        ConfigReload()
     }
 
-    private fun copyconfig(source: String) : YamlConfiguration? {
-        consoleMessage("$pluginName §eIniciando verificação da config...")
-        val configfile = File(pluginpastedir(), "$source.yml")
-        val resource = instance.javaClass.getResourceAsStream("/$source.yml") ?: return YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
+    private fun startlang() {
+        val directoryStream: DirectoryStream<Path>? = Files.newDirectoryStream(FileSystems.newFileSystem(
+            Paths.get(instance.javaClass.protectionDomain.codeSource.location.toURI()), null).getPath("/lang/"))
+        if (directoryStream != null) {
+            for (i in directoryStream) {
+                copyconfig(i.fileName.toString().replace(".yml", ""), true)
+            }
+        }
+    }
+
+    private fun copyconfig(source: String, lang: Boolean) : YamlConfiguration? {
+        val configfile: File
+        val resource: InputStream
+        val checkfile: File
+        if (lang) {
+            configfile = File(pluginlangdir(), "$source.yml")
+            resource = instance.javaClass.getResourceAsStream("/lang/$source.yml") ?: return YamlConfiguration.loadConfiguration(
+                File(pluginlangdir(), "$source.yml")
+            )
+            checkfile = File(pluginlangdir(), "$source-check.yml")
+        }
+        else {
+            configfile = File(pluginpastedir(), "$source.yml")
+            resource = instance.javaClass.getResourceAsStream("/$source.yml") ?: return YamlConfiguration.loadConfiguration(
+                File(pluginpastedir(), "$source.yml")
+            )
+            checkfile = File(pluginpastedir(), "$source-check.yml")
+        }
         if (configfile.exists()) {
             val check : YamlConfiguration
             try {
-                check = YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
+                check = if (lang) {
+                    YamlConfiguration.loadConfiguration(File(pluginlangdir(), "$source.yml"))
+                } else {
+                    YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
+                }
             } catch (Ex: Exception) {
-                consoleMessage("$pluginName §cProblema na config $source.")
+                if (lang) {
+                    consoleMessage("$pluginName §cProblema na lang $source.")
+                } else {
+                    consoleMessage("$pluginName §cProblema na config $source.")
+                }
                 disableplugin()
                 Ex.printStackTrace()
                 return null
             }
             val v = check.getDouble("Version-file")
-            val checkfile = File(pluginpastedir(), "$source-check.yml")
             if (checkfile.exists()) checkfile.delete()
             Files.copy(resource, checkfile.toPath())
             val vc = YamlConfiguration.loadConfiguration(checkfile).getDouble("Version-file")
@@ -65,14 +105,32 @@ object ConfigMain {
             else {
                 ConfigChecker(configfile, checkfile)
             }
-            val b = YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
-            configs.add(b)
-            consoleMessage("$pluginName §eVerificação completa!")
+            val b = if (lang) {
+                YamlConfiguration.loadConfiguration(File(pluginlangdir(), "$source.yml"))
+            } else {
+                YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
+            }
+            if (lang) {
+                langs.add(b)
+            }
+            else {
+                configs.add(b)
+            }
             return b
         }
-        else (File(pluginpastedir()).mkdirs())
+        else if(lang) {
+            (File(pluginlangdir()).mkdirs())
+        }
+        else {
+            (File(pluginpastedir()).mkdirs())
+        }
         Files.copy(resource, configfile.toPath())
-        consoleMessage("$pluginName §eCriado arquivo de config ${configfile.name}")
+        if (lang) {
+            consoleMessage("$pluginName §eCriado arquivo de lang ${configfile.name}")
+        }
+        else {
+            consoleMessage("$pluginName §eCriado arquivo de config ${configfile.name}")
+        }
         consoleMessage("$pluginName §eVerificação completa!")
         return YamlConfiguration.loadConfiguration(File(pluginpastedir(), "$source.yml"))
     }
@@ -81,5 +139,4 @@ object ConfigMain {
     fun getStringList(source: YamlConfiguration, path: String): List<String> = source.getStringList(path)
     fun getInt(source: YamlConfiguration, path: String): Int = source.getInt(path)
     fun getIntList(source: YamlConfiguration, path: String): List<Int> = source.getIntegerList(path)
-
 }
