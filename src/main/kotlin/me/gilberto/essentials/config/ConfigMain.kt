@@ -1,8 +1,14 @@
 package me.gilberto.essentials.config
 
 import me.gilberto.essentials.EssentialsMain.instance
-import me.gilberto.essentials.EssentialsMain.pluginName
-import me.gilberto.essentials.config.configs.lang.langname
+import me.gilberto.essentials.config.configs.Lang.langname
+import me.gilberto.essentials.config.configs.langs.Start.completeverf
+import me.gilberto.essentials.config.configs.langs.Start.create
+import me.gilberto.essentials.config.configs.langs.Start.langerror
+import me.gilberto.essentials.config.configs.langs.Start.langsel
+import me.gilberto.essentials.config.configs.langs.Start.problem
+import me.gilberto.essentials.config.configs.langs.Start.problemreload
+import me.gilberto.essentials.config.configs.langs.Start.startvef
 import me.gilberto.essentials.management.Manager.consoleMessage
 import me.gilberto.essentials.management.Manager.disableplugin
 import me.gilberto.essentials.management.Manager.pluginlangdir
@@ -18,33 +24,35 @@ object ConfigMain {
     lateinit var econf: YamlConfiguration
     lateinit var lang: YamlConfiguration
     fun startconfig() {
-        consoleMessage("$pluginName §eIniciando verificação da config...")
+        consoleMessage(startvef.replace("%to%", "config"))
         econf = copyconfig("GD_EssentialsConfig", false) ?: return
         ConfigReload()
-        consoleMessage("$pluginName §eVerificação completa!")
-        consoleMessage("$pluginName §eIniciando verificação da lang...")
+        consoleMessage(completeverf)
+        consoleMessage(startvef.replace("%to%", "lang"))
         startlang()
         val padlang = YamlConfiguration.loadConfiguration(File(pluginlangdir(), "pt_BR.yml"))
         try {
             val a = File(pluginlangdir(), "$langname.yml")
             if (a.exists()) {
                 lang = YamlConfiguration.loadConfiguration(a)
-                consoleMessage("$pluginName §eLang selecionada -> ${langname}!")
-            }
-            else {
+                consoleMessage(langsel.replace("%lang%", langname))
+            } else {
                 lang = padlang
-                consoleMessage("$pluginName §eUtilizando lang padrão por error!")
+                consoleMessage(langerror)
             }
         } catch (ex: Exception) {
             lang = padlang
-            consoleMessage("$pluginName §eUtilizando lang padrão por error!")
+            consoleMessage(langerror)
         }
-        consoleMessage("$pluginName §eVerificação completa!")
+        LangReload()
+        consoleMessage(completeverf)
     }
-    fun addtoconfig (source: YamlConfiguration, path: String, value: Any) {
+
+    fun addtoconfig(source: YamlConfiguration, path: String, value: Any) {
         source.addDefault(path, value)
         reloadconfig()
     }
+
     fun reloadconfig() {
         fun test(source: YamlConfiguration) {
             val check: YamlConfiguration
@@ -52,7 +60,7 @@ object ConfigMain {
                 check = YamlConfiguration.loadConfiguration(File(pluginpastedir(), "${source.name}.yml"))
             } catch (Ex: Exception) {
                 Ex.printStackTrace()
-                consoleMessage("§cProblema na config $source, retornando a antiga!")
+                consoleMessage(problemreload.replace("%file%", source.name))
                 source.save(source.currentPath)
                 return
             }
@@ -65,8 +73,11 @@ object ConfigMain {
     }
 
     private fun startlang() {
-        val directoryStream: DirectoryStream<Path>? = Files.newDirectoryStream(FileSystems.newFileSystem(
-            Paths.get(instance.javaClass.protectionDomain.codeSource.location.toURI()), null).getPath("/lang/"))
+        val directoryStream: DirectoryStream<Path>? = Files.newDirectoryStream(
+            FileSystems.newFileSystem(
+                Paths.get(instance.javaClass.protectionDomain.codeSource.location.toURI()), null
+            ).getPath("/lang/")
+        )
         if (directoryStream != null) {
             for (i in directoryStream) {
                 copyconfig(i.fileName.toString().replace(".yml", ""), true)
@@ -74,26 +85,27 @@ object ConfigMain {
         }
     }
 
-    private fun copyconfig(source: String, lang: Boolean) : YamlConfiguration? {
+    private fun copyconfig(source: String, lang: Boolean): YamlConfiguration? {
         val configfile: File
         val resource: InputStream
         val checkfile: File
         if (lang) {
             configfile = File(pluginlangdir(), "$source.yml")
-            resource = instance.javaClass.getResourceAsStream("/lang/$source.yml") ?: return YamlConfiguration.loadConfiguration(
-                File(pluginlangdir(), "$source.yml")
-            )
+            resource = instance.javaClass.getResourceAsStream("/lang/$source.yml")
+                ?: return YamlConfiguration.loadConfiguration(
+                    File(pluginlangdir(), "$source.yml")
+                )
             checkfile = File(pluginlangdir(), "$source-check.yml")
-        }
-        else {
+        } else {
             configfile = File(pluginpastedir(), "$source.yml")
-            resource = instance.javaClass.getResourceAsStream("/$source.yml") ?: return YamlConfiguration.loadConfiguration(
-                File(pluginpastedir(), "$source.yml")
-            )
+            resource =
+                instance.javaClass.getResourceAsStream("/$source.yml") ?: return YamlConfiguration.loadConfiguration(
+                    File(pluginpastedir(), "$source.yml")
+                )
             checkfile = File(pluginpastedir(), "$source-check.yml")
         }
         if (configfile.exists()) {
-            val check : YamlConfiguration
+            val check: YamlConfiguration
             try {
                 check = if (lang) {
                     YamlConfiguration.loadConfiguration(File(pluginlangdir(), "$source.yml"))
@@ -102,9 +114,9 @@ object ConfigMain {
                 }
             } catch (Ex: Exception) {
                 if (lang) {
-                    consoleMessage("$pluginName §cProblema na lang $source.")
+                    consoleMessage(problem.replace("%to%", "lang").replace("%file%", source))
                 } else {
-                    consoleMessage("$pluginName §cProblema na config $source.")
+                    consoleMessage(problem.replace("%to%", "config").replace("%file%", source))
                 }
                 disableplugin()
                 Ex.printStackTrace()
@@ -116,12 +128,10 @@ object ConfigMain {
             val vc = YamlConfiguration.loadConfiguration(checkfile).getDouble("Version-file")
             if (vc > v) {
                 ConfigVersionChecker(configfile, checkfile, vc.toString(), lang)
-            }
-            else {
+            } else {
                 ConfigChecker(configfile, checkfile, lang)
             }
-        }
-        else {
+        } else {
             if (lang) {
                 (File(pluginlangdir()).mkdirs())
             } else {
@@ -129,9 +139,9 @@ object ConfigMain {
             }
             Files.copy(resource, configfile.toPath())
             if (lang) {
-                consoleMessage("$pluginName §eCriado arquivo de lang ${configfile.name}")
+                consoleMessage(create.replace("%to%", "lang").replace("%file%", configfile.name))
             } else {
-                consoleMessage("$pluginName §eCriado arquivo de config ${configfile.name}")
+                consoleMessage(create.replace("%to%", "config").replace("%file%", configfile.name))
             }
         }
         return if (lang) {
@@ -144,6 +154,7 @@ object ConfigMain {
             b
         }
     }
+
     fun getString(source: YamlConfiguration, path: String): String = source.getString(path)
     fun getStringList(source: YamlConfiguration, path: String): List<String> = source.getStringList(path)
     fun getInt(source: YamlConfiguration, path: String): Int = source.getInt(path)

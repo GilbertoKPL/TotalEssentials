@@ -2,13 +2,17 @@ package me.gilberto.essentials.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import me.gilberto.essentials.EssentialsMain.pluginName
 import me.gilberto.essentials.config.configs.Database.mysqldatabase
 import me.gilberto.essentials.config.configs.Database.mysqlip
 import me.gilberto.essentials.config.configs.Database.mysqlpass
 import me.gilberto.essentials.config.configs.Database.mysqlport
 import me.gilberto.essentials.config.configs.Database.mysqlusername
 import me.gilberto.essentials.config.configs.Database.sqlselector
+import me.gilberto.essentials.config.configs.langs.Start.conectdatabase
+import me.gilberto.essentials.config.configs.langs.Start.databaseerror
+import me.gilberto.essentials.config.configs.langs.Start.databasesucesso
+import me.gilberto.essentials.config.configs.langs.Start.databasevalid
+import me.gilberto.essentials.config.configs.langs.Start.databasevalid1
 import me.gilberto.essentials.database.SqlStart.start
 import me.gilberto.essentials.management.Manager.consoleMessage
 import me.gilberto.essentials.management.Manager.pluginpastedir
@@ -16,7 +20,7 @@ import org.jetbrains.exposed.sql.Database
 
 class SqlSelector {
     init {
-        consoleMessage("$pluginName §eIniciando a conexão com o database!")
+        consoleMessage(conectdatabase)
         try {
             when (sqlselector.lowercase()) {
                 "sqlite" -> {
@@ -41,14 +45,13 @@ class SqlSelector {
                     start()
                 }
                 else -> {
-                    consoleMessage("$pluginName §cPor favor selecione um database valido!")
-                    consoleMessage("$pluginName §cValidos-> sqlite, h2 e mysql.")
+                    consoleMessage(databasevalid)
+                    consoleMessage(databasevalid1)
                 }
             }
-            consoleMessage("$pluginName §eConectado com sucesso no database ${sqlselector.lowercase()}!")
-        }
-        catch (ex : Exception) {
-            consoleMessage("$pluginName §cErro ao conectar com o database!")
+            consoleMessage(databasesucesso.replace("%db", sqlselector.lowercase()))
+        } catch (ex: Exception) {
+            consoleMessage(databaseerror)
         }
     }
 }

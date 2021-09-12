@@ -17,21 +17,24 @@ import java.util.concurrent.TimeUnit;
 
 import static me.gilberto.essentials.EssentialsMain.pluginName;
 
-@SuppressWarnings( "deprecation" )
+@SuppressWarnings("deprecation")
 public class LibChecker {
+    private static final String libloc = EssentialsMain.instance().getDataFolder().getPath() + "/lib";
     public static ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+    static int todow = 0;
+    static int dow = 0;
+    static boolean termined = false;
+
     private static InputStream dowloader(String url) throws IOException {
         URLConnection stream = new URL(url).openConnection();
         stream.connect();
         return stream.getInputStream();
     }
+
     private static void consoleMessage(String msg) {
         EssentialsMain.instance().getServer().getConsoleSender().sendMessage(msg);
     }
-    private static final String libloc = EssentialsMain.instance().getDataFolder().getPath() +"/lib";
-    static int todow = 0;
-    static int dow = 0;
-    static boolean termined = false;
+
     public static void checkversion() {
         YamlConfiguration versionfile;
         consoleMessage(pluginName + " §eIniciando verificação da lib...");
@@ -39,13 +42,12 @@ public class LibChecker {
         exec.scheduleAtFixedRate(() -> {
             if (termined) {
                 exec.shutdown();
-            }
-            else {
+            } else {
                 if (todow != 0 && dow != 0) {
                     consoleMessage(pluginName + " §eProgresso: " + (100 - (((todow - dow) * 100) / todow)) + "%");
                 }
             }
-        }, 1, 1,  TimeUnit.SECONDS);
+        }, 1, 1, TimeUnit.SECONDS);
         try {
             versionfile = YamlConfiguration.loadConfiguration(dowloader("https://www.dropbox.com/s/34gzmbcs61gbu3d/versionchecker.yml?dl=1"));
             todow = versionfile.getInt("version-lib.size");
@@ -67,8 +69,7 @@ public class LibChecker {
                                     }
                                 }
                             }
-                        }
-                        else new File(libloc).mkdirs();
+                        } else new File(libloc).mkdirs();
                         try {
                             InputStream filelib = dowloader(versionfile.getString(i.replace("version-lib", "repo")));
                             Files.copy(filelib, lib.toPath());
@@ -77,8 +78,7 @@ public class LibChecker {
                         } catch (Exception e) {
                             consoleMessage(pluginName + " §cErro ao baixar modulo: " + version + ", por favor reporte ao dono do plugin!");
                         }
-                    }
-                    else noremove.add(lib);
+                    } else noremove.add(lib);
                 }
             }
             String[] paste = new File(libloc).list();

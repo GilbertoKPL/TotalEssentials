@@ -1,12 +1,16 @@
 package me.gilberto.essentials.config
 
-import me.gilberto.essentials.EssentialsMain.pluginName
+import me.gilberto.essentials.config.configs.langs.Start
+import me.gilberto.essentials.config.configs.langs.Start.add
+import me.gilberto.essentials.config.configs.langs.Start.modconfig
+import me.gilberto.essentials.config.configs.langs.Start.remove
+import me.gilberto.essentials.config.configs.langs.Start.updateheader
 import me.gilberto.essentials.management.Manager.consoleMessage
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
 
-class ConfigVersionChecker(file: File, newfile: File, version: String?, lang:Boolean) {
+class ConfigVersionChecker(file: File, newfile: File, version: String?, lang: Boolean) {
     private var map = HashMap<String, Int>()
     private var map1 = HashMap<String, Int>()
 
@@ -34,51 +38,53 @@ class ConfigVersionChecker(file: File, newfile: File, version: String?, lang:Boo
         }
         return sortedMap
     }
+
     private fun reverse(map: LinkedHashMap<String, Int>): LinkedHashMap<String, Int> {
         val reversedMap = LinkedHashMap<String, Int>()
-        val it: ListIterator<Map.Entry<String, Int>> = ArrayList<Map.Entry<String, Int>>(map.entries).listIterator(map.entries.size)
+        val it: ListIterator<Map.Entry<String, Int>> =
+            ArrayList<Map.Entry<String, Int>>(map.entries).listIterator(map.entries.size)
         while (it.hasPrevious()) {
             val (key, value) = it.previous()
             reversedMap[key] = value
         }
         return reversedMap
     }
+
     private val conffile: YamlConfiguration = YamlConfiguration.loadConfiguration(file)
     private val confnewfile: YamlConfiguration = YamlConfiguration.loadConfiguration(newfile)
+
     init {
         val newconfig = YamlConfiguration.loadConfiguration(newfile)
         for (i in confnewfile.getKeys(true)) {
             if (i == "Version-file") {
                 newconfig.set(i, confnewfile.get(i))
                 if (version != null) {
-                    consoleMessage("$pluginName §eAtualizado a Version-file do arquivo ${file.name} para $version")
-                }
-                else {
+                    consoleMessage(Start.update.replace("%file%", file.name).replace("%version%", version))
+                } else {
                     if (lang) {
-                        consoleMessage("$pluginName §cDetectado modificação na lang executando Checker!")
+                        consoleMessage(modconfig.replace("%to%", "lang"))
                     } else {
-                        consoleMessage("$pluginName §cDetectado modificação na config executando Checker!")
+                        consoleMessage(modconfig.replace("%to%", "config"))
                     }
                 }
                 val header = conffile.options()!!
                 val newheader = confnewfile.options()!!
                 if (header.header().toString() != newheader.header().toString()) {
                     newconfig.options().header(newheader.header().toString())
-                    consoleMessage("$pluginName §eAtualizado a Header do arquivo ${file.name}")
+                    consoleMessage(updateheader.replace("%file%", file.name))
                 }
                 continue
             }
             if (conffile.get(i) != null) {
                 newconfig.set(i, conffile.get(i))
-            }
-            else {
+            } else {
                 map1[i] = i.split(".").size.plus(1)
             }
         }
         val putsorted = sortMapByValuesWithDuplicates(map1)
         for (i in putsorted) {
             newconfig.set(i.key, confnewfile.get(i.key))
-            consoleMessage("$pluginName §eAdicionado path ${i.key} no arquivo ${file.name}")
+            consoleMessage(add.replace("%path%", i.key).replace("%file%", file.name))
         }
         for (i in conffile.getKeys(true)) {
             if (i == "Version-file") continue
@@ -89,7 +95,7 @@ class ConfigVersionChecker(file: File, newfile: File, version: String?, lang:Boo
         val removesorted = reverse(sortMapByValuesWithDuplicates(map))
         for (i in removesorted) {
             newconfig.set(i.key, null)
-            consoleMessage("$pluginName §cRetirado path ${i.key} no arquivo ${file.name}")
+            consoleMessage(remove.replace("%path%", i.key).replace("%file%", file.name))
         }
         newconfig.save(file)
         newfile.delete()

@@ -3,9 +3,10 @@ package me.gilberto.essentials.config
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-class ConfigChecker(file : File, newfile: File, lang: Boolean) {
+class ConfigChecker(file: File, newfile: File, lang: Boolean) {
     private val conffile = YamlConfiguration.loadConfiguration(file)
     private val confnewfile = YamlConfiguration.loadConfiguration(newfile)
+
     init {
         var delete = true
         for (i in confnewfile.getKeys(true)) {
