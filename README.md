@@ -5,7 +5,7 @@ Qualquer duvida entre em contato no meu discord: GDPlugins#5620
 Atualmente o projeto está utilizando gradle kts como compilador.
 
 Recursos ->
-* Sistema de Lang
+* Sistema de Lang;
 * Livraria própria utilizando recursos novos como :
   - Mysql ultima versão;
   - h2 ultima versão;
