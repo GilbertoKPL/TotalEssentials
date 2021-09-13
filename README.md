@@ -12,7 +12,7 @@ Recursos ->
   - HikariCP.
 * Check da config;
 * Check da lib;
-* CCheck da versão;
+* Check da versão;
 * Check da lang.
 
 Atualmente ainda está em dev, qualquer ajuda é bem vinda !
