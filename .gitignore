@@ -1,9 +1,3 @@
 /.idea/
 /.gradle/
-/Minecraft/logs/
-/Minecraft/world/
-/Minecraft/world_nether/
-/Minecraft/world_the_end/
-/Minecraft/server.properties
-/Minecraft/spigot.yml
-/Minecraft/plugins/
+/Minecraft/

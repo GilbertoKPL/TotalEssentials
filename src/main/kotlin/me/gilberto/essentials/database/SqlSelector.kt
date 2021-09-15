@@ -49,7 +49,7 @@ class SqlSelector {
                     consoleMessage(databasevalid1)
                 }
             }
-            consoleMessage(databasesucesso.replace("%db", sqlselector.lowercase()))
+            consoleMessage(databasesucesso.replace("%db%", sqlselector.lowercase()))
         } catch (ex: Exception) {
             consoleMessage(databaseerror)
         }

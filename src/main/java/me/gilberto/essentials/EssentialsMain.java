@@ -6,7 +6,7 @@ import me.gilberto.essentials.management.StartPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class EssentialsMain extends JavaPlugin {
-    public static String pluginName = "§f[§cGD§f_§bEssentials§f]";
+    public static String pluginName = "§f[§bEssentials§cGD§f]";
     public static EssentialsMain instance;
 
     public static EssentialsMain instance() {

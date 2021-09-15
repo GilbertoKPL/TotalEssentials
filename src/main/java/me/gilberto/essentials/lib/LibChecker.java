@@ -1,6 +1,7 @@
 package me.gilberto.essentials.lib;
 
 import me.gilberto.essentials.EssentialsMain;
+import me.gilberto.essentials.config.configs.langs.Check;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -15,7 +16,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static me.gilberto.essentials.EssentialsMain.instance;
 import static me.gilberto.essentials.EssentialsMain.pluginName;
+import static me.gilberto.essentials.config.configs.langs.Check.*;
 
 @SuppressWarnings("deprecation")
 public class LibChecker {
@@ -32,25 +35,29 @@ public class LibChecker {
     }
 
     private static void consoleMessage(String msg) {
-        EssentialsMain.instance().getServer().getConsoleSender().sendMessage(msg);
+        EssentialsMain.instance().getServer().getConsoleSender().sendMessage(pluginName + " " + msg);
     }
 
     public static void checkversion() {
         YamlConfiguration versionfile;
-        consoleMessage(pluginName + " §eIniciando verificação da lib...");
+        consoleMessage(Check.startvef.replace("%to%", "lib"));
         HashSet<File> noremove = new HashSet<>();
         exec.scheduleAtFixedRate(() -> {
             if (termined) {
                 exec.shutdown();
             } else {
                 if (todow != 0 && dow != 0) {
-                    consoleMessage(pluginName + " §eProgresso: " + (100 - (((todow - dow) * 100) / todow)) + "%");
+                    consoleMessage(dowload.replace("%perc%", "" + (100 - (((todow - dow) * 100) / todow))));
                 }
             }
         }, 1, 1, TimeUnit.SECONDS);
         try {
             versionfile = YamlConfiguration.loadConfiguration(dowloader("https://www.dropbox.com/s/34gzmbcs61gbu3d/versionchecker.yml?dl=1"));
             todow = versionfile.getInt("version-lib.size");
+            double vc = versionfile.getInt("plugin-version");
+            if (vc > Double.parseDouble(instance.getDescription().getVersion())) {
+                //check version dev..
+            }
             for (String i : versionfile.getKeys(true)) {
                 String[] a = i.split("\\.");
                 if (Objects.equals(a[0], "version-lib") && a.length > 1 && !Objects.equals(a[1], "size")) {
@@ -76,7 +83,7 @@ public class LibChecker {
                             noremove.add(lib);
                             dow += (int) lib.length();
                         } catch (Exception e) {
-                            consoleMessage(pluginName + " §cErro ao baixar modulo: " + version + ", por favor reporte ao dono do plugin!");
+                            consoleMessage(errormodule.replace("%file%", version));
                         }
                     } else noremove.add(lib);
                 }
@@ -90,10 +97,10 @@ public class LibChecker {
                     }
                 }
             }
-            consoleMessage(pluginName + " §eVerificação completa!");
+            consoleMessage(completeverf);
             termined = true;
         } catch (Exception e) {
-            consoleMessage(pluginName + " §cErro na verificação de atualização, pulando...");
+            consoleMessage(error);
         }
     }
 }
