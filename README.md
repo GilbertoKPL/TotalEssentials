@@ -1,7 +1,20 @@
-# GD_Essentials
-Plugin com comandos essenciais para seu servidor de minecraft feito utilizando Kotlin e Exposed SQL.
+# EssentialsGD
 
-Qualquer duvida entre em contato no meu discord: GDPlugins#5620
-Atualmente o projeto está utilizando gradle kts como compilador.
+* in dev, it's in the beginning but it has a bright future, it will work in several versions, plugin that will help a lot to create your server because it will have many integrations on it.
 
-Atualmente ainda está em dev, qualquer ajuda é bem vinda !
+# Resources
+
+* Own Lib using new features such as:
+  - Mysql latest version;
+  - h2 latest version;
+  - HikariCP;
+  - Kotlin;
+  - ExposedSql.
+* Lang system and check;
+* Config system and check;
+* Check system and lib;
+* Version checker.
+
+# Discord
+
+* GD_Plugins#5620
