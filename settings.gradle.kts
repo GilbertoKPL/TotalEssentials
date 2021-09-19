@@ -1,2 +1,2 @@
-rootProject.name = "GD_Essentials"
+rootProject.name = "EssentialsGD"
 

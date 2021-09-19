@@ -1,8 +1,8 @@
 group = "me.gilbertodamim"
-version = "1.0"
 val exposedVersion= "0.34.1"
 val bukkitversion= "1.8.8-R0.1-SNAPSHOT"
 val kotlinversion= "1.5.30"
+val libpaste = "EssentialsGD/lib/"
 
 plugins {
     kotlin("jvm") version "1.5.30"
@@ -31,7 +31,7 @@ tasks {
     }
     shadowJar {
         manifest {
-            attributes["Class-Path"] = "GD_Essentials/lib/kotlin-stdlib-$kotlinversion.jar GD_Essentials/lib/exposed-core-$exposedVersion.jar GD_Essentials/lib/exposed-dao-$exposedVersion.jar GD_Essentials/lib/exposed-jdbc-$exposedVersion.jar GD_Essentials/lib/h2-1.4.200.jar GD_Essentials/lib/mysql-connector-java-8.0.26.jar GD_Essentials/lib/HikariCP-3.4.2.jar GD_Essentials/lib/slf4j-nop-1.7.32.jar GD_Essentials/lib/slf4j-api-1.7.32.jar"
+            attributes["Class-Path"] = "$libpaste/kotlin-stdlib-$kotlinversion.jar $libpaste/exposed-core-$exposedVersion.jar $libpaste/exposed-dao-$exposedVersion.jar $libpaste/exposed-jdbc-$exposedVersion.jar $libpaste/h2-1.4.200.jar $libpaste/mysql-connector-java-8.0.26.jar $libpaste/HikariCP-3.4.2.jar $libpaste/slf4j-nop-1.7.32.jar $libpaste/slf4j-api-1.7.32.jar"
         }
         classifier = null
         destinationDirectory.set(File("$buildDir/../Minecraft/plugins"))

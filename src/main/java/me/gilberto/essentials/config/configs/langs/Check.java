@@ -6,4 +6,5 @@ public class Check {
     public static String completeverf = "§eVerificação completa!";
     public static String errormodule = "§cErro ao baixar modulo: %file%, por favor reporte ao dono do plugin!";
     public static String error = "§cErro na verificação de atualização, pulando...";
+    public static String updateplugin = "§eAtualizando plugin para versão %version%...";
 }

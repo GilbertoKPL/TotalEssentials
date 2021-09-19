@@ -25,7 +25,7 @@ object ConfigMain {
     lateinit var lang: YamlConfiguration
     fun startconfig() {
         consoleMessage(startvef.replace("%to%", "config"))
-        econf = copyconfig("GD_EssentialsConfig", false) ?: return
+        econf = copyconfig("EssentialsGDConfig", false) ?: return
         ConfigReload()
         consoleMessage(completeverf)
         consoleMessage(startvef.replace("%to%", "lang"))
@@ -118,8 +118,8 @@ object ConfigMain {
                 } else {
                     consoleMessage(problem.replace("%to%", "config").replace("%file%", source))
                 }
-                disableplugin()
                 Ex.printStackTrace()
+                disableplugin()
                 return null
             }
             val v = check.getDouble("Version-file")

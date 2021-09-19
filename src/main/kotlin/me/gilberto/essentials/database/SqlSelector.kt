@@ -25,11 +25,11 @@ class SqlSelector {
             when (sqlselector.lowercase()) {
                 "sqlite" -> {
                     SqlInstance.SQL =
-                        Database.connect("jdbc:sqlite:${pluginpastedir()}/GD_Essentials.db", "org.sqlite.JDBC")
+                        Database.connect("jdbc:sqlite:${pluginpastedir()}/EssentialsGD.db", "org.sqlite.JDBC")
                     start()
                 }
                 "h2" -> {
-                    SqlInstance.SQL = Database.connect("jdbc:h2:./${pluginpastedir()}/GD_Essentials", "org.h2.Driver")
+                    SqlInstance.SQL = Database.connect("jdbc:h2:./${pluginpastedir()}/EssentialsGD", "org.h2.Driver")
                     start()
                 }
                 "mysql" -> {

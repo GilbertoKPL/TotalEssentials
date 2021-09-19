@@ -12,6 +12,6 @@ object Manager {
     fun pluginlangdir(): String = instance.dataFolder.path + "/lang/"
     fun disableplugin() {
         consoleMessage("§cDesabilitando plugin por algum motivo interno")
-        instance.server.pluginManager.getPlugin(instance.name)
+        instance.server.pluginManager.disablePlugin(instance.server.pluginManager.getPlugin(instance.name))
     }
 }

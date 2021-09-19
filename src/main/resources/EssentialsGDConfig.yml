@@ -1,6 +1,6 @@
-# Este arquivo é a main config do plugin gd_essentials onde influenciará em seu funcionamento...
+# Este arquivo é a main config do plugin essentialsGD onde influenciará em seu funcionamento...
 # Criador: Gilberto Damim;
-# Github: https://github.com/GilbertoDamim/GD_Essentials;
+# Github: https://github.com/GilbertoDamim/EssentialsGD;
 # Quaisquer duvidas entrar em contato no discord GDPlugins#5620 ou mesmo pelo github;
 # Este projeto está em desenvolvimento porfavor tenha paciencia do projeto final;
 # Escolha o tipo de armazenamento do plugin, disponiveis: sqlite, h2, mysql;
