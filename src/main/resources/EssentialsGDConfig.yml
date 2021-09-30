@@ -15,3 +15,5 @@ Database:
     username: "xxxx"
     database: "xxxx"
     pass: "xxxx"
+Kits:
+  Use-short-time: false

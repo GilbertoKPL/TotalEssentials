@@ -13,7 +13,6 @@ import me.gilberto.essentials.config.configs.langs.Start.databaseerror
 import me.gilberto.essentials.config.configs.langs.Start.databasesucesso
 import me.gilberto.essentials.config.configs.langs.Start.databasevalid
 import me.gilberto.essentials.config.configs.langs.Start.databasevalid1
-import me.gilberto.essentials.database.SqlStart.start
 import me.gilberto.essentials.management.Manager.consoleMessage
 import me.gilberto.essentials.management.Manager.pluginpastedir
 import org.jetbrains.exposed.sql.Database
@@ -26,11 +25,9 @@ class SqlSelector {
                 "sqlite" -> {
                     SqlInstance.SQL =
                         Database.connect("jdbc:sqlite:${pluginpastedir()}/EssentialsGD.db", "org.sqlite.JDBC")
-                    start()
                 }
                 "h2" -> {
                     SqlInstance.SQL = Database.connect("jdbc:h2:./${pluginpastedir()}/EssentialsGD", "org.h2.Driver")
-                    start()
                 }
                 "mysql" -> {
                     val config = HikariConfig().apply {
@@ -42,7 +39,6 @@ class SqlSelector {
                     }
                     val dataSource = HikariDataSource(config)
                     SqlInstance.SQL = Database.connect(dataSource)
-                    start()
                 }
                 else -> {
                     consoleMessage(databasevalid)

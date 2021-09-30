@@ -1,7 +1,7 @@
 package me.gilberto.essentials.config
 
 import me.gilberto.essentials.EssentialsMain.instance
-import me.gilberto.essentials.config.configs.Lang.langname
+import me.gilberto.essentials.config.configs.Database.langname
 import me.gilberto.essentials.config.configs.langs.Start.completeverf
 import me.gilberto.essentials.config.configs.langs.Start.create
 import me.gilberto.essentials.config.configs.langs.Start.langerror
@@ -155,8 +155,19 @@ object ConfigMain {
         }
     }
 
-    fun getString(source: YamlConfiguration, path: String): String = source.getString(path)
-    fun getStringList(source: YamlConfiguration, path: String): List<String> = source.getStringList(path)
+    fun getString(source: YamlConfiguration, path: String, color: Boolean): String {
+        return if (color) { source.getString(path).replace("§", "&") } else source.getString(path)
+    }
+    fun getStringList(source: YamlConfiguration, path: String, color: Boolean): List<String> {
+        return if (color) {
+            val ret : MutableList<String> = ArrayList()
+            for (i in source.getStringList(path)) {
+                ret.add(i.replace("§", "&"))
+            }
+            ret
+        } else source.getStringList(path)
+    }
     fun getInt(source: YamlConfiguration, path: String): Int = source.getInt(path)
     fun getIntList(source: YamlConfiguration, path: String): List<Int> = source.getIntegerList(path)
+    fun getBoolean(source: YamlConfiguration, path: String): Boolean = source.getBoolean(path)
 }

@@ -1,3 +1,19 @@
 # Lang pt.br
 Version-file: 1.0
 
+Time:
+  timeseconds: "segundos"
+  timesecond: "segundo"
+  timesecondshort: "s"
+  timeminutes: "minutos"
+  timeminute: "minuto"
+  timeminuteshort: "m"
+  timehours: "horas"
+  timehour: "hora"
+  timehourshort: "h"
+  timedays: "dias"
+  timeday: "dia"
+  timedayshort: "d"
+Kit:
+  notexist: "&cEsse kit não existe"
+  editkittime: "&eTempo do kit setado para %time%"
