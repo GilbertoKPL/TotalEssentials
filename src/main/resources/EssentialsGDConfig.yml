@@ -16,4 +16,5 @@ Database:
     database: "xxxx"
     pass: "xxxx"
 Kits:
+  activated: true
   Use-short-time: false

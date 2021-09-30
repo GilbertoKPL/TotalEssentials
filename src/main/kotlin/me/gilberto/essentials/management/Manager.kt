@@ -27,7 +27,7 @@ object Manager {
         val hours = minutes / 60
         val days = hours / 24
         if (!short) {
-            return "$days $timedayshort, ${hours % 24} $$timehourshort, ${minutes % 60} $timeminuteshort ${seconds % 60} $timesecondshort"
+            return "$days $timedayshort, ${hours % 24} $timehourshort, ${minutes % 60} $timeminuteshort ${seconds % 60} $timesecondshort"
         }
         val uniseconds = if (seconds == 1L) { Time.timesecond } else Time.timeseconds
         val uniminutes = if (minutes == 1L) { Time.timeminute } else Time.timeminutes

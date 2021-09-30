@@ -7,7 +7,9 @@ class StartCommands {
         kits()
     }
     private fun kits() {
-        Kits.startkits()
-        instance.getCommand("kits").executor = Kits()
+        if (me.gilberto.essentials.config.configs.Kits.activated) {
+            Kits.startkits()
+            instance.getCommand("kits").executor = Kits()
+        }
     }
 }
