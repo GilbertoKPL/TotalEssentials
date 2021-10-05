@@ -14,6 +14,6 @@ Time:
   timedays: "dias"
   timeday: "dia"
   timedayshort: "d"
-Kit:
+Kits:
   notexist: "&cEsse kit não existe"
   editkittime: "&eTempo do kit setado para %time%"

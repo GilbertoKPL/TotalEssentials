@@ -18,17 +18,17 @@ object Time {
     lateinit var timedayshort: String
 
     fun reload(source1: YamlConfiguration) {
-        timeseconds = ConfigMain.getString(source1, "Time.timeseconds",false)
-        timesecond = ConfigMain.getString(source1, "Time.timesecond",false)
-        timesecondshort = ConfigMain.getString(source1, "Time.timesecond",false)
-        timeminutes = ConfigMain.getString(source1, "Time.timeminutes",false)
-        timeminute = ConfigMain.getString(source1, "Time.timeminute",false)
-        timeminuteshort = ConfigMain.getString(source1, "Time.timeminute",false)
-        timehours = ConfigMain.getString(source1, "Time.timehours",false)
-        timehour = ConfigMain.getString(source1, "Time.timehour",false)
-        timehourshort = ConfigMain.getString(source1, "Time.timehour",false)
-        timedays = ConfigMain.getString(source1, "Time.timedays",false)
-        timeday = ConfigMain.getString(source1, "Time.timeday",false)
-        timedayshort = ConfigMain.getString(source1, "Time.timeday",false)
+        timeseconds = ConfigMain.getString(source1, "Time.timeseconds", false)
+        timesecond = ConfigMain.getString(source1, "Time.timesecond", false)
+        timesecondshort = ConfigMain.getString(source1, "Time.timesecond", false)
+        timeminutes = ConfigMain.getString(source1, "Time.timeminutes", false)
+        timeminute = ConfigMain.getString(source1, "Time.timeminute", false)
+        timeminuteshort = ConfigMain.getString(source1, "Time.timeminute", false)
+        timehours = ConfigMain.getString(source1, "Time.timehours", false)
+        timehour = ConfigMain.getString(source1, "Time.timehour", false)
+        timehourshort = ConfigMain.getString(source1, "Time.timehour", false)
+        timedays = ConfigMain.getString(source1, "Time.timedays", false)
+        timeday = ConfigMain.getString(source1, "Time.timeday", false)
+        timedayshort = ConfigMain.getString(source1, "Time.timeday", false)
     }
 }

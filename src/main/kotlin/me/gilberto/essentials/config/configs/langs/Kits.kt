@@ -7,7 +7,7 @@ object Kits {
     lateinit var notexist: String
     lateinit var editkittime: String
     fun reload(source1: YamlConfiguration) {
-        notexist = ConfigMain.getString(source1, "Kits.notexist",true)
-        editkittime = ConfigMain.getString(source1, "Kits.editkittime",true)
+        notexist = ConfigMain.getString(source1, "Kits.notexist", true)
+        editkittime = ConfigMain.getString(source1, "Kits.editkittime", true)
     }
 }

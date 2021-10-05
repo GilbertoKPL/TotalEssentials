@@ -67,8 +67,8 @@ class ConfigVersionChecker(file: File, newfile: File, version: String?, lang: Bo
                         consoleMessage(modconfig.replace("%to%", "config"))
                     }
                 }
-                val header = conffile.options()!!
-                val newheader = confnewfile.options()!!
+                val header = conffile.options()
+                val newheader = confnewfile.options()
                 if (header.header().toString() != newheader.header().toString()) {
                     newconfig.options().header(newheader.header().toString())
                     consoleMessage(updateheader.replace("%file%", file.name))

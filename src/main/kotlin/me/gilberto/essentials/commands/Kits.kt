@@ -18,32 +18,43 @@ import java.util.concurrent.TimeUnit
 
 object SqlKits : Table() {
     val kitname = varchar("kitname", 16)
-    val kitrealname = varchar("kitname", 32)
+    val kitrealname = varchar("kitrealname", 32)
     val kittime = long("kittime").default(0)
     val kititens = text("kititens").default("")
 
     override val primaryKey = PrimaryKey(kitname)
 }
 
+@Suppress("DEPRECATION")
 class Kits : CommandExecutor {
     override fun onCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         return false
     }
 
-    fun convertitens(to: List<ItemStack>): String {
+    private fun convertitens(to: List<ItemStack>): String {
         var converted = ""
         fun check(to: String?): String {
             return to ?: "_"
         }
         for (i in to) {
-            val id = i.typeId
-            val data = i.data.data
+            val id = i.type.id
+            val data = i.data?.data
             val quant = check(i.amount.toString())
-            val metadata = check(i.itemMeta.toString())
-            val durability = check(i.durability.toString())
-            val enchants = check(i.enchantments.toString())
-            converted = "$converted-$id-$data.$quant.$durability.$enchants.$metadata"
+            val metadata = i.itemMeta!!
+            val durability = i.durability
+            var enchants = "_"
+            val name = if (metadata.hasDisplayName()) {
+                metadata.displayName
+            } else "_"
+            for (toenchant in metadata.enchants) {
+                enchants = if (enchants == "_") {
+                    toenchant.toString()
+                } else {
+                    "$enchants%$toenchant"
+                }
+            }
+            converted = "$converted-$id-$data.$quant.$durability.$enchants.$name"
         }
         return converted
     }
@@ -94,15 +105,15 @@ class Kits : CommandExecutor {
                 SqlKits.update({ SqlKits.kitname eq kit.lowercase() }) {
                     it[kittime] = convert
                 }
-        }
-    }, Executors.newCachedThreadPool())
-}
+            }
+        }, Executors.newCachedThreadPool())
+    }
 
-companion object {
-    fun startkits() {
-        transaction(SqlInstance.SQL) {
-            SchemaUtils.create(SqlKits)
+    companion object {
+        fun startkits() {
+            transaction(SqlInstance.SQL) {
+                SchemaUtils.create(SqlKits)
+            }
         }
     }
-}
 }

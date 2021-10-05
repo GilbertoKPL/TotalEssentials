@@ -13,12 +13,12 @@ object Database {
     lateinit var langname: String
 
     fun reload(source1: YamlConfiguration) {
-        langname = ConfigMain.getString(source1, "Lang",false)
-        sqlselector = ConfigMain.getString(source1, "Database.type",false)
-        mysqlip = ConfigMain.getString(source1, "Database.mysql.ip",false)
-        mysqlport = ConfigMain.getString(source1, "Database.mysql.port",false)
-        mysqlusername = ConfigMain.getString(source1, "Database.mysql.username",false)
-        mysqldatabase = ConfigMain.getString(source1, "Database.mysql.database",false)
-        mysqlpass = ConfigMain.getString(source1, "Database.mysql.pass",false)
+        langname = ConfigMain.getString(source1, "Lang", false)
+        sqlselector = ConfigMain.getString(source1, "Database.type", false)
+        mysqlip = ConfigMain.getString(source1, "Database.mysql.ip", false)
+        mysqlport = ConfigMain.getString(source1, "Database.mysql.port", false)
+        mysqlusername = ConfigMain.getString(source1, "Database.mysql.username", false)
+        mysqldatabase = ConfigMain.getString(source1, "Database.mysql.database", false)
+        mysqlpass = ConfigMain.getString(source1, "Database.mysql.pass", false)
     }
 }

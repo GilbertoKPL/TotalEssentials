@@ -1,7 +1,7 @@
 group = "me.gilbertodamim"
-val exposedVersion= "0.34.1"
-val bukkitversion= "1.8.8-R0.1-SNAPSHOT"
-val kotlinversion= "1.5.30"
+val exposedVersion= "0.35.1"
+val bukkitversion= "1.17.1-R0.1-SNAPSHOT"
+val kotlinversion= "1.5.31"
 val libpaste = "EssentialsGD/lib/"
 
 plugins {
@@ -21,7 +21,6 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     compileOnly("org.spigotmc:spigot-api:$bukkitversion")
-    compileOnly("org.bukkit:bukkit:$bukkitversion")
     compileOnly("com.zaxxer:HikariCP:3.4.2")
 }
 
