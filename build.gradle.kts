@@ -30,7 +30,7 @@ tasks {
     }
     shadowJar {
         manifest {
-            attributes["Class-Path"] = "$libpaste/kotlin-stdlib-$kotlinversion.jar $libpaste/exposed-core-$exposedVersion.jar $libpaste/exposed-dao-$exposedVersion.jar $libpaste/exposed-jdbc-$exposedVersion.jar $libpaste/h2-1.4.200.jar $libpaste/mysql-connector-java-8.0.26.jar $libpaste/HikariCP-3.4.2.jar $libpaste/slf4j-nop-1.7.32.jar $libpaste/slf4j-api-1.7.32.jar"
+            attributes["Class-Path"] = "${libpaste}kotlin-stdlib-$kotlinversion.jar ${libpaste}exposed-core-$exposedVersion.jar ${libpaste}exposed-dao-$exposedVersion.jar ${libpaste}exposed-jdbc-$exposedVersion.jar ${libpaste}h2-1.4.200.jar ${libpaste}mysql-connector-java-8.0.26.jar ${libpaste}HikariCP-3.4.2.jar ${libpaste}slf4j-nop-1.7.32.jar ${libpaste}slf4j-api-1.7.32.jar"
         }
         classifier = null
         destinationDirectory.set(File("$buildDir/../Minecraft/plugins"))

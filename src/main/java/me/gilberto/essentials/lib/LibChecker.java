@@ -55,6 +55,7 @@ public class LibChecker {
         }, 1, 1, TimeUnit.SECONDS);
         try {
             File checkfile = new File(libloc, "filecheck.yml");
+            new File(libloc).mkdirs();
             Files.copy(dowloader("https://www.dropbox.com/s/34gzmbcs61gbu3d/versionchecker.yml?dl=1"), checkfile.toPath());
             versionfile = YamlConfiguration.loadConfiguration(checkfile);
             checkfile.delete();
