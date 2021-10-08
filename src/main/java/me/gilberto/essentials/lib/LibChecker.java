@@ -22,6 +22,7 @@ import static me.gilberto.essentials.EssentialsMain.instance;
 import static me.gilberto.essentials.EssentialsMain.pluginName;
 import static me.gilberto.essentials.config.configs.langs.Check.*;
 
+@SuppressWarnings({"all"})
 public class LibChecker {
     private static final String libloc = EssentialsMain.instance().getDataFolder().getPath() + "/lib";
     public static ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -56,16 +57,17 @@ public class LibChecker {
         try {
             File checkfile = new File(libloc, "filecheck.yml");
             new File(libloc).mkdirs();
-            Files.copy(dowloader("https://www.dropbox.com/s/34gzmbcs61gbu3d/versionchecker.yml?dl=1"), checkfile.toPath());
+            Files.copy(dowloader("https://pastebin.com/raw/Nm30fsTp"), checkfile.toPath());
             versionfile = YamlConfiguration.loadConfiguration(checkfile);
             checkfile.delete();
-            todow = versionfile.getInt("version-lib.size");
+            double pluginv = Double.parseDouble(instance.getDescription().getVersion());
+            todow = versionfile.getInt("version-lib-" + pluginv + ".size");
             String vc = versionfile.getString("plugin-version");
             assert vc != null;
-            if (Double.parseDouble(vc) > Double.parseDouble(instance.getDescription().getVersion())) {
+            if (Double.parseDouble(vc) > pluginv) {
                 consoleMessage(updateplugin.replace("%version%", "" + vc));
                 try {
-                    InputStream filelib = dowloader(versionfile.getString("repo.plugin-repo"));
+                    InputStream filelib = dowloader(versionfile.getString("plugin-repo"));
                     File pl = new File(instance.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
                     File plplace = new File(instance.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString().replace(pl.getName(), "EssentialsGD-" + vc + ".jar").replace("file:", ""));
                     Files.copy(filelib, plplace.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -82,34 +84,48 @@ public class LibChecker {
                 }
             }
             if (update) return;
-            for (String i : versionfile.getKeys(true)) {
-                String[] a = i.split("\\.");
-                if (Objects.equals(a[0], "version-lib") && a.length > 1 && !Objects.equals(a[1], "size")) {
-                    String version = versionfile.getString(i);
-                    File lib = new File(libloc, version + ".jar");
-                    if (!lib.exists()) {
-                        String[] paste = new File(libloc).list();
-                        if (paste != null) {
-                            for (String d : paste) {
-                                String[] e = d.split("-");
-                                for (String g : e) {
-                                    if (g.split("\\.").length > 1) {
-                                        if (d.replace("-" + g, "").equals(i.replace("version-lib.", ""))) {
-                                            new File(libloc, d).delete();
-                                        }
+            for (String i : Objects.requireNonNull(versionfile.getConfigurationSection("version-lib-" + pluginv)).getKeys(false)) {
+                if (Objects.equals(i, "size")) continue;
+                String[] split = Objects.requireNonNull(versionfile.getString("version-lib-" + pluginv + "." + i)).split(":-:");
+                String version = split[0];
+                File lib = new File(libloc, version + ".jar");
+                if (!lib.exists()) {
+                    String[] paste = new File(libloc).list();
+                    if (paste != null) {
+                        for (String d : paste) {
+                            String[] e = d.split("-");
+                            for (String g : e) {
+                                if (g.split("\\.").length > 1) {
+                                    if (d.replace("-" + g, "").equals(i.replace("version-lib-" + pluginv + ".", ""))) {
+                                        new File(libloc, d).delete();
                                     }
                                 }
                             }
-                        } else new File(libloc).mkdirs();
+                        }
+                    } else new File(libloc).mkdirs();
+                    try {
+                        InputStream filelib = dowloader(split[1]);
+                        Files.copy(filelib, lib.toPath());
+                        noremove.add(lib);
+                        dow += (int) lib.length();
+                    } catch (Exception e) {
+                        consoleMessage(errormodule.replace("%file%", version));
+                    }
+                } else {
+                    if (lib.length() != Integer.parseInt(split[2])) {
                         try {
-                            InputStream filelib = dowloader(versionfile.getString(i.replace("version-lib", "repo")));
-                            Files.copy(filelib, lib.toPath());
+                            InputStream filelib = dowloader(split[1]);
+                            Files.copy(filelib, lib.toPath(), StandardCopyOption.REPLACE_EXISTING);
                             noremove.add(lib);
-                            dow += (int) lib.length();
+                            dow += filelib.available();
                         } catch (Exception e) {
                             consoleMessage(errormodule.replace("%file%", version));
                         }
-                    } else noremove.add(lib);
+                    }
+                    else {
+                        noremove.add(lib);
+                        dow += (int) lib.length();
+                    }
                 }
             }
             String[] paste = new File(libloc).list();
