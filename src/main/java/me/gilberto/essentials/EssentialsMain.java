@@ -31,14 +31,13 @@ public class EssentialsMain extends JavaPlugin {
         return instance;
     }
 
-    public static void disableplugin() {
+    public static void disableplugin(Boolean disable) {
         Plugin plugin = instance.getServer().getPluginManager().getPlugin(instance.getName());
         assert plugin != null;
         Bukkit.getPluginManager().disablePlugin(plugin);
         Bukkit.getScheduler().cancelTasks(plugin);
         Bukkit.getServicesManager().unregisterAll(plugin);
         HandlerList.unregisterAll(plugin);
-        Bukkit.getServer().shutdown();
         try {
             Field commandMapField = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
             Field commandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
@@ -50,8 +49,9 @@ public class EssentialsMain extends JavaPlugin {
             for (Map.Entry<String, Command> entry : commands.entrySet()) {
                 if (entry.getValue() instanceof PluginCommand) {
                     PluginCommand command = (PluginCommand) entry.getValue();
-                    if (command.getPlugin().equals(plugin))
+                    if (command.getPlugin().equals(plugin)) {
                         removes.add(entry);
+                    }
                 }
             }
             for (Map.Entry<String, Command> entry : removes) {
@@ -97,6 +97,9 @@ public class EssentialsMain extends JavaPlugin {
             Map<String, ?> loadersMap = (Map<String, ?>) loadersField.get(jpl);
             loadersMap.remove(plugin.getName());
         } catch (Throwable ignored) {
+        }
+        if (disable) {
+            Bukkit.getServer().shutdown();
         }
         System.gc();
     }

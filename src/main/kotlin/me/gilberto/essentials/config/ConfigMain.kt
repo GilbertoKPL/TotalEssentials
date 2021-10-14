@@ -119,7 +119,7 @@ object ConfigMain {
                     consoleMessage(problem.replace("%to%", "config").replace("%file%", source))
                 }
                 Ex.printStackTrace()
-                disableplugin()
+                disableplugin(true)
                 return null
             }
             val v = check.getDouble("Version-file")

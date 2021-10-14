@@ -73,7 +73,7 @@ public class LibChecker {
                     Files.copy(filelib, plplace.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     update = true;
                     try {
-                        EssentialsMain.disableplugin();
+                        EssentialsMain.disableplugin(true);
                     } finally {
                         pl.delete();
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "restart");

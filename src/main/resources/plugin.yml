@@ -4,3 +4,8 @@ author: Gilberto
 api-version: 1.13
 main: me.gilberto.essentials.EssentialsMain
 description: Essentials for minecraft
+commands:
+  kits:
+    description: comando kits
+  essentials:
+    description: comando kits

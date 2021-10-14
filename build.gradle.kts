@@ -1,5 +1,5 @@
 group = "me.gilbertodamim"
-val exposedVersion= "0.35.1"
+val exposedVersion= "0.35.2"
 val bukkitversion= "1.17.1-R0.1-SNAPSHOT"
 val kotlinversion= "1.5.31"
 val hikariversion= "3.4.5"

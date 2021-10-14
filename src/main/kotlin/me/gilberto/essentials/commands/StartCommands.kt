@@ -4,6 +4,7 @@ import me.gilberto.essentials.EssentialsMain.instance
 
 class StartCommands {
     fun start() {
+        instance.getCommand("essentials")?.setExecutor(Essentials())
         kits()
     }
 
