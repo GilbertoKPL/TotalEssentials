@@ -9,3 +9,7 @@ object SqlKits : Table() {
     val kititens = text("kititens")
     override val primaryKey = PrimaryKey(kitname)
 }
+object PlayerKits : Table() {
+    val player = varchar("uuid", 16)
+    override val primaryKey = PrimaryKey(player)
+}

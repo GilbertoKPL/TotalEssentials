@@ -4,17 +4,24 @@ import me.gilberto.essentials.EssentialsMain.instance
 import me.gilberto.essentials.config.configs.Kits.Useshorttime
 import me.gilberto.essentials.config.configs.langs.Kits
 import me.gilberto.essentials.config.configs.langs.Kits.editkittime
+import me.gilberto.essentials.database.PlayerKits
 import me.gilberto.essentials.database.SqlInstance
 import me.gilberto.essentials.database.SqlKits
 import me.gilberto.essentials.management.Dao.inventory
 import me.gilberto.essentials.management.Manager.consoleMessage
 import me.gilberto.essentials.management.Manager.convertmilisstring
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.CompletableFuture
@@ -36,7 +43,36 @@ class Kits : CommandExecutor {
         }
         return false
     }
-
+    private fun convertitens(to: String): ArrayList<ItemStack> {
+        val itens = ArrayList<ItemStack>()
+        for (i in to.split("^§^")) {
+            val splited = i.split("_§_")
+            val item = if (splited[2] == "-") {
+                Material.getMaterial(splited[0])?.let { ItemStack(it, splited[1].toInt()) }
+            }
+            else {
+                Material.getMaterial(splited[0])?.let { ItemStack(it, splited[1].toInt(), splited[2].toShort()) }
+            }
+            if (splited[3] != "-") {
+                for (ii in splited[3].split("=§§=")) {
+                    val splited2 = ii.split("=§=")
+                    Enchantment.getByKey(NamespacedKey.fromString(splited2[0]))?.let { item?.addUnsafeEnchantment(it, splited2[1].toInt()) }
+                }
+            }
+            val b = item?.itemMeta
+            if (splited[4] != "-") {
+                b?.setDisplayName(splited[4])
+            }
+            if (splited[5] != "-") {
+                b?.lore = splited[5].split("=§=")
+            }
+            item?.itemMeta = b
+            if (item != null) {
+                itens.add(item)
+            }
+        }
+        return itens
+    }
     private fun convertitens(to: Array<ItemStack>): String {
         fun check(to: String?): String {
             return to ?: "-"
@@ -46,14 +82,7 @@ class Kits : CommandExecutor {
             //support for lower versions.
             if (i == null) continue
             //support for lower versions.
-            val id = if(i.type.id == 0) continue else {
-                i.type.id.toString()
-            }
-            val data = if (i.data != null) {
-                i.data?.data.toString()
-            } else {
-                "0"
-            }
+            val itemname = if(i.type.name == "AIR") continue else { i.type.name }
             val quant = check(i.amount.toString())
             var durability = i.durability.toString()
             if (durability == "0") {
@@ -62,34 +91,49 @@ class Kits : CommandExecutor {
             val metadata = i.itemMeta
             var enchants = "-"
             var name = "-"
+            var lore = "-"
             if (metadata != null) {
                 name = if (metadata.hasDisplayName()) {
                     metadata.displayName
                 } else "-"
-                for (toenchant in metadata.enchants) {
-                    enchants = if (enchants == "-") {
-                        "${toenchant.key}=§=${toenchant.value}"
-                    } else {
-                        "$enchants=§§=${toenchant.value}"
+                if (metadata.enchants.isNotEmpty()) {
+                    for (toenchant in metadata.enchants) {
+                        enchants = if (enchants == "-") {
+                            "${toenchant.key.key}=§=${toenchant.value}"
+                        } else {
+                            "$enchants=§§=${toenchant.key.key}=§=${toenchant.value}"
+                        }
+                    }
+                }
+                if (metadata.lore != null && metadata.lore!!.isNotEmpty()) {
+                    for (tolore in metadata.lore!!) {
+                        lore = if (lore == "-") {
+                            tolore
+                        } else {
+                            "$lore=§=$tolore"
+                        }
                     }
                 }
             }
             converted = if (converted == "") {
-                "${id}_§_${data}_§_${quant}_§_${durability}_§_${enchants}_§_$name"
+                "${itemname}_§_${quant}_§_${durability}_§_${enchants}_§_${name}_§_$lore"
             } else {
-                "$converted-§-${id}_§_${data}_§_${quant}_§_${durability}_§_${enchants}_§_$name"
+                "$converted^§^${itemname}_§_${quant}_§_${durability}_§_${enchants}_§_${name}_§_$lore"
             }
-            consoleMessage(converted)
         }
         return converted
     }
     private fun createkitgui(kit: String, player: Player) {
-        val inv = instance.server.createInventory(player, 27, kit)
+        val inv = instance.server.createInventory(player, 36, kit)
         player.openInventory(inv)
         inventory[player] = kit
     }
     private fun createkit(kit: String, itens: Array<ItemStack>) {
         val ite = convertitens(itens)
+        consoleMessage(ite)
+        for(i in convertitens(ite)) {
+            Bukkit.getPlayer("Gilberto")?.inventory?.addItem(i)
+        }
         CompletableFuture.runAsync({
             transaction(SqlInstance.SQL) {
                 SqlKits.insert {
@@ -98,6 +142,18 @@ class Kits : CommandExecutor {
                     it[kititens] = ite
                     it[kittime] = 0
                 }
+                PlayerKits.integer(kit.lowercase())
+            }
+        }, Executors.newCachedThreadPool())
+    }
+    private fun delkit(kit: String) {
+        CompletableFuture.runAsync({
+            transaction(SqlInstance.SQL) {
+                SqlKits.deleteWhere { SqlKits.kitname like kit }
+                val col = Column<Int>(SqlKits, kit.lowercase(), IntegerColumnType())
+                val col1 = Column<Int>(PlayerKits, kit.lowercase(), IntegerColumnType())
+                col.dropStatement()
+                col1.dropStatement()
             }
         }, Executors.newCachedThreadPool())
     }
@@ -144,6 +200,7 @@ class Kits : CommandExecutor {
         fun startkits() {
             transaction(SqlInstance.SQL) {
                 SchemaUtils.create(SqlKits)
+                SchemaUtils.create(PlayerKits)
             }
         }
     }
