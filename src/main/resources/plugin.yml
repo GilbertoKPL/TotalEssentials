@@ -5,7 +5,13 @@ api-version: 1.13
 main: me.gilberto.essentials.EssentialsMain
 description: Essentials for minecraft
 commands:
-  kits:
+  kit:
+    description: comando kits
+  editkit:
+    description: comando kits
+  createkit:
+    description: comando kits
+  delkit:
     description: comando kits
   essentials:
-    description: comando kits
+    description: comando principal

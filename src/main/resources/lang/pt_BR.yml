@@ -1,6 +1,9 @@
 # Lang pt.br
 Version-file: 1.0
 
+General:
+  onlyplayercommand: "&cEsse comando é somente para player!"
+  notperm: "&cVocê não tem permissão para executar esse comando."
 Time:
   timeseconds: "segundos"
   timesecond: "segundo"
@@ -15,5 +18,14 @@ Time:
   timeday: "dia"
   timedayshort: "d"
 Kits:
-  notexist: "&cEsse kit não existe"
-  editkittime: "&eTempo do kit setado para %time%"
+  notexist: "&cEsse kit não existe."
+  exist: "&cEsse kit já existe."
+  editkittime: "&eTempo do kit setado para %time%."
+  createkitusage: "&c/createkit (Nome do kit)."
+  createkitsuccess: "&eKit %name% criado com sucesso, para edita-lo utilize /editarkit %name%."
+  createkitproblem: "&cKit %name% não foi criado, possivelmente um bug do plugin peça ajuda ao dono!"
+  delkitusage: "&c/delkit (Nome do kit)."
+  delkitsuccess: "&eKit %name% deletado com sucesso."
+  delkitproblem: "&cKit %name% não foi deletado, possivelmente um bug do plugin peça ajuda ao dono!"
+  editkitsuccess: "&eKit %name% não foi editado com sucesso!"
+  editkitproblem: "&cKit %name% não foi editado, possivelmente um bug do plugin peça ajuda ao dono!"

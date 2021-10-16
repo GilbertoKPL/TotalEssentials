@@ -6,7 +6,7 @@ object SqlKits : Table() {
     val kitname = varchar("kitname", 16)
     val kitrealname = varchar("kitrealname", 32)
     val kittime = long("kittime").default(0)
-    val kititens = text("kititens")
+    val kititens = varchar("kititens", 255)
     override val primaryKey = PrimaryKey(kitname)
 }
 object PlayerKits : Table() {

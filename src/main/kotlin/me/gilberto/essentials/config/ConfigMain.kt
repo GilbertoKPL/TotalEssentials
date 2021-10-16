@@ -157,7 +157,7 @@ object ConfigMain {
 
     fun getString(source: YamlConfiguration, path: String, color: Boolean): String {
         return if (color) {
-            source.getString(path)!!.replace("§", "&")
+            source.getString(path)!!.replace("&", "§")
         } else source.getString(path)!!
     }
 
@@ -165,7 +165,7 @@ object ConfigMain {
         return if (color) {
             val ret: MutableList<String> = ArrayList()
             for (i in source.getStringList(path)) {
-                ret.add(i.replace("§", "&"))
+                ret.add(i.replace("&", "§"))
             }
             ret
         } else source.getStringList(path)
