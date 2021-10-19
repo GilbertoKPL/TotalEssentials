@@ -1,12 +1,10 @@
 package me.gilberto.essentials.commands.kits
 
 import me.gilberto.essentials.EssentialsMain
-import me.gilberto.essentials.commands.kits.Kit.Companion.checkkitexist
 import me.gilberto.essentials.commands.kits.Kit.Companion.convertitens
 import me.gilberto.essentials.commands.kits.Kit.Companion.updatekits
 import me.gilberto.essentials.config.configs.langs.General
 import me.gilberto.essentials.config.configs.langs.Kits
-import me.gilberto.essentials.database.PlayerKits
 import me.gilberto.essentials.database.SqlInstance
 import me.gilberto.essentials.database.SqlKits
 import me.gilberto.essentials.management.Dao
@@ -17,7 +15,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
@@ -32,10 +29,10 @@ class EditKit : CommandExecutor {
             return false
         }
         if (s.hasPermission("gd.essentials.kits.admin")) {
-            if (args.size > 2) {
+            if (args.size > 1) {
                 val kit = args[0].lowercase()
-                if (checkkitexist(kit).get()) {
-                    if (args[1] == "time" && args.size > 3) {
+                if (Dao.kitsitens[args[0].lowercase()] != null){
+                    if (args[1] == "time" && args.size > 2) {
                         try {
                             editkit(kit, args[2].toInt(), args[3], s)
                             s.sendMessage(Kits.editkitsuccess.replace("%name%", kit))
@@ -72,6 +69,9 @@ class EditKit : CommandExecutor {
 
     private fun editkitgui(kit: String, p: Player) {
         val inv = EssentialsMain.instance.server.createInventory(p, 36, kit)
+        for (i in Dao.kitsitens[kit]!!) {
+            inv.addItem(i)
+        }
         p.openInventory(inv)
         Dao.editinventory[p] = kit
     }
@@ -88,11 +88,11 @@ class EditKit : CommandExecutor {
                     it[kitrealname] = namekit
                 }
             }
+            updatekits()
         }, Executors.newSingleThreadExecutor())
-        updatekits()
     }
 
-    private fun editkit(kit: String, time: Int, unit: String, s: CommandSender) {
+    private fun editkit(kit: String, time: Int, unit: String?, s: CommandSender) {
         CompletableFuture.runAsync({
             transaction(SqlInstance.SQL) {
                 val work = SqlKits.select { SqlKits.kitname eq kit.lowercase() }
@@ -100,12 +100,15 @@ class EditKit : CommandExecutor {
                     s.sendMessage(Kits.notexist)
                     return@transaction
                 }
-                val convert = when (unit.lowercase()) {
-                    "s" -> TimeUnit.SECONDS.toMillis(time.toLong())
-                    "m" -> TimeUnit.MINUTES.toMillis(time.toLong())
-                    "h" -> TimeUnit.HOURS.toMillis(time.toLong())
-                    "d" -> TimeUnit.DAYS.toMillis(time.toLong())
-                    else -> TimeUnit.MINUTES.toMillis(time.toLong())
+                val convert = if (unit == null) { TimeUnit.MINUTES.toMillis(time.toLong()) }
+                else {
+                    when (unit.lowercase()) {
+                        "s" -> TimeUnit.SECONDS.toMillis(time.toLong())
+                        "m" -> TimeUnit.MINUTES.toMillis(time.toLong())
+                        "h" -> TimeUnit.HOURS.toMillis(time.toLong())
+                        "d" -> TimeUnit.DAYS.toMillis(time.toLong())
+                        else -> TimeUnit.MINUTES.toMillis(time.toLong())
+                    }
                 }
                 s.sendMessage(
                     Kits.editkittime.replace(
@@ -116,9 +119,9 @@ class EditKit : CommandExecutor {
                 SqlKits.update({ SqlKits.kitname eq kit.lowercase() }) {
                     it[kittime] = convert
                 }
+                updatekits()
             }
         }, Executors.newCachedThreadPool())
-        updatekits()
     }
 
     private fun editkit(kit: String, itens: Array<ItemStack>) {
@@ -128,11 +131,9 @@ class EditKit : CommandExecutor {
                 SqlKits.update({ SqlKits.kitname eq kit.lowercase() }) {
                     it[kititens] = ite
                 }
-                PlayerKits.integer(kit.lowercase())
-                SchemaUtils.createMissingTablesAndColumns(PlayerKits)
             }
+            updatekits()
         }, Executors.newCachedThreadPool())
-        updatekits()
     }
 
     fun event(e: InventoryCloseEvent): Boolean {

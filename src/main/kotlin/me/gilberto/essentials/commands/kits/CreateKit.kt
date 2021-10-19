@@ -1,7 +1,6 @@
 package me.gilberto.essentials.commands.kits
 
 import me.gilberto.essentials.EssentialsMain
-import me.gilberto.essentials.commands.kits.Kit.Companion.checkkitexist
 import me.gilberto.essentials.commands.kits.Kit.Companion.convertitens
 import me.gilberto.essentials.commands.kits.Kit.Companion.updatekits
 import me.gilberto.essentials.config.configs.langs.General
@@ -44,7 +43,7 @@ class CreateKit : CommandExecutor {
     }
 
     private fun createkitgui(kit: String, p: Player) {
-        if (checkkitexist(kit.lowercase()).get()) {
+        if (Dao.kitsitens[kit.lowercase()] != null) {
             p.sendMessage(exist)
             return
         }
@@ -63,11 +62,11 @@ class CreateKit : CommandExecutor {
                     it[kititens] = ite
                     it[kittime] = 0
                 }
-                PlayerKits.integer(kit.lowercase())
+                PlayerKits.long(kit.lowercase())
                 SchemaUtils.createMissingTablesAndColumns(PlayerKits)
             }
+            updatekits()
         }, Executors.newCachedThreadPool())
-        updatekits()
     }
 
     fun event(e: InventoryCloseEvent): Boolean {

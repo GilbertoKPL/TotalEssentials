@@ -16,8 +16,6 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.CompletableFuture
@@ -43,10 +41,14 @@ class Kit : CommandExecutor {
 
     companion object {
         fun startkits() {
-            transaction(SqlInstance.SQL) {
-                SchemaUtils.create(SqlKits, PlayerKits)
+            try {
+                transaction(SqlInstance.SQL) {
+                    SchemaUtils.create(SqlKits, PlayerKits)
+                }
             }
-            updatekits()
+            finally {
+                updatekits()
+            }
         }
 
         fun updatekits() {
@@ -64,20 +66,6 @@ class Kit : CommandExecutor {
                     }
                 }
             }, Executors.newCachedThreadPool())
-        }
-
-        fun checkkitexist(kit: String): CompletableFuture<Boolean> {
-            val completableFuture = CompletableFuture<Boolean>()
-            Executors.newCachedThreadPool().submit<Boolean?> {
-                transaction(SqlInstance.SQL) {
-                    if (SqlKits.select(SqlKits.kitname like kit).empty()) {
-                        completableFuture.complete(false)
-                    } else {
-                        completableFuture.complete(true)
-                    }
-                }
-            }
-            return completableFuture
         }
 
         fun convertitens(to: Array<ItemStack>): String {

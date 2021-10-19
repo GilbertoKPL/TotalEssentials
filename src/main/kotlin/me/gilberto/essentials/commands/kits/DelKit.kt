@@ -50,10 +50,12 @@ class DelKit : CommandExecutor {
                 }
                 SqlKits.deleteWhere { SqlKits.kitname like kit }
                 val col = Column<Int>(PlayerKits, kit, IntegerColumnType())
-                col.dropStatement()
+                col.dropStatement().forEach { statement ->
+                    exec(statement)
+                }
                 p.sendMessage(Kits.delkitsuccess.replace("%name%", kit))
             }
+            updatekits()
         }, Executors.newCachedThreadPool())
-        updatekits()
     }
 }

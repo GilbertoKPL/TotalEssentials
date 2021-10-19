@@ -27,5 +27,5 @@ Kits:
   delkitusage: "&c/delkit (Nome do kit)."
   delkitsuccess: "&eKit %name% deletado com sucesso."
   delkitproblem: "&cKit %name% não foi deletado, possivelmente um bug do plugin peça ajuda ao dono!"
-  editkitsuccess: "&eKit %name% não foi editado com sucesso!"
+  editkitsuccess: "&eKit %name% foi editado com sucesso!"
   editkitproblem: "&cKit %name% não foi editado, possivelmente um bug do plugin peça ajuda ao dono!"

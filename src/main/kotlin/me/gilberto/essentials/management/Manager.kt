@@ -17,26 +17,53 @@ object Manager {
     fun pluginlangdir(): String = instance.dataFolder.path + "/lang/"
 
     fun convertmilisstring(to: Long, short: Boolean): String {
+        val tosend = ArrayList<String>()
+        fun helper(sendshort: String, send: String) {
+            if (short) {
+                tosend.add(sendshort)
+            } else {
+                tosend.add(send)
+            }
+        }
         val seconds = to / 1000
         val minutes = seconds / 60
         val hours = minutes / 60
         val days = hours / 24
-        if (!short) {
-            return "$days $timedayshort, ${hours % 24} $timehourshort, ${minutes % 60} $timeminuteshort ${seconds % 60} $timesecondshort"
-        }
-        val uniseconds = if (seconds == 1L) {
-            Time.timesecond
-        } else Time.timeseconds
-        val uniminutes = if (minutes == 1L) {
-            Time.timeminute
-        } else Time.timeminutes
-        val unihours = if (hours == 1L) {
-            Time.timehour
-        } else Time.timehours
-        val unidays = if (days == 1L) {
+        val unidays = if (days < 1L) {
             Time.timeday
         } else Time.timedays
-        return "$days $unidays, ${hours % 24} $unihours ${minutes % 60} $uniminutes ${seconds % 60} $uniseconds"
+        helper("$days $timedayshort", "$days $unidays")
+        val unihours = if (hours < 1L) {
+            Time.timehour
+        } else Time.timehours
+        helper("${hours % 24} $timehourshort", "${hours % 24} $unihours")
+        val uniminutes = if (minutes < 1L) {
+            Time.timeminute
+        } else Time.timeminutes
+        helper("${minutes % 60} $timeminuteshort", "${minutes % 60} $uniminutes")
+        val uniseconds = if (seconds < 1L) {
+            Time.timesecond
+        } else Time.timeseconds
+        helper("${seconds % 60} $timesecondshort", "${seconds % 60} $uniseconds")
+        var toreturn = ""
+        var vezes = 0
+        for (i in tosend) {
+            vezes += 1
+            toreturn = if (vezes == i.length) {
+                if (toreturn == "") {
+                    "$i."
+                } else {
+                    "$toreturn, i."
+                }
+            } else {
+                if (toreturn == "") {
+                    "$i."
+                } else {
+                    "$toreturn, $i"
+                }
+            }
+        }
+        return toreturn
     }
 
 }
