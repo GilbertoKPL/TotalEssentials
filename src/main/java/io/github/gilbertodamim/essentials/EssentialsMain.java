@@ -1,6 +1,6 @@
 package io.github.gilbertodamim.essentials;
 
-import io.github.gilbertodamim.essentials.lib.LibChecker;
+import io.github.gilbertodamim.essentials.library.LibChecker;
 import io.github.gilbertodamim.essentials.management.DisablePlugin;
 import io.github.gilbertodamim.essentials.management.StartPlugin;
 import org.bukkit.Bukkit;
@@ -13,12 +13,11 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
+
 import java.lang.reflect.Field;
 import java.net.URLClassLoader;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 
 @SuppressWarnings({"unchecked"})
 public class EssentialsMain extends JavaPlugin {
@@ -29,7 +28,25 @@ public class EssentialsMain extends JavaPlugin {
         return instance;
     }
 
-    public static void disableplugin(Boolean disable) {
+    public static void disableLoggers() {
+        try {
+            org.apache.logging.log4j.core.LoggerContext ctx = (org.apache.logging.log4j.core.LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
+            org.apache.logging.log4j.core.config.Configuration config = ctx.getConfiguration();
+            ArrayList<String> toRemove = new ArrayList<>();
+            toRemove.add("com.zaxxer.hikari.pool.PoolBase");
+            toRemove.add("com.zaxxer.hikari.pool.HikariPool");
+            toRemove.add("com.zaxxer.hikari.HikariDataSource");
+            toRemove.add("com.zaxxer.hikari.HikariConfig");
+            toRemove.add("com.zaxxer.hikari.util.DriverDataSource");
+            toRemove.add("Exposed");
+            for (String remove : toRemove) {
+                config.getLoggerConfig(remove).setLevel(org.apache.logging.log4j.Level.OFF);
+            }
+        }
+        catch (Exception ignored) {}
+    }
+
+    public static void disablePlugin() {
         Plugin plugin = instance.getServer().getPluginManager().getPlugin(instance.getName());
         assert plugin != null;
         Bukkit.getPluginManager().disablePlugin(plugin);
@@ -96,14 +113,12 @@ public class EssentialsMain extends JavaPlugin {
             loadersMap.remove(plugin.getName());
         } catch (Throwable ignored) {
         }
-        if (disable) {
-            Bukkit.getServer().shutdown();
-        }
         System.gc();
     }
 
     public void onEnable() {
         instance = this;
+        disableLoggers();
         LibChecker.checkversion();
         if (LibChecker.update) return;
         new StartPlugin();

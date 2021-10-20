@@ -12,39 +12,42 @@ object Manager {
     fun consoleMessage(msg: String) {
         instance.server.consoleSender.sendMessage("$pluginName $msg")
     }
-
     fun pluginPasteDir(): String = instance.dataFolder.path
     fun pluginLangDir(): String = instance.dataFolder.path + "/lang/"
-    fun convertMillisToString(to: Long, short: Boolean): String {
+    fun convertMillisToString(time: Long, short: Boolean): String {
         val toSend = ArrayList<String>()
-        fun helper(sendShort: String, send: String) {
-            if (short) {
-                toSend.add(sendShort)
-            } else {
-                toSend.add(send)
+        fun helper(time: Long, sendShort: String, send: String) {
+            if (time > 0L) {
+                if (short) {
+                    toSend.add(sendShort)
+                } else {
+                    toSend.add(send)
+                }
             }
         }
-
-        val seconds = to / 1000
-        val minutes = seconds / 60
-        val hours = minutes / 60
+        var seconds = time / 1000
+        var minutes = seconds / 60
+        var hours = minutes / 60
         val days = hours / 24
-        val uniDays = if (days < 1L) {
+        seconds %= 60
+        minutes %= 60
+        hours %= 24
+        val uniDays = if (days < 2) {
             TimeLang.timeDay
         } else TimeLang.timeDays
-        helper("$days $timeDayShort", "$days $uniDays")
-        val uniHours = if (hours < 1L) {
+        helper(days, "$days $timeDayShort", "$days $uniDays")
+        val uniHours = if (hours < 2) {
             TimeLang.timeHour
         } else TimeLang.timeHours
-        helper("${hours % 24} $timeHourShort", "${hours % 24} $uniHours")
-        val uniMinutes = if (minutes < 1L) {
+        helper(hours, "$hours $timeHourShort", "${hours % 24} $uniHours")
+        val uniMinutes = if (minutes < 2) {
             TimeLang.timeMinute
         } else TimeLang.timeMinutes
-        helper("${minutes % 60} $timeMinuteShort", "${minutes % 60} $uniMinutes")
-        val uniSeconds = if (seconds < 1L) {
+        helper(minutes, "$minutes $timeMinuteShort", "${minutes % 60} $uniMinutes")
+        val uniSeconds = if (seconds < 2) {
             TimeLang.timeSecond
         } else TimeLang.timeSeconds
-        helper("${seconds % 60} $timeSecondShort", "${seconds % 60} $uniSeconds")
+        helper(seconds, "$seconds $timeSecondShort", "${seconds % 60} $uniSeconds")
         var toReturn = ""
         var quaint = 0
         for (values in toSend) {
@@ -57,7 +60,7 @@ object Manager {
                 }
             } else {
                 if (toReturn == "") {
-                    "$values."
+                    values
                 } else {
                     "$toReturn, $values"
                 }
@@ -65,5 +68,4 @@ object Manager {
         }
         return toReturn
     }
-
 }

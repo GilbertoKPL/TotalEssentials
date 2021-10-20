@@ -1,4 +1,4 @@
-package io.github.gilbertodamim.essentials.lib;
+package io.github.gilbertodamim.essentials.library;
 
 import io.github.gilbertodamim.essentials.EssentialsMain;
 import io.github.gilbertodamim.essentials.config.langs.StartLang;
@@ -72,7 +72,7 @@ public class LibChecker {
                     Files.copy(filelib, plplace.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     update = true;
                     try {
-                        EssentialsMain.disableplugin(true);
+                        EssentialsMain.disablePlugin();
                     } finally {
                         pl.delete();
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "restart");

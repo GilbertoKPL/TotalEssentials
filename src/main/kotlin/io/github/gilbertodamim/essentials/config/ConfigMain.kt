@@ -1,6 +1,6 @@
 package io.github.gilbertodamim.essentials.config
 
-import io.github.gilbertodamim.essentials.EssentialsMain.disableplugin
+import io.github.gilbertodamim.essentials.EssentialsMain.disablePlugin
 import io.github.gilbertodamim.essentials.EssentialsMain.instance
 import io.github.gilbertodamim.essentials.config.configs.DatabaseConfig
 import io.github.gilbertodamim.essentials.config.configs.DatabaseConfig.langName
@@ -122,7 +122,7 @@ object ConfigMain {
                     consoleMessage(problemMessage.replace("%to%", "config").replace("%file%", source))
                 }
                 Ex.printStackTrace()
-                disableplugin(true)
+                disablePlugin()
                 return null
             }
             val v = check.getDouble("Version-file")
