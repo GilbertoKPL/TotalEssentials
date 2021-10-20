@@ -9,7 +9,7 @@ Version-file: 1.0
 Lang: pt_br
 Database:
   type: "h2"
-  mysql:
+  connect:
     ip: "0.0.0.0"
     port: "3306"
     username: "xxxx"
@@ -17,4 +17,4 @@ Database:
     pass: "xxxx"
 Kits:
   activated: true
-  Use-short-time: false
+  use-short-time: false
