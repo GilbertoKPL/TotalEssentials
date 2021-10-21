@@ -46,19 +46,24 @@ class DelKit : CommandExecutor {
 
     private fun delKit(kit: String, p: Player) {
         CompletableFuture.runAsync({
-            transaction(SqlInstance.SQL) {
-                if (SqlKits.select(SqlKits.kitName like kit).empty()) {
-                    p.sendMessage(notExist)
-                    return@transaction
+            try {
+                transaction(SqlInstance.SQL) {
+                    if (SqlKits.select(SqlKits.kitName like kit).empty()) {
+                        p.sendMessage(notExist)
+                        return@transaction
+                    }
+                    SqlKits.deleteWhere { SqlKits.kitName like kit }
+                    val col = Column<Int>(PlayerKits, kit, IntegerColumnType())
+                    col.dropStatement().forEach { statement ->
+                        exec(statement)
+                    }
+                    p.sendMessage(KitsLang.delKitSuccess.replace("%name%", kit))
                 }
-                SqlKits.deleteWhere { SqlKits.kitName like kit }
-                val col = Column<Int>(PlayerKits, kit, IntegerColumnType())
-                col.dropStatement().forEach { statement ->
-                    exec(statement)
-                }
-                p.sendMessage(KitsLang.delKitSuccess.replace("%name%", kit))
+                updateKits()
             }
-            updateKits()
+            catch (e : Exception) {
+                e.printStackTrace()
+            }
         }, Executors.newCachedThreadPool())
     }
 }

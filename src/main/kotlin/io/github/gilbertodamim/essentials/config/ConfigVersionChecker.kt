@@ -56,7 +56,7 @@ class ConfigVersionChecker(file: File, newFile: File, version: String?, lang: Bo
             if (FileKeys == "Version-file") {
                 newConfig.set(FileKeys, confNewFile.get(FileKeys))
                 if (version != null) {
-                    consoleMessage(StartLang.updateMessage.replace("%file%", file.name).replace("%version%", version))
+                    consoleMessage(updateMessage.replace("%file%", file.name).replace("%version%", version))
                 } else {
                     if (lang) {
                         consoleMessage(modConfig.replace("%to%", "lang"))

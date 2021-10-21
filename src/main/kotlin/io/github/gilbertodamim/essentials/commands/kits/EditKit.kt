@@ -5,9 +5,10 @@ import io.github.gilbertodamim.essentials.commands.kits.Kit.Companion.convertIte
 import io.github.gilbertodamim.essentials.commands.kits.Kit.Companion.updateKits
 import io.github.gilbertodamim.essentials.config.configs.KitsConfig
 import io.github.gilbertodamim.essentials.config.langs.GeneralLang
+import io.github.gilbertodamim.essentials.config.langs.KitsLang
 import io.github.gilbertodamim.essentials.database.SqlInstance
 import io.github.gilbertodamim.essentials.database.table.SqlKits
-import io.github.gilbertodamim.essentials.management.Dao
+import io.github.gilbertodamim.essentials.management.dao.Dao
 import io.github.gilbertodamim.essentials.management.Manager
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -31,12 +32,12 @@ class EditKit : CommandExecutor {
         if (s.hasPermission("gd.essentials.kits.admin")) {
             if (args.size > 1) {
                 val kit = args[0].lowercase()
-                if (Dao.kitsItems[args[0].lowercase()] != null) {
+                if (Dao.kitsCache[args[0].lowercase()] != null) {
                     if (args[1] == "time" && args.size > 2) {
                         try {
                             editKit(kit, args[2].toInt(), args[3], s)
                             s.sendMessage(
-                                io.github.gilbertodamim.essentials.config.langs.KitsLang.editKitSuccess.replace(
+                                KitsLang.editKitSuccess.replace(
                                     "%name%",
                                     kit
                                 )
@@ -44,7 +45,7 @@ class EditKit : CommandExecutor {
                         } catch (ex: Exception) {
                             ex.printStackTrace()
                             s.sendMessage(
-                                io.github.gilbertodamim.essentials.config.langs.KitsLang.editKitProblem.replace(
+                                KitsLang.editKitProblem.replace(
                                     "%name%",
                                     kit
                                 )
@@ -60,7 +61,7 @@ class EditKit : CommandExecutor {
                         try {
                             editKit(kit, args[2], s)
                             s.sendMessage(
-                                io.github.gilbertodamim.essentials.config.langs.KitsLang.editKitSuccess.replace(
+                                KitsLang.editKitSuccess.replace(
                                     "%name%",
                                     kit
                                 )
@@ -68,7 +69,7 @@ class EditKit : CommandExecutor {
                         } catch (ex: Exception) {
                             ex.printStackTrace()
                             s.sendMessage(
-                                io.github.gilbertodamim.essentials.config.langs.KitsLang.editKitProblem.replace(
+                                KitsLang.editKitProblem.replace(
                                     "%name%",
                                     kit
                                 )
@@ -78,7 +79,7 @@ class EditKit : CommandExecutor {
                     }
                     return false
                 }
-                s.sendMessage(io.github.gilbertodamim.essentials.config.langs.KitsLang.notExist)
+                s.sendMessage(KitsLang.notExist)
                 return false
             }
             return false
@@ -89,94 +90,110 @@ class EditKit : CommandExecutor {
 
     private fun editKitGui(kit: String, p: Player) {
         val inv = EssentialsMain.instance.server.createInventory(p, 36, kit)
-        for (items in Dao.kitsItems[kit]!!) {
+        for (items in Dao.kitsCache[kit]?.items!!) {
+            if (items == null) continue
             inv.addItem(items)
         }
         p.openInventory(inv)
-        Dao.editKitInventory[p] = kit
+        Dao.kitInventory[p] = kit
     }
 
     private fun editKit(kit: String, nameKit: String, s: CommandSender) {
         CompletableFuture.runAsync({
-            transaction(SqlInstance.SQL) {
-                val work = SqlKits.select { SqlKits.kitName eq kit.lowercase() }
-                if (work.empty()) {
-                    s.sendMessage(io.github.gilbertodamim.essentials.config.langs.KitsLang.notExist)
-                    return@transaction
+            try {
+                transaction(SqlInstance.SQL) {
+                    val work = SqlKits.select { SqlKits.kitName eq kit.lowercase() }
+                    if (work.empty()) {
+                        s.sendMessage(KitsLang.notExist)
+                        return@transaction
+                    }
+                    SqlKits.update({ SqlKits.kitName eq kit.lowercase() }) {
+                        it[kitRealName] = nameKit
+                    }
                 }
-                SqlKits.update({ SqlKits.kitName eq kit.lowercase() }) {
-                    it[kitRealName] = nameKit
-                }
+                updateKits()
             }
-            updateKits()
+            catch (e : Exception) {
+                e.printStackTrace()
+            }
         }, Executors.newSingleThreadExecutor())
     }
 
     private fun editKit(kit: String, time: Int, unit: String?, s: CommandSender) {
         CompletableFuture.runAsync({
-            transaction(SqlInstance.SQL) {
-                val work = SqlKits.select { SqlKits.kitName eq kit.lowercase() }
-                if (work.empty()) {
-                    s.sendMessage(io.github.gilbertodamim.essentials.config.langs.KitsLang.notExist)
-                    return@transaction
-                }
-                val convert = if (unit == null) {
-                    TimeUnit.MINUTES.toMillis(time.toLong())
-                } else {
-                    when (unit.lowercase()) {
-                        "s" -> TimeUnit.SECONDS.toMillis(time.toLong())
-                        "m" -> TimeUnit.MINUTES.toMillis(time.toLong())
-                        "h" -> TimeUnit.HOURS.toMillis(time.toLong())
-                        "d" -> TimeUnit.DAYS.toMillis(time.toLong())
-                        else -> TimeUnit.MINUTES.toMillis(time.toLong())
+            try {
+                transaction(SqlInstance.SQL) {
+                    val work = SqlKits.select { SqlKits.kitName eq kit.lowercase() }
+                    if (work.empty()) {
+                        s.sendMessage(KitsLang.notExist)
+                        return@transaction
                     }
-                }
-                s.sendMessage(
-                    io.github.gilbertodamim.essentials.config.langs.KitsLang.editKitTime.replace(
-                        "%time%",
-                        Manager.convertMillisToString(convert, KitsConfig.useShortTime)
+                    val convert = if (unit == null) {
+                        TimeUnit.MINUTES.toMillis(time.toLong())
+                    } else {
+                        when (unit.lowercase()) {
+                            "s" -> TimeUnit.SECONDS.toMillis(time.toLong())
+                            "m" -> TimeUnit.MINUTES.toMillis(time.toLong())
+                            "h" -> TimeUnit.HOURS.toMillis(time.toLong())
+                            "d" -> TimeUnit.DAYS.toMillis(time.toLong())
+                            else -> TimeUnit.MINUTES.toMillis(time.toLong())
+                        }
+                    }
+                    s.sendMessage(
+                        KitsLang.editKitTime.replace(
+                            "%time%",
+                            Manager.convertMillisToString(convert, KitsConfig.useShortTime)
+                        )
                     )
-                )
-                SqlKits.update({ SqlKits.kitName eq kit.lowercase() }) {
-                    it[kitTime] = convert
+                    SqlKits.update({ SqlKits.kitName eq kit.lowercase() }) {
+                        it[kitTime] = convert
+                    }
+                    updateKits()
                 }
-                updateKits()
+            }
+            catch (e : Exception) {
+                e.printStackTrace()
             }
         }, Executors.newCachedThreadPool())
     }
 
-    private fun editKit(kit: String, items: Array<ItemStack>) {
+    private fun editKit(kit: String, items: Array<ItemStack?>) {
         CompletableFuture.runAsync({
-            val ite = convertItems(items)
-            transaction(SqlInstance.SQL) {
-                SqlKits.update({ SqlKits.kitName eq kit.lowercase() }) {
-                    it[kitItems] = ite
+            try {
+                val ite = convertItems(items)
+                transaction(SqlInstance.SQL) {
+                    SqlKits.update({ SqlKits.kitName eq kit.lowercase() }) {
+                        it[kitItems] = ite
+                    }
                 }
+                updateKits()
             }
-            updateKits()
+            catch (e : Exception) {
+                e.printStackTrace()
+            }
         }, Executors.newCachedThreadPool())
     }
 
     fun event(e: InventoryCloseEvent): Boolean {
-        if (Dao.editKitInventory.contains(e.player)) {
+        if (Dao.kitInventory.contains(e.player)) {
             try {
-                editKit(Dao.editKitInventory[e.player]!!, e.inventory.contents)
+                editKit(Dao.kitInventory[e.player]!!, e.inventory.contents)
                 e.player.sendMessage(
-                    io.github.gilbertodamim.essentials.config.langs.KitsLang.editKitSuccess.replace(
+                    KitsLang.editKitSuccess.replace(
                         "%name%",
-                        Dao.editKitInventory[e.player]!!
+                        Dao.kitInventory[e.player]!!
                     )
                 )
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 e.player.sendMessage(
-                    io.github.gilbertodamim.essentials.config.langs.KitsLang.editKitProblem.replace(
+                    KitsLang.editKitProblem.replace(
                         "%name%",
-                        Dao.editKitInventory[e.player]!!
+                        Dao.kitInventory[e.player]!!
                     )
                 )
             }
-            Dao.editKitInventory.remove(e.player)
+            Dao.kitInventory.remove(e.player)
             return true
         }
         return false

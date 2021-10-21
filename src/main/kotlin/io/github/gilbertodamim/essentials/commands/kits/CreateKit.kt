@@ -10,7 +10,7 @@ import io.github.gilbertodamim.essentials.config.langs.KitsLang.createKitUsage
 import io.github.gilbertodamim.essentials.database.SqlInstance
 import io.github.gilbertodamim.essentials.database.table.PlayerKits
 import io.github.gilbertodamim.essentials.database.table.SqlKits
-import io.github.gilbertodamim.essentials.management.Dao
+import io.github.gilbertodamim.essentials.management.dao.Dao
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -43,7 +43,7 @@ class CreateKit : CommandExecutor {
     }
 
     private fun createKitGui(kit: String, p: Player) {
-        if (Dao.kitsItems[kit.lowercase()] != null) {
+        if (Dao.kitsCache[kit.lowercase()] != null) {
             p.sendMessage(Exist)
             return
         }
@@ -52,20 +52,25 @@ class CreateKit : CommandExecutor {
         Dao.kitInventory[p] = kit
     }
 
-    private fun createKit(kit: String, items: Array<ItemStack>) {
+    private fun createKit(kit: String, items: Array<ItemStack?>) {
         CompletableFuture.runAsync({
-            val item = convertItems(items)
-            transaction(SqlInstance.SQL) {
-                SqlKits.insert {
-                    it[kitName] = kit.lowercase()
-                    it[kitRealName] = kit
-                    it[kitItems] = item
-                    it[kitTime] = 0
+            try {
+                val item = convertItems(items)
+                transaction(SqlInstance.SQL) {
+                    SqlKits.insert {
+                        it[kitName] = kit.lowercase()
+                        it[kitRealName] = kit
+                        it[kitItems] = item
+                        it[kitTime] = 0
+                    }
+                    PlayerKits.long(kit.lowercase())
+                    SchemaUtils.createMissingTablesAndColumns(PlayerKits)
                 }
-                PlayerKits.long(kit.lowercase())
-                SchemaUtils.createMissingTablesAndColumns(PlayerKits)
+                updateKits()
             }
-            updateKits()
+            catch (e : Exception) {
+                e.printStackTrace()
+            }
         }, Executors.newCachedThreadPool())
     }
 

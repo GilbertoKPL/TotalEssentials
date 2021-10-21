@@ -20,12 +20,13 @@ import java.nio.file.*
 object ConfigMain {
     private var configList = ArrayList<YamlConfiguration>()
     private var langList = ArrayList<YamlConfiguration>()
+
     private lateinit var essentialsConfig: YamlConfiguration
     private lateinit var langConfig: YamlConfiguration
 
     fun startConfig() {
         consoleMessage(startVerification.replace("%to%", "config"))
-        essentialsConfig = copyConfig("EssentialsGDConfig", false) ?: return
+        essentialsConfig = gdConfig("EssentialsGDConfig", false) ?: return
         reloadConfig(true)
         consoleMessage(completeVerification)
         consoleMessage(startVerification.replace("%to%", "lang"))
@@ -82,12 +83,12 @@ object ConfigMain {
         )
         if (directoryStream != null) {
             for (i in directoryStream) {
-                copyConfig(i.fileName.toString().replace(".yml", ""), true)
+                gdConfig(i.fileName.toString().replace(".yml", ""), true)
             }
         }
     }
 
-    private fun copyConfig(source: String, lang: Boolean): YamlConfiguration? {
+    private fun gdConfig(source: String, lang: Boolean): YamlConfiguration? {
         val configFile: File
         val resource: InputStream
         val checkFile: File
