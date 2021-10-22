@@ -8,6 +8,7 @@ import io.github.gilbertodamim.essentials.config.langs.KitsLang.notExist
 import io.github.gilbertodamim.essentials.database.SqlInstance
 import io.github.gilbertodamim.essentials.database.table.PlayerKits
 import io.github.gilbertodamim.essentials.database.table.SqlKits
+import io.github.gilbertodamim.essentials.management.dao.Dao.kitsCache
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -30,7 +31,12 @@ class DelKit : CommandExecutor {
         if (s.hasPermission("gd.essentials.kits.admin")) {
             if (args.size == 1) {
                 try {
+                    kitsCache[args[0].lowercase()] ?: run {
+                        s.sendMessage(notExist)
+                        return false
+                    }
                     delKit(args[0].lowercase(), s)
+
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                     s.sendMessage(KitsLang.delKitProblem.replace("%name%", args[0]))
@@ -48,17 +54,13 @@ class DelKit : CommandExecutor {
         CompletableFuture.runAsync({
             try {
                 transaction(SqlInstance.SQL) {
-                    if (SqlKits.select(SqlKits.kitName like kit).empty()) {
-                        p.sendMessage(notExist)
-                        return@transaction
-                    }
                     SqlKits.deleteWhere { SqlKits.kitName like kit }
                     val col = Column<Int>(PlayerKits, kit, IntegerColumnType())
                     col.dropStatement().forEach { statement ->
                         exec(statement)
                     }
-                    p.sendMessage(KitsLang.delKitSuccess.replace("%name%", kit))
                 }
+                p.sendMessage(KitsLang.delKitSuccess.replace("%name%", kit))
                 updateKits()
             }
             catch (e : Exception) {

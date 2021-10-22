@@ -28,22 +28,29 @@ public class EssentialsMain extends JavaPlugin {
         return instance;
     }
 
+    public static void checkClass(String c) throws ClassNotFoundException {
+        Class.forName(c);
+    }
+
     public static void disableLoggers() {
         try {
-            org.apache.logging.log4j.core.LoggerContext ctx = (org.apache.logging.log4j.core.LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
-            org.apache.logging.log4j.core.config.Configuration config = ctx.getConfiguration();
-            ArrayList<String> toRemove = new ArrayList<>();
-            toRemove.add("com.zaxxer.hikari.pool.PoolBase");
-            toRemove.add("com.zaxxer.hikari.pool.HikariPool");
-            toRemove.add("com.zaxxer.hikari.HikariDataSource");
-            toRemove.add("com.zaxxer.hikari.HikariConfig");
-            toRemove.add("com.zaxxer.hikari.util.DriverDataSource");
-            toRemove.add("Exposed");
-            for (String remove : toRemove) {
-                config.getLoggerConfig(remove).setLevel(org.apache.logging.log4j.Level.OFF);
-            }
+            checkClass("org.apache.logging.log4j.core.LoggerContext");
         }
-        catch (Exception ignored) {}
+        catch (ClassNotFoundException e) {
+            return;
+        }
+        org.apache.logging.log4j.core.LoggerContext ctx = (org.apache.logging.log4j.core.LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
+        org.apache.logging.log4j.core.config.Configuration config = ctx.getConfiguration();
+        ArrayList<String> toRemove = new ArrayList<>();
+        toRemove.add("com.zaxxer.hikari.pool.PoolBase");
+        toRemove.add("com.zaxxer.hikari.pool.HikariPool");
+        toRemove.add("com.zaxxer.hikari.HikariDataSource");
+        toRemove.add("com.zaxxer.hikari.HikariConfig");
+        toRemove.add("com.zaxxer.hikari.util.DriverDataSource");
+        toRemove.add("Exposed");
+        for (String remove : toRemove) {
+            config.getLoggerConfig(remove).setLevel(org.apache.logging.log4j.Level.OFF);
+        }
     }
 
     public static void disablePlugin() {
@@ -119,9 +126,12 @@ public class EssentialsMain extends JavaPlugin {
     public void onEnable() {
         instance = this;
         disableLoggers();
-        LibChecker.checkversion();
-        if (LibChecker.update) return;
-        new StartPlugin();
+        try {
+            LibChecker.checkversion();
+        }
+        finally {
+            if (!LibChecker.update) new StartPlugin();
+        }
         super.onEnable();
     }
 

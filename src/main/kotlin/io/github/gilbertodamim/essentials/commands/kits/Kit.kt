@@ -33,13 +33,10 @@ class Kit : CommandExecutor {
             return false
         }
         if (args.isNotEmpty() && s.hasPermission("gd.essentials.kits")) {
-            if (kitsCache[args[0].lowercase()] != null) {
-                for (i in kitsCache[args[0].lowercase()]?.items!!) {
-                    if(i == null) continue
-                    s.player?.inventory?.addItem(i)
-                }
+            val to = kitsCache[args[0].lowercase()] ?: return false
+            for (i in to.items) {
+                s.player?.inventory?.addItem(i ?: continue)
             }
-            return false
         }
         return false
     }

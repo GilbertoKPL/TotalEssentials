@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack
 
 object Dao {
     val kitInventory = HashMap<Player, String>(10)
+    val kitEditInventory = HashMap<Player, String>(10)
     val kitsCache = HashMap<String, GDKit>(30)
     var inUpdate = false
 }

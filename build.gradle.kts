@@ -23,16 +23,23 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     compileOnly("org.spigotmc:spigot-api:$bukkitversion")
     compileOnly("com.zaxxer:HikariCP:$hikariversion")
-    compileOnly("org.slf4j:slf4j-api:$slf4j")
     compileOnly("org.apache.logging.log4j:log4j-core:2.14.1")
 }
-@kotlin.Suppress("Deprecation")
-tasks {
-    shadowJar {
-        manifest {
-            attributes["Class-Path"] = "${libpaste}kotlin-stdlib-$kotlinversion.jar ${libpaste}exposed-core-$exposedVersion.jar ${libpaste}exposed-dao-$exposedVersion.jar ${libpaste}exposed-jdbc-$exposedVersion.jar ${libpaste}h2-1.4.200.jar ${libpaste}mysql-connector-java-8.0.26.jar ${libpaste}HikariCP-$hikariversion.jar ${libpaste}slf4j-nop-$slf4j.jar ${libpaste}slf4j-api-$slf4j.jar"
-        }
-        classifier = null
-        destinationDirectory.set(File("$buildDir/../Minecraft/plugins"))
+tasks.jar { enabled = false }
+artifacts.archives(tasks.shadowJar)
+tasks.shadowJar {
+    archiveFileName.set(rootProject.name + ".jar")
+    destinationDirectory.set(File("$buildDir/../Minecraft/plugins"))
+    manifest {
+        attributes["Class-Path"] = "${libpaste}kotlin-stdlib-$kotlinversion.jar ${libpaste}exposed-core-$exposedVersion.jar ${libpaste}exposed-dao-$exposedVersion.jar ${libpaste}exposed-jdbc-$exposedVersion.jar ${libpaste}h2-1.4.200.jar ${libpaste}mysql-connector-java-8.0.26.jar ${libpaste}HikariCP-$hikariversion.jar ${libpaste}slf4j-nop-$slf4j.jar ${libpaste}slf4j-simple-$slf4j.jar"
     }
 }
+tasks.withType<JavaCompile> {
+    sourceCompatibility = "8"
+    targetCompatibility = "8"
+    options.encoding = "UTF-8"
+}
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+}
+

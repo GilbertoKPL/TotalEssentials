@@ -83,9 +83,9 @@ public class LibChecker {
                 }
             }
             if (update) return;
-            for (String i : Objects.requireNonNull(versionfile.getConfigurationSection("version-lib-" + pluginv)).getKeys(false)) {
-                if (Objects.equals(i, "size")) continue;
-                String[] split = Objects.requireNonNull(versionfile.getString("version-lib-" + pluginv + "." + i)).split(":-:");
+            for (String libs : Objects.requireNonNull(versionfile.getConfigurationSection("version-lib-" + pluginv)).getKeys(false)) {
+                if (Objects.equals(libs, "size")) continue;
+                String[] split = Objects.requireNonNull(versionfile.getString("version-lib-" + pluginv + "." + libs)).split(":-:");
                 String version = split[0];
                 File lib = new File(libloc, version + ".jar");
                 if (!lib.exists()) {
@@ -95,7 +95,7 @@ public class LibChecker {
                             String[] e = d.split("-");
                             for (String g : e) {
                                 if (g.split("\\.").length > 1) {
-                                    if (d.replace("-" + g, "").equals(i.replace("version-lib-" + pluginv + ".", ""))) {
+                                    if (d.replace("-" + g, "").equals(libs.replace("version-lib-" + pluginv + ".", ""))) {
                                         new File(libloc, d).delete();
                                     }
                                 }
@@ -109,6 +109,7 @@ public class LibChecker {
                         dow += (int) lib.length();
                     } catch (Exception e) {
                         consoleMessage(StartLang.moduleError.replace("%file%", version));
+                        e.printStackTrace();
                     }
                 } else {
                     if (lib.length() != Integer.parseInt(split[2])) {
@@ -119,6 +120,7 @@ public class LibChecker {
                             dow += filelib.available();
                         } catch (Exception e) {
                             consoleMessage(StartLang.moduleError.replace("%file%", version));
+                            e.printStackTrace();
                         }
                     } else {
                         noremove.add(lib);

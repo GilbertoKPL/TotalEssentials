@@ -32,7 +32,12 @@ class CreateKit : CommandExecutor {
         }
         if (s.hasPermission("gd.essentials.kits.admin")) {
             if (args.size == 1) {
-                createKitGui(args[0], s)
+                if (Dao.kitsCache[args[0]] == null) {
+                    createKitGui(args[0], s)
+                }
+                else {
+                    s.sendMessage(Exist)
+                }
             } else {
                 s.sendMessage(createKitUsage)
             }
@@ -43,10 +48,6 @@ class CreateKit : CommandExecutor {
     }
 
     private fun createKitGui(kit: String, p: Player) {
-        if (Dao.kitsCache[kit.lowercase()] != null) {
-            p.sendMessage(Exist)
-            return
-        }
         val inv = EssentialsMain.instance.server.createInventory(p, 36, kit)
         p.openInventory(inv)
         Dao.kitInventory[p] = kit
