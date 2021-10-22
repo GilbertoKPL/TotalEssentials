@@ -1,4 +1,4 @@
-# EssentialsGD
+# KSystem
 
 * in dev, it's in the beginning but it has a bright future, it will work in several versions, plugin that will help a lot to create your server because it will have many integrations on it.
 
