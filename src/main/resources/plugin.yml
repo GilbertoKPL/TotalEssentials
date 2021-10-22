@@ -1,8 +1,8 @@
-name: EssentialsGD
+name: KSystem
 version: 1.1
 author: Gilberto
 api-version: 1.13
-main: io.github.gilbertodamim.essentials.EssentialsMain
+main: io.github.gilbertodamim.ksystem.KSystemMain
 description: Essentials for minecraft
 commands:
   kit:
