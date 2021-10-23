@@ -17,4 +17,4 @@
 
 # Discord
 
-* GD_Plugins#5620
+* Gilberto (K_Plugins)#5620
