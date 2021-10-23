@@ -4,9 +4,11 @@ public class StartLang {
     public static String startVerification = "§eIniciando verificação da %to%...";
     public static String download = "§eProgresso: %perc%%";
     public static String completeVerification = "§eVerificação completa!";
+    public static String restartBukkit = "§eReninciando Bukkit para aplicar implementações!";
     public static String moduleError = "§cErro ao baixar modulo: %file%, por favor reporte ao dono do plugin!";
     public static String anyError = "§cErro na verificação de atualização, pulando...";
     public static String updatePlugin = "§eAtualizando plugin para versão %version%...";
+    public static String updatePluginMessage = "§eAtualização completa!";
     public static String langSelectedMessage = "§eLang selecionada -> %lang%.";
     public static String langError = "§cUtilizando lang padrão por error!";
     public static String problemMessage = "§cProblema na %to% %file%";

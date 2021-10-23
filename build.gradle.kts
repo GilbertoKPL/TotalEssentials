@@ -1,4 +1,7 @@
-group = "io.github.gilbertodamim"
+group = "io.github.gilbertodamim.ksystem"
+version = 1.1
+
+
 val exposedVersion= "0.35.3"
 val bukkitversion= "1.17.1-R0.1-SNAPSHOT"
 val kotlinversion= "1.5.31"
@@ -9,6 +12,41 @@ val libpaste = "KSystem/lib/"
 plugins {
     kotlin("jvm") version "1.5.31"
     id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.0"
+}
+
+bukkit {
+    main = "io.github.gilbertodamim.ksystem.KSystemMain"
+    author = "Gilberto"
+    version = "${project.version}"
+    apiVersion = "1.13"
+    load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.STARTUP
+    commands {
+        register("kit") {
+            description = "This is a kit command!"
+            aliases = listOf("kits")
+            permission = "ksystem.kits"
+            usage = "Just run the command!"
+        }
+        register("editkit") {
+            description = "This is a editkit command!"
+            aliases = listOf("editarkit")
+            permission = "ksystem.kits.admin"
+            usage = "Just run the command!"
+        }
+        register("createkit") {
+            description = "This is a createkit command!"
+            aliases = listOf("criarkit")
+            permission = "ksystem.kits.admin"
+            usage = "Just run the command!"
+        }
+        register("delkit") {
+            description = "This is a delkit command!"
+            aliases = listOf("deletarkit")
+            permission = "ksystem.kits.admin"
+            usage = "Just run the command!"
+        }
+    }
 }
 
 repositories {
@@ -28,10 +66,10 @@ dependencies {
 tasks.jar { enabled = false }
 artifacts.archives(tasks.shadowJar)
 tasks.shadowJar {
-    archiveFileName.set(rootProject.name + ".jar")
+    archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
     destinationDirectory.set(File("$buildDir/../Minecraft/plugins"))
     manifest {
-        attributes["Launcher-Agent-Class"] = "io.github.gilbertodamim.ksystem.library.Agent"
+        attributes["Class-Path"] = "${libpaste}kotlin-stdlib-$kotlinversion.jar ${libpaste}exposed-core-$exposedVersion.jar ${libpaste}exposed-dao-$exposedVersion.jar ${libpaste}exposed-jdbc-$exposedVersion.jar ${libpaste}h2-1.4.200.jar ${libpaste}mysql-connector-java-8.0.26.jar ${libpaste}HikariCP-$hikariversion.jar ${libpaste}slf4j-nop-$slf4j.jar ${libpaste}slf4j-simple-$slf4j.jar"
     }
 }
 tasks.withType<JavaCompile> {

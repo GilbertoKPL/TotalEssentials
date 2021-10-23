@@ -13,10 +13,11 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
-
 import java.lang.reflect.Field;
 import java.net.URLClassLoader;
 import java.util.*;
+
+import static io.github.gilbertodamim.ksystem.config.langs.StartLang.restartBukkit;
 
 
 @SuppressWarnings({"unchecked"})
@@ -35,8 +36,7 @@ public class KSystemMain extends JavaPlugin {
     public static void disableLoggers() {
         try {
             checkClass("org.apache.logging.log4j.core.LoggerContext");
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             return;
         }
         org.apache.logging.log4j.core.LoggerContext ctx = (org.apache.logging.log4j.core.LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
@@ -128,9 +128,18 @@ public class KSystemMain extends JavaPlugin {
         disableLoggers();
         try {
             LibChecker.checkversion();
-        }
-        finally {
-            if (!LibChecker.update) new StartPlugin();
+        } finally {
+            if (LibChecker.libChecker) {
+                KSystemMain.instance().getServer().getConsoleSender().sendMessage(pluginName + " " + restartBukkit);
+                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "restart");
+            } else {
+                if (!LibChecker.update) {
+                    new StartPlugin();
+                } else {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "restart");
+                    KSystemMain.instance().getServer().getConsoleSender().sendMessage(pluginName + " " + restartBukkit);
+                }
+            }
         }
         super.onEnable();
     }

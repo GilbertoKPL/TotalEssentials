@@ -79,7 +79,7 @@ object ConfigMain {
     private fun startLang() {
         val directoryStream: DirectoryStream<Path>? = Files.newDirectoryStream(
             FileSystems.newFileSystem(
-                Paths.get(instance.javaClass.protectionDomain.codeSource.location.toURI()), null
+                Paths.get(instance.javaClass.protectionDomain.codeSource.location.toURI()), instance.javaClass.classLoader
             ).getPath("/lang/")
         )
         if (directoryStream != null) {

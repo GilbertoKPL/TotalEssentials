@@ -6,23 +6,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
 
 import static io.github.gilbertodamim.ksystem.KSystemMain.instance;
 import static io.github.gilbertodamim.ksystem.KSystemMain.pluginName;
@@ -32,6 +26,7 @@ public class LibChecker {
     private static final String libloc = KSystemMain.instance().getDataFolder().getPath() + "/lib";
     public static ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
     public static boolean update = false;
+    public static boolean libChecker = false;
     static int todow = 0;
     static int dow = 0;
     static boolean termined = false;
@@ -81,19 +76,19 @@ public class LibChecker {
                         KSystemMain.disablePlugin();
                     } finally {
                         pl.delete();
-                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "restart");
                     }
+                    pluginv = Double.parseDouble(vc);
                 } catch (Exception ex) {
                     consoleMessage(StartLang.anyError);
                 }
             }
-            if (update) return;
             for (String libs : Objects.requireNonNull(versionfile.getConfigurationSection("version-lib-" + pluginv)).getKeys(false)) {
                 if (Objects.equals(libs, "size")) continue;
                 String[] split = Objects.requireNonNull(versionfile.getString("version-lib-" + pluginv + "." + libs)).split(":-:");
                 String version = split[0];
                 File lib = new File(libloc, version + ".jar");
                 if (!lib.exists()) {
+                    libChecker = true;
                     String[] paste = new File(libloc).list();
                     if (paste != null) {
                         for (String d : paste) {
@@ -139,12 +134,15 @@ public class LibChecker {
                     File a = new File(libloc, i);
                     if (!noremove.contains(a)) {
                         a.delete();
-                    } else {
-                        Agent.addClassPath(a);
                     }
                 }
             }
-            consoleMessage(StartLang.completeVerification);
+            if (!update) {
+                consoleMessage(StartLang.completeVerification);
+            }
+            else {
+                consoleMessage(StartLang.updatePluginMessage);
+            }
             termined = true;
         } catch (Exception e) {
             e.printStackTrace();
