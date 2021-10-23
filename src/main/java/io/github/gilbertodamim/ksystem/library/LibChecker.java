@@ -140,7 +140,7 @@ public class LibChecker {
                     if (!noremove.contains(a)) {
                         a.delete();
                     } else {
-                        loadLibrary(a);
+                        Agent.addClassPath(a);
                     }
                 }
             }
@@ -148,16 +148,6 @@ public class LibChecker {
             termined = true;
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-    public static synchronized void loadLibrary(java.io.File jar) {
-        try {
-            java.net.URL url = jar.toURI().toURL();
-            java.lang.reflect.Method method = java.net.URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{java.net.URL.class});
-            method.setAccessible(true);
-            method.invoke(Thread.currentThread().getContextClassLoader(), new Object[]{url});
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 }
