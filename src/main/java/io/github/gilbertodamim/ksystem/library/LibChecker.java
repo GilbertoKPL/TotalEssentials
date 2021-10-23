@@ -6,17 +6,23 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
 
 import static io.github.gilbertodamim.ksystem.KSystemMain.instance;
 import static io.github.gilbertodamim.ksystem.KSystemMain.pluginName;
@@ -78,7 +84,6 @@ public class LibChecker {
                         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "restart");
                     }
                 } catch (Exception ex) {
-                    consoleMessage(String.valueOf(ex));
                     consoleMessage(StartLang.anyError);
                 }
             }
@@ -134,6 +139,8 @@ public class LibChecker {
                     File a = new File(libloc, i);
                     if (!noremove.contains(a)) {
                         a.delete();
+                    } else {
+                        loadLibrary(a);
                     }
                 }
             }
@@ -141,6 +148,16 @@ public class LibChecker {
             termined = true;
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    public static synchronized void loadLibrary(java.io.File jar) {
+        try {
+            java.net.URL url = jar.toURI().toURL();
+            java.lang.reflect.Method method = java.net.URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{java.net.URL.class});
+            method.setAccessible(true);
+            method.invoke(Thread.currentThread().getContextClassLoader(), new Object[]{url});
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }

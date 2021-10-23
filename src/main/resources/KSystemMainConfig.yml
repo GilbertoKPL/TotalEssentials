@@ -1,20 +1,20 @@
 # Este arquivo é a main config do plugin KSystem onde influenciará em seu funcionamento...
 # Criador: Gilberto Damim;
 # Github: https://github.com/GilbertoDamim/KSystem;
-# Quaisquer duvidas entrar em contato no discord GDPlugins#5620 ou mesmo pelo github;
+# Quaisquer duvidas entrar em contato no discord Gilberto (K_Plugins)#5620 ou mesmo pelo github;
 # Este projeto está em desenvolvimento porfavor tenha paciencia do projeto final;
 # Escolha o tipo de armazenamento do plugin, disponiveis: sqlite, h2, mysql;
 # futuros tipos de armazenamento: postgresql, sqlserver.
 Version-file: 1.0
-Lang: pt_br
+Lang: pt_BR
 Database:
-  type: "h2"
+  type: h2
   connect:
-    ip: "0.0.0.0"
-    port: "3306"
-    username: "xxxx"
-    database: "xxxx"
-    pass: "xxxx"
+    ip: 0.0.0.0
+    port: 3306
+    username: u0_ksystem
+    database: s0_ksystem
+    pass: xxxx
 Kits:
   activated: true
   use-short-time: false

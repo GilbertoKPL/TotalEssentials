@@ -4,7 +4,6 @@ val bukkitversion= "1.17.1-R0.1-SNAPSHOT"
 val kotlinversion= "1.5.31"
 val hikariversion= "3.4.5"
 val slf4j= "1.7.32"
-val libpaste = "KSystem/lib/"
 
 plugins {
     kotlin("jvm") version "1.5.31"
@@ -30,9 +29,6 @@ artifacts.archives(tasks.shadowJar)
 tasks.shadowJar {
     archiveFileName.set(rootProject.name + ".jar")
     destinationDirectory.set(File("$buildDir/../Minecraft/plugins"))
-    manifest {
-        attributes["Class-Path"] = "${libpaste}kotlin-stdlib-$kotlinversion.jar ${libpaste}exposed-core-$exposedVersion.jar ${libpaste}exposed-dao-$exposedVersion.jar ${libpaste}exposed-jdbc-$exposedVersion.jar ${libpaste}h2-1.4.200.jar ${libpaste}mysql-connector-java-8.0.26.jar ${libpaste}HikariCP-$hikariversion.jar ${libpaste}slf4j-nop-$slf4j.jar ${libpaste}slf4j-simple-$slf4j.jar"
-    }
 }
 tasks.withType<JavaCompile> {
     sourceCompatibility = "8"

@@ -44,6 +44,7 @@ object ConfigMain {
         } catch (ex: Exception) {
             langConfig = patternLang
             consoleMessage(langError)
+            ex.printStackTrace()
         }
         reloadLang()
         consoleMessage(completeVerification)

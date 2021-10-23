@@ -2,30 +2,30 @@
 Version-file: 1.0
 
 General:
-  only-player-command: "&cEsse comando é somente para player!"
-  not-perm: "&cVocê não tem permissão para executar esse comando."
+  only-player-command: '&cEsse comando é somente para player!'
+  not-perm: '&cVocê não tem permissão para executar esse comando.'
 Time:
-  time-seconds: "segundos"
-  time-second: "segundo"
-  time-second-short: "s"
-  time-minutes: "minutos"
-  time-minute: "minuto"
-  time-minute-short: "m"
-  time-hours: "horas"
-  time-hour: "hora"
-  time-hour-short: "h"
-  time-days: "dias"
-  time-day: "dia"
-  time-day-short: "d"
+  time-seconds: 'segundos'
+  time-second: 'segundo'
+  time-second-short: 's'
+  time-minutes: 'minutos'
+  time-minute: 'minuto'
+  time-minute-short: 'm'
+  time-hours: 'horas'
+  time-hour: 'hora'
+  time-hour-short: 'h'
+  time-days: 'dias'
+  time-day: 'dia'
+  time-day-short: 'd'
 Kits:
-  not-exist: "&cEsse kit não existe."
-  exist: "&cEsse kit já existe."
-  editkit-time: "&eTempo do kit setado para %time%."
-  createkit-usage: "&c/createkit (Nome do kit)."
-  createkit-success: "&eKit %name% criado com sucesso, para edita-lo utilize /editarkit %name%."
-  createkit-problem: "&cKit %name% não foi criado, possivelmente um bug do plugin peça ajuda ao dono!"
-  delkit-usage: "&c/delkit (Nome do kit)."
-  delkit-success: "&eKit %name% deletado com sucesso."
-  delkit-problem: "&cKit %name% não foi deletado, possivelmente um bug do plugin peça ajuda ao dono!"
-  editkit-success: "&eKit %name% foi editado com sucesso!"
-  editkit-problem: "&cKit %name% não foi editado, possivelmente um bug do plugin peça ajuda ao dono!"
+  not-exist: '&cEsse kit não existe.'
+  exist: '&cEsse kit já existe.'
+  editkit-time: '&eTempo do kit setado para %time%.'
+  createkit-usage: '&c/createkit (Nome do kit).'
+  createkit-success: '&eKit %name% criado com sucesso, para edita-lo utilize /editarkit %name%.'
+  createkit-problem: '&cKit %name% não foi criado, possivelmente um bug do plugin peça ajuda ao dono!'
+  delkit-usage: '&c/delkit (Nome do kit).'
+  delkit-success: '&eKit %name% deletado com sucesso.'
+  delkit-problem: '&cKit %name% não foi deletado, possivelmente um bug do plugin peça ajuda ao dono!'
+  editkit-success: '&eKit %name% foi editado com sucesso!'
+  editkit-problem: '&cKit %name% não foi editado, possivelmente um bug do plugin peça ajuda ao dono!'
