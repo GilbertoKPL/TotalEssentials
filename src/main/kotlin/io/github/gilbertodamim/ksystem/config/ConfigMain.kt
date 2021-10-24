@@ -9,6 +9,7 @@ import io.github.gilbertodamim.ksystem.config.langs.GeneralLang
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang
 import io.github.gilbertodamim.ksystem.config.langs.StartLang.*
 import io.github.gilbertodamim.ksystem.config.langs.TimeLang
+import io.github.gilbertodamim.ksystem.inventory.KitsInventory
 import io.github.gilbertodamim.ksystem.management.Manager.consoleMessage
 import io.github.gilbertodamim.ksystem.management.Manager.pluginLangDir
 import io.github.gilbertodamim.ksystem.management.Manager.pluginPasteDir
@@ -54,6 +55,7 @@ object ConfigMain {
         KitsLang.reload(langConfig)
         TimeLang.reload(langConfig)
         GeneralLang.reload(langConfig)
+        KitsInventory().editKitInventory()
     }
 
     private fun reloadConfig(firstTime: Boolean = false) {

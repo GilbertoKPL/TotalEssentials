@@ -4,6 +4,7 @@ import io.github.gilbertodamim.ksystem.config.langs.GeneralLang.onlyPlayerComman
 import io.github.gilbertodamim.ksystem.database.SqlInstance
 import io.github.gilbertodamim.ksystem.database.table.PlayerKits
 import io.github.gilbertodamim.ksystem.database.table.SqlKits
+import io.github.gilbertodamim.ksystem.inventory.KitsInventory
 import io.github.gilbertodamim.ksystem.management.dao.Dao
 import io.github.gilbertodamim.ksystem.management.dao.Dao.kitsCache
 import io.github.gilbertodamim.ksystem.management.dao.KSystemKit
@@ -14,6 +15,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
+import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -25,7 +27,6 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 
 
-@Suppress("DEPRECATION")
 class Kit : CommandExecutor {
     override fun onCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (s !is Player) {
@@ -33,12 +34,19 @@ class Kit : CommandExecutor {
             return false
         }
         if (args.isNotEmpty() && s.hasPermission("ksystem.kits")) {
-            val to = kitsCache[args[0].lowercase()] ?: return false
-            for (i in to.items) {
+            val to = kitsCache.getIfPresent(args[0].lowercase()) ?: return false
+            for (i in to.get().items) {
                 s.player?.inventory?.addItem(i ?: continue)
             }
         }
+        else {
+
+        }
         return false
+    }
+
+    fun kitGui(number : Int) {
+
     }
 
     companion object {
@@ -62,15 +70,16 @@ class Kit : CommandExecutor {
                             val kitRealName = values[SqlKits.kitRealName]
                             val kitTime = values[SqlKits.kitTime]
                             val item = values[SqlKits.kitItems]
-                            kitsCache[kit] = KSystemKit(kit, kitTime, kitRealName, convertItems(item))
+                            kitsCache.put(kit, CompletableFuture.supplyAsync { KSystemKit(kit, kitTime, kitRealName, convertItems(item))})
                         }
-                        Dao.inUpdate = false
                     }
+                    Dao.inUpdate = false
                 }
                 catch (e : Exception) {
                     e.printStackTrace()
                 }
             }, Executors.newCachedThreadPool())
+            KitsInventory().kitGuiInventory()
         }
 
         @Throws(IllegalStateException::class)

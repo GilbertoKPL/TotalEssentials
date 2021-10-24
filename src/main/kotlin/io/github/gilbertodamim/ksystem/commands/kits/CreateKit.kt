@@ -32,7 +32,7 @@ class CreateKit : CommandExecutor {
         }
         if (s.hasPermission("ksystem.kits.admin")) {
             if (args.size == 1) {
-                if (Dao.kitsCache[args[0]] == null) {
+                if (Dao.kitsCache.getIfPresent(args[0]) == null) {
                     createKitGui(args[0], s)
                 }
                 else {

@@ -29,7 +29,7 @@ class DelKit : CommandExecutor {
         if (s.hasPermission("ksystem.kits.admin")) {
             if (args.size == 1) {
                 try {
-                    kitsCache[args[0].lowercase()] ?: run {
+                    kitsCache.getIfPresent(args[0].lowercase()) ?: run {
                         s.sendMessage(notExist)
                         return false
                     }

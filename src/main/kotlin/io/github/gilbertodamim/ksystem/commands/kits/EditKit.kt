@@ -6,15 +6,21 @@ import io.github.gilbertodamim.ksystem.commands.kits.Kit.Companion.updateKits
 import io.github.gilbertodamim.ksystem.config.configs.KitsConfig
 import io.github.gilbertodamim.ksystem.config.langs.GeneralLang
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang
+import io.github.gilbertodamim.ksystem.config.langs.KitsLang.editkitInventoryNameMessage
+import io.github.gilbertodamim.ksystem.config.langs.KitsLang.editkitInventoryTimeMessage
 import io.github.gilbertodamim.ksystem.database.SqlInstance
 import io.github.gilbertodamim.ksystem.database.table.SqlKits
 import io.github.gilbertodamim.ksystem.management.Manager
 import io.github.gilbertodamim.ksystem.management.dao.Dao
+import io.github.gilbertodamim.ksystem.management.dao.Dao.ChatEventKit
+import io.github.gilbertodamim.ksystem.management.dao.Dao.EditKitGuiCache
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
@@ -29,57 +35,13 @@ class EditKit : CommandExecutor {
             return false
         }
         if (s.hasPermission("ksystem.kits.admin")) {
-            if (args.size > 1) {
+            if (args.isNotEmpty()) {
                 val kit = args[0].lowercase()
-                val kitcache = Dao.kitsCache[args[0].lowercase()] ?: run {
+                Dao.kitsCache.getIfPresent(kit) ?: run {
                     s.sendMessage(KitsLang.notExist)
                     return false
                 }
-                if (args[1] == "time") {
-                    try {
-                        editKit(kit, args[2], s)
-                        s.sendMessage(
-                            KitsLang.editKitSuccess.replace(
-                                "%name%",
-                                kit
-                            )
-                        )
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                        s.sendMessage(
-                            KitsLang.editKitProblem.replace(
-                                "%name%",
-                                kit
-                            )
-                        )
-                    }
-                    return false
-                }
-                if (args[1] == "items") {
-                    editKitGui(kit, kitcache.items, s)
-                    return false
-                }
-                if (args[1] == "name") {
-                    try {
-                        editKit(kit, args[2])
-                        s.sendMessage(
-                            KitsLang.editKitSuccess.replace(
-                                "%name%",
-                                kit
-                            )
-                        )
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                        s.sendMessage(
-                            KitsLang.editKitProblem.replace(
-                                "%name%",
-                                kit
-                            )
-                        )
-                    }
-                    return false
-                }
-                return false
+                editKitGui(kit, s)
             }
             return false
         }
@@ -87,8 +49,90 @@ class EditKit : CommandExecutor {
         return false
     }
 
+    fun editKitMessageEvent(e: AsyncPlayerChatEvent) : Boolean {
+        val toCheck = ChatEventKit[e.player] ?: return false
+        e.isCancelled = true
+        val split = toCheck.split("-")
+        val s = e.player
+        if (split[0] == "time") {
+            try {
+                editKit(split[1], e.message, s)
+                s.sendMessage(
+                    KitsLang.editKitSuccess.replace(
+                        "%name%",
+                        split[1]
+                    )
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                s.sendMessage(
+                    KitsLang.editKitProblem.replace(
+                        "%name%",
+                        split[1]
+                    )
+                )
+            }
+        }
+        if (split[0] == "name") {
+            try {
+                editKit(split[1], e.message)
+                s.sendMessage(
+                    KitsLang.editKitSuccess.replace(
+                        "%name%",
+                        split[1]
+                    )
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                s.sendMessage(
+                    KitsLang.editKitProblem.replace(
+                        "%name%",
+                        split[1]
+                    )
+                )
+            }
+        }
+        return true
+    }
+
+    fun editKitGuiEvent(e: InventoryClickEvent) : Boolean {
+        val iname = e.view.title.split(" ")
+        if (iname[0] == ("EditKit")) {
+            e.isCancelled = true
+            val number = e.slot
+            val p = e.whoClicked
+            if (number == 11) {
+                p.closeInventory()
+                Dao.kitsCache.getIfPresent(iname[1])?.get()?.items?.let { editKitGui(iname[1], it, p as Player) }
+                return true
+            }
+            if (number == 13) {
+                p.closeInventory()
+                p.sendMessage(editkitInventoryTimeMessage)
+                ChatEventKit[p as Player] = "time-${iname[1]}"
+                return true
+            }
+            if (number == 15) {
+                p.closeInventory()
+                p.sendMessage(editkitInventoryNameMessage)
+                ChatEventKit[p as Player] = "name-${iname[1]}"
+                return true
+            }
+            return true
+        }
+        return false
+    }
+
+    private fun editKitGui(kit: String, p: Player) {
+        val inv = KSystemMain.instance.server.createInventory(null, 27, "EditKit $kit")
+        for (i in EditKitGuiCache.asMap()) {
+            inv.setItem(i.key, i.value)
+        }
+        p.openInventory(inv)
+    }
+
     private fun editKitGui(kit: String, items: Array<ItemStack?>, p: Player) {
-        val inv = KSystemMain.instance.server.createInventory(p, 36, kit)
+        val inv = KSystemMain.instance.server.createInventory(null, 36, kit)
         for (i in items) {
             inv.addItem(i ?: continue)
         }
