@@ -2,7 +2,6 @@ package io.github.gilbertodamim.ksystem.library;
 
 import io.github.gilbertodamim.ksystem.KSystemMain;
 import io.github.gilbertodamim.ksystem.config.langs.StartLang;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -21,17 +20,16 @@ import java.util.concurrent.TimeUnit;
 import static io.github.gilbertodamim.ksystem.KSystemMain.instance;
 import static io.github.gilbertodamim.ksystem.KSystemMain.pluginName;
 
-@SuppressWarnings({"all"})
 public class LibChecker {
-    private static final String libloc = KSystemMain.instance().getDataFolder().getPath() + "/lib";
+    private static final String libraryLocation = KSystemMain.instance().getDataFolder().getPath() + "/lib";
     public static ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
     public static boolean update = false;
     public static boolean libChecker = false;
-    static int todow = 0;
-    static int dow = 0;
-    static boolean termined = false;
+    static int toDownload = 0;
+    static int download = 0;
+    static boolean finished = false;
 
-    private static InputStream dowloader(String url) throws IOException {
+    private static InputStream downloader(String url) throws IOException {
         URLConnection stream = new URL(url).openConnection();
         stream.connect();
         return stream.getInputStream();
@@ -41,72 +39,58 @@ public class LibChecker {
         KSystemMain.instance().getServer().getConsoleSender().sendMessage(pluginName + " " + msg);
     }
 
-    public static void checkversion() {
-        YamlConfiguration versionfile;
+    public static void checkVersion() {
+        YamlConfiguration versionFile;
         consoleMessage(StartLang.startVerification.replace("%to%", "lib e plugin"));
-        HashSet<File> noremove = new HashSet<>();
+        HashSet<File> noRemove = new HashSet<>();
         exec.scheduleAtFixedRate(() -> {
-            if (termined) {
+            if (finished) {
                 exec.shutdown();
             } else {
-                if (todow != 0 && dow != 0) {
-                    consoleMessage(StartLang.download.replace("%perc%", "" + (100 - (((todow - dow) * 100) / todow))));
+                if (toDownload != 0 && download != 0) {
+                    consoleMessage(StartLang.download.replace("%perc%", "" + (100 - (((toDownload - download) * 100) / toDownload))));
                 }
             }
         }, 1, 1, TimeUnit.SECONDS);
         try {
-            File checkfile = new File(libloc, "filecheck.yml");
-            new File(libloc).mkdirs();
-            Files.copy(dowloader("https://pastebin.com/raw/Nm30fsTp"), checkfile.toPath());
-            versionfile = YamlConfiguration.loadConfiguration(checkfile);
-            checkfile.delete();
-            double pluginv = Double.parseDouble(instance.getDescription().getVersion());
-            todow = versionfile.getInt("version-lib-" + pluginv + ".size");
-            String vc = versionfile.getString("plugin-version");
-            assert vc != null;
-            if (Double.parseDouble(vc) > pluginv) {
-                consoleMessage(StartLang.updatePlugin.replace("%version%", "" + vc));
-                try {
-                    InputStream filelib = dowloader(versionfile.getString("plugin-repo"));
-                    File pl = new File(instance.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-                    File plplace = new File(instance.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString().replace(pl.getName(), "KSystem-" + vc + ".jar").replace("file:", ""));
-                    Files.copy(filelib, plplace.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    update = true;
-                    try {
-                        KSystemMain.disablePlugin();
-                    } finally {
-                        pl.delete();
-                    }
-                    pluginv = Double.parseDouble(vc);
-                } catch (Exception ex) {
-                    consoleMessage(StartLang.anyError);
-                }
+            File checkFile = new File(libraryLocation, "filecheck.yml");
+            new File(libraryLocation).mkdirs();
+            Files.copy(downloader("https://pastebin.com/raw/Nm30fsTp"), checkFile.toPath());
+            versionFile = YamlConfiguration.loadConfiguration(checkFile);
+            checkFile.delete();
+            String pluginVersion = KSystemMain.version;
+            String versionToCheck = versionFile.getString("plugin-version");
+            if (Double.parseDouble(Objects.requireNonNull(versionToCheck)) > Double.parseDouble(pluginVersion)) {
+                update = true;
+                pluginVersion = versionToCheck;
+                consoleMessage(StartLang.updatePlugin.replace("%version%", "" + versionToCheck));
             }
-            for (String libs : Objects.requireNonNull(versionfile.getConfigurationSection("version-lib-" + pluginv)).getKeys(false)) {
+            toDownload = versionFile.getInt("version-lib-" + pluginVersion + ".size");
+            for (String libs : Objects.requireNonNull(versionFile.getConfigurationSection("version-lib-" + pluginVersion)).getKeys(false)) {
                 if (Objects.equals(libs, "size")) continue;
-                String[] split = Objects.requireNonNull(versionfile.getString("version-lib-" + pluginv + "." + libs)).split(":-:");
+                String[] split = Objects.requireNonNull(versionFile.getString("version-lib-" + pluginVersion + "." + libs)).split(":-:");
                 String version = split[0];
-                File lib = new File(libloc, version + ".jar");
+                File lib = new File(libraryLocation, version + ".jar");
                 if (!lib.exists()) {
                     libChecker = true;
-                    String[] paste = new File(libloc).list();
+                    String[] paste = new File(libraryLocation).list();
                     if (paste != null) {
                         for (String d : paste) {
                             String[] e = d.split("-");
                             for (String g : e) {
                                 if (g.split("\\.").length > 1) {
-                                    if (d.replace("-" + g, "").equals(libs.replace("version-lib-" + pluginv + ".", ""))) {
-                                        new File(libloc, d).delete();
+                                    if (d.replace("-" + g, "").equals(libs.replace("version-lib-" + pluginVersion + ".", ""))) {
+                                        new File(libraryLocation, d).delete();
                                     }
                                 }
                             }
                         }
-                    } else new File(libloc).mkdirs();
+                    } else new File(libraryLocation).mkdirs();
                     try {
-                        InputStream filelib = dowloader(split[1]);
-                        Files.copy(filelib, lib.toPath());
-                        noremove.add(lib);
-                        dow += (int) lib.length();
+                        InputStream fileLibrary = downloader(split[1]);
+                        Files.copy(fileLibrary, lib.toPath());
+                        noRemove.add(lib);
+                        download += (int) lib.length();
                     } catch (Exception e) {
                         consoleMessage(StartLang.moduleError.replace("%file%", version));
                         e.printStackTrace();
@@ -114,36 +98,53 @@ public class LibChecker {
                 } else {
                     if (lib.length() != Integer.parseInt(split[2])) {
                         try {
-                            InputStream filelib = dowloader(split[1]);
-                            Files.copy(filelib, lib.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                            noremove.add(lib);
-                            dow += filelib.available();
+                            InputStream fileLibrary = downloader(split[1]);
+                            Files.copy(fileLibrary, lib.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            noRemove.add(lib);
+                            download += fileLibrary.available();
                         } catch (Exception e) {
                             consoleMessage(StartLang.moduleError.replace("%file%", version));
                             e.printStackTrace();
                         }
                     } else {
-                        noremove.add(lib);
-                        dow += (int) lib.length();
+                        noRemove.add(lib);
+                        download += (int) lib.length();
                     }
                 }
             }
-            String[] paste = new File(libloc).list();
+            String[] paste = new File(libraryLocation).list();
             if (paste != null) {
                 for (String i : paste) {
-                    File a = new File(libloc, i);
-                    if (!noremove.contains(a)) {
+                    File a = new File(libraryLocation, i);
+                    if (!noRemove.contains(a)) {
                         a.delete();
                     }
                 }
             }
+            finished = true;
             if (!update) {
                 consoleMessage(StartLang.completeVerification);
             }
             else {
+                try {
+                    InputStream fileLibrary = downloader(versionFile.getString("plugin-repo"));
+                    File plugin = new File(instance.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+                    File pluginToPlace = new File(instance.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString().replace(plugin.getName(), "KSystem-" + versionToCheck + ".jar").replace("file:", ""));
+                    if (plugin.getName().equals(pluginToPlace.getName())) {
+                        pluginToPlace = new File(instance.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString().replace(plugin.getName(), "KSystem-" + versionToCheck + "-debug.jar").replace("file:", ""));
+                    }
+                    Files.copy(fileLibrary, pluginToPlace.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    try {
+                        KSystemMain.disablePlugin();
+                    } finally {
+                        plugin.delete();
+                    }
+                } catch (Exception ex) {
+                    consoleMessage(StartLang.anyError);
+                    ex.printStackTrace();
+                }
                 consoleMessage(StartLang.updatePluginMessage);
             }
-            termined = true;
         } catch (Exception e) {
             e.printStackTrace();
         }

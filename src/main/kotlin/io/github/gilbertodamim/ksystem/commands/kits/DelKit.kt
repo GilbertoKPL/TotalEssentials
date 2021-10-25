@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.IntegerColumnType
+import org.jetbrains.exposed.sql.LongColumnType
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.CompletableFuture
@@ -29,11 +30,12 @@ class DelKit : CommandExecutor {
         if (s.hasPermission("ksystem.kits.admin")) {
             if (args.size == 1) {
                 try {
-                    kitsCache.getIfPresent(args[0].lowercase()) ?: run {
+                    if (kitsCache.getIfPresent(args[0].lowercase()) == null) {
                         s.sendMessage(notExist)
-                        return false
                     }
-                    delKit(args[0].lowercase(), s)
+                    else {
+                        delKit(args[0].lowercase(), s)
+                    }
 
                 } catch (ex: Exception) {
                     ex.printStackTrace()
@@ -53,7 +55,7 @@ class DelKit : CommandExecutor {
             try {
                 transaction(SqlInstance.SQL) {
                     SqlKits.deleteWhere { SqlKits.kitName like kit }
-                    val col = Column<Int>(PlayerKits, kit, IntegerColumnType())
+                    val col = Column<Long>(PlayerKits, kit, LongColumnType())
                     col.dropStatement().forEach { statement ->
                         exec(statement)
                     }

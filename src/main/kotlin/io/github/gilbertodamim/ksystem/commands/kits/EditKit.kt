@@ -20,6 +20,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -51,71 +52,59 @@ class EditKit : CommandExecutor {
 
     fun editKitMessageEvent(e: AsyncPlayerChatEvent) : Boolean {
         val toCheck = ChatEventKit[e.player] ?: return false
+        ChatEventKit.remove(e.player)
         e.isCancelled = true
         val split = toCheck.split("-")
         val s = e.player
         if (split[0] == "time") {
             try {
                 editKit(split[1], e.message, s)
-                s.sendMessage(
-                    KitsLang.editKitSuccess.replace(
-                        "%name%",
-                        split[1]
-                    )
-                )
+                s.sendMessage(KitsLang.editKitSuccess.replace("%name%", split[1]))
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                s.sendMessage(
-                    KitsLang.editKitProblem.replace(
-                        "%name%",
-                        split[1]
-                    )
-                )
+                s.sendMessage(KitsLang.editKitProblem.replace("%name%", split[1]))
             }
         }
         if (split[0] == "name") {
             try {
-                editKit(split[1], e.message)
-                s.sendMessage(
-                    KitsLang.editKitSuccess.replace(
-                        "%name%",
-                        split[1]
+                if (e.message.length > 16) {
+                    s.sendMessage(KitsLang.nameLength)
+                }
+                else {
+                    editKit(split[1], e.message.replace("&", "§"))
+                    s.sendMessage(
+                        KitsLang.editKitSuccess.replace("%name%", split[1])
                     )
-                )
+                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                s.sendMessage(
-                    KitsLang.editKitProblem.replace(
-                        "%name%",
-                        split[1]
-                    )
-                )
+                s.sendMessage(KitsLang.editKitProblem.replace("%name%", split[1]))
             }
         }
         return true
     }
 
     fun editKitGuiEvent(e: InventoryClickEvent) : Boolean {
-        val iname = e.view.title.split(" ")
-        if (iname[0] == ("EditKit")) {
+        val inventoryName = e.view.title.split(" ")
+        if (inventoryName[0] == ("EditKit") && e.currentItem != null) {
             e.isCancelled = true
             val number = e.slot
             val p = e.whoClicked
             if (number == 11) {
                 p.closeInventory()
-                Dao.kitsCache.getIfPresent(iname[1])?.get()?.items?.let { editKitGui(iname[1], it, p as Player) }
+                Dao.kitsCache.getIfPresent(inventoryName[1])?.get()?.items?.let { editKitGui(inventoryName[1], it, p as Player) }
                 return true
             }
             if (number == 13) {
                 p.closeInventory()
                 p.sendMessage(editkitInventoryTimeMessage)
-                ChatEventKit[p as Player] = "time-${iname[1]}"
+                ChatEventKit[p as Player] = "time-${inventoryName[1]}"
                 return true
             }
             if (number == 15) {
                 p.closeInventory()
                 p.sendMessage(editkitInventoryNameMessage)
-                ChatEventKit[p as Player] = "name-${iname[1]}"
+                ChatEventKit[p as Player] = "name-${inventoryName[1]}"
                 return true
             }
             return true

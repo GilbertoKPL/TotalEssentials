@@ -13,16 +13,22 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import static io.github.gilbertodamim.ksystem.config.langs.StartLang.restartBukkit;
 
 
 @SuppressWarnings({"unchecked"})
 public class KSystemMain extends JavaPlugin {
-    public static String pluginName = "§f[§bK§cSystem§f]";
+    final public static String pluginName = "§f[§bK§cSystem§f]";
+    public static String version = "";
+
     public static KSystemMain instance;
 
     public static KSystemMain instance() {
@@ -31,6 +37,17 @@ public class KSystemMain extends JavaPlugin {
 
     public static void checkClass(String c) throws ClassNotFoundException {
         Class.forName(c);
+    }
+
+    public String getVersionNameFromManifest() throws IOException {
+        InputStream manifestStream = getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
+        if (manifestStream != null) {
+            Manifest manifest = new Manifest(manifestStream);
+            Attributes attributes = manifest.getMainAttributes();
+            return attributes.getValue("Version-Name");
+
+        }
+        return instance.getDescription().getVersion();
     }
 
     public static void disableLoggers() {
@@ -127,7 +144,12 @@ public class KSystemMain extends JavaPlugin {
         instance = this;
         disableLoggers();
         try {
-            LibChecker.checkversion();
+            version = getVersionNameFromManifest();
+        } catch (IOException e) {
+            version = instance.getDescription().getVersion();
+        }
+        try {
+            LibChecker.checkVersion();
         } finally {
             if (LibChecker.libChecker) {
                 KSystemMain.instance().getServer().getConsoleSender().sendMessage(pluginName + " " + restartBukkit);

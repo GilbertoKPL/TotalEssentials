@@ -7,6 +7,7 @@ import io.github.gilbertodamim.ksystem.config.langs.TimeLang.timeDayShort
 import io.github.gilbertodamim.ksystem.config.langs.TimeLang.timeHourShort
 import io.github.gilbertodamim.ksystem.config.langs.TimeLang.timeMinuteShort
 import io.github.gilbertodamim.ksystem.config.langs.TimeLang.timeSecondShort
+import org.bukkit.entity.Player
 
 object Manager {
     fun consoleMessage(msg: String) {
@@ -14,6 +15,9 @@ object Manager {
     }
     fun pluginPasteDir(): String = instance.dataFolder.path
     fun pluginLangDir(): String = instance.dataFolder.path + "/lang/"
+    fun getPlayerUUID(p : Player) : String{
+        return p.uniqueId.toString()
+    }
     fun convertMillisToString(time: Long, short: Boolean): String {
         val toSend = ArrayList<String>()
         fun helper(time: Long, sendShort: String, send: String) {
