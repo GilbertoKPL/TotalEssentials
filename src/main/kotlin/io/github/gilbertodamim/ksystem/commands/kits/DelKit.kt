@@ -14,7 +14,6 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.IntegerColumnType
 import org.jetbrains.exposed.sql.LongColumnType
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -32,8 +31,7 @@ class DelKit : CommandExecutor {
                 try {
                     if (kitsCache.getIfPresent(args[0].lowercase()) == null) {
                         s.sendMessage(notExist)
-                    }
-                    else {
+                    } else {
                         delKit(args[0].lowercase(), s)
                     }
 
@@ -62,8 +60,7 @@ class DelKit : CommandExecutor {
                 }
                 p.sendMessage(KitsLang.delKitSuccess.replace("%name%", kit))
                 updateKits()
-            }
-            catch (e : Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }, Executors.newCachedThreadPool())

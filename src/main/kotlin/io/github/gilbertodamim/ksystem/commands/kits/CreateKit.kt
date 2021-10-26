@@ -11,6 +11,7 @@ import io.github.gilbertodamim.ksystem.database.SqlInstance
 import io.github.gilbertodamim.ksystem.database.table.PlayerKits
 import io.github.gilbertodamim.ksystem.database.table.SqlKits
 import io.github.gilbertodamim.ksystem.management.dao.Dao
+import io.github.gilbertodamim.ksystem.management.dao.KSystemKit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -38,8 +39,7 @@ class CreateKit : CommandExecutor {
                     } else {
                         s.sendMessage(Exist)
                     }
-                }
-                else {
+                } else {
                     s.sendMessage(KitsLang.nameLength)
                 }
             } else {
@@ -58,9 +58,19 @@ class CreateKit : CommandExecutor {
     }
 
     private fun createKit(kit: String, items: Array<ItemStack?>) {
+        val item = convertItems(items)
+        Dao.kitsCache.put(
+            kit,
+            CompletableFuture.supplyAsync {
+                KSystemKit(
+                    kit.lowercase(),
+                    0,
+                    kit,
+                    convertItems(item)
+                )
+            })
         CompletableFuture.runAsync({
             try {
-                val item = convertItems(items)
                 transaction(SqlInstance.SQL) {
                     SqlKits.insert {
                         it[kitName] = kit.lowercase()
@@ -71,9 +81,7 @@ class CreateKit : CommandExecutor {
                     PlayerKits.long(kit.lowercase())
                     SchemaUtils.createMissingTablesAndColumns(PlayerKits)
                 }
-                updateKits()
-            }
-            catch (e : Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }, Executors.newCachedThreadPool())

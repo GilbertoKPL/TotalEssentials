@@ -11,6 +11,6 @@ object SqlKits : Table() {
 }
 
 object PlayerKits : Table() {
-    val uuid = varchar("uuid", 16)
+    val uuid = varchar("uuid", 64)
     override val primaryKey = PrimaryKey(uuid)
 }

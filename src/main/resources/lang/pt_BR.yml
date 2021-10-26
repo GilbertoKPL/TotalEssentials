@@ -54,3 +54,12 @@ Kits:
   kit-inventory-items-lore:
     - '&fNome do kit -> %name%'
     - '&eClique para ver o kit'
+  kit-pickup-message: '&cFalta %time% para pegar seu kit novamente'
+  kit-pickup-icon: '&cClique aqui para pegar o seu kit'
+  kit-pickup-icon-not-pickup: '&cVocê não consegue pegar esse kit'
+  kit-pickup-icon-lore-not-perm:
+  - '&cVocê não tem permissão'
+  kit-pickup-icon-lore-time:
+    - '&fFalta'
+    - '&f%time%'
+    - '&fPara pegar seu kit'

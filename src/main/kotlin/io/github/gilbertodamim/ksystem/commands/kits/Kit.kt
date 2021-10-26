@@ -1,18 +1,27 @@
 package io.github.gilbertodamim.ksystem.commands.kits
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import io.github.gilbertodamim.ksystem.KSystemMain
+import io.github.gilbertodamim.ksystem.config.configs.KitsConfig.useShortTime
+import io.github.gilbertodamim.ksystem.config.langs.GeneralLang.notPerm
 import io.github.gilbertodamim.ksystem.config.langs.GeneralLang.onlyPlayerCommand
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang
+import io.github.gilbertodamim.ksystem.config.langs.KitsLang.kitPickupIcon
+import io.github.gilbertodamim.ksystem.config.langs.KitsLang.kitPickupIconLoreNotPerm
+import io.github.gilbertodamim.ksystem.config.langs.KitsLang.kitPickupIconLoreTime
+import io.github.gilbertodamim.ksystem.config.langs.KitsLang.kitPickupMessage
+import io.github.gilbertodamim.ksystem.config.langs.KitsLang.notExist
 import io.github.gilbertodamim.ksystem.database.SqlInstance
 import io.github.gilbertodamim.ksystem.database.table.PlayerKits
 import io.github.gilbertodamim.ksystem.database.table.SqlKits
 import io.github.gilbertodamim.ksystem.inventory.Api
 import io.github.gilbertodamim.ksystem.inventory.KitsInventory
+import io.github.gilbertodamim.ksystem.management.Manager.convertMillisToString
 import io.github.gilbertodamim.ksystem.management.Manager.getPlayerUUID
 import io.github.gilbertodamim.ksystem.management.dao.Dao
-import io.github.gilbertodamim.ksystem.management.dao.Dao.KitPlayerCache
 import io.github.gilbertodamim.ksystem.management.dao.Dao.kitClickGuiCache
 import io.github.gilbertodamim.ksystem.management.dao.Dao.kitGuiCache
+import io.github.gilbertodamim.ksystem.management.dao.Dao.kitPlayerCache
 import io.github.gilbertodamim.ksystem.management.dao.Dao.kitsCache
 import io.github.gilbertodamim.ksystem.management.dao.KSystemKit
 import org.bukkit.Material
@@ -21,8 +30,6 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.player.PlayerLoginEvent
-import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
@@ -43,12 +50,16 @@ class Kit : CommandExecutor {
             return false
         }
         if (args.isNotEmpty() && s.hasPermission("ksystem.kits")) {
-            val to = kitsCache.getIfPresent(args[0].lowercase()) ?: return false
-            for (i in to.get().items) {
-                s.player?.inventory?.addItem(i ?: continue)
+            val to = kitsCache.getIfPresent(args[0].lowercase())
+            if (to != null) {
+                for (i in to.get().items) {
+                    s.player?.inventory?.addItem(i ?: continue)
+                }
             }
-        }
-        else {
+            else {
+                //send kitList
+            }
+        } else {
             val inv = kitGuiCache.getIfPresent(1)
             if (inv != null) {
                 s.openInventory(inv)
@@ -58,17 +69,17 @@ class Kit : CommandExecutor {
     }
 
     private fun reloadKitCache() {
-        KitPlayerCache.cleanUp()
+        kitPlayerCache.cleanUp()
         CompletableFuture.runAsync({
             try {
                 transaction(SqlInstance.SQL) {
                     for (i in PlayerKits.selectAll()) {
-                        val hashMap = HashMap<String, Long>()
+                        val cache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
                         for (col in PlayerKits.columns) {
                             if (col == PlayerKits.uuid) continue
-                            hashMap[col.name] = i[col] as Long
+                            cache.put(col.name, i[col] as Long)
                         }
-                        KitPlayerCache.put(i[PlayerKits.uuid], hashMap)
+                        kitPlayerCache.put(i[PlayerKits.uuid], cache)
                     }
                 }
             } catch (e: Exception) {
@@ -79,15 +90,15 @@ class Kit : CommandExecutor {
 
     private fun upDatePlayerKitTime(p: Player, kit: String) {
         val pUUID = getPlayerUUID(p)
+        val cache = kitPlayerCache.getIfPresent(pUUID)
+        if (cache != null) {
+            cache.invalidate(kit)
+            cache.put(kit, System.currentTimeMillis())
+            kitPlayerCache.invalidate(pUUID)
+            kitPlayerCache.put(pUUID, cache)
+        }
         CompletableFuture.runAsync({
             try {
-                val hashMap = KitPlayerCache.getIfPresent(pUUID)
-                if (hashMap != null) {
-                    hashMap.remove(kit)
-                    hashMap[kit] = System.currentTimeMillis()
-                    KitPlayerCache.invalidate(pUUID)
-                    KitPlayerCache.put(pUUID, hashMap)
-                }
                 transaction(SqlInstance.SQL) {
                     val work = PlayerKits.select { PlayerKits.uuid eq pUUID }
                     val col = Column<Long>(PlayerKits, kit, LongColumnType())
@@ -96,9 +107,8 @@ class Kit : CommandExecutor {
                             it[uuid] = pUUID
                             it[col] = System.currentTimeMillis()
                         }
-                        putPlayersCache(p)
-                    }
-                    else {
+                        addPlayerToCache(p)
+                    } else {
                         PlayerKits.update({ PlayerKits.uuid eq pUUID }) {
                             it[col] = System.currentTimeMillis()
                         }
@@ -110,12 +120,12 @@ class Kit : CommandExecutor {
         }, Executors.newSingleThreadExecutor())
     }
 
-    private fun putPlayersCache(p: Player) {
-        val pUUID = getPlayerUUID(p)
+    private fun addPlayerToCache(p: Player) {
         CompletableFuture.runAsync({
             try {
+                val pUUID = getPlayerUUID(p)
                 transaction(SqlInstance.SQL) {
-                    val hashMap = HashMap<String, Long>()
+                    val cache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
                     val work = PlayerKits.select { PlayerKits.uuid eq pUUID }
                     if (work.empty()) {
                         PlayerKits.insert {
@@ -124,9 +134,9 @@ class Kit : CommandExecutor {
                     }
                     for (i in PlayerKits.columns) {
                         if (i == PlayerKits.uuid) continue
-                        hashMap[i.name] = work.single()[i] as Long
+                        cache.put(i.name, work.single()[i] as Long)
                     }
-                    KitPlayerCache.put(pUUID, hashMap)
+                    kitPlayerCache.put(pUUID, cache)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -134,35 +144,76 @@ class Kit : CommandExecutor {
         }, Executors.newSingleThreadExecutor())
     }
 
-    private fun pickupKit(p: Player) {
-        CompletableFuture.runAsync({
-            try {
-                transaction(SqlInstance.SQL) {
-
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+    private fun pickupKit(p: Player, kit: String) {
+        val pUUID = getPlayerUUID(p)
+        val kitCache = kitsCache.getIfPresent(kit)
+        if (kitCache != null) {
+            val timePlayerPickedKit = kitPlayerCache.getIfPresent(pUUID)?.getIfPresent(kit)
+            var timeAll = 0L
+            if (timePlayerPickedKit != null) {
+                timeAll = kitCache.get()?.time!! + timePlayerPickedKit
             }
-        }, Executors.newSingleThreadExecutor())
+            if (timeAll == 0L || timeAll < System.currentTimeMillis()) {
+                if (p.hasPermission("ksystem.kit.$kit")) {
+                    for (i in kitCache.get()?.items!!) {
+                        if (i == null) continue
+                        p.inventory.addItem(i)
+                    }
+                    upDatePlayerKitTime(p, kit)
+                } else {
+                    p.sendMessage(notPerm)
+                }
+            } else {
+                val remainingTime = timeAll - System.currentTimeMillis()
+                p.sendMessage(kitPickupMessage.replace("%time%", convertMillisToString(remainingTime, useShortTime)))
+            }
+        } else {
+            p.sendMessage(notExist)
+        }
     }
 
     private fun kitGui(kit: String, p: Player) {
         val inv = KSystemMain.instance.server.createInventory(null, 36, "Kit $kit")
-        for (i in kitsCache.getIfPresent(kit)!!.get().items) {
+        val to = kitsCache.getIfPresent(kit)!!.get()
+        val pUUID = getPlayerUUID(p)
+        val timePlayerPickedKit = kitPlayerCache.getIfPresent(pUUID)?.getIfPresent(kit)
+        var timeAll = 0L
+        if (timePlayerPickedKit != null) {
+            timeAll = kitsCache.getIfPresent(kit)?.get()?.time!! + timePlayerPickedKit
+        }
+        for (i in to.items) {
             if (i == null) continue
             inv.addItem(i)
         }
         inv.setItem(27, Api.item(Material.HOPPER, KitsLang.kitInventoryIconBackName))
+        if (p.hasPermission("ksystem.kit.$kit")) {
+            if (timeAll < System.currentTimeMillis() || timeAll == 0L) {
+                inv.setItem(35, Api.item(Material.ARROW, kitPickupIcon))
+            } else {
+                val array = ArrayList<String>()
+                val remainingTime = timeAll - System.currentTimeMillis()
+                for (i in kitPickupIconLoreTime) {
+                    array.add(i.replace("%time%", convertMillisToString(remainingTime, useShortTime)))
+                }
+                inv.setItem(35, Api.item(Material.ARROW, KitsLang.kitPickupIconNotPickup, array))
+            }
+        } else {
+            inv.setItem(35, Api.item(Material.ARROW, KitsLang.kitPickupIconNotPickup, kitPickupIconLoreNotPerm))
+        }
         p.openInventory(inv)
     }
 
-    fun kitGuiEvent(e: InventoryClickEvent) : Boolean {
+    fun kitGuiEvent(e: InventoryClickEvent): Boolean {
         val inventoryName = e.view.title.split(" ")
         if (inventoryName[0] == "Kit" && e.currentItem != null) {
             e.isCancelled = true
             val number = e.slot
             if (number == 27 && e.currentItem != null) {
                 e.whoClicked.openInventory(kitGuiCache.getIfPresent(1)!!)
+            }
+            if (number == 35 && e.currentItem!!.itemMeta != null && e.currentItem!!.itemMeta?.displayName == kitPickupIcon) {
+                pickupKit(e.whoClicked as Player, inventoryName[1])
+                e.whoClicked.closeInventory()
             }
             return true
         }
@@ -171,9 +222,10 @@ class Kit : CommandExecutor {
             val number = e.slot
             if (number < 27) {
                 val kit = kitClickGuiCache.getIfPresent((number + 1) + ((inventoryName[1].toInt() - 1) * 27))
-                kitGui(kit!!, e.whoClicked as Player)
-            }
-            else {
+                if (kit != null) {
+                    kitGui(kit, e.whoClicked as Player)
+                }
+            } else {
                 if (number == 27 && inventoryName[1].toInt() > 1) {
                     e.whoClicked.openInventory(kitGuiCache.getIfPresent(inventoryName[1].toInt() - 1)!!)
                 }
@@ -211,13 +263,21 @@ class Kit : CommandExecutor {
                             val kitRealName = values[SqlKits.kitRealName]
                             val kitTime = values[SqlKits.kitTime]
                             val item = values[SqlKits.kitItems]
-                            kitsCache.put(kit, CompletableFuture.supplyAsync { KSystemKit(kit, kitTime, kitRealName, convertItems(item))})
+                            kitsCache.put(
+                                kit,
+                                CompletableFuture.supplyAsync {
+                                    KSystemKit(
+                                        kit,
+                                        kitTime,
+                                        kitRealName,
+                                        convertItems(item)
+                                    )
+                                })
                         }
                     }
                     KitsInventory().kitGuiInventory()
                     Dao.inUpdate = false
-                }
-                catch (e : Exception) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }, Executors.newCachedThreadPool())
@@ -238,6 +298,7 @@ class Kit : CommandExecutor {
                 throw IllegalStateException(e)
             }
         }
+
         @Throws(IOException::class)
         fun convertItems(data: String): Array<ItemStack?> {
             return try {

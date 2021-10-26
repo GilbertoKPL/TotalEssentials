@@ -28,6 +28,11 @@ object KitsLang {
     lateinit var kitInventoryItemsName: String
     lateinit var nameLength: String
     lateinit var kitInventoryItemsLore: List<String>
+    lateinit var kitPickupMessage: String
+    lateinit var kitPickupIcon: String
+    lateinit var kitPickupIconNotPickup: String
+    lateinit var kitPickupIconLoreNotPerm: List<String>
+    lateinit var kitPickupIconLoreTime: List<String>
     fun reload(source1: YamlConfiguration) {
         notExist = ConfigMain.getString(source1, "Kits.not-exist", true)
         Exist = ConfigMain.getString(source1, "Kits.exist", true)
@@ -53,5 +58,10 @@ object KitsLang {
         kitInventoryItemsName = ConfigMain.getString(source1, "Kits.kit-inventory-items-name", true)
         kitInventoryItemsLore = ConfigMain.getStringList(source1, "Kits.kit-inventory-items-lore", true)
         nameLength = ConfigMain.getString(source1, "Kits.name-length", true)
+        kitPickupMessage = ConfigMain.getString(source1, "Kits.kit-pickup-message", true)
+        kitPickupIcon = ConfigMain.getString(source1, "Kits.kit-pickup-icon", true)
+        kitPickupIconNotPickup = ConfigMain.getString(source1, "Kits.kit-pickup-icon-not-pickup", true)
+        kitPickupIconLoreNotPerm = ConfigMain.getStringList(source1, "Kits.kit-pickup-icon-lore-not-perm", true)
+        kitPickupIconLoreTime = ConfigMain.getStringList(source1, "Kits.kit-pickup-icon-lore-time", true)
     }
 }
