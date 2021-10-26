@@ -1,6 +1,5 @@
 package io.github.gilbertodamim.ksystem.commands.kits
 
-import io.github.gilbertodamim.ksystem.commands.kits.Kit.Companion.updateKits
 import io.github.gilbertodamim.ksystem.config.langs.GeneralLang
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang.delKitUsage
@@ -8,6 +7,8 @@ import io.github.gilbertodamim.ksystem.config.langs.KitsLang.notExist
 import io.github.gilbertodamim.ksystem.database.SqlInstance
 import io.github.gilbertodamim.ksystem.database.table.PlayerKits
 import io.github.gilbertodamim.ksystem.database.table.SqlKits
+import io.github.gilbertodamim.ksystem.inventory.KitsInventory
+import io.github.gilbertodamim.ksystem.management.ErrorClass
 import io.github.gilbertodamim.ksystem.management.dao.Dao.kitsCache
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -36,7 +37,7 @@ class DelKit : CommandExecutor {
                     }
 
                 } catch (ex: Exception) {
-                    ex.printStackTrace()
+                    ErrorClass().sendException(ex)
                     s.sendMessage(KitsLang.delKitProblem.replace("%name%", args[0]))
                 }
             } else {
@@ -49,6 +50,8 @@ class DelKit : CommandExecutor {
     }
 
     private fun delKit(kit: String, p: Player) {
+        kitsCache.synchronous().invalidate(kit)
+        KitsInventory().kitGuiInventory()
         CompletableFuture.runAsync({
             try {
                 transaction(SqlInstance.SQL) {
@@ -59,9 +62,8 @@ class DelKit : CommandExecutor {
                     }
                 }
                 p.sendMessage(KitsLang.delKitSuccess.replace("%name%", kit))
-                updateKits()
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (ex: Exception) {
+                ErrorClass().sendException(ex)
             }
         }, Executors.newCachedThreadPool())
     }

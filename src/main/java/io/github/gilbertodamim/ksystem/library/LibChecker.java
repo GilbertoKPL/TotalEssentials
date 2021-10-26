@@ -18,7 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static io.github.gilbertodamim.ksystem.KSystemMain.instance;
-import static io.github.gilbertodamim.ksystem.KSystemMain.pluginName;
+import static io.github.gilbertodamim.ksystem.KSystemMain.pluginTagName;
 
 public class LibChecker {
     private static final String libraryLocation = KSystemMain.instance().getDataFolder().getPath() + "/lib";
@@ -36,7 +36,7 @@ public class LibChecker {
     }
 
     private static void consoleMessage(String msg) {
-        KSystemMain.instance().getServer().getConsoleSender().sendMessage(pluginName + " " + msg);
+        KSystemMain.instance().getServer().getConsoleSender().sendMessage(pluginTagName + " " + msg);
     }
 
     public static void checkVersion() {

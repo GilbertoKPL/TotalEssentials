@@ -2,7 +2,6 @@ package io.github.gilbertodamim.ksystem.commands.kits
 
 import io.github.gilbertodamim.ksystem.KSystemMain
 import io.github.gilbertodamim.ksystem.commands.kits.Kit.Companion.convertItems
-import io.github.gilbertodamim.ksystem.commands.kits.Kit.Companion.updateKits
 import io.github.gilbertodamim.ksystem.config.langs.GeneralLang
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang.Exist
@@ -10,6 +9,8 @@ import io.github.gilbertodamim.ksystem.config.langs.KitsLang.createKitUsage
 import io.github.gilbertodamim.ksystem.database.SqlInstance
 import io.github.gilbertodamim.ksystem.database.table.PlayerKits
 import io.github.gilbertodamim.ksystem.database.table.SqlKits
+import io.github.gilbertodamim.ksystem.inventory.KitsInventory
+import io.github.gilbertodamim.ksystem.management.ErrorClass
 import io.github.gilbertodamim.ksystem.management.dao.Dao
 import io.github.gilbertodamim.ksystem.management.dao.KSystemKit
 import org.bukkit.command.Command
@@ -69,6 +70,7 @@ class CreateKit : CommandExecutor {
                     convertItems(item)
                 )
             })
+        KitsInventory().kitGuiInventory()
         CompletableFuture.runAsync({
             try {
                 transaction(SqlInstance.SQL) {
@@ -81,8 +83,8 @@ class CreateKit : CommandExecutor {
                     PlayerKits.long(kit.lowercase())
                     SchemaUtils.createMissingTablesAndColumns(PlayerKits)
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (ex: Exception) {
+                ErrorClass().sendException(ex)
             }
         }, Executors.newCachedThreadPool())
     }
@@ -93,7 +95,7 @@ class CreateKit : CommandExecutor {
                 createKit(Dao.kitInventory[e.player]!!, e.inventory.contents)
                 e.player.sendMessage(KitsLang.createKitSuccess.replace("%name%", Dao.kitInventory[e.player]!!))
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                ErrorClass().sendException(ex)
                 e.player.sendMessage(KitsLang.createKitProblem.replace("%name%", Dao.kitInventory[e.player]!!))
             }
             Dao.kitInventory.remove(e.player)

@@ -2,7 +2,6 @@ package io.github.gilbertodamim.ksystem.commands.kits
 
 import io.github.gilbertodamim.ksystem.KSystemMain
 import io.github.gilbertodamim.ksystem.commands.kits.Kit.Companion.convertItems
-import io.github.gilbertodamim.ksystem.commands.kits.Kit.Companion.updateKits
 import io.github.gilbertodamim.ksystem.config.configs.KitsConfig
 import io.github.gilbertodamim.ksystem.config.langs.GeneralLang
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang
@@ -10,10 +9,14 @@ import io.github.gilbertodamim.ksystem.config.langs.KitsLang.editkitInventoryNam
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang.editkitInventoryTimeMessage
 import io.github.gilbertodamim.ksystem.database.SqlInstance
 import io.github.gilbertodamim.ksystem.database.table.SqlKits
+import io.github.gilbertodamim.ksystem.inventory.KitsInventory
+import io.github.gilbertodamim.ksystem.management.ErrorClass
 import io.github.gilbertodamim.ksystem.management.Manager
 import io.github.gilbertodamim.ksystem.management.dao.Dao
 import io.github.gilbertodamim.ksystem.management.dao.Dao.ChatEventKit
 import io.github.gilbertodamim.ksystem.management.dao.Dao.EditKitGuiCache
+import io.github.gilbertodamim.ksystem.management.dao.Dao.kitsCache
+import io.github.gilbertodamim.ksystem.management.dao.KSystemKit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -37,7 +40,7 @@ class EditKit : CommandExecutor {
         if (s.hasPermission("ksystem.kits.admin")) {
             if (args.isNotEmpty()) {
                 val kit = args[0].lowercase()
-                Dao.kitsCache.getIfPresent(kit) ?: run {
+                kitsCache.getIfPresent(kit) ?: run {
                     s.sendMessage(KitsLang.notExist)
                     return false
                 }
@@ -60,7 +63,7 @@ class EditKit : CommandExecutor {
                 editKit(split[1], e.message, s)
                 s.sendMessage(KitsLang.editKitSuccess.replace("%name%", split[1]))
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                ErrorClass().sendException(ex)
                 s.sendMessage(KitsLang.editKitProblem.replace("%name%", split[1]))
             }
         }
@@ -75,7 +78,7 @@ class EditKit : CommandExecutor {
                     )
                 }
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                ErrorClass().sendException(ex)
                 s.sendMessage(KitsLang.editKitProblem.replace("%name%", split[1]))
             }
         }
@@ -84,13 +87,13 @@ class EditKit : CommandExecutor {
 
     fun editKitGuiEvent(e: InventoryClickEvent): Boolean {
         val inventoryName = e.view.title.split(" ")
-        if (inventoryName[0] == ("EditKit") && e.currentItem != null) {
+        if (inventoryName[0] == ("${KSystemMain.pluginName}§eEditKit") && e.currentItem != null) {
             e.isCancelled = true
             val number = e.slot
             val p = e.whoClicked
             if (number == 11) {
                 p.closeInventory()
-                Dao.kitsCache.getIfPresent(inventoryName[1])?.get()?.items?.let {
+                kitsCache.getIfPresent(inventoryName[1])?.get()?.items?.let {
                     editKitGui(
                         inventoryName[1],
                         it,
@@ -116,8 +119,8 @@ class EditKit : CommandExecutor {
         return false
     }
 
-    private fun editKitGui(kit: String, p: Player) {
-        val inv = KSystemMain.instance.server.createInventory(null, 27, "EditKit $kit")
+    fun editKitGui(kit: String, p: Player) {
+        val inv = KSystemMain.instance.server.createInventory(null, 27, "${KSystemMain.pluginName}§eEditKit $kit")
         for (i in EditKitGuiCache.asMap()) {
             inv.setItem(i.key, i.value)
         }
@@ -134,6 +137,20 @@ class EditKit : CommandExecutor {
     }
 
     private fun editKit(kit: String, nameKit: String) {
+        val editValues = kitsCache.getIfPresent(kit)?.get()
+        if (editValues != null) {
+            kitsCache.put(
+                kit,
+                CompletableFuture.supplyAsync {
+                    KSystemKit(
+                        editValues.name,
+                        editValues.time,
+                        nameKit,
+                        editValues.items
+                    )
+                })
+        }
+        KitsInventory().kitGuiInventory()
         CompletableFuture.runAsync({
             try {
                 transaction(SqlInstance.SQL) {
@@ -141,54 +158,79 @@ class EditKit : CommandExecutor {
                         it[kitRealName] = nameKit
                     }
                 }
-                updateKits()
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (ex: Exception) {
+                ErrorClass().sendException(ex)
             }
         }, Executors.newSingleThreadExecutor())
     }
 
     private fun editKit(kit: String, time: String, s: CommandSender) {
+        val split = time.replace("(?<=[A-Z])(?=[A-Z])|(?<=[a-z])(?=[A-Z])|(?<=\\D)$".toRegex(), "1")
+            .split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)".toRegex())
+        val unit = try {
+            split[1]
+        } catch (e: Exception) {
+            null
+        }
+        val convert = if (unit == null) {
+            TimeUnit.MINUTES.toMillis(split[0].toLong())
+        } else {
+            when (unit.lowercase()) {
+                "s" -> TimeUnit.SECONDS.toMillis(split[0].toLong())
+                "m" -> TimeUnit.MINUTES.toMillis(split[0].toLong())
+                "h" -> TimeUnit.HOURS.toMillis(split[0].toLong())
+                "d" -> TimeUnit.DAYS.toMillis(split[0].toLong())
+                else -> TimeUnit.MINUTES.toMillis(split[0].toLong())
+            }
+        }
+        val editValues = kitsCache.getIfPresent(kit)?.get()
+        if (editValues != null) {
+            kitsCache.put(
+                kit,
+                CompletableFuture.supplyAsync {
+                    KSystemKit(
+                        editValues.name,
+                        convert,
+                        editValues.realName,
+                        editValues.items
+                    )
+                })
+        }
+        KitsInventory().kitGuiInventory()
+        s.sendMessage(
+            KitsLang.editKitTime.replace(
+                "%time%",
+                Manager.convertMillisToString(convert, KitsConfig.useShortTime)
+            )
+        )
         CompletableFuture.runAsync({
             try {
-                val split = time.replace("(?<=[A-Z])(?=[A-Z])|(?<=[a-z])(?=[A-Z])|(?<=\\D)$".toRegex(), "1")
-                    .split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)".toRegex())
-                val unit = try {
-                    split[1]
-                } catch (e: Exception) {
-                    null
-                }
-                val convert = if (unit == null) {
-                    TimeUnit.MINUTES.toMillis(split[0].toLong())
-                } else {
-                    when (unit.lowercase()) {
-                        "s" -> TimeUnit.SECONDS.toMillis(split[0].toLong())
-                        "m" -> TimeUnit.MINUTES.toMillis(split[0].toLong())
-                        "h" -> TimeUnit.HOURS.toMillis(split[0].toLong())
-                        "d" -> TimeUnit.DAYS.toMillis(split[0].toLong())
-                        else -> TimeUnit.MINUTES.toMillis(split[0].toLong())
-                    }
-                }
-                s.sendMessage(
-                    KitsLang.editKitTime.replace(
-                        "%time%",
-                        Manager.convertMillisToString(convert, KitsConfig.useShortTime)
-                    )
-                )
                 transaction(SqlInstance.SQL) {
                     SqlKits.update({ SqlKits.kitName eq kit.lowercase() }) {
                         it[kitTime] = convert
                     }
-                    updateKits()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (ex: Exception) {
+                ErrorClass().sendException(ex)
             }
         }, Executors.newCachedThreadPool())
     }
 
     private fun editKit(kit: String, items: Array<ItemStack?>) {
-
+        val editValues = kitsCache.getIfPresent(kit)?.get()
+        if (editValues != null) {
+            kitsCache.put(
+                kit,
+                CompletableFuture.supplyAsync {
+                    KSystemKit(
+                        editValues.name,
+                        editValues.time,
+                        editValues.realName,
+                        items
+                    )
+                })
+        }
+        KitsInventory().kitGuiInventory()
         CompletableFuture.runAsync({
             try {
                 val ite = convertItems(items)
@@ -197,9 +239,8 @@ class EditKit : CommandExecutor {
                         it[kitItems] = ite
                     }
                 }
-                updateKits()
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (ex: Exception) {
+                ErrorClass().sendException(ex)
             }
         }, Executors.newCachedThreadPool())
     }
@@ -215,7 +256,7 @@ class EditKit : CommandExecutor {
                     )
                 )
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                ErrorClass().sendException(ex)
                 e.player.sendMessage(
                     KitsLang.editKitProblem.replace(
                         "%name%",

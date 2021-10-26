@@ -9,6 +9,7 @@ import io.github.gilbertodamim.ksystem.config.configs.DatabaseConfig.sqlPort
 import io.github.gilbertodamim.ksystem.config.configs.DatabaseConfig.sqlType
 import io.github.gilbertodamim.ksystem.config.configs.DatabaseConfig.sqlUsername
 import io.github.gilbertodamim.ksystem.config.langs.StartLang.*
+import io.github.gilbertodamim.ksystem.management.ErrorClass
 import io.github.gilbertodamim.ksystem.management.Manager.consoleMessage
 import io.github.gilbertodamim.ksystem.management.Manager.pluginPasteDir
 import org.jetbrains.exposed.sql.Database
@@ -43,7 +44,7 @@ class SqlSelector {
             consoleMessage(connectDatabaseSuccess.replace("%db%", sqlType.lowercase()))
         } catch (ex: Exception) {
             consoleMessage(connectDatabaseError)
-            ex.printStackTrace()
+            ErrorClass().sendException(ex)
         }
     }
 }

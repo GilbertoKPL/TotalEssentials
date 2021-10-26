@@ -26,7 +26,8 @@ import static io.github.gilbertodamim.ksystem.config.langs.StartLang.restartBukk
 
 @SuppressWarnings({"unchecked"})
 public class KSystemMain extends JavaPlugin {
-    final public static String pluginName = "§f[§bK§cSystem§f]";
+    final public static String pluginName = "§bK§cSystem";
+    final public static String pluginTagName = "§f[" + pluginName + "§f]";
     public static String version = "";
 
     public static KSystemMain instance;
@@ -152,14 +153,14 @@ public class KSystemMain extends JavaPlugin {
             LibChecker.checkVersion();
         } finally {
             if (LibChecker.libChecker) {
-                KSystemMain.instance().getServer().getConsoleSender().sendMessage(pluginName + " " + restartBukkit);
+                KSystemMain.instance().getServer().getConsoleSender().sendMessage(pluginTagName + " " + restartBukkit);
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "restart");
             } else {
                 if (!LibChecker.update) {
                     new StartPlugin();
                 } else {
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "restart");
-                    KSystemMain.instance().getServer().getConsoleSender().sendMessage(pluginName + " " + restartBukkit);
+                    KSystemMain.instance().getServer().getConsoleSender().sendMessage(pluginTagName + " " + restartBukkit);
                 }
             }
         }

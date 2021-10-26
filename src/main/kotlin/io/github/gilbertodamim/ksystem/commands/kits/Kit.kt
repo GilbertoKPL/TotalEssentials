@@ -2,23 +2,27 @@ package io.github.gilbertodamim.ksystem.commands.kits
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import io.github.gilbertodamim.ksystem.KSystemMain
+import io.github.gilbertodamim.ksystem.KSystemMain.pluginName
 import io.github.gilbertodamim.ksystem.config.configs.KitsConfig.useShortTime
 import io.github.gilbertodamim.ksystem.config.langs.GeneralLang.notPerm
 import io.github.gilbertodamim.ksystem.config.langs.GeneralLang.onlyPlayerCommand
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang
+import io.github.gilbertodamim.ksystem.config.langs.KitsLang.kitInventoryIconEditkitName
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang.kitPickupIcon
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang.kitPickupIconLoreNotPerm
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang.kitPickupIconLoreTime
+import io.github.gilbertodamim.ksystem.config.langs.KitsLang.kitPickupIconNotPickup
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang.kitPickupMessage
+import io.github.gilbertodamim.ksystem.config.langs.KitsLang.list
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang.notExist
 import io.github.gilbertodamim.ksystem.database.SqlInstance
 import io.github.gilbertodamim.ksystem.database.table.PlayerKits
 import io.github.gilbertodamim.ksystem.database.table.SqlKits
 import io.github.gilbertodamim.ksystem.inventory.Api
 import io.github.gilbertodamim.ksystem.inventory.KitsInventory
+import io.github.gilbertodamim.ksystem.management.ErrorClass
 import io.github.gilbertodamim.ksystem.management.Manager.convertMillisToString
 import io.github.gilbertodamim.ksystem.management.Manager.getPlayerUUID
-import io.github.gilbertodamim.ksystem.management.dao.Dao
 import io.github.gilbertodamim.ksystem.management.dao.Dao.kitClickGuiCache
 import io.github.gilbertodamim.ksystem.management.dao.Dao.kitGuiCache
 import io.github.gilbertodamim.ksystem.management.dao.Dao.kitPlayerCache
@@ -52,20 +56,28 @@ class Kit : CommandExecutor {
         if (args.isNotEmpty() && s.hasPermission("ksystem.kits")) {
             val to = kitsCache.getIfPresent(args[0].lowercase())
             if (to != null) {
-                for (i in to.get().items) {
-                    s.player?.inventory?.addItem(i ?: continue)
-                }
-            }
-            else {
-                //send kitList
+                pickupKit(s, args[0].lowercase())
+            } else {
+                s.sendMessage(list.replace("%kits%", kitList().toString()))
             }
         } else {
             val inv = kitGuiCache.getIfPresent(1)
             if (inv != null) {
                 s.openInventory(inv)
             }
+            else {
+                s.sendMessage(KitsLang.notExistKits)
+            }
         }
         return false
+    }
+
+    private fun kitList() : List<String> {
+        val list = ArrayList<String>()
+        for(i in kitsCache.asMap()) {
+            list.add(i.key)
+        }
+        return list
     }
 
     private fun reloadKitCache() {
@@ -82,8 +94,8 @@ class Kit : CommandExecutor {
                         kitPlayerCache.put(i[PlayerKits.uuid], cache)
                     }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (ex: Exception) {
+                ErrorClass().sendException(ex)
             }
         }, Executors.newSingleThreadExecutor())
     }
@@ -114,8 +126,8 @@ class Kit : CommandExecutor {
                         }
                     }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (ex: Exception) {
+                ErrorClass().sendException(ex)
             }
         }, Executors.newSingleThreadExecutor())
     }
@@ -138,8 +150,8 @@ class Kit : CommandExecutor {
                     }
                     kitPlayerCache.put(pUUID, cache)
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (ex: Exception) {
+                ErrorClass().sendException(ex)
             }
         }, Executors.newSingleThreadExecutor())
     }
@@ -153,12 +165,13 @@ class Kit : CommandExecutor {
             if (timePlayerPickedKit != null) {
                 timeAll = kitCache.get()?.time!! + timePlayerPickedKit
             }
-            if (timeAll == 0L || timeAll < System.currentTimeMillis()) {
+            if (timeAll == 0L || timeAll <= System.currentTimeMillis()) {
                 if (p.hasPermission("ksystem.kit.$kit")) {
                     for (i in kitCache.get()?.items!!) {
                         if (i == null) continue
                         p.inventory.addItem(i)
                     }
+                    p.sendMessage(KitsLang.pickedSuccess.replace("%kit%", ))
                     upDatePlayerKitTime(p, kit)
                 } else {
                     p.sendMessage(notPerm)
@@ -172,8 +185,8 @@ class Kit : CommandExecutor {
         }
     }
 
-    private fun kitGui(kit: String, p: Player) {
-        val inv = KSystemMain.instance.server.createInventory(null, 36, "Kit $kit")
+    private fun kitGui(kit: String, guiNumber: String, p: Player) {
+        val inv = KSystemMain.instance.server.createInventory(null, 36, "$pluginName§eKit $kit $guiNumber")
         val to = kitsCache.getIfPresent(kit)!!.get()
         val pUUID = getPlayerUUID(p)
         val timePlayerPickedKit = kitPlayerCache.getIfPresent(pUUID)?.getIfPresent(kit)
@@ -185,45 +198,70 @@ class Kit : CommandExecutor {
             if (i == null) continue
             inv.addItem(i)
         }
-        inv.setItem(27, Api.item(Material.HOPPER, KitsLang.kitInventoryIconBackName))
-        if (p.hasPermission("ksystem.kit.$kit")) {
-            if (timeAll < System.currentTimeMillis() || timeAll == 0L) {
-                inv.setItem(35, Api.item(Material.ARROW, kitPickupIcon))
-            } else {
-                val array = ArrayList<String>()
-                val remainingTime = timeAll - System.currentTimeMillis()
-                for (i in kitPickupIconLoreTime) {
-                    array.add(i.replace("%time%", convertMillisToString(remainingTime, useShortTime)))
-                }
-                inv.setItem(35, Api.item(Material.ARROW, KitsLang.kitPickupIconNotPickup, array))
+        for (to1 in 27..35) {
+            if (to1 == 27) {
+                inv.setItem(27, Api.item(Material.HOPPER, KitsLang.kitInventoryIconBackName, true))
+                continue
             }
-        } else {
-            inv.setItem(35, Api.item(Material.ARROW, KitsLang.kitPickupIconNotPickup, kitPickupIconLoreNotPerm))
+            if (to1 == 31) {
+                if (p.hasPermission("ksystem.kits.admin")) {
+                    inv.setItem(to1, Api.item(Material.CHEST, kitInventoryIconEditkitName, true))
+                    continue
+                }
+            }
+            if (to1 == 35) {
+                if (p.hasPermission("ksystem.kit.$kit")) {
+                    if (timeAll <= System.currentTimeMillis() || timeAll == 0L) {
+                        inv.setItem(to1, Api.item(Material.ARROW, kitPickupIcon, true))
+                    } else {
+                        val array = ArrayList<String>()
+                        val remainingTime = timeAll - System.currentTimeMillis()
+                        for (i in kitPickupIconLoreTime) {
+                            array.add(i.replace("%time%", convertMillisToString(remainingTime, useShortTime)))
+                        }
+                        inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, array))
+                    }
+                } else {
+                    inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, kitPickupIconLoreNotPerm))
+                }
+                continue
+            }
+            inv.setItem(to1, Api.item(Material.YELLOW_STAINED_GLASS_PANE, "${pluginName}§eKIT", true))
         }
         p.openInventory(inv)
     }
 
     fun kitGuiEvent(e: InventoryClickEvent): Boolean {
         val inventoryName = e.view.title.split(" ")
-        if (inventoryName[0] == "Kit" && e.currentItem != null) {
+        if (inventoryName[0] == "$pluginName§eKit" && e.currentItem != null) {
             e.isCancelled = true
             val number = e.slot
             if (number == 27 && e.currentItem != null) {
-                e.whoClicked.openInventory(kitGuiCache.getIfPresent(1)!!)
+                e.whoClicked.openInventory(kitGuiCache.getIfPresent(inventoryName[2].toInt())!!)
             }
-            if (number == 35 && e.currentItem!!.itemMeta != null && e.currentItem!!.itemMeta?.displayName == kitPickupIcon) {
-                pickupKit(e.whoClicked as Player, inventoryName[1])
-                e.whoClicked.closeInventory()
+            if (number == 31 && e.currentItem != null && e.currentItem!!.itemMeta != null && e.currentItem!!.itemMeta?.displayName == kitInventoryIconEditkitName) {
+                if (e.whoClicked.hasPermission("ksystem.kits.admin")) {
+                    EditKit().editKitGui(inventoryName[1], e.whoClicked as Player)
+                }
+            }
+            if (number == 35 && e.currentItem!!.itemMeta != null) {
+                if (e.currentItem!!.itemMeta?.displayName == kitPickupIcon) {
+                    pickupKit(e.whoClicked as Player, inventoryName[1])
+                    e.whoClicked.closeInventory()
+                }
+                if (e.currentItem!!.itemMeta?.displayName == kitPickupIconNotPickup) {
+                    kitGui(inventoryName[1], inventoryName[2], e.whoClicked as Player)
+                }
             }
             return true
         }
-        if (inventoryName[0] == "Kits") {
+        if (inventoryName[0] == "$pluginName§eKits") {
             e.isCancelled = true
             val number = e.slot
             if (number < 27) {
                 val kit = kitClickGuiCache.getIfPresent((number + 1) + ((inventoryName[1].toInt() - 1) * 27))
                 if (kit != null) {
-                    kitGui(kit, e.whoClicked as Player)
+                    kitGui(kit, inventoryName[1], e.whoClicked as Player)
                 }
             } else {
                 if (number == 27 && inventoryName[1].toInt() > 1) {
@@ -253,8 +291,7 @@ class Kit : CommandExecutor {
             }
         }
 
-        fun updateKits() {
-            Dao.inUpdate = true
+        private fun updateKits() {
             CompletableFuture.runAsync({
                 try {
                     transaction(SqlInstance.SQL) {
@@ -276,9 +313,8 @@ class Kit : CommandExecutor {
                         }
                     }
                     KitsInventory().kitGuiInventory()
-                    Dao.inUpdate = false
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                } catch (ex: Exception) {
+                    ErrorClass().sendException(ex)
                 }
             }, Executors.newCachedThreadPool())
         }

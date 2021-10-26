@@ -1,7 +1,7 @@
 package io.github.gilbertodamim.ksystem.management
 
 import io.github.gilbertodamim.ksystem.KSystemMain.instance
-import io.github.gilbertodamim.ksystem.KSystemMain.pluginName
+import io.github.gilbertodamim.ksystem.KSystemMain.pluginTagName
 import io.github.gilbertodamim.ksystem.config.langs.TimeLang
 import io.github.gilbertodamim.ksystem.config.langs.TimeLang.timeDayShort
 import io.github.gilbertodamim.ksystem.config.langs.TimeLang.timeHourShort
@@ -11,13 +11,15 @@ import org.bukkit.entity.Player
 
 object Manager {
     fun consoleMessage(msg: String) {
-        instance.server.consoleSender.sendMessage("$pluginName $msg")
+        instance.server.consoleSender.sendMessage("$pluginTagName $msg")
     }
+
     fun pluginPasteDir(): String = instance.dataFolder.path
     fun pluginLangDir(): String = instance.dataFolder.path + "/lang/"
-    fun getPlayerUUID(p : Player) : String{
+    fun getPlayerUUID(p: Player): String {
         return p.uniqueId.toString()
     }
+
     fun convertMillisToString(time: Long, short: Boolean): String {
         val toSend = ArrayList<String>()
         fun helper(time: Long, sendShort: String, send: String) {
@@ -29,6 +31,7 @@ object Manager {
                 }
             }
         }
+
         var seconds = time / 1000
         var minutes = seconds / 60
         var hours = minutes / 60

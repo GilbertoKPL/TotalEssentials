@@ -1,6 +1,8 @@
 package io.github.gilbertodamim.ksystem.inventory
 
 import org.bukkit.Material
+import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
 object Api {
@@ -13,10 +15,14 @@ object Api {
         return item
     }
 
-    fun item(material: Material, name: String): ItemStack {
+    fun item(material: Material, name: String, effect: Boolean = false): ItemStack {
         val item = ItemStack(material)
         val meta = item.itemMeta
         meta?.setDisplayName(name)
+        if (effect) {
+            item.addUnsafeEnchantment(Enchantment.LUCK, 1)
+            meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+        }
         item.itemMeta = meta
         return item
     }

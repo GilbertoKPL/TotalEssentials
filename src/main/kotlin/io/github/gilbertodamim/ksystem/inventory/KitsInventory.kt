@@ -1,6 +1,7 @@
 package io.github.gilbertodamim.ksystem.inventory
 
 import io.github.gilbertodamim.ksystem.KSystemMain
+import io.github.gilbertodamim.ksystem.KSystemMain.pluginName
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang.editkitInventoryItemsLore
 import io.github.gilbertodamim.ksystem.config.langs.KitsLang.editkitInventoryItemsName
@@ -23,7 +24,10 @@ class KitsInventory {
     fun editKitInventory() {
         for (inventory in 0..26) {
             if (inventory == 11) {
-                EditKitGuiCache.put(inventory, item(Material.CHEST, editkitInventoryItemsName, editkitInventoryItemsLore))
+                EditKitGuiCache.put(
+                    inventory,
+                    item(Material.CHEST, editkitInventoryItemsName, editkitInventoryItemsLore)
+                )
                 continue
             }
             if (inventory == 13) {
@@ -31,16 +35,20 @@ class KitsInventory {
                 continue
             }
             if (inventory == 15) {
-                EditKitGuiCache.put(inventory, item(Material.NAME_TAG, editkitInventoryNameName, editkitInventoryNameLore))
+                EditKitGuiCache.put(
+                    inventory,
+                    item(Material.NAME_TAG, editkitInventoryNameName, editkitInventoryNameLore)
+                )
                 continue
             }
-            EditKitGuiCache.put(inventory, item(Material.AIR))
+            EditKitGuiCache.put(inventory, item(Material.YELLOW_STAINED_GLASS_PANE, "${pluginName}§eKIT", true))
         }
     }
+
     fun kitGuiInventory() {
         var size = 1
         var length = 0
-        var inv = KSystemMain.instance.server.createInventory(null, 36, "Kits 1")
+        var inv = KSystemMain.instance.server.createInventory(null, 36, "$pluginName§eKits 1")
         for (i in Dao.kitsCache.asMap()) {
             var item = ItemStack(Material.CHEST)
             val name = kitInventoryItemsName.replace("%kitrealname%", i.value.get().realName)
@@ -53,7 +61,7 @@ class KitsInventory {
             val meta = item.itemMeta
             item.amount = 1
             meta?.setDisplayName(name)
-            val itemLore  = ArrayList<String>()
+            val itemLore = ArrayList<String>()
             for (lore in kitInventoryItemsLore) {
                 itemLore.add(lore.replace("%name%", i.key))
             }
@@ -64,13 +72,21 @@ class KitsInventory {
             if (length < 26) {
                 inv.setItem(length, item)
                 length += 1
-            }
-            else {
+            } else {
                 inv.setItem(length, item)
-                if (size > 1) {
-                    inv.setItem(27, item(Material.HOPPER, KitsLang.kitInventoryIconBackName))
+                for (to in 27..35) {
+                    if (to == 27) {
+                        if (size > 1) {
+                            inv.setItem(to, item(Material.HOPPER, KitsLang.kitInventoryIconBackName))
+                            continue
+                        }
+                    }
+                    if (to == 35) {
+                        inv.setItem(to, item(Material.ARROW, KitsLang.kitInventoryIconNextName))
+                        continue
+                    }
+                    inv.setItem(to, item(Material.YELLOW_STAINED_GLASS_PANE, "${pluginName}§eKIT", true))
                 }
-                inv.setItem(35, item(Material.ARROW, KitsLang.kitInventoryIconNextName))
                 kitGuiCache.put(size, inv)
                 length = 0
                 size += 1
@@ -80,6 +96,11 @@ class KitsInventory {
         if (length > 0) {
             if (size != 1) {
                 inv.setItem(27, item(Material.HOPPER, KitsLang.kitInventoryIconBackName))
+            }
+            if (size == 1) {
+                for (to in 27..35) {
+                    inv.setItem(to, item(Material.YELLOW_STAINED_GLASS_PANE, "${pluginName}§eKIT", true))
+                }
             }
             kitGuiCache.put(size, inv)
         }

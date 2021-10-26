@@ -2,7 +2,7 @@ package io.github.gilbertodamim.ksystem.management.dao
 
 import org.bukkit.inventory.ItemStack
 
-data class KSystemKit(val name : String, val time : Long, val realName : String, val items : Array<ItemStack?>) {
+data class KSystemKit(val name: String, val time: Long, val realName: String, val items: Array<ItemStack?>) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -13,6 +13,7 @@ data class KSystemKit(val name : String, val time : Long, val realName : String,
         if (!items.contentEquals(other.items)) return false
         return true
     }
+
     override fun hashCode(): Int {
         var result = name.hashCode()
         result = 31 * result + time.hashCode()

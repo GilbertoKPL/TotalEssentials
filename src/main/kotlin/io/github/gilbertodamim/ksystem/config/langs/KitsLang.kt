@@ -31,8 +31,12 @@ object KitsLang {
     lateinit var kitPickupMessage: String
     lateinit var kitPickupIcon: String
     lateinit var kitPickupIconNotPickup: String
+    lateinit var kitInventoryIconEditkitName: String
+    lateinit var notExistKits: String
     lateinit var kitPickupIconLoreNotPerm: List<String>
     lateinit var kitPickupIconLoreTime: List<String>
+    lateinit var list: String
+    lateinit var pickedSuccess: String
     fun reload(source1: YamlConfiguration) {
         notExist = ConfigMain.getString(source1, "Kits.not-exist", true)
         Exist = ConfigMain.getString(source1, "Kits.exist", true)
@@ -63,5 +67,9 @@ object KitsLang {
         kitPickupIconNotPickup = ConfigMain.getString(source1, "Kits.kit-pickup-icon-not-pickup", true)
         kitPickupIconLoreNotPerm = ConfigMain.getStringList(source1, "Kits.kit-pickup-icon-lore-not-perm", true)
         kitPickupIconLoreTime = ConfigMain.getStringList(source1, "Kits.kit-pickup-icon-lore-time", true)
+        kitInventoryIconEditkitName = ConfigMain.getString(source1, "Kits.kit-inventory-icon-editkit-name", true)
+        notExistKits = ConfigMain.getString(source1, "Kits.not-exist-kits", true)
+        list = ConfigMain.getString(source1, "Kits.list", true)
+        pickedSuccess = ConfigMain.getString(source1, "Kits.pickidSucess", true)
     }
 }

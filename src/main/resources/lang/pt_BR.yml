@@ -20,6 +20,9 @@ Time:
 Kits:
   not-exist: '&cEsse kit não existe.'
   exist: '&cEsse kit já existe.'
+  not-exist-kits: '&eCrie seu kit com /criarkit (nome do kit)'
+  list: '&eLista de kits -> %kits%'
+  picked-success: '&eVocê pegou o kit %kit% com sucesso'
   name-length: '&cTamanho maximo do nome do kit 16 caracteres.'
   editkit-time: '&eTempo do kit setado para %time%.'
   createkit-usage: '&c/createkit (Nome do kit).'
@@ -50,6 +53,7 @@ Kits:
     - '&fEditar o nome do kit'
   kit-inventory-icon-back-name: '&eVoltar página'
   kit-inventory-icon-next-name: '&ePróxima página'
+  kit-inventory-icon-editkit-name: '&eClique aqui para editar o kit'
   kit-inventory-items-name: '&eKit &f%kitrealname%'
   kit-inventory-items-lore:
     - '&fNome do kit -> %name%'

@@ -1,6 +1,7 @@
 group = "io.github.gilbertodamim.ksystem"
 version = 1.0
 
+//1.17.1 -> 1.17.1-R0.1-SNAPSHOT
 
 val exposedVersion= "0.35.3"
 val bukkitversion= "1.17.1-R0.1-SNAPSHOT"

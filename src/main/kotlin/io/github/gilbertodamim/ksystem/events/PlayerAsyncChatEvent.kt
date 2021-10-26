@@ -8,6 +8,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 class PlayerAsyncChatEvent : Listener {
     @EventHandler
     fun closeInventory(e: AsyncPlayerChatEvent) {
-        if(EditKit().editKitMessageEvent(e)) return
+        if (EditKit().editKitMessageEvent(e)) return
     }
 }

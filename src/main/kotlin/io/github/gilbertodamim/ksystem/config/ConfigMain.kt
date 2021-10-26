@@ -10,6 +10,7 @@ import io.github.gilbertodamim.ksystem.config.langs.KitsLang
 import io.github.gilbertodamim.ksystem.config.langs.StartLang.*
 import io.github.gilbertodamim.ksystem.config.langs.TimeLang
 import io.github.gilbertodamim.ksystem.inventory.KitsInventory
+import io.github.gilbertodamim.ksystem.management.ErrorClass
 import io.github.gilbertodamim.ksystem.management.Manager.consoleMessage
 import io.github.gilbertodamim.ksystem.management.Manager.pluginLangDir
 import io.github.gilbertodamim.ksystem.management.Manager.pluginPasteDir
@@ -45,7 +46,7 @@ object ConfigMain {
         } catch (ex: Exception) {
             langConfig = patternLang
             consoleMessage(langError)
-            ex.printStackTrace()
+            ErrorClass().sendException(ex)
         }
         reloadLang()
         consoleMessage(completeVerification)
@@ -64,8 +65,8 @@ object ConfigMain {
                 val check: YamlConfiguration
                 try {
                     check = YamlConfiguration.loadConfiguration(File(pluginPasteDir(), "${configs.name}.yml"))
-                } catch (Ex: Exception) {
-                    Ex.printStackTrace()
+                } catch (ex: Exception) {
+                    ErrorClass().sendException(ex)
                     consoleMessage(problemReload.replace("%file%", configs.name))
                     configs.save(configs.currentPath)
                     return
@@ -81,7 +82,8 @@ object ConfigMain {
     private fun startLang() {
         val directoryStream: DirectoryStream<Path>? = Files.newDirectoryStream(
             FileSystems.newFileSystem(
-                Paths.get(instance.javaClass.protectionDomain.codeSource.location.toURI()), instance.javaClass.classLoader
+                Paths.get(instance.javaClass.protectionDomain.codeSource.location.toURI()),
+                instance.javaClass.classLoader
             ).getPath("/lang/")
         )
         if (directoryStream != null) {
@@ -119,13 +121,13 @@ object ConfigMain {
                 } else {
                     YamlConfiguration.loadConfiguration(File(pluginPasteDir(), "$source.yml"))
                 }
-            } catch (Ex: Exception) {
+            } catch (ex: Exception) {
                 if (lang) {
                     consoleMessage(problemMessage.replace("%to%", "lang").replace("%file%", source))
                 } else {
                     consoleMessage(problemMessage.replace("%to%", "config").replace("%file%", source))
                 }
-                Ex.printStackTrace()
+                ErrorClass().sendException(ex)
                 disablePlugin()
                 return null
             }
