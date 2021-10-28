@@ -9,7 +9,7 @@ import io.github.gilbertodamim.ksystem.config.configs.KitsConfig
 
 class StartCommands {
     fun start() {
-        instance.getCommand("essentials")?.setExecutor(Essentials())
+        instance.getCommand("ksystem")?.setExecutor(KSystem())
         kits()
     }
 

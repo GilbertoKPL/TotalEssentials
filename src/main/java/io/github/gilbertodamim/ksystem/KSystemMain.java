@@ -13,13 +13,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URLClassLoader;
 import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import static io.github.gilbertodamim.ksystem.config.langs.StartLang.restartBukkit;
 
@@ -28,7 +24,7 @@ import static io.github.gilbertodamim.ksystem.config.langs.StartLang.restartBukk
 public class KSystemMain extends JavaPlugin {
     final public static String pluginName = "§bK§cSystem";
     final public static String pluginTagName = "§f[" + pluginName + "§f]";
-    public static String version = "";
+    public static Double version = 1.0;
 
     public static KSystemMain instance;
 
@@ -39,18 +35,6 @@ public class KSystemMain extends JavaPlugin {
     public static void checkClass(String c) throws ClassNotFoundException {
         Class.forName(c);
     }
-
-    public String getVersionNameFromManifest() throws IOException {
-        InputStream manifestStream = getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
-        if (manifestStream != null) {
-            Manifest manifest = new Manifest(manifestStream);
-            Attributes attributes = manifest.getMainAttributes();
-            return attributes.getValue("Version-Name");
-
-        }
-        return instance.getDescription().getVersion();
-    }
-
     public static void disableLoggers() {
         try {
             checkClass("org.apache.logging.log4j.core.LoggerContext");
@@ -144,11 +128,6 @@ public class KSystemMain extends JavaPlugin {
     public void onEnable() {
         instance = this;
         disableLoggers();
-        try {
-            version = getVersionNameFromManifest();
-        } catch (IOException e) {
-            version = instance.getDescription().getVersion();
-        }
         try {
             LibChecker.checkVersion();
         } finally {

@@ -2,6 +2,7 @@ package io.github.gilbertodamim.ksystem.management.dao
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
@@ -19,4 +20,7 @@ object Dao {
     val ChatEventKit = HashMap<Player, String>(10)
     val kitInventory = HashMap<Player, String>(10)
     val kitEditInventory = HashMap<Player, String>(10)
+
+    //general
+    val Materials = HashMap<String, Material>(10)
 }

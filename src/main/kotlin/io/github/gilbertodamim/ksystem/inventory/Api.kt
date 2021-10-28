@@ -6,21 +6,29 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
 object Api {
-    fun item(material: Material, name: String, lore: List<String>): ItemStack {
+    fun item(material: Material, name: String, lore: List<String>, effect: Boolean = false): ItemStack {
         val item = ItemStack(material)
+        if (effect) {
+            item.addUnsafeEnchantment(Enchantment.LUCK, 1)
+        }
         val meta = item.itemMeta
         meta?.lore = lore
         meta?.setDisplayName(name)
+        if (effect) {
+            meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+        }
         item.itemMeta = meta
         return item
     }
 
     fun item(material: Material, name: String, effect: Boolean = false): ItemStack {
         val item = ItemStack(material)
+        if (effect) {
+            item.addUnsafeEnchantment(Enchantment.LUCK, 1)
+        }
         val meta = item.itemMeta
         meta?.setDisplayName(name)
         if (effect) {
-            item.addUnsafeEnchantment(Enchantment.LUCK, 1)
             meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)
         }
         item.itemMeta = meta

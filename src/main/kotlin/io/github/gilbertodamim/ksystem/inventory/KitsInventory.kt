@@ -31,17 +31,21 @@ class KitsInventory {
                 continue
             }
             if (inventory == 13) {
-                EditKitGuiCache.put(inventory, item(Material.CLOCK, editkitInventoryTimeName, editkitInventoryTimeLore))
-                continue
-            }
-            if (inventory == 15) {
-                EditKitGuiCache.put(
-                    inventory,
-                    item(Material.NAME_TAG, editkitInventoryNameName, editkitInventoryNameLore)
+                EditKitGuiCache.put(inventory,
+                    item(Dao.Materials["clock"]!!, editkitInventoryTimeName, editkitInventoryTimeLore)
                 )
                 continue
             }
-            EditKitGuiCache.put(inventory, item(Material.YELLOW_STAINED_GLASS_PANE, "${pluginName}§eKIT", true))
+            if (inventory == 15) {
+                    EditKitGuiCache.put(
+                        inventory,
+                        item(Dao.Materials["feather"]!!, editkitInventoryNameName, editkitInventoryNameLore)
+                    )
+                continue
+            }
+            EditKitGuiCache.put(inventory,
+                item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+            )
         }
     }
 
@@ -77,15 +81,17 @@ class KitsInventory {
                 for (to in 27..35) {
                     if (to == 27) {
                         if (size > 1) {
-                            inv.setItem(to, item(Material.HOPPER, KitsLang.kitInventoryIconBackName))
+                            inv.setItem(to, item(Material.HOPPER, KitsLang.kitInventoryIconBackName, true))
                             continue
                         }
                     }
                     if (to == 35) {
-                        inv.setItem(to, item(Material.ARROW, KitsLang.kitInventoryIconNextName))
+                        inv.setItem(to, item(Material.ARROW, KitsLang.kitInventoryIconNextName, true))
                         continue
                     }
-                    inv.setItem(to, item(Material.YELLOW_STAINED_GLASS_PANE, "${pluginName}§eKIT", true))
+                    inv.setItem(to,
+                        item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+                    )
                 }
                 kitGuiCache.put(size, inv)
                 length = 0
@@ -99,7 +105,9 @@ class KitsInventory {
             }
             if (size == 1) {
                 for (to in 27..35) {
-                    inv.setItem(to, item(Material.YELLOW_STAINED_GLASS_PANE, "${pluginName}§eKIT", true))
+                    inv.setItem(to,
+                        item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+                    )
                 }
             }
             kitGuiCache.put(size, inv)

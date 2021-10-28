@@ -70,6 +70,6 @@ object KitsLang {
         kitInventoryIconEditkitName = ConfigMain.getString(source1, "Kits.kit-inventory-icon-editkit-name", true)
         notExistKits = ConfigMain.getString(source1, "Kits.not-exist-kits", true)
         list = ConfigMain.getString(source1, "Kits.list", true)
-        pickedSuccess = ConfigMain.getString(source1, "Kits.pickidSucess", true)
+        pickedSuccess = ConfigMain.getString(source1, "Kits.picked-success", true)
     }
 }

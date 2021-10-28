@@ -7,6 +7,8 @@ import io.github.gilbertodamim.ksystem.config.langs.TimeLang.timeDayShort
 import io.github.gilbertodamim.ksystem.config.langs.TimeLang.timeHourShort
 import io.github.gilbertodamim.ksystem.config.langs.TimeLang.timeMinuteShort
 import io.github.gilbertodamim.ksystem.config.langs.TimeLang.timeSecondShort
+import io.github.gilbertodamim.ksystem.management.dao.Dao.Materials
+import org.bukkit.Material
 import org.bukkit.entity.Player
 
 object Manager {
@@ -74,5 +76,22 @@ object Manager {
             }
         }
         return toReturn
+    }
+
+    fun startMaterials() {
+        fun help(material : List<String>) : Material {
+            var mat = Material.AIR
+            for (i in material) {
+                val toPut = Material.getMaterial(i)
+                if (toPut != null) {
+                    mat = toPut
+                    break
+                }
+            }
+            return mat
+        }
+        Materials["glass"] = help(listOf("STAINED_GLASS_PANE", "THIN_GLASS", "YELLOW_STAINED_GLASS"))
+        Materials["clock"] = help(listOf("CLOCK", "WATCH"))
+        Materials["feather"] = help(listOf("FEATHER"))
     }
 }

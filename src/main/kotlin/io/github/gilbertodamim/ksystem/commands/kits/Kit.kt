@@ -23,6 +23,7 @@ import io.github.gilbertodamim.ksystem.inventory.KitsInventory
 import io.github.gilbertodamim.ksystem.management.ErrorClass
 import io.github.gilbertodamim.ksystem.management.Manager.convertMillisToString
 import io.github.gilbertodamim.ksystem.management.Manager.getPlayerUUID
+import io.github.gilbertodamim.ksystem.management.dao.Dao
 import io.github.gilbertodamim.ksystem.management.dao.Dao.kitClickGuiCache
 import io.github.gilbertodamim.ksystem.management.dao.Dao.kitGuiCache
 import io.github.gilbertodamim.ksystem.management.dao.Dao.kitPlayerCache
@@ -80,18 +81,30 @@ class Kit : CommandExecutor {
         return list
     }
 
-    private fun reloadKitCache() {
+    private fun startPlayerKitCache() {
         kitPlayerCache.cleanUp()
         CompletableFuture.runAsync({
             try {
                 transaction(SqlInstance.SQL) {
                     for (i in PlayerKits.selectAll()) {
+                        val sizeColumn = PlayerKits.columns.size - 1
+                        var checkSizeColumn = 0
                         val cache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
                         for (col in PlayerKits.columns) {
                             if (col == PlayerKits.uuid) continue
-                            cache.put(col.name, i[col] as Long)
+                            val long = i[col] as Long
+                            val timeAll = kitsCache.getIfPresent(col.name)?.get()?.time!! + long
+                            if (long == 0L || timeAll < System.currentTimeMillis()) {
+                                checkSizeColumn += 1
+                            }
+                            cache.put(col.name, long)
                         }
-                        kitPlayerCache.put(i[PlayerKits.uuid], cache)
+                        if (sizeColumn == checkSizeColumn) {
+                            PlayerKits.deleteWhere { PlayerKits.uuid eq i[PlayerKits.uuid]}
+                        }
+                        else {
+                            kitPlayerCache.put(i[PlayerKits.uuid], cache)
+                        }
                     }
                 }
             } catch (ex: Exception) {
@@ -114,10 +127,21 @@ class Kit : CommandExecutor {
                 transaction(SqlInstance.SQL) {
                     val work = PlayerKits.select { PlayerKits.uuid eq pUUID }
                     val col = Column<Long>(PlayerKits, kit, LongColumnType())
+                    val array = ArrayList<Column<Long>>()
+                    for (column in SqlKits.selectAll()) {
+                        val colTo = Column<Long>(PlayerKits, column[SqlKits.kitName], LongColumnType())
+                        array.add(colTo)
+                    }
                     if (work.empty()) {
                         PlayerKits.insert {
                             it[uuid] = pUUID
                             it[col] = System.currentTimeMillis()
+                            for (i in array) {
+                                if (i == uuid) continue
+                                if (i == col) continue
+                                val colTo = Column<Long>(PlayerKits, i.name, LongColumnType())
+                                it[colTo] = 0L
+                            }
                         }
                         addPlayerToCache(p)
                     } else {
@@ -171,7 +195,7 @@ class Kit : CommandExecutor {
                         if (i == null) continue
                         p.inventory.addItem(i)
                     }
-                    p.sendMessage(KitsLang.pickedSuccess.replace("%kit%", ))
+                    p.sendMessage(KitsLang.pickedSuccess.replace("%kit%", kitCache.get().realName))
                     upDatePlayerKitTime(p, kit)
                 } else {
                     p.sendMessage(notPerm)
@@ -219,14 +243,16 @@ class Kit : CommandExecutor {
                         for (i in kitPickupIconLoreTime) {
                             array.add(i.replace("%time%", convertMillisToString(remainingTime, useShortTime)))
                         }
-                        inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, array))
+                        inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, array , true))
                     }
                 } else {
-                    inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, kitPickupIconLoreNotPerm))
+                    inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, kitPickupIconLoreNotPerm , true))
                 }
                 continue
             }
-            inv.setItem(to1, Api.item(Material.YELLOW_STAINED_GLASS_PANE, "${pluginName}§eKIT", true))
+            inv.setItem(to1,
+                Api.item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+            )
         }
         p.openInventory(inv)
     }
@@ -286,12 +312,12 @@ class Kit : CommandExecutor {
                     SchemaUtils.create(SqlKits, PlayerKits)
                 }
             } finally {
-                updateKits()
-                Kit().reloadKitCache()
+                startCacheKits()
+                Kit().startPlayerKitCache()
             }
         }
 
-        private fun updateKits() {
+        private fun startCacheKits() {
             CompletableFuture.runAsync({
                 try {
                     transaction(SqlInstance.SQL) {

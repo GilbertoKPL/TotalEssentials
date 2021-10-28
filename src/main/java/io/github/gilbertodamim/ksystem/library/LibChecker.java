@@ -58,15 +58,17 @@ public class LibChecker {
             Files.copy(downloader("https://pastebin.com/raw/Nm30fsTp"), checkFile.toPath());
             versionFile = YamlConfiguration.loadConfiguration(checkFile);
             checkFile.delete();
-            String pluginVersion = KSystemMain.version;
+            Double pluginVersion = KSystemMain.version;
             String versionToCheck = versionFile.getString("plugin-version");
-            if (Double.parseDouble(Objects.requireNonNull(versionToCheck)) > Double.parseDouble(pluginVersion)) {
+            assert versionToCheck != null;
+            if (Double.parseDouble(versionToCheck) > pluginVersion) {
                 update = true;
-                pluginVersion = versionToCheck;
+                pluginVersion = Double.parseDouble(versionToCheck);
                 consoleMessage(StartLang.updatePlugin.replace("%version%", "" + versionToCheck));
             }
             toDownload = versionFile.getInt("version-lib-" + pluginVersion + ".size");
-            for (String libs : Objects.requireNonNull(versionFile.getConfigurationSection("version-lib-" + pluginVersion)).getKeys(false)) {
+            for (String libs : versionFile.getConfigurationSection("version-lib-" + pluginVersion).getKeys(false)) {
+                if (libs == null) continue;
                 if (Objects.equals(libs, "size")) continue;
                 String[] split = Objects.requireNonNull(versionFile.getString("version-lib-" + pluginVersion + "." + libs)).split(":-:");
                 String version = split[0];

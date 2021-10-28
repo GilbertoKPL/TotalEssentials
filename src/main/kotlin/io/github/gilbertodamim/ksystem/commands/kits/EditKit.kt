@@ -165,22 +165,30 @@ class EditKit : CommandExecutor {
     }
 
     private fun editKit(kit: String, time: String, s: CommandSender) {
-        val split = time.replace("(?<=[A-Z])(?=[A-Z])|(?<=[a-z])(?=[A-Z])|(?<=\\D)$".toRegex(), "1")
-            .split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)".toRegex())
-        val unit = try {
-            split[1]
-        } catch (e: Exception) {
-            null
-        }
-        val convert = if (unit == null) {
-            TimeUnit.MINUTES.toMillis(split[0].toLong())
-        } else {
-            when (unit.lowercase()) {
-                "s" -> TimeUnit.SECONDS.toMillis(split[0].toLong())
-                "m" -> TimeUnit.MINUTES.toMillis(split[0].toLong())
-                "h" -> TimeUnit.HOURS.toMillis(split[0].toLong())
-                "d" -> TimeUnit.DAYS.toMillis(split[0].toLong())
-                else -> TimeUnit.MINUTES.toMillis(split[0].toLong())
+        val messageSplit = time.split(" ")
+        var convert = 0L
+        for (i in messageSplit) {
+            val split = i.replace("(?<=[A-Z])(?=[A-Z])|(?<=[a-z])(?=[A-Z])|(?<=\\D)$".toRegex(), "1")
+                .split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)".toRegex())
+            val unit = try {
+                split[1]
+            } catch (e: Exception) {
+                null
+            }
+            convert += if (unit == null) {
+                try {
+                    TimeUnit.MINUTES.toMillis(split[0].toLong())
+                } catch (e: Exception) {
+                    0L
+                }
+            } else {
+                when (unit.lowercase()) {
+                    "s" -> TimeUnit.SECONDS.toMillis(split[0].toLong())
+                    "m" -> TimeUnit.MINUTES.toMillis(split[0].toLong())
+                    "h" -> TimeUnit.HOURS.toMillis(split[0].toLong())
+                    "d" -> TimeUnit.DAYS.toMillis(split[0].toLong())
+                    else -> TimeUnit.MINUTES.toMillis(split[0].toLong())
+                }
             }
         }
         val editValues = kitsCache.getIfPresent(kit)?.get()
