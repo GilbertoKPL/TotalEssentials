@@ -4,7 +4,6 @@ version = 1.0
 //1.17.1 -> 1.17.1-R0.1-SNAPSHOT
 
 val exposedVersion= "0.35.3"
-val bukkitVersion= "1.17.1-R0.1-SNAPSHOT"
 val kotlinVersion= "1.5.31"
 val xSeries = "8.4.0"
 val hikariVersion= "3.4.5" // java 8
@@ -53,13 +52,13 @@ repositories {
     mavenCentral()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
+    maven(url = "https://repo.mikeprimm.com/")
 }
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion")
     compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    compileOnly("org.spigotmc:spigot-api:$bukkitVersion")
     compileOnly("com.zaxxer:HikariCP:$hikariVersion")
     compileOnly("com.github.ben-manes.caffeine:caffeine:$caffeine")
     //in plugin
@@ -67,6 +66,9 @@ dependencies {
     implementation("org.slf4j:slf4j-nop:1.7.32")
     //not lib
     compileOnly("org.apache.logging.log4j:log4j-core:2.14.1")
+    //minecraft
+    compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
+    //compileOnly("org.bukkit:craftbukkit:1.5.2-R1.1-SNAPSHOT")
 }
 artifacts.archives(tasks.shadowJar)
 tasks.shadowJar {

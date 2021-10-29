@@ -224,9 +224,9 @@ class Kit : CommandExecutor {
             if (i == null) continue
             inv.addItem(i)
         }
-        for (to1 in 35..44) {
-            if (to1 == 35) {
-                inv.setItem(27, Api.item(Material.HOPPER, KitsLang.kitInventoryIconBackName, true))
+        for (to1 in 36..44) {
+            if (to1 == 36) {
+                inv.setItem(to1, Api.item(Material.HOPPER, KitsLang.kitInventoryIconBackName, true))
                 continue
             }
             if (to1 == 40) {
@@ -265,7 +265,7 @@ class Kit : CommandExecutor {
             val p = e.whoClicked as Player
             e.isCancelled = true
             val number = e.slot
-            if (number == 35 && e.currentItem != null) {
+            if (number == 36 && e.currentItem != null) {
                 p.openInventory(kitGuiCache.getIfPresent(inventoryName[2].toInt())!!)
             }
             if (number == 40 && e.currentItem != null && e.currentItem!!.itemMeta != null && e.currentItem!!.itemMeta?.displayName == kitInventoryIconEditkitName) {

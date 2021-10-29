@@ -187,7 +187,11 @@ class EditKit : CommandExecutor {
                     "m" -> TimeUnit.MINUTES.toMillis(split[0].toLong())
                     "h" -> TimeUnit.HOURS.toMillis(split[0].toLong())
                     "d" -> TimeUnit.DAYS.toMillis(split[0].toLong())
-                    else -> TimeUnit.MINUTES.toMillis(split[0].toLong())
+                    else -> try {
+                        TimeUnit.MINUTES.toMillis(split[0].toLong())
+                    } catch (e: Exception) {
+                        0L
+                    }
                 }
             }
         }
@@ -254,25 +258,26 @@ class EditKit : CommandExecutor {
     }
 
     fun event(e: InventoryCloseEvent): Boolean {
-        if (Dao.kitEditInventory.contains(e.player)) {
+        if (Dao.kitEditInventory.contains(e.player as Player)) {
+            val p = e.player as Player
             try {
-                editKit(Dao.kitEditInventory[e.player]!!, e.inventory.contents)
-                e.player.sendMessage(
+                editKit(Dao.kitEditInventory[p]!!, e.inventory.contents)
+                p.sendMessage(
                     KitsLang.editKitSuccess.replace(
                         "%name%",
-                        Dao.kitEditInventory[e.player]!!
+                        Dao.kitEditInventory[p]!!
                     )
                 )
             } catch (ex: Exception) {
                 ErrorClass().sendException(ex)
-                e.player.sendMessage(
+                p.sendMessage(
                     KitsLang.editKitProblem.replace(
                         "%name%",
-                        Dao.kitEditInventory[e.player]!!
+                        Dao.kitEditInventory[p]!!
                     )
                 )
             }
-            Dao.kitEditInventory.remove(e.player)
+            Dao.kitEditInventory.remove(p)
             return true
         }
         return false
