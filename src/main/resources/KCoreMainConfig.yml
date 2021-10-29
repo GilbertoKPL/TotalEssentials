@@ -1,0 +1,20 @@
+# Este arquivo é a main config do plugin KCore onde influenciará em seu funcionamento...
+# Criador: Gilberto Damim;
+# Github: https://github.com/GilbertoDamim/KCore;
+# Quaisquer duvidas entrar em contato no discord Gilberto (K_Plugins)#5620 ou mesmo pelo github;
+# Este projeto está em desenvolvimento porfavor tenha paciencia do projeto final;
+# Escolha o tipo de armazenamento do plugin, disponiveis: sqlite, h2, mysql;
+# futuros tipos de armazenamento: postgresql, sqlserver.
+Version-file: 1.0
+Lang: pt_BR
+Database:
+  type: h2
+  connect:
+    ip: localhost
+    port: 3306
+    username: u0_kcore
+    database: s0_kcore
+    pass: kcore123
+Kits:
+  activated: true
+  use-short-time: false

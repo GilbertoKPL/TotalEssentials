@@ -1,4 +1,4 @@
-group = "io.github.gilbertodamim.ksystem"
+group = "io.github.gilbertodamim.kcore"
 version = 1.0
 
 //1.17.1 -> 1.17.1-R0.1-SNAPSHOT
@@ -10,7 +10,7 @@ val xSeries = "8.4.0"
 val hikariVersion= "3.4.5" // java 8
 val slf4j= "1.7.32"
 val caffeine= "2.9.2" // java 8
-val libPaste = "KSystem/lib/"
+val libPaste = "KCore/lib/"
 
 plugins {
     kotlin("jvm") version "1.5.31"
@@ -19,36 +19,32 @@ plugins {
 }
 
 bukkit {
-    main = "io.github.gilbertodamim.ksystem.KSystemMain"
+    main = "io.github.gilbertodamim.kcore.KCoreMain"
     author = "Gilberto"
-    version = "${project.version}"
+    name = project.name
+    version = project.version.toString()
     apiVersion = "1.13"
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.STARTUP
     commands {
-        register("ksystem") {
+        register("kcore") {
             description = "This is a kit command!"
             aliases = listOf("system", "essentials", "s", "ks")
-            permission = "ksystem.kits"
         }
         register("kit") {
             description = "This is a kit command!"
             aliases = listOf("kits")
-            permission = "ksystem.kits"
         }
         register("editkit") {
             description = "This is a editkit command!"
             aliases = listOf("editarkit")
-            permission = "ksystem.kits.admin"
         }
         register("createkit") {
             description = "This is a createkit command!"
             aliases = listOf("criarkit")
-            permission = "ksystem.kits.admin"
         }
         register("delkit") {
             description = "This is a delkit command!"
             aliases = listOf("deletarkit")
-            permission = "ksystem.kits.admin"
         }
     }
 }
@@ -75,7 +71,7 @@ dependencies {
 artifacts.archives(tasks.shadowJar)
 tasks.shadowJar {
     archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
-    destinationDirectory.set(File("$buildDir/../Minecraft/plugins"))
+    destinationDirectory.set(File("$buildDir/../Minecraft152/plugins"))
     manifest {
         attributes["Class-Path"] = "${libPaste}kotlin-stdlib-$kotlinVersion.jar ${libPaste}exposed-core-$exposedVersion.jar ${libPaste}exposed-dao-$exposedVersion.jar ${libPaste}exposed-jdbc-$exposedVersion.jar ${libPaste}h2-1.4.200.jar ${libPaste}mysql-connector-java-8.0.26.jar ${libPaste}HikariCP-$hikariVersion.jar ${libPaste}caffeine-$caffeine.jar ${libPaste}caffeine-guava-$caffeine.jar"
         attributes["Version-Name"] = project.version

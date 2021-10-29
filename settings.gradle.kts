@@ -1,2 +1,2 @@
-rootProject.name = "KSystem"
+rootProject.name = "KCore"
 
