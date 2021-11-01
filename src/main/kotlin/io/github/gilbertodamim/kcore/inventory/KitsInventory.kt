@@ -12,6 +12,7 @@ import io.github.gilbertodamim.kcore.config.langs.KitsLang.editkitInventoryTimeN
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitInventoryItemsLore
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitInventoryItemsName
 import io.github.gilbertodamim.kcore.inventory.Api.item
+import io.github.gilbertodamim.kcore.management.Manager.consoleMessage
 import io.github.gilbertodamim.kcore.management.dao.Dao
 import io.github.gilbertodamim.kcore.management.dao.Dao.EditKitGuiCache
 import io.github.gilbertodamim.kcore.management.dao.Dao.kitClickGuiCache
@@ -22,6 +23,7 @@ import org.bukkit.inventory.ItemStack
 
 class KitsInventory {
     fun editKitInventory() {
+        EditKitGuiCache.invalidateAll()
         for (inventory in 0..26) {
             if (inventory == 11) {
                 EditKitGuiCache.put(
@@ -53,6 +55,8 @@ class KitsInventory {
         var size = 1
         var length = 0
         var inv = KCoreMain.instance.server.createInventory(null, 36, "$pluginName§eKits 1")
+        kitGuiCache.invalidateAll()
+        kitClickGuiCache.invalidateAll()
         for (i in Dao.kitsCache.asMap()) {
             var item = ItemStack(Material.CHEST)
             val name = kitInventoryItemsName.replace("%kitrealname%", i.value.get().realName)
@@ -96,19 +100,20 @@ class KitsInventory {
                 kitGuiCache.put(size, inv)
                 length = 0
                 size += 1
-                inv = KCoreMain.instance.server.createInventory(null, 36, "Kits $size")
+                inv = KCoreMain.instance.server.createInventory(null, 36, "$pluginName§eKits $size")
             }
         }
         if (length > 0) {
             if (size != 1) {
                 inv.setItem(27, item(Material.HOPPER, KitsLang.kitInventoryIconBackName))
             }
-            if (size == 1) {
-                for (to in 27..35) {
-                    inv.setItem(to,
-                        item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
-                    )
-                }
+            else {
+                inv.setItem(27, item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true))
+            }
+            for (to in 28..35) {
+                inv.setItem(to,
+                    item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+                )
             }
             kitGuiCache.put(size, inv)
         }

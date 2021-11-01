@@ -94,7 +94,7 @@ class CreateKit : CommandExecutor {
                         hashmap[name] = internalHashmap
                         PlayerKits.deleteWhere { uuid eq name }
                     }
-                    PlayerKits.long(kit.lowercase())
+                    PlayerKits.long(kit.lowercase()).defaultValueFun = { 0 }
                     SchemaUtils.createMissingTablesAndColumns(PlayerKits)
                     for (i in hashmap) {
                         PlayerKits.insert {

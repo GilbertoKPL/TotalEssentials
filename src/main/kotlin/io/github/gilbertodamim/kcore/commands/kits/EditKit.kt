@@ -139,6 +139,7 @@ class EditKit : CommandExecutor {
     private fun editKit(kit: String, nameKit: String) {
         val editValues = kitsCache.getIfPresent(kit)?.get()
         if (editValues != null) {
+            kitsCache.synchronous().invalidate(kit)
             kitsCache.put(
                 kit,
                 CompletableFuture.supplyAsync {
@@ -197,6 +198,7 @@ class EditKit : CommandExecutor {
         }
         val editValues = kitsCache.getIfPresent(kit)?.get()
         if (editValues != null) {
+            kitsCache.synchronous().invalidate(kit)
             kitsCache.put(
                 kit,
                 CompletableFuture.supplyAsync {
@@ -231,6 +233,7 @@ class EditKit : CommandExecutor {
     private fun editKit(kit: String, items: Array<ItemStack?>) {
         val editValues = kitsCache.getIfPresent(kit)?.get()
         if (editValues != null) {
+            kitsCache.synchronous().invalidate(kit)
             kitsCache.put(
                 kit,
                 CompletableFuture.supplyAsync {

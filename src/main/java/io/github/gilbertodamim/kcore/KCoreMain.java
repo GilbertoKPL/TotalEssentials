@@ -3,6 +3,7 @@ package io.github.gilbertodamim.kcore;
 import io.github.gilbertodamim.kcore.library.LibChecker;
 import io.github.gilbertodamim.kcore.management.DisablePlugin;
 import io.github.gilbertodamim.kcore.management.StartPlugin;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -53,6 +54,10 @@ public class KCoreMain extends JavaPlugin {
         for (String remove : toRemove) {
             config.getLoggerConfig(remove).setLevel(org.apache.logging.log4j.Level.OFF);
         }
+    }
+
+    public void metrics() {
+        new Metrics(this, 13191);
     }
 
     public static void disablePlugin() {
@@ -127,6 +132,7 @@ public class KCoreMain extends JavaPlugin {
 
     public void onEnable() {
         instance = this;
+        metrics();
         disableLoggers();
         try {
             LibChecker.checkVersion();

@@ -23,6 +23,7 @@ import io.github.gilbertodamim.kcore.inventory.KitsInventory
 import io.github.gilbertodamim.kcore.management.ErrorClass
 import io.github.gilbertodamim.kcore.management.KCoreBukkitObjectInputStream
 import io.github.gilbertodamim.kcore.management.KCoreBukkitObjectOutputStream
+import io.github.gilbertodamim.kcore.management.Manager.consoleMessage
 import io.github.gilbertodamim.kcore.management.Manager.convertMillisToString
 import io.github.gilbertodamim.kcore.management.Manager.getPlayerUUID
 import io.github.gilbertodamim.kcore.management.dao.Dao
@@ -41,6 +42,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
 import java.io.ByteArrayInputStream
@@ -84,27 +86,34 @@ class Kit : CommandExecutor {
     }
 
     private fun startPlayerKitCache() {
-        kitPlayerCache.cleanUp()
+        kitPlayerCache.invalidateAll()
         CompletableFuture.runAsync({
             try {
                 transaction(SqlInstance.SQL) {
+                    for (a in SqlKits.selectAll()) {
+                        val name = a[SqlKits.kitName]
+                        PlayerKits.long(name.lowercase()).defaultValueFun = { 0 }
+                    }
                     for (i in PlayerKits.selectAll()) {
-                        val sizeColumn = PlayerKits.columns.size - 1
+                        val sizeColumn = PlayerKits.columns.size
                         var checkSizeColumn = 0
                         val cache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
-                        for (col in PlayerKits.columns) {
-                            if (col == PlayerKits.uuid) continue
-                            val long = i[col] as Long
-                            val timeAll = kitsCache.getIfPresent(col.name)?.get()?.time!! + long
+                        for (a in SqlKits.selectAll()) {
+                            val colName = a[SqlKits.kitName]
+                            val col1 = Column<Long>(PlayerKits, colName, LongColumnType())
+                            var long = i[col1]
+                            val timeAll = a[SqlKits.kitTime] + long
                             if (long == 0L || timeAll < System.currentTimeMillis()) {
                                 checkSizeColumn += 1
+                                long = 0L
                             }
-                            cache.put(col.name, long)
+                            cache.put(colName, long)
                         }
                         if (sizeColumn == checkSizeColumn) {
                             PlayerKits.deleteWhere { PlayerKits.uuid eq i[PlayerKits.uuid]}
                         }
                         else {
+                            consoleMessage(i[PlayerKits.uuid])
                             kitPlayerCache.put(i[PlayerKits.uuid], cache)
                         }
                     }
@@ -119,62 +128,35 @@ class Kit : CommandExecutor {
         val pUUID = getPlayerUUID(p)
         val cache = kitPlayerCache.getIfPresent(pUUID)
         if (cache != null) {
-            cache.invalidate(kit)
             cache.put(kit, System.currentTimeMillis())
             kitPlayerCache.invalidate(pUUID)
             kitPlayerCache.put(pUUID, cache)
+        }
+        else {
+            val newCache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
+            for (i in kitsCache.asMap()) {
+                val name = i.value.get().name
+                if (name == kit) continue
+                newCache.put(name, 0L)
+            }
+            newCache.put(kit, System.currentTimeMillis())
+            kitPlayerCache.put(pUUID, newCache)
         }
         CompletableFuture.runAsync({
             try {
                 transaction(SqlInstance.SQL) {
                     val work = PlayerKits.select { PlayerKits.uuid eq pUUID }
                     val col = Column<Long>(PlayerKits, kit, LongColumnType())
-                    val array = ArrayList<Column<Long>>()
-                    for (column in SqlKits.selectAll()) {
-                        val colTo = Column<Long>(PlayerKits, column[SqlKits.kitName], LongColumnType())
-                        array.add(colTo)
-                    }
                     if (work.empty()) {
                         PlayerKits.insert {
                             it[uuid] = pUUID
                             it[col] = System.currentTimeMillis()
-                            for (i in array) {
-                                if (i == uuid) continue
-                                if (i == col) continue
-                                val colTo = Column<Long>(PlayerKits, i.name, LongColumnType())
-                                it[colTo] = 0L
-                            }
                         }
-                        addPlayerToCache(p)
                     } else {
                         PlayerKits.update({ PlayerKits.uuid eq pUUID }) {
                             it[col] = System.currentTimeMillis()
                         }
                     }
-                }
-            } catch (ex: Exception) {
-                ErrorClass().sendException(ex)
-            }
-        }, Executors.newSingleThreadExecutor())
-    }
-
-    private fun addPlayerToCache(p: Player) {
-        CompletableFuture.runAsync({
-            try {
-                val pUUID = getPlayerUUID(p)
-                transaction(SqlInstance.SQL) {
-                    val cache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
-                    val work = PlayerKits.select { PlayerKits.uuid eq pUUID }
-                    if (work.empty()) {
-                        PlayerKits.insert {
-                            it[uuid] = pUUID
-                        }
-                    }
-                    for (i in PlayerKits.columns) {
-                        if (i == PlayerKits.uuid) continue
-                        cache.put(i.name, work.single()[i] as Long)
-                    }
-                    kitPlayerCache.put(pUUID, cache)
                 }
             } catch (ex: Exception) {
                 ErrorClass().sendException(ex)
@@ -324,6 +306,7 @@ class Kit : CommandExecutor {
         private fun startCacheKits() {
             CompletableFuture.runAsync({
                 try {
+                    kitsCache.synchronous().invalidateAll()
                     transaction(SqlInstance.SQL) {
                         for (values in SqlKits.selectAll()) {
                             val kit = values[SqlKits.kitName]

@@ -28,7 +28,7 @@ object ConfigMain {
 
     fun startConfig() {
         consoleMessage(startVerification.replace("%to%", "config"))
-        essentialsConfig = kSystemConfig("KCoreMainConfig", false) ?: return
+        essentialsConfig = kCoreConfig("KCoreMainConfig", false) ?: return
         reloadConfig(true)
         consoleMessage(completeVerification)
         consoleMessage(startVerification.replace("%to%", "lang"))
@@ -88,12 +88,12 @@ object ConfigMain {
         )
         if (directoryStream != null) {
             for (i in directoryStream) {
-                kSystemConfig(i.fileName.toString().replace(".yml", ""), true)
+                kCoreConfig(i.fileName.toString().replace(".yml", ""), true)
             }
         }
     }
 
-    private fun kSystemConfig(source: String, lang: Boolean): YamlConfiguration? {
+    private fun kCoreConfig(source: String, lang: Boolean): YamlConfiguration? {
         val configFile: File
         val resource: InputStream
         val checkFile: File

@@ -64,6 +64,7 @@ dependencies {
     //in plugin
     implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("org.slf4j:slf4j-nop:1.7.32")
+    implementation("org.bstats:bstats-bukkit:2.2.1")
     //not lib
     compileOnly("org.apache.logging.log4j:log4j-core:2.14.1")
     //minecraft
@@ -73,11 +74,12 @@ dependencies {
 artifacts.archives(tasks.shadowJar)
 tasks.shadowJar {
     archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
-    destinationDirectory.set(File("$buildDir/../Minecraft152/plugins"))
+    destinationDirectory.set(File("$buildDir/../Minecraft/plugins"))
     manifest {
         attributes["Class-Path"] = "${libPaste}kotlin-stdlib-$kotlinVersion.jar ${libPaste}exposed-core-$exposedVersion.jar ${libPaste}exposed-dao-$exposedVersion.jar ${libPaste}exposed-jdbc-$exposedVersion.jar ${libPaste}h2-1.4.200.jar ${libPaste}mysql-connector-java-8.0.26.jar ${libPaste}HikariCP-$hikariVersion.jar ${libPaste}caffeine-$caffeine.jar ${libPaste}caffeine-guava-$caffeine.jar"
         attributes["Version-Name"] = project.version
     }
+    relocate("org.bstats", "io.github.gilbertodamim.kcore.library")
 }
 tasks.withType<JavaCompile> {
     sourceCompatibility = "8"
