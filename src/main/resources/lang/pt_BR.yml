@@ -1,6 +1,4 @@
 # Lang pt.br
-Version-file: 1.0
-
 General:
   only-player-command: '&cEsse comando é somente para player!'
   not-perm: '&cVocê não tem permissão para executar esse comando.'

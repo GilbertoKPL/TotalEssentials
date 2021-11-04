@@ -16,43 +16,53 @@ import io.github.gilbertodamim.kcore.management.Manager.pluginLangDir
 import io.github.gilbertodamim.kcore.management.Manager.pluginPasteDir
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
-import java.io.InputStream
 import java.nio.file.*
 
 object ConfigMain {
     private var configList = ArrayList<YamlConfiguration>()
     private var langList = ArrayList<YamlConfiguration>()
-
     private lateinit var essentialsConfig: YamlConfiguration
     private lateinit var langConfig: YamlConfiguration
 
-    fun startConfig() {
+    fun start() {
         consoleMessage(startVerification.replace("%to%", "config"))
-        essentialsConfig = kCoreConfig("KCoreMainConfig", false) ?: return
+        essentialsConfig = kCoreConfig("KCoreMainConfig") ?: return
         reloadConfig(true)
         consoleMessage(completeVerification)
         consoleMessage(startVerification.replace("%to%", "lang"))
-        startLang()
-        val patternLang = YamlConfiguration.loadConfiguration(File(pluginLangDir(), "pt_BR.yml"))
-        try {
-            val langSelected = File(pluginLangDir(), "$langName.yml")
-            if (langSelected.exists()) {
-                langConfig = YamlConfiguration.loadConfiguration(langSelected)
-                consoleMessage(langSelectedMessage.replace("%lang%", langName))
-            } else {
-                langConfig = patternLang
-                consoleMessage(langError)
-            }
-        } catch (ex: Exception) {
-            langConfig = patternLang
-            consoleMessage(langError)
-            ErrorClass().sendException(ex)
-        }
-        reloadLang()
+        reloadLang(true)
         consoleMessage(completeVerification)
     }
 
-    private fun reloadLang() {
+    private fun reloadLang(firstTime: Boolean = false) {
+        if (firstTime) {
+            val patternLang = YamlConfiguration.loadConfiguration(File(pluginLangDir(), "pt_BR.yml"))
+            val directoryStream: DirectoryStream<Path>? = Files.newDirectoryStream(
+                FileSystems.newFileSystem(
+                    Paths.get(instance.javaClass.protectionDomain.codeSource.location.toURI()),
+                    instance.javaClass.classLoader
+                ).getPath("/lang/")
+            )
+            if (directoryStream != null) {
+                for (i in directoryStream) {
+                    kCoreConfig(i.fileName.toString().replace(".yml", ""), true)
+                }
+            }
+            try {
+                val langSelected = File(pluginLangDir(), "$langName.yml")
+                if (langSelected.exists()) {
+                    langConfig = YamlConfiguration.loadConfiguration(langSelected)
+                    consoleMessage(langSelectedMessage.replace("%lang%", langName))
+                } else {
+                    langConfig = patternLang
+                    consoleMessage(langError)
+                }
+            } catch (ex: Exception) {
+                langConfig = patternLang
+                consoleMessage(langError)
+                ErrorClass().sendException(ex)
+            }
+        }
         KitsLang.reload(langConfig)
         TimeLang.reload(langConfig)
         GeneralLang.reload(langConfig)
@@ -60,7 +70,7 @@ object ConfigMain {
     }
 
     private fun reloadConfig(firstTime: Boolean = false) {
-        if (!firstTime) {
+        if (firstTime) {
             for (configs in configList) {
                 val check: YamlConfiguration
                 try {
@@ -78,99 +88,80 @@ object ConfigMain {
         KitsConfig.reload(essentialsConfig)
     }
 
-
-    private fun startLang() {
-        val directoryStream: DirectoryStream<Path>? = Files.newDirectoryStream(
-            FileSystems.newFileSystem(
-                Paths.get(instance.javaClass.protectionDomain.codeSource.location.toURI()),
-                instance.javaClass.classLoader
-            ).getPath("/lang/")
-        )
-        if (directoryStream != null) {
-            for (i in directoryStream) {
-                kCoreConfig(i.fileName.toString().replace(".yml", ""), true)
-            }
-        }
-    }
-
-    private fun kCoreConfig(source: String, lang: Boolean): YamlConfiguration? {
-        val configFile: File
-        val resource: InputStream
-        val checkFile: File
-
-        if (lang) {
-            configFile = File(pluginLangDir(), "$source.yml")
-            resource = instance.javaClass.getResourceAsStream("/lang/$source.yml")
-                ?: return YamlConfiguration.loadConfiguration(
-                    File(pluginLangDir(), "$source.yml")
-                )
-            checkFile = File(pluginLangDir(), "$source-check.yml")
+    private fun kCoreConfig(source: String, lang: Boolean = false): YamlConfiguration? {
+        val location = if (lang) {
+            "/lang/$source.yml"
         } else {
-            configFile = File(pluginPasteDir(), "$source.yml")
-            resource =
-                instance.javaClass.getResourceAsStream("/$source.yml") ?: return YamlConfiguration.loadConfiguration(
-                    File(pluginPasteDir(), "$source.yml")
-                )
-            checkFile = File(pluginPasteDir(), "$source-check.yml")
+            "/$source.yml"
         }
-        if (configFile.exists()) {
-            val check: YamlConfiguration
-            try {
-                check = if (lang) {
-                    YamlConfiguration.loadConfiguration(File(pluginLangDir(), "$source.yml"))
+        val dir = if (lang) {
+            pluginLangDir()
+        } else {
+            pluginPasteDir()
+        }
+        val message = if (lang) {
+            "lang"
+        } else {
+            "config"
+        }
+        try {
+            val configFile = File(dir, "$source.yml")
+            val resource = instance.javaClass.getResourceAsStream(location)
+            if (configFile.exists()) {
+                val configYaml = YamlConfiguration.loadConfiguration(configFile)
+                if (resource != null) {
+                    val checkFile = File(dir, "checker.yml")
+                    if (checkFile.exists()) checkFile.delete()
+                    Files.copy(resource, checkFile.toPath())
+                    val checkYaml = YamlConfiguration.loadConfiguration(checkFile)
+                    var checkCurrent = true
+                    for (fileKeys in checkYaml.getKeys(true)) {
+                        if (configYaml.get(fileKeys) == null) {
+                            ConfigVersionChecker(configFile, checkFile)
+                            checkCurrent = false
+                            break
+                        }
+                    }
+                    if (checkCurrent) {
+                        for (fileKeys in configYaml.getKeys(true)) {
+                            if (checkYaml.get(fileKeys) == null) {
+                                ConfigVersionChecker(configFile, checkFile)
+                                break
+                            }
+                        }
+                    }
+                    checkFile.delete()
+                    return YamlConfiguration.loadConfiguration(configFile)
                 } else {
-                    YamlConfiguration.loadConfiguration(File(pluginPasteDir(), "$source.yml"))
+                    return configYaml
                 }
-            } catch (ex: Exception) {
+            } else {
+                configFile.mkdirs()
+                Files.copy(resource!!, configFile.toPath())
+                consoleMessage(createMessage.replace("%to%", message).replace("%file%", configFile.name))
+                val configYaml = YamlConfiguration.loadConfiguration(configFile)
                 if (lang) {
-                    consoleMessage(problemMessage.replace("%to%", "lang").replace("%file%", source))
+                    langList.add(configYaml)
                 } else {
-                    consoleMessage(problemMessage.replace("%to%", "config").replace("%file%", source))
+                    configList.add(configYaml)
                 }
-                ErrorClass().sendException(ex)
-                disablePlugin()
-                return null
+                return configYaml
             }
-            val v = check.getDouble("Version-file")
-            if (checkFile.exists()) checkFile.delete()
-            Files.copy(resource, checkFile.toPath())
-            val vc = YamlConfiguration.loadConfiguration(checkFile).getDouble("Version-file")
-            if (vc > v) {
-                ConfigVersionChecker(configFile, checkFile, vc.toString(), lang)
-            } else {
-                ConfigChecker(configFile, checkFile, lang)
-            }
-        } else {
-            if (lang) {
-                (File(pluginLangDir()).mkdirs())
-            } else {
-                (File(pluginPasteDir()).mkdirs())
-            }
-            Files.copy(resource, configFile.toPath())
-            if (lang) {
-                consoleMessage(createMessage.replace("%to%", "lang").replace("%file%", configFile.name))
-            } else {
-                consoleMessage(createMessage.replace("%to%", "config").replace("%file%", configFile.name))
-            }
+        } catch (ex: Exception) {
+            consoleMessage(problemMessage.replace("%to%", message).replace("%file%", source))
+            ErrorClass().sendException(ex)
+            disablePlugin()
         }
-        return if (lang) {
-            val toReturn = YamlConfiguration.loadConfiguration(File(pluginLangDir(), "$source.yml"))
-            langList.add(toReturn)
-            toReturn
-        } else {
-            val toReturn = YamlConfiguration.loadConfiguration(File(pluginPasteDir(), "$source.yml"))
-            configList.add(toReturn)
-            toReturn
-        }
+        return null
     }
 
-    fun getString(source: YamlConfiguration, path: String, color: Boolean): String {
+    fun getString(source: YamlConfiguration, path: String, color: Boolean = false): String {
         return if (color) {
             source.getString(path)!!.replace("&", "§")
         } else source.getString(path)!!
     }
 
-    fun getStringList(source: YamlConfiguration, path: String, color: Boolean): List<String> {
+    fun getStringList(source: YamlConfiguration, path: String, color: Boolean = false): List<String> {
         return if (color) {
             val ret: MutableList<String> = ArrayList()
             for (i in source.getStringList(path)) {

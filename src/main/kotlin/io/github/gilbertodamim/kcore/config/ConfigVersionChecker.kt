@@ -6,7 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
 
-class ConfigVersionChecker(file: File, newFile: File, version: String?, lang: Boolean) {
+class ConfigVersionChecker(file: File, newFile: File) {
     private var toRemove = HashMap<String, Int>()
     private var toPut = HashMap<String, Int>()
 
@@ -51,26 +51,14 @@ class ConfigVersionChecker(file: File, newFile: File, version: String?, lang: Bo
 
     init {
         val newConfig = YamlConfiguration.loadConfiguration(newFile)
+        newFile.delete()
         for (FileKeys in confNewFile.getKeys(true)) {
-            if (FileKeys == "Version-file") {
-                newConfig.set(FileKeys, confNewFile.get(FileKeys))
-                if (version != null) {
-                    consoleMessage(updateMessage.replace("%file%", file.name).replace("%version%", version))
-                } else {
-                    if (lang) {
-                        consoleMessage(modConfig.replace("%to%", "lang"))
-                    } else {
-                        consoleMessage(modConfig.replace("%to%", "config"))
-                    }
-                }
                 val header = confFile.options()
                 val newHeader = confNewFile.options()
                 if (header.header().toString() != newHeader.header().toString()) {
                     newConfig.options().header(newHeader.header().toString())
                     consoleMessage(updateHeader.replace("%file%", file.name))
                 }
-                continue
-            }
             if (confFile.get(FileKeys) != null) {
                 newConfig.set(FileKeys, confFile.get(FileKeys))
             } else {
@@ -94,6 +82,5 @@ class ConfigVersionChecker(file: File, newFile: File, version: String?, lang: Bo
             consoleMessage(removeMessage.replace("%path%", deleteConfig.key).replace("%file%", file.name))
         }
         newConfig.save(file)
-        newFile.delete()
     }
 }

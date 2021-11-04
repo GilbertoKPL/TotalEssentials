@@ -95,7 +95,7 @@ class Kit : CommandExecutor {
                         PlayerKits.long(name.lowercase()).defaultValueFun = { 0 }
                     }
                     for (i in PlayerKits.selectAll()) {
-                        val sizeColumn = PlayerKits.columns.size
+                        val sizeColumn = SqlKits.columns.size
                         var checkSizeColumn = 0
                         val cache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
                         for (a in SqlKits.selectAll()) {
@@ -113,7 +113,6 @@ class Kit : CommandExecutor {
                             PlayerKits.deleteWhere { PlayerKits.uuid eq i[PlayerKits.uuid]}
                         }
                         else {
-                            consoleMessage(i[PlayerKits.uuid])
                             kitPlayerCache.put(i[PlayerKits.uuid], cache)
                         }
                     }

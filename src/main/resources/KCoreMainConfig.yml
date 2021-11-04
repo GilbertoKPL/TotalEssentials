@@ -5,7 +5,6 @@
 # Este projeto está em desenvolvimento porfavor tenha paciencia do projeto final;
 # Escolha o tipo de armazenamento do plugin, disponiveis: sqlite, h2, mysql;
 # futuros tipos de armazenamento: postgresql, sqlserver.
-Version-file: 1.0
 Lang: pt_BR
 Database:
   type: h2

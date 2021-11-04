@@ -14,10 +14,8 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.LongColumnType
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
@@ -62,9 +60,31 @@ class DelKit : CommandExecutor {
                         }
                     }
                     SqlKits.deleteWhere { SqlKits.kitName like kit }
+
+                    val hashmap = HashMap<String, HashMap<Column<Long>, Long>>()
                     val col = Column<Long>(PlayerKits, kit, LongColumnType())
+                    for (i in PlayerKits.selectAll()) {
+                        val name = i[PlayerKits.uuid]
+                        val internalHashmap = HashMap<Column<Long>, Long>()
+                        for (column in PlayerKits.columns) {
+                            if (column == PlayerKits.uuid) continue
+                            if (column == col) continue
+                            val colTo = Column<Long>(PlayerKits, column.name, LongColumnType())
+                            internalHashmap[colTo] = i[colTo]
+                        }
+                        hashmap[name] = internalHashmap
+                        PlayerKits.deleteWhere { PlayerKits.uuid eq name }
+                    }
                     col.dropStatement().forEach { statement ->
                         exec(statement)
+                    }
+                    for (i in hashmap) {
+                        PlayerKits.insert {
+                            it[uuid] = i.key
+                            for (column in i.value) {
+                                it[column.key] = column.value
+                            }
+                        }
                     }
                 }
                 p.sendMessage(KitsLang.delKitSuccess.replace("%name%", kit))
