@@ -70,7 +70,7 @@ object ConfigMain {
     }
 
     private fun reloadConfig(firstTime: Boolean = false) {
-        if (firstTime) {
+        if (!firstTime) {
             for (configs in configList) {
                 val check: YamlConfiguration
                 try {
@@ -136,7 +136,7 @@ object ConfigMain {
                     return configYaml
                 }
             } else {
-                configFile.mkdirs()
+                File(dir).mkdirs()
                 Files.copy(resource!!, configFile.toPath())
                 consoleMessage(createMessage.replace("%to%", message).replace("%file%", configFile.name))
                 val configYaml = YamlConfiguration.loadConfiguration(configFile)

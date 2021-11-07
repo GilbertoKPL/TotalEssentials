@@ -3,6 +3,7 @@ package io.github.gilbertodamim.kcore.library;
 import io.github.gilbertodamim.kcore.KCoreMain;
 import io.github.gilbertodamim.kcore.config.langs.StartLang;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +12,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -49,7 +52,7 @@ public class LibChecker {
     public static void checkVersion() {
         YamlConfiguration checkFileYaml;
         consoleMessage(StartLang.startVerification.replace("%to%", "lib e plugin"));
-        HashSet<File> noRemove = new HashSet<>();
+        List<File> noRemove = new ArrayList<>();
         exec.scheduleAtFixedRate(() -> {
             if (finished) {
                 exec.shutdown();
