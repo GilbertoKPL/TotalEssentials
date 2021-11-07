@@ -93,7 +93,7 @@ class EditKit : CommandExecutor {
             val p = e.whoClicked as Player
             if (number == 11) {
                 p.closeInventory()
-                kitsCache.getIfPresent(inventoryName[1])?.get()?.items?.let {
+                kitsCache.getIfPresent(inventoryName[1])?.items?.let {
                     editKitGui(
                         inventoryName[1],
                         it,
@@ -137,19 +137,19 @@ class EditKit : CommandExecutor {
     }
 
     private fun editKit(kit: String, nameKit: String) {
-        val editValues = kitsCache.getIfPresent(kit)?.get()
+        val editValues = kitsCache.getIfPresent(kit)
         if (editValues != null) {
-            kitsCache.synchronous().invalidate(kit)
+            kitsCache.invalidate(kit)
             kitsCache.put(
                 kit,
-                CompletableFuture.supplyAsync {
+
                     KCoreKit(
                         editValues.name,
                         editValues.time,
                         nameKit,
                         editValues.items
                     )
-                })
+                )
         }
         KitsInventory().kitGuiInventory()
         CompletableFuture.runAsync({
@@ -196,19 +196,18 @@ class EditKit : CommandExecutor {
                 }
             }
         }
-        val editValues = kitsCache.getIfPresent(kit)?.get()
+        val editValues = kitsCache.getIfPresent(kit)
         if (editValues != null) {
-            kitsCache.synchronous().invalidate(kit)
+            kitsCache.invalidate(kit)
             kitsCache.put(
                 kit,
-                CompletableFuture.supplyAsync {
                     KCoreKit(
                         editValues.name,
                         convert,
                         editValues.realName,
                         editValues.items
                     )
-                })
+                )
         }
         KitsInventory().kitGuiInventory()
         s.sendMessage(
@@ -231,19 +230,19 @@ class EditKit : CommandExecutor {
     }
 
     private fun editKit(kit: String, items: Array<ItemStack?>) {
-        val editValues = kitsCache.getIfPresent(kit)?.get()
+        val editValues = kitsCache.getIfPresent(kit)
         if (editValues != null) {
-            kitsCache.synchronous().invalidate(kit)
+            kitsCache.invalidate(kit)
             kitsCache.put(
                 kit,
-                CompletableFuture.supplyAsync {
+
                     KCoreKit(
                         editValues.name,
                         editValues.time,
                         editValues.realName,
                         items
                     )
-                })
+                )
         }
         KitsInventory().kitGuiInventory()
         CompletableFuture.runAsync({

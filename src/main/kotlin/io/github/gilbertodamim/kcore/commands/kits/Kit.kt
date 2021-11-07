@@ -23,7 +23,6 @@ import io.github.gilbertodamim.kcore.inventory.KitsInventory
 import io.github.gilbertodamim.kcore.management.ErrorClass
 import io.github.gilbertodamim.kcore.management.KCoreBukkitObjectInputStream
 import io.github.gilbertodamim.kcore.management.KCoreBukkitObjectOutputStream
-import io.github.gilbertodamim.kcore.management.Manager.consoleMessage
 import io.github.gilbertodamim.kcore.management.Manager.convertMillisToString
 import io.github.gilbertodamim.kcore.management.Manager.getPlayerUUID
 import io.github.gilbertodamim.kcore.management.dao.Dao
@@ -42,7 +41,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
 import java.io.ByteArrayInputStream
@@ -69,17 +67,16 @@ class Kit : CommandExecutor {
             val inv = kitGuiCache.getIfPresent(1)
             if (inv != null) {
                 s.openInventory(inv)
-            }
-            else {
+            } else {
                 s.sendMessage(KitsLang.notExistKits)
             }
         }
         return false
     }
 
-    private fun kitList() : List<String> {
+    private fun kitList(): List<String> {
         val list = ArrayList<String>()
-        for(i in kitsCache.asMap()) {
+        for (i in kitsCache.asMap()) {
             list.add(i.key)
         }
         return list
@@ -90,27 +87,31 @@ class Kit : CommandExecutor {
         CompletableFuture.runAsync({
             try {
                 transaction(SqlInstance.SQL) {
-                    for (a in SqlKits.selectAll()) {
-                        val name = a[SqlKits.kitName]
-                        PlayerKits.long(name.lowercase()).defaultValueFun = { 0 }
-                    }
                     for (i in PlayerKits.selectAll()) {
-                        val sizeColumn = SqlKits.columns.size
-                        var checkSizeColumn = 0
+                        var toPut = ""
+                        var used = false
                         val cache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
-                        for (a in SqlKits.selectAll()) {
-                            val colName = a[SqlKits.kitName]
-                            val col1 = Column<Long>(PlayerKits, colName, LongColumnType())
-                            var long = i[col1]
-                            val timeAll = a[SqlKits.kitTime] + long
-                            if (long == 0L || timeAll < System.currentTimeMillis()) {
-                                checkSizeColumn += 1
-                                long = 0L
+                        for (a in i[PlayerKits.kitsTime].split("-")) {
+                            val split = a.split(".")
+                            val long = split[1].toLong()
+                            val name = split[0]
+                            val timeAll = SqlKits.select { SqlKits.kitName eq name }.single()[SqlKits.kitTime] + long
+                            if (long != 0L || timeAll > System.currentTimeMillis()) {
+                                if (toPut == "") {
+                                    toPut = a
+                                }
+                                else {
+                                    toPut += "-$a"
+                                }
+                                used = true
+                                cache.put(name, long)
                             }
-                            cache.put(colName, long)
                         }
-                        if (sizeColumn == checkSizeColumn) {
-                            PlayerKits.deleteWhere { PlayerKits.uuid eq i[PlayerKits.uuid]}
+                        PlayerKits.update ({PlayerKits.uuid eq i[PlayerKits.uuid]}){
+                            it[kitsTime] = toPut
+                        }
+                        if (!used) {
+                            PlayerKits.deleteWhere { PlayerKits.uuid eq i[PlayerKits.uuid] }
                         }
                         else {
                             kitPlayerCache.put(i[PlayerKits.uuid], cache)
@@ -130,11 +131,10 @@ class Kit : CommandExecutor {
             cache.put(kit, System.currentTimeMillis())
             kitPlayerCache.invalidate(pUUID)
             kitPlayerCache.put(pUUID, cache)
-        }
-        else {
+        } else {
             val newCache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
             for (i in kitsCache.asMap()) {
-                val name = i.value.get().name
+                val name = i.value.name
                 if (name == kit) continue
                 newCache.put(name, 0L)
             }
@@ -145,15 +145,15 @@ class Kit : CommandExecutor {
             try {
                 transaction(SqlInstance.SQL) {
                     val work = PlayerKits.select { PlayerKits.uuid eq pUUID }
-                    val col = Column<Long>(PlayerKits, kit, LongColumnType())
                     if (work.empty()) {
                         PlayerKits.insert {
                             it[uuid] = pUUID
-                            it[col] = System.currentTimeMillis()
+                            it[kitsTime] = "$kit.${System.currentTimeMillis()}"
                         }
                     } else {
+                        val to = work.single()[PlayerKits.kitsTime]
                         PlayerKits.update({ PlayerKits.uuid eq pUUID }) {
-                            it[col] = System.currentTimeMillis()
+                            it[kitsTime] = "$to-$kit.${System.currentTimeMillis()}"
                         }
                     }
                 }
@@ -170,15 +170,15 @@ class Kit : CommandExecutor {
             val timePlayerPickedKit = kitPlayerCache.getIfPresent(pUUID)?.getIfPresent(kit)
             var timeAll = 0L
             if (timePlayerPickedKit != null) {
-                timeAll = kitCache.get()?.time!! + timePlayerPickedKit
+                timeAll = kitCache.time + timePlayerPickedKit
             }
             if (timeAll == 0L || timeAll <= System.currentTimeMillis()) {
                 if (p.hasPermission("kcore.kit.$kit")) {
-                    for (i in kitCache.get()?.items!!) {
+                    for (i in kitCache.items) {
                         if (i == null) continue
                         p.inventory.addItem(i)
                     }
-                    p.sendMessage(KitsLang.pickedSuccess.replace("%kit%", kitCache.get().realName))
+                    p.sendMessage(KitsLang.pickedSuccess.replace("%kit%", kitCache.realName))
                     upDatePlayerKitTime(p, kit)
                 } else {
                     p.sendMessage(notPerm)
@@ -194,12 +194,12 @@ class Kit : CommandExecutor {
 
     private fun kitGui(kit: String, guiNumber: String, p: Player) {
         val inv = KCoreMain.instance.server.createInventory(null, 45, "$pluginName§eKit $kit $guiNumber")
-        val to = kitsCache.getIfPresent(kit)!!.get()
+        val to = kitsCache.getIfPresent(kit)!!
         val pUUID = getPlayerUUID(p)
         val timePlayerPickedKit = kitPlayerCache.getIfPresent(pUUID)?.getIfPresent(kit)
         var timeAll = 0L
         if (timePlayerPickedKit != null) {
-            timeAll = kitsCache.getIfPresent(kit)?.get()?.time!! + timePlayerPickedKit
+            timeAll = kitsCache.getIfPresent(kit)?.time!! + timePlayerPickedKit
         }
         for (i in to.items) {
             if (i == null) continue
@@ -226,14 +226,15 @@ class Kit : CommandExecutor {
                         for (i in kitPickupIconLoreTime) {
                             array.add(i.replace("%time%", convertMillisToString(remainingTime, useShortTime)))
                         }
-                        inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, array , true))
+                        inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, array, true))
                     }
                 } else {
-                    inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, kitPickupIconLoreNotPerm , true))
+                    inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, kitPickupIconLoreNotPerm, true))
                 }
                 continue
             }
-            inv.setItem(to1,
+            inv.setItem(
+                to1,
                 Api.item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
             )
         }
@@ -305,7 +306,7 @@ class Kit : CommandExecutor {
         private fun startCacheKits() {
             CompletableFuture.runAsync({
                 try {
-                    kitsCache.synchronous().invalidateAll()
+                    kitsCache.invalidateAll()
                     transaction(SqlInstance.SQL) {
                         for (values in SqlKits.selectAll()) {
                             val kit = values[SqlKits.kitName]
@@ -314,14 +315,13 @@ class Kit : CommandExecutor {
                             val item = values[SqlKits.kitItems]
                             kitsCache.put(
                                 kit,
-                                CompletableFuture.supplyAsync {
                                     KCoreKit(
                                         kit,
                                         kitTime,
                                         kitRealName,
                                         convertItems(item)
                                     )
-                                })
+                                )
                         }
                     }
                     KitsInventory().kitGuiInventory()
@@ -335,7 +335,11 @@ class Kit : CommandExecutor {
             var toReturn = ""
             try {
                 val outputStream = ByteArrayOutputStream()
-                val dataOutput = try { BukkitObjectOutputStream(outputStream) } catch (e : NoClassDefFoundError) { KCoreBukkitObjectOutputStream(outputStream) }
+                val dataOutput = try {
+                    BukkitObjectOutputStream(outputStream)
+                } catch (e: NoClassDefFoundError) {
+                    KCoreBukkitObjectOutputStream(outputStream)
+                }
                 dataOutput.writeInt(items.size)
                 for (i in items.indices) {
                     dataOutput.writeObject(items[i])
@@ -351,7 +355,11 @@ class Kit : CommandExecutor {
         fun convertItems(data: String): Array<ItemStack?> {
             return try {
                 val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(data))
-                val dataInput = try { BukkitObjectInputStream(inputStream) } catch (e : NoClassDefFoundError) { KCoreBukkitObjectInputStream(inputStream) }
+                val dataInput = try {
+                    BukkitObjectInputStream(inputStream)
+                } catch (e: NoClassDefFoundError) {
+                    KCoreBukkitObjectInputStream(inputStream)
+                }
                 val items = arrayOfNulls<ItemStack>(dataInput.readInt())
                 for (i in items.indices) {
                     items[i] = dataInput.readObject() as ItemStack?

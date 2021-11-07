@@ -36,6 +36,7 @@ public class KCoreMain extends JavaPlugin {
     public static void checkClass(String c) throws ClassNotFoundException {
         Class.forName(c);
     }
+
     public static void disableLoggers() {
         try {
             checkClass("org.apache.logging.log4j.core.LoggerContext");
@@ -54,10 +55,6 @@ public class KCoreMain extends JavaPlugin {
         for (String remove : toRemove) {
             config.getLoggerConfig(remove).setLevel(org.apache.logging.log4j.Level.OFF);
         }
-    }
-
-    public void metrics() {
-        new Metrics(this, 13191);
     }
 
     public static void disablePlugin() {
@@ -128,6 +125,10 @@ public class KCoreMain extends JavaPlugin {
         } catch (Throwable ignored) {
         }
         System.gc();
+    }
+
+    public void metrics() {
+        new Metrics(this, 13191);
     }
 
     public void onEnable() {

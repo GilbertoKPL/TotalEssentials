@@ -14,13 +14,11 @@ public class StartLang {
     public static String problemMessage = "§cProblema na %to% %file%";
     public static String problemReload = "§cProblema na %file%, retornando a antiga!";
     public static String createMessage = "§eCriado arquivo de %to%, %file%.";
-    public static String modConfig = "§cDetectado modificação na %to%, executando Checker!";
-    public static String updateMessage = "§eAtualizado a Version-file do arquivo %file% para %version%.";
     public static String updateHeader = "§eAtualizado a Header do arquivo %file%.";
     public static String addMessage = "§eAdicionado path %path% no arquivo %file%.";
     public static String removeMessage = "§cRetirado path %path% no arquivo %file%.";
     public static String connectDatabase = "§eIniciando a conexão com o database!";
     public static String connectDatabaseSuccess = "§eConectado com sucesso no database %db%!";
     public static String connectDatabaseError = "§cErro ao conectar com o database!";
-    public static String databaseValid = "§cPor favor selecione um database valido, Validos-> sqlite, h2 e mysql.";
+    public static String databaseValid = "§cPor favor selecione um database valido, Validos-> h2 e mysql, foi utilizado h2 para iniciar";
 }

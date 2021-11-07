@@ -11,7 +11,8 @@ object Api {
         if (effect) {
             try {
                 item.addUnsafeEnchantment(Enchantment.LUCK, 1)
-            } catch (ignored : NoSuchFieldError) {}
+            } catch (ignored: NoSuchFieldError) {
+            }
         }
         val meta = item.itemMeta
         meta?.lore = lore
@@ -19,7 +20,8 @@ object Api {
         if (effect) {
             try {
                 meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)
-            } catch (ignored : NoClassDefFoundError) {}
+            } catch (ignored: NoClassDefFoundError) {
+            }
         }
         item.itemMeta = meta
         return item
@@ -30,14 +32,16 @@ object Api {
         if (effect) {
             try {
                 item.addUnsafeEnchantment(Enchantment.LUCK, 1)
-            } catch (ignored : NoSuchFieldError) {}
+            } catch (ignored: NoSuchFieldError) {
+            }
         }
         val meta = item.itemMeta
         meta?.setDisplayName(name)
         if (effect) {
             try {
                 meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)
-            } catch (ignored : NoClassDefFoundError) {}
+            } catch (ignored: NoClassDefFoundError) {
+            }
         }
         item.itemMeta = meta
         return item

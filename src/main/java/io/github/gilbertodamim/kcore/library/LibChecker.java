@@ -20,14 +20,21 @@ import java.util.concurrent.TimeUnit;
 import static io.github.gilbertodamim.kcore.KCoreMain.instance;
 import static io.github.gilbertodamim.kcore.KCoreMain.pluginTagName;
 
+@SuppressWarnings({"all"})
 public class LibChecker {
     private static final String libraryLocation = KCoreMain.instance().getDataFolder().getPath() + "/lib";
+
     public static ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+
     public static boolean update = false;
+
     public static boolean libChecker = false;
-    static int toDownload = 0;
-    static int download = 0;
-    static boolean finished = false;
+
+    private static int toDownload = 0;
+
+    private static int download = 0;
+
+    private static boolean finished = false;
 
     private static InputStream downloader(String url) throws IOException {
         URLConnection stream = new URL(url).openConnection();
@@ -40,7 +47,7 @@ public class LibChecker {
     }
 
     public static void checkVersion() {
-        YamlConfiguration versionFile;
+        YamlConfiguration checkFileYaml;
         consoleMessage(StartLang.startVerification.replace("%to%", "lib e plugin"));
         HashSet<File> noRemove = new HashSet<>();
         exec.scheduleAtFixedRate(() -> {
@@ -56,21 +63,21 @@ public class LibChecker {
             File checkFile = new File(libraryLocation, "filecheck.yml");
             new File(libraryLocation).mkdirs();
             Files.copy(downloader("https://pastebin.com/raw/Nm30fsTp"), checkFile.toPath());
-            versionFile = YamlConfiguration.loadConfiguration(checkFile);
+            checkFileYaml = YamlConfiguration.loadConfiguration(checkFile);
             checkFile.delete();
             Double pluginVersion = KCoreMain.version;
-            String versionToCheck = versionFile.getString("plugin-version");
+            String versionToCheck = checkFileYaml.getString("plugin-version");
             assert versionToCheck != null;
             if (Double.parseDouble(versionToCheck) > pluginVersion) {
                 update = true;
                 pluginVersion = Double.parseDouble(versionToCheck);
                 consoleMessage(StartLang.updatePlugin.replace("%version%", "" + versionToCheck));
             }
-            toDownload = versionFile.getInt("version-lib-" + pluginVersion + ".size");
-            for (String libs : versionFile.getConfigurationSection("version-lib-" + pluginVersion).getKeys(false)) {
-                if (libs == null) continue;
-                if (Objects.equals(libs, "size")) continue;
-                String[] split = Objects.requireNonNull(versionFile.getString("version-lib-" + pluginVersion + "." + libs)).split(":-:");
+            for (String libs : Objects.requireNonNull(checkFileYaml.getConfigurationSection("version-lib-" + pluginVersion)).getKeys(false)) {
+                toDownload += Integer.parseInt(Objects.requireNonNull(checkFileYaml.getString("version-lib-" + pluginVersion + "." + libs)).split(":-:")[2]);
+            }
+            for (String libs : Objects.requireNonNull(checkFileYaml.getConfigurationSection("version-lib-" + pluginVersion)).getKeys(false)) {
+                String[] split = Objects.requireNonNull(checkFileYaml.getString("version-lib-" + pluginVersion + "." + libs)).split(":-:");
                 String version = split[0];
                 File lib = new File(libraryLocation, version + ".jar");
                 if (!lib.exists()) {
@@ -126,10 +133,9 @@ public class LibChecker {
             finished = true;
             if (!update) {
                 consoleMessage(StartLang.completeVerification);
-            }
-            else {
+            } else {
                 try {
-                    InputStream fileLibrary = downloader(versionFile.getString("plugin-repo"));
+                    InputStream fileLibrary = downloader(checkFileYaml.getString("plugin-repo"));
                     File plugin = new File(instance.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
                     File pluginToPlace = new File(instance.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString().replace(plugin.getName(), "KCore-" + versionToCheck + ".jar").replace("file:", ""));
                     if (plugin.getName().equals(pluginToPlace.getName())) {

@@ -24,13 +24,13 @@ Kits:
   name-length: '&cTamanho maximo do nome do kit 16 caracteres.'
   editkit-time: '&eTempo do kit setado para %time%.'
   createkit-usage: '&c/createkit (Nome do kit).'
-  createkit-success: '&eKit %name% criado com sucesso, para edita-lo utilize /editarkit %name%.'
-  createkit-problem: '&cKit %name% não foi criado, possivelmente um bug do plugin peça ajuda ao dono!'
+  createkit-success: '&eKit %name% &efoi criado com sucesso, para edita-lo utilize /editarkit %name%.'
+  createkit-problem: '&cKit %name% &enão foi criado, possivelmente um bug do plugin peça ajuda ao dono!'
   delkit-usage: '&c/delkit (Nome do kit).'
-  delkit-success: '&eKit %name% deletado com sucesso.'
-  delkit-problem: '&cKit %name% não foi deletado, possivelmente um bug do plugin peça ajuda ao dono!'
-  editkit-success: '&eKit %name% foi editado com sucesso!'
-  editkit-problem: '&cKit %name% não foi editado, possivelmente um bug do plugin peça ajuda ao dono!'
+  delkit-success: '&eKit %name% &edeletado com sucesso.'
+  delkit-problem: '&cKit %name% &enão foi deletado, possivelmente um bug do plugin peça ajuda ao dono!'
+  editkit-success: '&eKit %name% &efoi editado com sucesso!'
+  editkit-problem: '&cKit %name% &enão foi editado, possivelmente um bug do plugin peça ajuda ao dono!'
   editkit-inventory-items-name: '&eEditKit - Items'
   editkit-inventory-items-lore:
     - '&fClique para editar'
@@ -60,7 +60,7 @@ Kits:
   kit-pickup-icon: '&cClique aqui para pegar o seu kit'
   kit-pickup-icon-not-pickup: '&cVocê não consegue pegar esse kit'
   kit-pickup-icon-lore-not-perm:
-  - '&cVocê não tem permissão'
+    - '&cVocê não tem permissão'
   kit-pickup-icon-lore-time:
     - '&fFalta'
     - '&f%time%'

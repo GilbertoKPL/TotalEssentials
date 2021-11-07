@@ -12,5 +12,6 @@ object SqlKits : Table() {
 
 object PlayerKits : Table() {
     val uuid = varchar("uuid", 64)
+    val kitsTime = text("kitsTime")
     override val primaryKey = PrimaryKey(uuid)
 }

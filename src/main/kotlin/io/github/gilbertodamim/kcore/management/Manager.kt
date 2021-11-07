@@ -84,7 +84,7 @@ object Manager {
     }
 
     fun startMaterials() {
-        fun help(material : List<String>) : Material {
+        fun help(material: List<String>): Material {
             var mat = Material.AIR
             for (i in material) {
                 val toPut = Material.getMaterial(i)
@@ -118,6 +118,7 @@ class KCoreBukkitObjectInputStream(`in`: InputStream?) : ObjectInputStream(`in`)
     init {
         enableResolveObject(true)
     }
+
     @Throws(IOException::class)
     override fun resolveObject(obj: Any): Any {
         var obj1: Any? = obj

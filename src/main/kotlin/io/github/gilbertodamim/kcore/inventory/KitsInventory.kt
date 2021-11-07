@@ -12,12 +12,10 @@ import io.github.gilbertodamim.kcore.config.langs.KitsLang.editkitInventoryTimeN
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitInventoryItemsLore
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitInventoryItemsName
 import io.github.gilbertodamim.kcore.inventory.Api.item
-import io.github.gilbertodamim.kcore.management.Manager.consoleMessage
 import io.github.gilbertodamim.kcore.management.dao.Dao
 import io.github.gilbertodamim.kcore.management.dao.Dao.EditKitGuiCache
 import io.github.gilbertodamim.kcore.management.dao.Dao.kitClickGuiCache
 import io.github.gilbertodamim.kcore.management.dao.Dao.kitGuiCache
-
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -33,19 +31,21 @@ class KitsInventory {
                 continue
             }
             if (inventory == 13) {
-                EditKitGuiCache.put(inventory,
+                EditKitGuiCache.put(
+                    inventory,
                     item(Dao.Materials["clock"]!!, editkitInventoryTimeName, editkitInventoryTimeLore)
                 )
                 continue
             }
             if (inventory == 15) {
-                    EditKitGuiCache.put(
-                        inventory,
-                        item(Dao.Materials["feather"]!!, editkitInventoryNameName, editkitInventoryNameLore)
-                    )
+                EditKitGuiCache.put(
+                    inventory,
+                    item(Dao.Materials["feather"]!!, editkitInventoryNameName, editkitInventoryNameLore)
+                )
                 continue
             }
-            EditKitGuiCache.put(inventory,
+            EditKitGuiCache.put(
+                inventory,
                 item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
             )
         }
@@ -59,8 +59,8 @@ class KitsInventory {
         kitClickGuiCache.invalidateAll()
         for (i in Dao.kitsCache.asMap()) {
             var item = ItemStack(Material.CHEST)
-            val name = kitInventoryItemsName.replace("%kitrealname%", i.value.get().realName)
-            for (to in i.value.get().items) {
+            val name = kitInventoryItemsName.replace("%kitrealname%", i.value.realName)
+            for (to in i.value.items) {
                 if (to != null) {
                     item = ItemStack(to.type)
                     break
@@ -93,7 +93,8 @@ class KitsInventory {
                         inv.setItem(to, item(Material.ARROW, KitsLang.kitInventoryIconNextName, true))
                         continue
                     }
-                    inv.setItem(to,
+                    inv.setItem(
+                        to,
                         item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
                     )
                 }
@@ -106,12 +107,12 @@ class KitsInventory {
         if (length > 0) {
             if (size != 1) {
                 inv.setItem(27, item(Material.HOPPER, KitsLang.kitInventoryIconBackName))
-            }
-            else {
+            } else {
                 inv.setItem(27, item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true))
             }
             for (to in 28..35) {
-                inv.setItem(to,
+                inv.setItem(
+                    to,
                     item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
                 )
             }

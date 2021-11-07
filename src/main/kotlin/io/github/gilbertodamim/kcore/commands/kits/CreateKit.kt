@@ -62,14 +62,13 @@ class CreateKit : CommandExecutor {
         val item = convertItems(items)
         Dao.kitsCache.put(
             kit,
-            CompletableFuture.supplyAsync {
                 KCoreKit(
                     kit.lowercase(),
                     0,
                     kit,
                     convertItems(item)
                 )
-            })
+            )
         KitsInventory().kitGuiInventory()
         CompletableFuture.runAsync({
             try {
@@ -79,32 +78,6 @@ class CreateKit : CommandExecutor {
                         it[kitRealName] = kit
                         it[kitItems] = item
                         it[kitTime] = 0L
-                    }
-                }
-                transaction(SqlInstance.SQL) {
-                    val hashmap = HashMap<String, HashMap<Column<Long>, Long>>()
-                    for (i in PlayerKits.selectAll()) {
-                        val name = i[uuid]
-                        val internalHashmap = HashMap<Column<Long>, Long>()
-                        for (column in PlayerKits.columns) {
-                            if (column == uuid) continue
-                            val colTo = Column<Long>(PlayerKits, column.name, LongColumnType())
-                            internalHashmap[colTo] = i[colTo]
-                        }
-                        hashmap[name] = internalHashmap
-                        PlayerKits.deleteWhere { uuid eq name }
-                    }
-                    PlayerKits.long(kit.lowercase()).defaultValueFun = { 0 }
-                    SchemaUtils.createMissingTablesAndColumns(PlayerKits)
-                    for (i in hashmap) {
-                        PlayerKits.insert {
-                            it[uuid] = i.key
-                            for (column in i.value) {
-                                it[column.key] = column.value
-                            }
-                            val colTo = Column<Long>(PlayerKits, kit.lowercase(), LongColumnType())
-                            it[colTo] = 0L
-                        }
                     }
                 }
             } catch (ex: Exception) {

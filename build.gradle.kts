@@ -3,7 +3,7 @@ version = 1.0
 
 //1.17.1 -> 1.17.1-R0.1-SNAPSHOT
 
-val exposedVersion= "0.35.3"
+val exposedVersion= "0.36.1"
 val kotlinVersion= "1.5.31"
 val xSeries = "8.4.0"
 val hikariVersion= "3.4.5" // java 8
@@ -76,7 +76,7 @@ tasks.shadowJar {
     archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
     destinationDirectory.set(File("$buildDir/../Minecraft/plugins"))
     manifest {
-        attributes["Class-Path"] = "${libPaste}kotlin-stdlib-$kotlinVersion.jar ${libPaste}exposed-core-$exposedVersion.jar ${libPaste}exposed-dao-$exposedVersion.jar ${libPaste}exposed-jdbc-$exposedVersion.jar ${libPaste}h2-1.4.200.jar ${libPaste}mysql-connector-java-8.0.26.jar ${libPaste}HikariCP-$hikariVersion.jar ${libPaste}caffeine-$caffeine.jar ${libPaste}caffeine-guava-$caffeine.jar"
+        attributes["Class-Path"] = "${libPaste}maria-db-2.7.4.jar ${libPaste}kotlin-stdlib-$kotlinVersion.jar ${libPaste}exposed-core-$exposedVersion.jar ${libPaste}exposed-dao-$exposedVersion.jar ${libPaste}exposed-jdbc-$exposedVersion.jar ${libPaste}h2-1.4.200.jar ${libPaste}mysql-connector-java-8.0.26.jar ${libPaste}HikariCP-$hikariVersion.jar ${libPaste}caffeine-$caffeine.jar ${libPaste}caffeine-guava-$caffeine.jar"
         attributes["Version-Name"] = project.version
     }
     relocate("org.bstats", "io.github.gilbertodamim.kcore.library")

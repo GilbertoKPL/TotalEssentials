@@ -53,12 +53,12 @@ class ConfigVersionChecker(file: File, newFile: File) {
         val newConfig = YamlConfiguration.loadConfiguration(newFile)
         newFile.delete()
         for (FileKeys in confNewFile.getKeys(true)) {
-                val header = confFile.options()
-                val newHeader = confNewFile.options()
-                if (header.header().toString() != newHeader.header().toString()) {
-                    newConfig.options().header(newHeader.header().toString())
-                    consoleMessage(updateHeader.replace("%file%", file.name))
-                }
+            val header = confFile.options()
+            val newHeader = confNewFile.options()
+            if (header.header().toString() != newHeader.header().toString()) {
+                newConfig.options().header(newHeader.header().toString())
+                consoleMessage(updateHeader.replace("%file%", file.name))
+            }
             if (confFile.get(FileKeys) != null) {
                 newConfig.set(FileKeys, confFile.get(FileKeys))
             } else {

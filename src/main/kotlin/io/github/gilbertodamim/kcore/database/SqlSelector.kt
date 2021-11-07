@@ -19,17 +19,13 @@ class SqlSelector {
         consoleMessage(connectDatabase)
         try {
             when (sqlType.lowercase()) {
-                "sqlite" -> {
-                    SqlInstance.SQL =
-                        Database.connect("jdbc:sqlite:${pluginPasteDir()}/KCoreSQLite.db", "org.sqlite.JDBC")
-                }
                 "h2" -> {
                     SqlInstance.SQL = Database.connect("jdbc:h2:./${pluginPasteDir()}/KCoreH2SQL", "org.h2.Driver")
                 }
                 "mysql" -> {
                     val config = HikariConfig().apply {
                         jdbcUrl = "jdbc:mysql://$sqlIp:$sqlPort/$sqlDatabase"
-                        driverClassName = "com.mysql.cj.jdbc.Driver"
+                        driverClassName = "org.mariadb.jdbc.Driver"
                         username = sqlUsername
                         password = sqlPassword
                         maximumPoolSize = 40
@@ -38,6 +34,7 @@ class SqlSelector {
                     SqlInstance.SQL = Database.connect(dataSource)
                 }
                 else -> {
+                    SqlInstance.SQL = Database.connect("jdbc:h2:./${pluginPasteDir()}/KCoreH2SQL", "org.h2.Driver")
                     consoleMessage(databaseValid)
                 }
             }

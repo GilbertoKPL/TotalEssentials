@@ -10,15 +10,21 @@ import org.bukkit.inventory.ItemStack
 
 object Dao {
     //kits
-    val kitsCache = Caffeine.newBuilder().initialCapacity(20).maximumSize(500).buildAsync<String, KCoreKit>()
+    val kitsCache = Caffeine.newBuilder().initialCapacity(20).maximumSize(500).build<String, KCoreKit>()
+
     val kitGuiCache = Caffeine.newBuilder().initialCapacity(20).maximumSize(500).build<Int, Inventory>()
+
     val kitClickGuiCache = Caffeine.newBuilder().initialCapacity(20).maximumSize(500).build<Int, String>()
+
     val kitPlayerCache = Caffeine.newBuilder().build<String, Cache<String, Long>>()
 
     //kits not cache
     val EditKitGuiCache = Caffeine.newBuilder().maximumSize(40).build<Int, ItemStack>()
+
     val ChatEventKit = HashMap<Player, String>(10)
+
     val kitInventory = HashMap<Player, String>(10)
+
     val kitEditInventory = HashMap<Player, String>(10)
 
     //general
