@@ -5,7 +5,7 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
-object Api {
+internal class Api {
     fun item(material: Material, name: String, lore: List<String>, effect: Boolean = false): ItemStack {
         val item = ItemStack(material)
         if (effect) {

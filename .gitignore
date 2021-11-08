@@ -1,6 +1,9 @@
-/.idea/
-/.gradle/
 /Minecraft/
 /Minecraft152/
 /Minecraft1171/
 /Minecraft189/
+/build/
+/.idea/
+/gradle/
+/.gradle/
+

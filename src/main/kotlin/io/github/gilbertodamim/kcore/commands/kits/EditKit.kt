@@ -1,7 +1,6 @@
 package io.github.gilbertodamim.kcore.commands.kits
 
 import io.github.gilbertodamim.kcore.KCoreMain
-import io.github.gilbertodamim.kcore.commands.kits.Kit.Companion.convertItems
 import io.github.gilbertodamim.kcore.config.configs.KitsConfig
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang
@@ -247,7 +246,7 @@ class EditKit : CommandExecutor {
         KitsInventory().kitGuiInventory()
         CompletableFuture.runAsync({
             try {
-                val ite = convertItems(items)
+                val ite = Kit().convertItems(items)
                 transaction(SqlInstance.SQL) {
                     SqlKits.update({ SqlKits.kitName eq kit.lowercase() }) {
                         it[kitItems] = ite

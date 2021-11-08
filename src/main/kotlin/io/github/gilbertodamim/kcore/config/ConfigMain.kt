@@ -20,7 +20,7 @@ import java.io.File
 import java.nio.file.*
 import java.util.stream.Collectors
 
-object ConfigMain {
+internal class ConfigMain {
 
     private var configList = ArrayList<YamlConfiguration>()
 
@@ -87,8 +87,7 @@ object ConfigMain {
             LibChecker.reloadClass("Time", TimeLang().javaClass, langConfig, true)
             LibChecker.reloadClass("Kits", KitsLang().javaClass, langConfig, true)
             LibChecker.reloadClass("General", GeneralLang().javaClass, langConfig, true)
-        }
-        finally {
+        } finally {
             KitsInventory().editKitInventory()
         }
     }

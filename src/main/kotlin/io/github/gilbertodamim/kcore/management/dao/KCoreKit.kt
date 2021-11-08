@@ -3,6 +3,7 @@ package io.github.gilbertodamim.kcore.management.dao
 import org.bukkit.inventory.ItemStack
 
 data class KCoreKit(val name: String, val time: Long, val realName: String, val items: Array<ItemStack?>) {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

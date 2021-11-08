@@ -2,9 +2,7 @@ package io.github.gilbertodamim.kcore.inventory
 
 import io.github.gilbertodamim.kcore.KCoreMain
 import io.github.gilbertodamim.kcore.KCoreMain.pluginName
-import io.github.gilbertodamim.kcore.config.langs.KitsLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.*
-import io.github.gilbertodamim.kcore.inventory.Api.item
 import io.github.gilbertodamim.kcore.management.dao.Dao
 import io.github.gilbertodamim.kcore.management.dao.Dao.EditKitGuiCache
 import io.github.gilbertodamim.kcore.management.dao.Dao.kitClickGuiCache
@@ -19,27 +17,27 @@ class KitsInventory {
             if (inventory == 11) {
                 EditKitGuiCache.put(
                     inventory,
-                    item(Material.CHEST, editKitInventoryItemsName, editKitInventoryItemsLore)
+                    Api().item(Material.CHEST, editKitInventoryItemsName, editKitInventoryItemsLore)
                 )
                 continue
             }
             if (inventory == 13) {
                 EditKitGuiCache.put(
                     inventory,
-                    item(Dao.Materials["clock"]!!, editKitInventoryTimeName, editKitInventoryTimeLore)
+                    Api().item(Dao.Materials["clock"]!!, editKitInventoryTimeName, editKitInventoryTimeLore)
                 )
                 continue
             }
             if (inventory == 15) {
                 EditKitGuiCache.put(
                     inventory,
-                    item(Dao.Materials["feather"]!!, editKitInventoryNameName, editKitInventoryNameLore)
+                    Api().item(Dao.Materials["feather"]!!, editKitInventoryNameName, editKitInventoryNameLore)
                 )
                 continue
             }
             EditKitGuiCache.put(
                 inventory,
-                item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+                Api().item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
             )
         }
     }
@@ -78,17 +76,17 @@ class KitsInventory {
                 for (to in 27..35) {
                     if (to == 27) {
                         if (size > 1) {
-                            inv.setItem(to, item(Material.HOPPER, KitsLang.kitInventoryIconBackName, true))
+                            inv.setItem(to, Api().item(Material.HOPPER, kitInventoryIconBackName, true))
                             continue
                         }
                     }
                     if (to == 35) {
-                        inv.setItem(to, item(Material.ARROW, KitsLang.kitInventoryIconNextName, true))
+                        inv.setItem(to, Api().item(Material.ARROW, kitInventoryIconNextName, true))
                         continue
                     }
                     inv.setItem(
                         to,
-                        item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+                        Api().item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
                     )
                 }
                 kitGuiCache.put(size, inv)
@@ -99,14 +97,14 @@ class KitsInventory {
         }
         if (length > 0) {
             if (size != 1) {
-                inv.setItem(27, item(Material.HOPPER, KitsLang.kitInventoryIconBackName))
+                inv.setItem(27, Api().item(Material.HOPPER, kitInventoryIconBackName))
             } else {
-                inv.setItem(27, item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true))
+                inv.setItem(27, Api().item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true))
             }
             for (to in 28..35) {
                 inv.setItem(
                     to,
-                    item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+                    Api().item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
                 )
             }
             kitGuiCache.put(size, inv)

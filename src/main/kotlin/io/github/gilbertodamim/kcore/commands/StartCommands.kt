@@ -15,7 +15,7 @@ class StartCommands {
 
     private fun kits() {
         if (KitsConfig.activated) {
-            Kit.startKits()
+            Kit().startKits()
             instance.getCommand("kit")?.setExecutor(Kit())
             instance.getCommand("editkit")?.setExecutor(EditKit())
             instance.getCommand("createkit")?.setExecutor(CreateKit())

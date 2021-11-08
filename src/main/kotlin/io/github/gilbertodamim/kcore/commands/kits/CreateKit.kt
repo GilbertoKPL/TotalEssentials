@@ -1,7 +1,6 @@
 package io.github.gilbertodamim.kcore.commands.kits
 
 import io.github.gilbertodamim.kcore.KCoreMain
-import io.github.gilbertodamim.kcore.commands.kits.Kit.Companion.convertItems
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.Exist
@@ -57,14 +56,14 @@ class CreateKit : CommandExecutor {
     }
 
     private fun createKit(kit: String, items: Array<ItemStack?>) {
-        val item = convertItems(items)
+        val item = Kit().convertItems(items)
         Dao.kitsCache.put(
             kit,
             KCoreKit(
                 kit.lowercase(),
                 0,
                 kit,
-                convertItems(item)
+                Kit().convertItems(item)
             )
         )
         KitsInventory().kitGuiInventory()

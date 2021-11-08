@@ -6,7 +6,6 @@ import io.github.gilbertodamim.kcore.KCoreMain.pluginName
 import io.github.gilbertodamim.kcore.config.configs.KitsConfig.useShortTime
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang.notPerm
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang.onlyPlayerCommand
-import io.github.gilbertodamim.kcore.config.langs.KitsLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.*
 import io.github.gilbertodamim.kcore.database.SqlInstance
 import io.github.gilbertodamim.kcore.database.table.PlayerKits
@@ -14,8 +13,6 @@ import io.github.gilbertodamim.kcore.database.table.SqlKits
 import io.github.gilbertodamim.kcore.inventory.Api
 import io.github.gilbertodamim.kcore.inventory.KitsInventory
 import io.github.gilbertodamim.kcore.management.ErrorClass
-import io.github.gilbertodamim.kcore.management.KCoreBukkitObjectInputStream
-import io.github.gilbertodamim.kcore.management.KCoreBukkitObjectOutputStream
 import io.github.gilbertodamim.kcore.management.Manager.convertMillisToString
 import io.github.gilbertodamim.kcore.management.Manager.getPlayerUUID
 import io.github.gilbertodamim.kcore.management.dao.Dao
@@ -24,6 +21,8 @@ import io.github.gilbertodamim.kcore.management.dao.Dao.kitGuiCache
 import io.github.gilbertodamim.kcore.management.dao.Dao.kitPlayerCache
 import io.github.gilbertodamim.kcore.management.dao.Dao.kitsCache
 import io.github.gilbertodamim.kcore.management.dao.KCoreKit
+import io.github.gilbertodamim.kcore.management.serialize.KCoreBukkitObjectInputStream
+import io.github.gilbertodamim.kcore.management.serialize.KCoreBukkitObjectOutputStream
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -169,7 +168,7 @@ class Kit : CommandExecutor {
                         if (i == null) continue
                         p.inventory.addItem(i)
                     }
-                    p.sendMessage(KitsLang.pickedSuccess.replace("%kit%", kitCache.realName))
+                    p.sendMessage(pickedSuccess.replace("%kit%", kitCache.realName))
                     upDatePlayerKitTime(p, kit)
                 } else {
                     p.sendMessage(notPerm)
@@ -198,35 +197,35 @@ class Kit : CommandExecutor {
         }
         for (to1 in 36..44) {
             if (to1 == 36) {
-                inv.setItem(to1, Api.item(Material.HOPPER, KitsLang.kitInventoryIconBackName, true))
+                inv.setItem(to1, Api().item(Material.HOPPER, kitInventoryIconBackName, true))
                 continue
             }
             if (to1 == 40) {
                 if (p.hasPermission("kcore.kits.admin")) {
-                    inv.setItem(to1, Api.item(Material.CHEST, kitInventoryIconEditKitName, true))
+                    inv.setItem(to1, Api().item(Material.CHEST, kitInventoryIconEditKitName, true))
                     continue
                 }
             }
             if (to1 == 44) {
                 if (p.hasPermission("kcore.kit.$kit")) {
                     if (timeAll <= System.currentTimeMillis() || timeAll == 0L) {
-                        inv.setItem(to1, Api.item(Material.ARROW, kitPickupIcon, true))
+                        inv.setItem(to1, Api().item(Material.ARROW, kitPickupIcon, true))
                     } else {
                         val array = ArrayList<String>()
                         val remainingTime = timeAll - System.currentTimeMillis()
                         for (i in kitPickupIconLoreTime) {
                             array.add(i.replace("%time%", convertMillisToString(remainingTime, useShortTime)))
                         }
-                        inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, array, true))
+                        inv.setItem(to1, Api().item(Material.ARROW, kitPickupIconNotPickup, array, true))
                     }
                 } else {
-                    inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, kitPickupIconLoreNotPerm, true))
+                    inv.setItem(to1, Api().item(Material.ARROW, kitPickupIconNotPickup, kitPickupIconLoreNotPerm, true))
                 }
                 continue
             }
             inv.setItem(
                 to1,
-                Api.item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+                Api().item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
             )
         }
         p.openInventory(inv)
@@ -282,84 +281,82 @@ class Kit : CommandExecutor {
         return false
     }
 
-    companion object {
-        fun startKits() {
+    fun startKits() {
+        try {
+            transaction(SqlInstance.SQL) {
+                SchemaUtils.create(SqlKits, PlayerKits)
+            }
+        } finally {
+            startCacheKits()
+            Kit().startPlayerKitCache()
+        }
+    }
+
+    private fun startCacheKits() {
+        CompletableFuture.runAsync({
             try {
+                kitsCache.invalidateAll()
                 transaction(SqlInstance.SQL) {
-                    SchemaUtils.create(SqlKits, PlayerKits)
-                }
-            } finally {
-                startCacheKits()
-                Kit().startPlayerKitCache()
-            }
-        }
-
-        private fun startCacheKits() {
-            CompletableFuture.runAsync({
-                try {
-                    kitsCache.invalidateAll()
-                    transaction(SqlInstance.SQL) {
-                        for (values in SqlKits.selectAll()) {
-                            val kit = values[SqlKits.kitName]
-                            val kitRealName = values[SqlKits.kitRealName]
-                            val kitTime = values[SqlKits.kitTime]
-                            val item = values[SqlKits.kitItems]
-                            kitsCache.put(
+                    for (values in SqlKits.selectAll()) {
+                        val kit = values[SqlKits.kitName]
+                        val kitRealName = values[SqlKits.kitRealName]
+                        val kitTime = values[SqlKits.kitTime]
+                        val item = values[SqlKits.kitItems]
+                        kitsCache.put(
+                            kit,
+                            KCoreKit(
                                 kit,
-                                KCoreKit(
-                                    kit,
-                                    kitTime,
-                                    kitRealName,
-                                    convertItems(item)
-                                )
+                                kitTime,
+                                kitRealName,
+                                convertItems(item)
                             )
-                        }
+                        )
                     }
-                    KitsInventory().kitGuiInventory()
-                } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
                 }
-            }, Executors.newCachedThreadPool())
-        }
-
-        fun convertItems(items: Array<ItemStack?>): String {
-            var toReturn = ""
-            try {
-                val outputStream = ByteArrayOutputStream()
-                val dataOutput = try {
-                    BukkitObjectOutputStream(outputStream)
-                } catch (e: NoClassDefFoundError) {
-                    KCoreBukkitObjectOutputStream(outputStream)
-                }
-                dataOutput.writeInt(items.size)
-                for (i in items.indices) {
-                    dataOutput.writeObject(items[i])
-                }
-                dataOutput.close()
-                toReturn = Base64Coder.encodeLines(outputStream.toByteArray())
-            } catch (e: ClassNotFoundException) {
+                KitsInventory().kitGuiInventory()
+            } catch (ex: Exception) {
+                ErrorClass().sendException(ex)
             }
-            return toReturn
-        }
+        }, Executors.newCachedThreadPool())
+    }
 
-        @Throws(IOException::class)
-        fun convertItems(data: String): Array<ItemStack?> {
-            return try {
-                val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(data))
-                val dataInput = try {
-                    BukkitObjectInputStream(inputStream)
-                } catch (e: NoClassDefFoundError) {
-                    KCoreBukkitObjectInputStream(inputStream)
-                }
-                val items = arrayOfNulls<ItemStack>(dataInput.readInt())
-                for (i in items.indices) {
-                    items[i] = dataInput.readObject() as ItemStack?
-                }
-                dataInput.close()
-                items
-            } catch (e: ClassNotFoundException) {
-                throw IOException(e)
+    fun convertItems(items: Array<ItemStack?>): String {
+        var toReturn = ""
+        try {
+            val outputStream = ByteArrayOutputStream()
+            val dataOutput = try {
+                BukkitObjectOutputStream(outputStream)
+            } catch (e: NoClassDefFoundError) {
+                KCoreBukkitObjectOutputStream(outputStream)
             }
+            dataOutput.writeInt(items.size)
+            for (i in items.indices) {
+                dataOutput.writeObject(items[i])
+            }
+            dataOutput.close()
+            toReturn = Base64Coder.encodeLines(outputStream.toByteArray())
+        } catch (e: ClassNotFoundException) {
+        }
+        return toReturn
+    }
+
+    @Throws(IOException::class)
+    fun convertItems(data: String): Array<ItemStack?> {
+        return try {
+            val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(data))
+            val dataInput = try {
+                BukkitObjectInputStream(inputStream)
+            } catch (e: NoClassDefFoundError) {
+                KCoreBukkitObjectInputStream(inputStream)
+            }
+            val items = arrayOfNulls<ItemStack>(dataInput.readInt())
+            for (i in items.indices) {
+                items[i] = dataInput.readObject() as ItemStack?
+            }
+            dataInput.close()
+            items
+        } catch (e: ClassNotFoundException) {
+            throw IOException(e)
         }
     }
 }
