@@ -1,12 +1,20 @@
 # KCore
 
-* in dev, it's in the beginning but it has a bright future, it will work in several versions, plugin that will help a lot to create your server because it will have many integrations on it.
+* A core system for minecraft server that supports most versions (1.5.2 - 1.17.1), using only database as a storage medium and various built-in commands / systems, which can be disabled at any time.
 
-# Resources
+## Commands - Kit System
+|Command         |Description                      |Permission                    |
+|----------------|-------------------------------|-----------------------------|
+|/createkit and /criarkit |Create a kit with an interface / GUI|kcore.kits.admin    |
+|/delkit |Delete kit with name|kcore.kits.admin    |
+|/editkit and /editarkit |Editkit a kit with an interface / GUI|kcore.kits.admin    |
+|/kit and /kits |Create a kit with an interface / GUIsee all kits through the interface / GUI and also get them|kcore.kits    |
+
+# Resources ( Internal )
 
 * Own Lib using new features such as:
-  - Mysql latest version;
-  - h2 latest version;
+  - MariaDB latest version;
+  - H2 database latest version;
   - HikariCP;
   - Kotlin;
   - ExposedSql.
