@@ -7,8 +7,6 @@ import io.github.gilbertodamim.kcore.config.langs.KitsLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.Exist
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.createKitUsage
 import io.github.gilbertodamim.kcore.database.SqlInstance
-import io.github.gilbertodamim.kcore.database.table.PlayerKits
-import io.github.gilbertodamim.kcore.database.table.PlayerKits.uuid
 import io.github.gilbertodamim.kcore.database.table.SqlKits
 import io.github.gilbertodamim.kcore.inventory.KitsInventory
 import io.github.gilbertodamim.kcore.management.ErrorClass
@@ -20,7 +18,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
@@ -62,13 +60,13 @@ class CreateKit : CommandExecutor {
         val item = convertItems(items)
         Dao.kitsCache.put(
             kit,
-                KCoreKit(
-                    kit.lowercase(),
-                    0,
-                    kit,
-                    convertItems(item)
-                )
+            KCoreKit(
+                kit.lowercase(),
+                0,
+                kit,
+                convertItems(item)
             )
+        )
         KitsInventory().kitGuiInventory()
         CompletableFuture.runAsync({
             try {

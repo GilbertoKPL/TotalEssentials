@@ -7,14 +7,7 @@ import io.github.gilbertodamim.kcore.config.configs.KitsConfig.useShortTime
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang.notPerm
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang.onlyPlayerCommand
 import io.github.gilbertodamim.kcore.config.langs.KitsLang
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitInventoryIconEditkitName
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitPickupIcon
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitPickupIconLoreNotPerm
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitPickupIconLoreTime
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitPickupIconNotPickup
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitPickupMessage
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.list
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.notExist
+import io.github.gilbertodamim.kcore.config.langs.KitsLang.*
 import io.github.gilbertodamim.kcore.database.SqlInstance
 import io.github.gilbertodamim.kcore.database.table.PlayerKits
 import io.github.gilbertodamim.kcore.database.table.SqlKits
@@ -68,7 +61,7 @@ class Kit : CommandExecutor {
             if (inv != null) {
                 s.openInventory(inv)
             } else {
-                s.sendMessage(KitsLang.notExistKits)
+                s.sendMessage(notExistKits)
             }
         }
         return false
@@ -99,21 +92,19 @@ class Kit : CommandExecutor {
                             if (long != 0L || timeAll > System.currentTimeMillis()) {
                                 if (toPut == "") {
                                     toPut = a
-                                }
-                                else {
+                                } else {
                                     toPut += "-$a"
                                 }
                                 used = true
                                 cache.put(name, long)
                             }
                         }
-                        PlayerKits.update ({PlayerKits.uuid eq i[PlayerKits.uuid]}){
+                        PlayerKits.update({ PlayerKits.uuid eq i[PlayerKits.uuid] }) {
                             it[kitsTime] = toPut
                         }
                         if (!used) {
                             PlayerKits.deleteWhere { PlayerKits.uuid eq i[PlayerKits.uuid] }
-                        }
-                        else {
+                        } else {
                             kitPlayerCache.put(i[PlayerKits.uuid], cache)
                         }
                     }
@@ -212,7 +203,7 @@ class Kit : CommandExecutor {
             }
             if (to1 == 40) {
                 if (p.hasPermission("kcore.kits.admin")) {
-                    inv.setItem(to1, Api.item(Material.CHEST, kitInventoryIconEditkitName, true))
+                    inv.setItem(to1, Api.item(Material.CHEST, kitInventoryIconEditKitName, true))
                     continue
                 }
             }
@@ -250,7 +241,7 @@ class Kit : CommandExecutor {
             if (number == 36 && e.currentItem != null) {
                 p.openInventory(kitGuiCache.getIfPresent(inventoryName[2].toInt())!!)
             }
-            if (number == 40 && e.currentItem != null && e.currentItem!!.itemMeta != null && e.currentItem!!.itemMeta?.displayName == kitInventoryIconEditkitName) {
+            if (number == 40 && e.currentItem != null && e.currentItem!!.itemMeta != null && e.currentItem!!.itemMeta?.displayName == kitInventoryIconEditKitName) {
                 if (p.hasPermission("kcore.kits.admin")) {
                     EditKit().editKitGui(inventoryName[1], p)
                 }
@@ -315,13 +306,13 @@ class Kit : CommandExecutor {
                             val item = values[SqlKits.kitItems]
                             kitsCache.put(
                                 kit,
-                                    KCoreKit(
-                                        kit,
-                                        kitTime,
-                                        kitRealName,
-                                        convertItems(item)
-                                    )
+                                KCoreKit(
+                                    kit,
+                                    kitTime,
+                                    kitRealName,
+                                    convertItems(item)
                                 )
+                            )
                         }
                     }
                     KitsInventory().kitGuiInventory()

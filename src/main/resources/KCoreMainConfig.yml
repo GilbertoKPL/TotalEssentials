@@ -5,15 +5,15 @@
 # Este projeto está em desenvolvimento porfavor tenha paciencia do projeto final;
 # Escolha o tipo de armazenamento do plugin, disponiveis: h2, mysql;
 # futuros tipos de armazenamento: postgresql, sqlserver.
-Lang: pt_BR
+General:
+  selected-lang: pt_BR
 Database:
   type: h2
-  connect:
-    ip: localhost
-    port: 3306
-    username: u0_kcore
-    database: s0_kcore
-    pass: kcore123
+  sql-ip: localhost
+  sql-port: 3306
+  sql-username: u0_kcore
+  sql-database: s0_kcore
+  sql-password: kcore123
 Kits:
   activated: true
   use-short-time: false

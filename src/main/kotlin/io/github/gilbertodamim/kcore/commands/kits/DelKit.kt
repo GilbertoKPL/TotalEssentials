@@ -15,8 +15,10 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 
@@ -61,13 +63,12 @@ class DelKit : CommandExecutor {
                             if (values.split(".")[0] != kit) {
                                 if (list == "") {
                                     list = values
-                                }
-                                else {
+                                } else {
                                     list += "$list-$values"
                                 }
                             }
                         }
-                        PlayerKits.update ({uuid like i[uuid]} ) {
+                        PlayerKits.update({ uuid like i[uuid] }) {
                             it[kitsTime] = list
                         }
                     }

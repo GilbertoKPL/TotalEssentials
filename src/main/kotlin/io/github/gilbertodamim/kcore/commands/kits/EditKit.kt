@@ -5,8 +5,8 @@ import io.github.gilbertodamim.kcore.commands.kits.Kit.Companion.convertItems
 import io.github.gilbertodamim.kcore.config.configs.KitsConfig
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.editkitInventoryNameMessage
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.editkitInventoryTimeMessage
+import io.github.gilbertodamim.kcore.config.langs.KitsLang.editKitInventoryNameMessage
+import io.github.gilbertodamim.kcore.config.langs.KitsLang.editKitInventoryTimeMessage
 import io.github.gilbertodamim.kcore.database.SqlInstance
 import io.github.gilbertodamim.kcore.database.table.SqlKits
 import io.github.gilbertodamim.kcore.inventory.KitsInventory
@@ -104,13 +104,13 @@ class EditKit : CommandExecutor {
             }
             if (number == 13) {
                 p.closeInventory()
-                p.sendMessage(editkitInventoryTimeMessage)
+                p.sendMessage(editKitInventoryTimeMessage)
                 ChatEventKit[p] = "time-${inventoryName[1]}"
                 return true
             }
             if (number == 15) {
                 p.closeInventory()
-                p.sendMessage(editkitInventoryNameMessage)
+                p.sendMessage(editKitInventoryNameMessage)
                 ChatEventKit[p] = "name-${inventoryName[1]}"
                 return true
             }
@@ -143,13 +143,13 @@ class EditKit : CommandExecutor {
             kitsCache.put(
                 kit,
 
-                    KCoreKit(
-                        editValues.name,
-                        editValues.time,
-                        nameKit,
-                        editValues.items
-                    )
+                KCoreKit(
+                    editValues.name,
+                    editValues.time,
+                    nameKit,
+                    editValues.items
                 )
+            )
         }
         KitsInventory().kitGuiInventory()
         CompletableFuture.runAsync({
@@ -201,13 +201,13 @@ class EditKit : CommandExecutor {
             kitsCache.invalidate(kit)
             kitsCache.put(
                 kit,
-                    KCoreKit(
-                        editValues.name,
-                        convert,
-                        editValues.realName,
-                        editValues.items
-                    )
+                KCoreKit(
+                    editValues.name,
+                    convert,
+                    editValues.realName,
+                    editValues.items
                 )
+            )
         }
         KitsInventory().kitGuiInventory()
         s.sendMessage(
@@ -236,13 +236,13 @@ class EditKit : CommandExecutor {
             kitsCache.put(
                 kit,
 
-                    KCoreKit(
-                        editValues.name,
-                        editValues.time,
-                        editValues.realName,
-                        items
-                    )
+                KCoreKit(
+                    editValues.name,
+                    editValues.time,
+                    editValues.realName,
+                    items
                 )
+            )
         }
         KitsInventory().kitGuiInventory()
         CompletableFuture.runAsync({

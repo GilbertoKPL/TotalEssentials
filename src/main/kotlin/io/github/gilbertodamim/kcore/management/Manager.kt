@@ -4,10 +4,7 @@ import com.google.common.collect.ImmutableMap
 import io.github.gilbertodamim.kcore.KCoreMain.instance
 import io.github.gilbertodamim.kcore.KCoreMain.pluginTagName
 import io.github.gilbertodamim.kcore.config.langs.TimeLang
-import io.github.gilbertodamim.kcore.config.langs.TimeLang.timeDayShort
-import io.github.gilbertodamim.kcore.config.langs.TimeLang.timeHourShort
-import io.github.gilbertodamim.kcore.config.langs.TimeLang.timeMinuteShort
-import io.github.gilbertodamim.kcore.config.langs.TimeLang.timeSecondShort
+import io.github.gilbertodamim.kcore.config.langs.TimeLang.*
 import io.github.gilbertodamim.kcore.management.dao.Dao.Materials
 import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerializable

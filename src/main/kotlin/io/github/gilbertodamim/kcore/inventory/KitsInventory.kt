@@ -3,14 +3,7 @@ package io.github.gilbertodamim.kcore.inventory
 import io.github.gilbertodamim.kcore.KCoreMain
 import io.github.gilbertodamim.kcore.KCoreMain.pluginName
 import io.github.gilbertodamim.kcore.config.langs.KitsLang
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.editkitInventoryItemsLore
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.editkitInventoryItemsName
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.editkitInventoryNameLore
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.editkitInventoryNameName
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.editkitInventoryTimeLore
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.editkitInventoryTimeName
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitInventoryItemsLore
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.kitInventoryItemsName
+import io.github.gilbertodamim.kcore.config.langs.KitsLang.*
 import io.github.gilbertodamim.kcore.inventory.Api.item
 import io.github.gilbertodamim.kcore.management.dao.Dao
 import io.github.gilbertodamim.kcore.management.dao.Dao.EditKitGuiCache
@@ -26,21 +19,21 @@ class KitsInventory {
             if (inventory == 11) {
                 EditKitGuiCache.put(
                     inventory,
-                    item(Material.CHEST, editkitInventoryItemsName, editkitInventoryItemsLore)
+                    item(Material.CHEST, editKitInventoryItemsName, editKitInventoryItemsLore)
                 )
                 continue
             }
             if (inventory == 13) {
                 EditKitGuiCache.put(
                     inventory,
-                    item(Dao.Materials["clock"]!!, editkitInventoryTimeName, editkitInventoryTimeLore)
+                    item(Dao.Materials["clock"]!!, editKitInventoryTimeName, editKitInventoryTimeLore)
                 )
                 continue
             }
             if (inventory == 15) {
                 EditKitGuiCache.put(
                     inventory,
-                    item(Dao.Materials["feather"]!!, editkitInventoryNameName, editkitInventoryNameLore)
+                    item(Dao.Materials["feather"]!!, editKitInventoryNameName, editKitInventoryNameLore)
                 )
                 continue
             }

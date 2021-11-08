@@ -1,19 +1,19 @@
 package io.github.gilbertodamim.kcore.library;
 
 import io.github.gilbertodamim.kcore.KCoreMain;
+import io.github.gilbertodamim.kcore.config.ConfigMain;
 import io.github.gilbertodamim.kcore.config.langs.StartLang;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
@@ -158,6 +158,57 @@ public class LibChecker {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void reloadClass(String Path, Class cl, YamlConfiguration source, Boolean color) throws IllegalAccessException {
+        for (Field i : cl.getDeclaredFields()) {
+            String[] names = i.getName().split("(?=\\p{Upper})");
+            String createdPatch = "";
+            for (String name : names) {
+                if (createdPatch == "") {
+                    createdPatch = Path + "." + name.toLowerCase();
+                } else {
+                    createdPatch += "-" + name.toLowerCase();
+                }
+            }
+            if (i.getGenericType().getTypeName().equalsIgnoreCase("java.util.List<java.lang.String>")) {
+                try {
+                    i.set(cl, ConfigMain.INSTANCE.getStringList(source, createdPatch, color));
+                } catch (NullPointerException e) {
+                    consoleMessage("Error in " + i.getName() );
+                    e.printStackTrace();
+                }
+                continue;
+            }
+            if (i.getGenericType().getTypeName() == "java.lang.String") {
+                try {
+                    i.set(cl, ConfigMain.INSTANCE.getString(source, createdPatch, color));
+                } catch (NullPointerException e) {
+                    consoleMessage("Error in " + i.getName() );
+                    e.printStackTrace();
+                }
+                continue;
+            }
+            if (i.getGenericType().getTypeName() == "java.lang.Boolean") {
+                try {
+                    i.set(cl, ConfigMain.INSTANCE.getBoolean(source, createdPatch));
+                } catch (NullPointerException e) {
+                    consoleMessage("Error in " + i.getName() );
+                    e.printStackTrace();
+                }
+                continue;
+            }
+            if (i.getGenericType().getTypeName() == "java.lang.Integer") {
+                try {
+                    i.set(cl, ConfigMain.INSTANCE.getInt(source, createdPatch));
+                } catch (NullPointerException e) {
+                    consoleMessage("Error in " + i.getName() );
+                    e.printStackTrace();
+                }
+                continue;
+            }
+            consoleMessage(i.getName() + " -" + i.getGenericType().getTypeName() + "- ");
         }
     }
 }
