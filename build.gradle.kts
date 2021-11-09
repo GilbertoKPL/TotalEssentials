@@ -1,18 +1,15 @@
 group = "io.github.gilbertodamim.kcore"
 version = 1.0
 
-//1.17.1 -> 1.17.1-R0.1-SNAPSHOT
-
-val exposedVersion= "0.36.1"
-val kotlinVersion= "1.5.31"
-val xSeries = "8.4.0"
+val exposedVersion= "0.36.2"
+val kotlinVersion= "1.6.0-RC2"
 val hikariVersion= "3.4.5" // java 8
 val slf4j= "1.7.32"
 val caffeine= "2.9.2" // java 8
 val libPaste = "KCore/lib/"
 
 plugins {
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.0-RC2"
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.0"
 }
@@ -62,9 +59,9 @@ dependencies {
     compileOnly("com.zaxxer:HikariCP:$hikariVersion")
     compileOnly("com.github.ben-manes.caffeine:caffeine:$caffeine")
     //in plugin
+    implementation("org.bstats:bstats-bukkit:2.2.1")
     implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("org.slf4j:slf4j-nop:1.7.32")
-    implementation("org.bstats:bstats-bukkit:2.2.1")
     //not lib
     compileOnly("org.apache.logging.log4j:log4j-core:2.14.1")
     //minecraft
@@ -76,7 +73,7 @@ tasks.shadowJar {
     archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
     destinationDirectory.set(File("$buildDir/../Minecraft/plugins"))
     manifest {
-        attributes["Class-Path"] = "${libPaste}maria-db-2.7.4.jar ${libPaste}kotlin-stdlib-$kotlinVersion.jar ${libPaste}exposed-core-$exposedVersion.jar ${libPaste}exposed-dao-$exposedVersion.jar ${libPaste}exposed-jdbc-$exposedVersion.jar ${libPaste}h2-1.4.200.jar ${libPaste}mysql-connector-java-8.0.26.jar ${libPaste}HikariCP-$hikariVersion.jar ${libPaste}caffeine-$caffeine.jar ${libPaste}caffeine-guava-$caffeine.jar"
+        attributes["Class-Path"] = "${libPaste}maria-db-2.7.4.jar ${libPaste}kotlin-stdlib-1.6.0.jar ${libPaste}exposed-core-$exposedVersion.jar ${libPaste}exposed-dao-$exposedVersion.jar ${libPaste}exposed-jdbc-$exposedVersion.jar ${libPaste}h2-1.4.200.jar ${libPaste}mysql-connector-java-8.0.26.jar ${libPaste}HikariCP-$hikariVersion.jar ${libPaste}caffeine-$caffeine.jar ${libPaste}caffeine-guava-$caffeine.jar"
         attributes["Version-Name"] = project.version
     }
     relocate("org.bstats", "io.github.gilbertodamim.kcore.library")
