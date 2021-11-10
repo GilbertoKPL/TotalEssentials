@@ -9,9 +9,9 @@ import io.github.gilbertodamim.kcore.management.Manager.startMaterials
 class StartPlugin {
     init {
         startMaterials()
-        ConfigMain().start()
+        ConfigMain.start()
         SqlSelector()
-        StartCommands().start()
-        StartEvents().start()
+        StartCommands.start()
+        StartEvents.start()
     }
 }

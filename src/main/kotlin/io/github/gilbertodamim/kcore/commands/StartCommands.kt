@@ -4,7 +4,7 @@ import io.github.gilbertodamim.kcore.KCoreMain.instance
 import io.github.gilbertodamim.kcore.commands.kits.*
 import io.github.gilbertodamim.kcore.config.configs.KitsConfig
 
-class StartCommands {
+object StartCommands {
     fun start() {
         instance.getCommand("kcore")?.setExecutor(KCore())
         kits()

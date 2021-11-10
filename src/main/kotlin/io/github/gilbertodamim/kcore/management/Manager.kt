@@ -22,6 +22,33 @@ object Manager {
         return p.uniqueId.toString()
     }
 
+    fun Player.sendMessageWithSound(message: String, Sound : String) {
+        player?.sendMessage(message)
+        try {
+            player?.playSound(player!!.location, org.bukkit.Sound.valueOf(Sound), 1F, 1F)
+        } catch (il : IllegalArgumentException) {
+            try {
+                player?.playSound(
+                    player!!.location,
+                    org.bukkit.Sound.valueOf(
+                        Sound.replace("_BLOCK_", "").replace("_ENTITY_", "").replace("_ITEM_", "")
+                    ),
+                    1F,
+                    1F
+                )
+            } catch (il : IllegalArgumentException) {
+                player?.playSound(
+                    player!!.location,
+                    org.bukkit.Sound.valueOf(
+                        Sound.replace("BLOCK_", "").replace("_BLOCK_", "").replace("ENTITY_", "").replace("ITEM_", "")
+                    ),
+                    1F,
+                    1F
+                )
+            }
+        }
+    }
+
     fun convertMillisToString(time: Long, short: Boolean): String {
         val toSend = ArrayList<String>()
         fun helper(time: Long, sendShort: String, send: String) {

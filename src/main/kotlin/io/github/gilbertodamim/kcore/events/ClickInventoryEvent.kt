@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 class ClickInventoryEvent : Listener {
     @EventHandler
     fun clickInventory(e: InventoryClickEvent) {
-        if (Kit().kitGuiEvent(e)) return
-        if (EditKit().editKitGuiEvent(e)) return
+        if (Kit.kitGuiEvent(e)) return
+        if (EditKit.editKitGuiEvent(e)) return
     }
 }

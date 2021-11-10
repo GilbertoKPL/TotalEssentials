@@ -4,4 +4,8 @@ public class KitsConfig {
     public static Boolean useShortTime = false;
 
     public static Boolean activated = false;
+
+    public static String sucess;
+
+    public static String problem;
 }

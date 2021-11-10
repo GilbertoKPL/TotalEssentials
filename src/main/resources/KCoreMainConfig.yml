@@ -17,3 +17,5 @@ Database:
 Kits:
   activated: true
   use-short-time: false
+  sucess: BLOCK_NOTE_BLOCK_PLING
+  problem: BLOCK_NOTE_BLOCK_BASS

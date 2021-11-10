@@ -1,16 +1,20 @@
 package io.github.gilbertodamim.kcore.commands.kits
 
+import com.github.benmanes.caffeine.cache.Caffeine
+import io.github.gilbertodamim.kcore.config.configs.KitsConfig
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.delKitUsage
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.notExist
+import io.github.gilbertodamim.kcore.dao.Dao.kitPlayerCache
+import io.github.gilbertodamim.kcore.dao.Dao.kitsCache
 import io.github.gilbertodamim.kcore.database.SqlInstance
 import io.github.gilbertodamim.kcore.database.table.PlayerKits
 import io.github.gilbertodamim.kcore.database.table.PlayerKits.uuid
 import io.github.gilbertodamim.kcore.database.table.SqlKits
 import io.github.gilbertodamim.kcore.inventory.KitsInventory
 import io.github.gilbertodamim.kcore.management.ErrorClass
-import io.github.gilbertodamim.kcore.dao.Dao.kitsCache
+import io.github.gilbertodamim.kcore.management.Manager.sendMessageWithSound
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -32,21 +36,21 @@ class DelKit : CommandExecutor {
             if (args.size == 1) {
                 try {
                     if (kitsCache.getIfPresent(args[0].lowercase()) == null) {
-                        s.sendMessage(notExist)
+                        s.sendMessageWithSound(notExist, KitsConfig.problem)
                     } else {
                         delKit(args[0].lowercase(), s)
                     }
 
                 } catch (ex: Exception) {
                     ErrorClass().sendException(ex)
-                    s.sendMessage(KitsLang.delKitProblem.replace("%name%", args[0]))
+                    s.sendMessageWithSound(KitsLang.delKitProblem.replace("%name%", args[0]), KitsConfig.problem)
                 }
             } else {
-                s.sendMessage(delKitUsage)
+                s.sendMessageWithSound(delKitUsage, KitsConfig.problem)
             }
             return false
         }
-        s.sendMessage(GeneralLang.notPerm)
+        s.sendMessageWithSound(GeneralLang.notPerm, KitsConfig.problem)
         return false
     }
 
@@ -59,21 +63,35 @@ class DelKit : CommandExecutor {
                     SqlKits.deleteWhere { SqlKits.kitName eq kit }
                     for (i in PlayerKits.selectAll()) {
                         var list = ""
+                        val present = kitPlayerCache.getIfPresent(i[uuid]) != null
+                        val cache = if (present) {
+                            Caffeine.newBuilder().maximumSize(500).build<String, Long>()
+                        } else {
+                            null
+                        }
                         for (values in i[PlayerKits.kitsTime].split("-")) {
-                            if (values.split(".")[0] != kit) {
+                            val separate = values.split(".")
+                            if (separate[0] != kit) {
                                 if (list == "") {
                                     list = values
                                 } else {
                                     list += "$list-$values"
+                                }
+                                if (present) {
+                                    cache?.put(separate[0], separate[1].toLong())
                                 }
                             }
                         }
                         PlayerKits.update({ uuid like i[uuid] }) {
                             it[kitsTime] = list
                         }
+                        if (present) {
+                            kitPlayerCache.invalidate(i[uuid])
+                            kitPlayerCache.put(i[uuid], cache!!)
+                        }
                     }
                 }
-                p.sendMessage(KitsLang.delKitSuccess.replace("%name%", kit))
+                p.sendMessageWithSound(KitsLang.delKitSuccess.replace("%name%", kit), KitsConfig.sucess)
             } catch (ex: Exception) {
                 ErrorClass().sendException(ex)
             }

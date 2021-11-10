@@ -1,16 +1,18 @@
 package io.github.gilbertodamim.kcore.commands.kits
 
 import io.github.gilbertodamim.kcore.KCoreMain
+import io.github.gilbertodamim.kcore.config.configs.KitsConfig
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.Exist
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.createKitUsage
+import io.github.gilbertodamim.kcore.dao.Dao
+import io.github.gilbertodamim.kcore.dao.KCoreKit
 import io.github.gilbertodamim.kcore.database.SqlInstance
 import io.github.gilbertodamim.kcore.database.table.SqlKits
 import io.github.gilbertodamim.kcore.inventory.KitsInventory
 import io.github.gilbertodamim.kcore.management.ErrorClass
-import io.github.gilbertodamim.kcore.dao.Dao
-import io.github.gilbertodamim.kcore.dao.KCoreKit
+import io.github.gilbertodamim.kcore.management.Manager.sendMessageWithSound
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -35,17 +37,17 @@ class CreateKit : CommandExecutor {
                     if (Dao.kitsCache.getIfPresent(args[0]) == null) {
                         createKitGui(args[0], s)
                     } else {
-                        s.sendMessage(Exist)
+                        s.sendMessageWithSound(Exist, KitsConfig.problem)
                     }
                 } else {
-                    s.sendMessage(KitsLang.nameLength)
+                    s.sendMessageWithSound(KitsLang.nameLength, KitsConfig.problem)
                 }
             } else {
-                s.sendMessage(createKitUsage)
+                s.sendMessageWithSound(createKitUsage, KitsConfig.problem)
             }
             return false
         }
-        s.sendMessage(GeneralLang.notPerm)
+        s.sendMessageWithSound(GeneralLang.notPerm, KitsConfig.problem)
         return false
     }
 
@@ -55,47 +57,49 @@ class CreateKit : CommandExecutor {
         Dao.kitInventory[p] = kit
     }
 
-    private fun createKit(kit: String, items: Array<ItemStack?>) {
-        val item = Kit().convertItems(items)
-        Dao.kitsCache.put(
-            kit,
-            KCoreKit(
-                kit.lowercase(),
-                0,
-                kit,
-                Kit().convertItems(item)
-            )
-        )
-        KitsInventory().kitGuiInventory()
-        CompletableFuture.runAsync({
-            try {
-                transaction(SqlInstance.SQL) {
-                    SqlKits.insert {
-                        it[kitName] = kit.lowercase()
-                        it[kitRealName] = kit
-                        it[kitItems] = item
-                        it[kitTime] = 0L
-                    }
+    companion object {
+        fun event(e: InventoryCloseEvent): Boolean {
+            if (Dao.kitInventory.contains(e.player as Player)) {
+                val p = e.player as Player
+                try {
+                    createKit(Dao.kitInventory[p]!!, e.inventory.contents)
+                    p.sendMessageWithSound(KitsLang.createKitSuccess.replace("%name%", Dao.kitInventory[p]!!), KitsConfig.sucess)
+                } catch (ex: Exception) {
+                    ErrorClass().sendException(ex)
+                    p.sendMessageWithSound(KitsLang.createKitProblem.replace("%name%", Dao.kitInventory[p]!!), KitsConfig.problem)
                 }
-            } catch (ex: Exception) {
-                ErrorClass().sendException(ex)
+                Dao.kitInventory.remove(p)
+                return true
             }
-        }, Executors.newCachedThreadPool())
-    }
-
-    fun event(e: InventoryCloseEvent): Boolean {
-        if (Dao.kitInventory.contains(e.player as Player)) {
-            val p = e.player as Player
-            try {
-                createKit(Dao.kitInventory[p]!!, e.inventory.contents)
-                p.sendMessage(KitsLang.createKitSuccess.replace("%name%", Dao.kitInventory[p]!!))
-            } catch (ex: Exception) {
-                ErrorClass().sendException(ex)
-                p.sendMessage(KitsLang.createKitProblem.replace("%name%", Dao.kitInventory[p]!!))
-            }
-            Dao.kitInventory.remove(p)
-            return true
+            return false
         }
-        return false
+
+        private fun createKit(kit: String, items: Array<ItemStack?>) {
+            val item = Kit().convertItems(items)
+            Dao.kitsCache.put(
+                kit,
+                KCoreKit(
+                    kit.lowercase(),
+                    0,
+                    kit,
+                    Kit().convertItems(item)
+                )
+            )
+            KitsInventory().kitGuiInventory()
+            CompletableFuture.runAsync({
+                try {
+                    transaction(SqlInstance.SQL) {
+                        SqlKits.insert {
+                            it[kitName] = kit.lowercase()
+                            it[kitRealName] = kit
+                            it[kitItems] = item
+                            it[kitTime] = 0L
+                        }
+                    }
+                } catch (ex: Exception) {
+                    ErrorClass().sendException(ex)
+                }
+            }, Executors.newCachedThreadPool())
+        }
     }
 }

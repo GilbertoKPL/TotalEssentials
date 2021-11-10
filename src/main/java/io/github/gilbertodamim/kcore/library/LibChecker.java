@@ -174,7 +174,7 @@ public class LibChecker {
             }
             if (i.getGenericType().getTypeName().equalsIgnoreCase("java.util.List<java.lang.String>")) {
                 try {
-                    i.set(cl, new ConfigMain().getStringList(source, createdPatch, color));
+                    i.set(cl, ConfigMain.Companion.getStringList(source, createdPatch, color));
                 } catch (NullPointerException e) {
                     consoleMessage("Error in " + i.getName());
                     e.printStackTrace();
@@ -183,7 +183,7 @@ public class LibChecker {
             }
             if (i.getGenericType().getTypeName() == "java.lang.String") {
                 try {
-                    i.set(cl, new ConfigMain().getString(source, createdPatch, color));
+                    i.set(cl, ConfigMain.Companion.getString(source, createdPatch, color));
                 } catch (NullPointerException e) {
                     consoleMessage("Error in " + i.getName());
                     e.printStackTrace();
@@ -192,7 +192,7 @@ public class LibChecker {
             }
             if (i.getGenericType().getTypeName() == "java.lang.Boolean") {
                 try {
-                    i.set(cl, new ConfigMain().getBoolean(source, createdPatch));
+                    i.set(cl, ConfigMain.Companion.getBoolean(source, createdPatch));
                 } catch (NullPointerException e) {
                     consoleMessage("Error in " + i.getName());
                     e.printStackTrace();
@@ -201,7 +201,7 @@ public class LibChecker {
             }
             if (i.getGenericType().getTypeName() == "java.lang.Integer") {
                 try {
-                    i.set(cl, new ConfigMain().getInt(source, createdPatch));
+                    i.set(cl, ConfigMain.Companion.getInt(source, createdPatch));
                 } catch (NullPointerException e) {
                     consoleMessage("Error in " + i.getName());
                     e.printStackTrace();
