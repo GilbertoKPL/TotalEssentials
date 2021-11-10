@@ -11,11 +11,11 @@ import io.github.gilbertodamim.kcore.database.table.SqlKits
 import io.github.gilbertodamim.kcore.inventory.KitsInventory
 import io.github.gilbertodamim.kcore.management.ErrorClass
 import io.github.gilbertodamim.kcore.management.Manager
-import io.github.gilbertodamim.kcore.management.dao.Dao
-import io.github.gilbertodamim.kcore.management.dao.Dao.ChatEventKit
-import io.github.gilbertodamim.kcore.management.dao.Dao.EditKitGuiCache
-import io.github.gilbertodamim.kcore.management.dao.Dao.kitsCache
-import io.github.gilbertodamim.kcore.management.dao.KCoreKit
+import io.github.gilbertodamim.kcore.dao.Dao
+import io.github.gilbertodamim.kcore.dao.Dao.ChatEventKit
+import io.github.gilbertodamim.kcore.dao.Dao.EditKitGuiCache
+import io.github.gilbertodamim.kcore.dao.Dao.kitsCache
+import io.github.gilbertodamim.kcore.dao.KCoreKit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender

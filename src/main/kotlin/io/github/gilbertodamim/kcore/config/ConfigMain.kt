@@ -88,7 +88,9 @@ internal class ConfigMain {
             LibChecker.reloadClass("Kits", KitsLang().javaClass, langConfig, true)
             LibChecker.reloadClass("General", GeneralLang().javaClass, langConfig, true)
         } finally {
-            KitsInventory().editKitInventory()
+            if (KitsConfig.activated) {
+                KitsInventory().editKitInventory()
+            }
         }
     }
 

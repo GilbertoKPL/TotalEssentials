@@ -3,10 +3,10 @@ package io.github.gilbertodamim.kcore.inventory
 import io.github.gilbertodamim.kcore.KCoreMain
 import io.github.gilbertodamim.kcore.KCoreMain.pluginName
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.*
-import io.github.gilbertodamim.kcore.management.dao.Dao
-import io.github.gilbertodamim.kcore.management.dao.Dao.EditKitGuiCache
-import io.github.gilbertodamim.kcore.management.dao.Dao.kitClickGuiCache
-import io.github.gilbertodamim.kcore.management.dao.Dao.kitGuiCache
+import io.github.gilbertodamim.kcore.dao.Dao
+import io.github.gilbertodamim.kcore.dao.Dao.EditKitGuiCache
+import io.github.gilbertodamim.kcore.dao.Dao.kitClickGuiCache
+import io.github.gilbertodamim.kcore.dao.Dao.kitGuiCache
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 

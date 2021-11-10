@@ -3,7 +3,7 @@ package io.github.gilbertodamim.kcore.management
 import io.github.gilbertodamim.kcore.KCoreMain.instance
 import io.github.gilbertodamim.kcore.KCoreMain.pluginTagName
 import io.github.gilbertodamim.kcore.config.langs.TimeLang.*
-import io.github.gilbertodamim.kcore.management.dao.Dao.Materials
+import io.github.gilbertodamim.kcore.dao.Dao.Materials
 import org.bukkit.Material
 import org.bukkit.entity.Player
 

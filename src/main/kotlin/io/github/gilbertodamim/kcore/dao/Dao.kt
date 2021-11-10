@@ -1,4 +1,4 @@
-package io.github.gilbertodamim.kcore.management.dao
+package io.github.gilbertodamim.kcore.dao
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine

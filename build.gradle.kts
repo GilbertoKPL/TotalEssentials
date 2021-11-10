@@ -23,7 +23,7 @@ bukkit {
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.STARTUP
     commands {
         register("kcore") {
-            description = "This is a kit command!"
+            description = "This is a main kcore command!"
             aliases = listOf("system", "essentials", "s", "ks")
         }
         register("kit") {
@@ -41,6 +41,10 @@ bukkit {
         register("delkit") {
             description = "This is a delkit command!"
             aliases = listOf("deletarkit")
+        }
+        register("givekit") {
+            description = "This is a givekit command!"
+            aliases = listOf("darkit")
         }
     }
 }

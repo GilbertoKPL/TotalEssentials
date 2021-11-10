@@ -10,7 +10,7 @@ import io.github.gilbertodamim.kcore.database.table.PlayerKits.uuid
 import io.github.gilbertodamim.kcore.database.table.SqlKits
 import io.github.gilbertodamim.kcore.inventory.KitsInventory
 import io.github.gilbertodamim.kcore.management.ErrorClass
-import io.github.gilbertodamim.kcore.management.dao.Dao.kitsCache
+import io.github.gilbertodamim.kcore.dao.Dao.kitsCache
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender

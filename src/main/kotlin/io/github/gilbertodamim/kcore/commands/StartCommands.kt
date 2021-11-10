@@ -1,10 +1,7 @@
 package io.github.gilbertodamim.kcore.commands
 
 import io.github.gilbertodamim.kcore.KCoreMain.instance
-import io.github.gilbertodamim.kcore.commands.kits.CreateKit
-import io.github.gilbertodamim.kcore.commands.kits.DelKit
-import io.github.gilbertodamim.kcore.commands.kits.EditKit
-import io.github.gilbertodamim.kcore.commands.kits.Kit
+import io.github.gilbertodamim.kcore.commands.kits.*
 import io.github.gilbertodamim.kcore.config.configs.KitsConfig
 
 class StartCommands {
@@ -20,6 +17,7 @@ class StartCommands {
             instance.getCommand("editkit")?.setExecutor(EditKit())
             instance.getCommand("createkit")?.setExecutor(CreateKit())
             instance.getCommand("delkit")?.setExecutor(DelKit())
+            instance.getCommand("givekit")?.setExecutor(GiveKit())
         }
     }
 }

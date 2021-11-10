@@ -1,4 +1,4 @@
-package io.github.gilbertodamim.kcore.management.dao
+package io.github.gilbertodamim.kcore.dao
 
 import org.bukkit.inventory.ItemStack
 

@@ -9,8 +9,8 @@ import io.github.gilbertodamim.kcore.database.SqlInstance
 import io.github.gilbertodamim.kcore.database.table.SqlKits
 import io.github.gilbertodamim.kcore.inventory.KitsInventory
 import io.github.gilbertodamim.kcore.management.ErrorClass
-import io.github.gilbertodamim.kcore.management.dao.Dao
-import io.github.gilbertodamim.kcore.management.dao.KCoreKit
+import io.github.gilbertodamim.kcore.dao.Dao
+import io.github.gilbertodamim.kcore.dao.KCoreKit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
