@@ -10,34 +10,34 @@ import io.github.gilbertodamim.kcore.dao.Dao.kitGuiCache
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-class KitsInventory {
+internal object KitsInventory {
     fun editKitInventory() {
         EditKitGuiCache.invalidateAll()
         for (inventory in 0..26) {
             if (inventory == 11) {
                 EditKitGuiCache.put(
                     inventory,
-                    Api().item(Material.CHEST, editKitInventoryItemsName, editKitInventoryItemsLore)
+                    Api.item(Material.CHEST, editKitInventoryItemsName, editKitInventoryItemsLore)
                 )
                 continue
             }
             if (inventory == 13) {
                 EditKitGuiCache.put(
                     inventory,
-                    Api().item(Dao.Materials["clock"]!!, editKitInventoryTimeName, editKitInventoryTimeLore)
+                    Api.item(Dao.Materials["clock"]!!, editKitInventoryTimeName, editKitInventoryTimeLore)
                 )
                 continue
             }
             if (inventory == 15) {
                 EditKitGuiCache.put(
                     inventory,
-                    Api().item(Dao.Materials["feather"]!!, editKitInventoryNameName, editKitInventoryNameLore)
+                    Api.item(Dao.Materials["feather"]!!, editKitInventoryNameName, editKitInventoryNameLore)
                 )
                 continue
             }
             EditKitGuiCache.put(
                 inventory,
-                Api().item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+                Api.item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
             )
         }
     }
@@ -76,17 +76,17 @@ class KitsInventory {
                 for (to in 27..35) {
                     if (to == 27) {
                         if (size > 1) {
-                            inv.setItem(to, Api().item(Material.HOPPER, kitInventoryIconBackName, true))
+                            inv.setItem(to, Api.item(Material.HOPPER, kitInventoryIconBackName, true))
                             continue
                         }
                     }
                     if (to == 35) {
-                        inv.setItem(to, Api().item(Material.ARROW, kitInventoryIconNextName, true))
+                        inv.setItem(to, Api.item(Material.ARROW, kitInventoryIconNextName, true))
                         continue
                     }
                     inv.setItem(
                         to,
-                        Api().item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+                        Api.item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
                     )
                 }
                 kitGuiCache.put(size, inv)
@@ -97,14 +97,14 @@ class KitsInventory {
         }
         if (length > 0) {
             if (size != 1) {
-                inv.setItem(27, Api().item(Material.HOPPER, kitInventoryIconBackName))
+                inv.setItem(27, Api.item(Material.HOPPER, kitInventoryIconBackName))
             } else {
-                inv.setItem(27, Api().item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true))
+                inv.setItem(27, Api.item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true))
             }
             for (to in 28..35) {
                 inv.setItem(
                     to,
-                    Api().item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+                    Api.item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
                 )
             }
             kitGuiCache.put(size, inv)

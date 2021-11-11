@@ -1,6 +1,7 @@
 package io.github.gilbertodamim.kcore.commands.kits
 
 import io.github.gilbertodamim.kcore.config.configs.KitsConfig
+import io.github.gilbertodamim.kcore.config.configs.KitsConfig.enableSounds
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -11,7 +12,7 @@ class GiveKit : CommandExecutor {
         if (s.hasPermission("kcore.kits.admin")) {
 
         }
-        s.sendMessage(GeneralLang.notPerm, KitsConfig.problem)
+        s.sendMessage(GeneralLang.notPerm)
         return false
     }
 }

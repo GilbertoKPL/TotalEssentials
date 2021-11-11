@@ -37,7 +37,7 @@ class KCore : CommandExecutor {
                             }
                         }
                     } catch (ex: Exception) {
-                        ErrorClass().sendException(ex)
+                        ErrorClass.sendException(ex)
                     }
                 }, Executors.newSingleThreadExecutor())
             }

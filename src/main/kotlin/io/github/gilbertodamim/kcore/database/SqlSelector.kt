@@ -36,7 +36,7 @@ class SqlSelector {
             consoleMessage(connectDatabaseSuccess.replace("%db%", type.lowercase()))
         } catch (ex: Exception) {
             consoleMessage(connectDatabaseError)
-            ErrorClass().sendException(ex)
+            ErrorClass.sendException(ex)
         }
     }
 }

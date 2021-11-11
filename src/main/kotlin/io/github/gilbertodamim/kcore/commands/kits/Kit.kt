@@ -3,8 +3,7 @@ package io.github.gilbertodamim.kcore.commands.kits
 import com.github.benmanes.caffeine.cache.Caffeine
 import io.github.gilbertodamim.kcore.KCoreMain
 import io.github.gilbertodamim.kcore.KCoreMain.pluginName
-import io.github.gilbertodamim.kcore.config.configs.KitsConfig
-import io.github.gilbertodamim.kcore.config.configs.KitsConfig.useShortTime
+import io.github.gilbertodamim.kcore.config.configs.KitsConfig.*
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang.notPerm
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang.onlyPlayerCommand
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.*
@@ -42,7 +41,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 
@@ -54,19 +52,16 @@ class Kit : CommandExecutor {
             return false
         }
         if (args.isNotEmpty() && s.hasPermission("kcore.kits")) {
-            val to = kitsCache.getIfPresent(args[0].lowercase())
-            if (to != null) {
+            kitsCache.getIfPresent(args[0].lowercase()).also {
+                it ?: s.sendMessageWithSound(list.replace("%kits%", kitList().toString()), problem, enableSounds)
+                    .run { return true }
                 pickupKit(s, args[0].lowercase())
-            } else {
-                s.sendMessageWithSound(list.replace("%kits%", kitList().toString()), KitsConfig.problem)
             }
-        } else {
-            val inv = kitGuiCache.getIfPresent(1)
-            if (inv != null) {
-                s.openInventory(inv)
-            } else {
-                s.sendMessageWithSound(notExistKits, KitsConfig.problem)
-            }
+            return true
+        }
+        kitGuiCache.getIfPresent(1).also {
+            it ?: s.sendMessageWithSound(notExistKits, problem, enableSounds).run { return true }
+            s.openInventory(it)
         }
         return false
     }
@@ -90,8 +85,9 @@ class Kit : CommandExecutor {
                 try {
                     transaction(SqlInstance.SQL) {
                         val uuid = getPlayerUUID(p)
-                        val query = PlayerKits.select(PlayerKits.uuid eq uuid)
-                        if (query.empty()) return@transaction
+                        val query = PlayerKits.select(PlayerKits.uuid eq uuid).also {
+                            if (it.empty()) return@transaction
+                        }
                         var toPut = ""
                         var used = false
                         val cache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
@@ -99,6 +95,7 @@ class Kit : CommandExecutor {
                             val split = a.split(".")
                             val timeKit = split[1].toLong()
                             val nameKit = split[0]
+
                             val timeAll =
                                 SqlKits.select { SqlKits.kitName eq nameKit }.single()[SqlKits.kitTime] + timeKit
                             if (timeKit != 0L || timeAll > System.currentTimeMillis()) {
@@ -121,7 +118,7 @@ class Kit : CommandExecutor {
                         kitPlayerCache.put(uuid, cache)
                     }
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
+                    ErrorClass.sendException(ex)
                 }
             }, Executors.newSingleThreadExecutor())
         }
@@ -140,24 +137,25 @@ class Kit : CommandExecutor {
 
         fun kitGuiEvent(e: InventoryClickEvent): Boolean {
             val inventoryName = e.view.title.split(" ")
-            if (inventoryName[0] == "$pluginName§eKit" && e.currentItem != null) {
+            e.currentItem ?: return false
+            val meta = e.currentItem!!.itemMeta ?: return false
+            if (inventoryName[0] == "$pluginName§eKit") {
                 val p = e.whoClicked as Player
                 e.isCancelled = true
                 val number = e.slot
-                if (number == 36 && e.currentItem != null) {
+                if (number == 36) {
                     p.openInventory(kitGuiCache.getIfPresent(inventoryName[2].toInt())!!)
                 }
-                if (number == 40 && e.currentItem != null && e.currentItem!!.itemMeta != null && e.currentItem!!.itemMeta?.displayName == kitInventoryIconEditKitName) {
-                    if (p.hasPermission("kcore.kits.admin")) {
-                        EditKit.editKitGui(inventoryName[1], p)
-                    }
+                if (number == 40 && meta.displayName == kitInventoryIconEditKitName && p.hasPermission("kcore.kits.admin")) {
+                    EditKit.editKitGui(inventoryName[1], p)
                 }
-                if (number == 44 && e.currentItem!!.itemMeta != null) {
-                    if (e.currentItem!!.itemMeta?.displayName == kitPickupIcon) {
+                if (number == 44) {
+                    if (meta.displayName == kitPickupIcon) {
                         pickupKit(p, inventoryName[1])
                         p.closeInventory()
+                        return true
                     }
-                    if (e.currentItem!!.itemMeta?.displayName == kitPickupIconNotPickup) {
+                    if (meta.displayName == kitPickupIconNotPickup) {
                         kitGui(inventoryName[1], inventoryName[2], p)
                     }
                 }
@@ -172,15 +170,15 @@ class Kit : CommandExecutor {
                     if (kit != null) {
                         kitGui(kit, inventoryName[1], p)
                     }
-                } else {
-                    if (number == 27 && inventoryName[1].toInt() > 1) {
-                        p.openInventory(kitGuiCache.getIfPresent(inventoryName[1].toInt() - 1)!!)
-                    }
-                    if (number == 35) {
-                        val check = kitGuiCache.getIfPresent(inventoryName[1].toInt() + 1)
-                        if (check != null) {
-                            p.openInventory(check)
-                        }
+                    return true
+                }
+                if (number == 27 && inventoryName[1].toInt() > 1) {
+                    p.openInventory(kitGuiCache.getIfPresent(inventoryName[1].toInt() - 1)!!)
+                }
+                if (number == 35) {
+                    val check = kitGuiCache.getIfPresent(inventoryName[1].toInt() + 1)
+                    if (check != null) {
+                        p.openInventory(check)
                     }
                 }
                 return true
@@ -188,87 +186,173 @@ class Kit : CommandExecutor {
             return false
         }
 
+        private fun giveKit(p: Player, items: List<ItemStack>, armorAutoEquip: Boolean, drop: Boolean = false) : Boolean {
+            //bug armored check error
+            val inv = p.inventory
+            val itemsInternal = ArrayList<ItemStack>()
+            val spacePlayer = inv.filterNotNull().size
+            val alreadyUsed = ArrayList<String>()
+            val itemsArmorInternal = HashMap<String, ItemStack>()
+            var space = (Integer.valueOf(36).minus(spacePlayer)).also {
+                if (armorAutoEquip) {
+                    fun helper(to: ItemStack?, name: String) {
+                        if (to == null) {
+                            it.plus(1)
+                        } else {
+                            alreadyUsed.add(name)
+                        }
+                    }
+                    helper(inv.helmet, "HELMET")
+                    helper(inv.chestplate, "CHESTPLATE")
+                    helper(inv.leggings, "LEGGINGS")
+                    helper(inv.boots, "BOOTS")
+                }
+            }
+            for (i in items) {
+                val split = i.type.name.split("_")
+                var armor = false
+                if (armorAutoEquip) {
+                    for (a in split) {
+                        if (a.contains("HELMET") || a.contains("CHESTPLATE") || a.contains("LEGGINGS") || a.contains("BOOTS")) {
+                            if (alreadyUsed.contains(a)) {
+                                itemsInternal.add(i)
+                                space -= 1
+                            } else {
+                                armor = true
+                                itemsArmorInternal[a] = i
+                                alreadyUsed.add(a)
+                            }
+                            break
+                        }
+                    }
+                }
+                if (!armor) {
+                    itemsInternal.add(i)
+                }
+            }
+            fun giveArmour() {
+                for (i in itemsArmorInternal) {
+                    if (i.key == "HELMET") {
+                        inv.helmet = i.value
+                        continue
+                    }
+                    if (i.key == "CHESTPLATE") {
+                        inv.chestplate = i.value
+                        continue
+                    }
+                    if (i.key == "LEGGINGS") {
+                        inv.leggings = i.value
+                        continue
+                    }
+                    if (i.key == "BOOTS") {
+                        inv.boots = i.value
+                        continue
+                    }
+                }
+            }
+            if (drop) {
+                for (i in itemsInternal) {
+                    if (space >= spacePlayer) {
+                        p.inventory.addItem(i)
+                        continue
+                    }
+                    p.world.dropItem(p.location, i)
+                }
+                giveArmour()
+                return true
+            }
+            if (space >= itemsInternal.size) {
+                for (i in itemsInternal) {
+                    p.inventory.addItem(i)
+                }
+                giveArmour()
+                return true
+            }
+            p.sendMessageWithSound(
+                kitPickupNoSpace.replace("%slots%", (itemsInternal.size - space).toString()),
+                problem,
+                enableSounds
+            )
+            return false
+        }
+
         private fun pickupKit(p: Player, kit: String) {
             val pUUID = getPlayerUUID(p)
-            val kitCache = kitsCache.getIfPresent(kit)
-            if (kitCache != null) {
-                val timePlayerPickedKit = kitPlayerCache.getIfPresent(pUUID)?.getIfPresent(kit)
-                var timeAll = 0L
-                if (timePlayerPickedKit != null) {
-                    timeAll = kitCache.time + timePlayerPickedKit
+            val kitCache =
+                kitsCache.getIfPresent(kit) ?: p.sendMessageWithSound(notExist, problem, enableSounds).run {
+                    return
                 }
-                if (timeAll == 0L || timeAll <= System.currentTimeMillis()) {
-                    if (p.hasPermission("kcore.kit.$kit")) {
-                        for (i in kitCache.items) {
-                            if (i == null) continue
-                            p.inventory.addItem(i)
-                        }
-                        upDatePlayerKitTime(p, kit)
-                        p.sendMessageWithSound(pickedSuccess.replace("%kit%", kitCache.realName), KitsConfig.sucess)
-                    } else {
-                        p.sendMessageWithSound(notPerm, KitsConfig.problem)
-                    }
-                } else {
-                    val remainingTime = timeAll - System.currentTimeMillis()
-                    p.sendMessageWithSound(
-                        kitPickupMessage.replace(
-                            "%time%",
-                            convertMillisToString(remainingTime, useShortTime)
-                        ), KitsConfig.problem
-                    )
-                }
-            } else {
-                p.sendMessageWithSound(notExist, KitsConfig.problem)
+            val timeAll = kitPlayerCache.getIfPresent(pUUID)?.getIfPresent(kit) ?: 0L.also {
+                it.plus(kitCache.time)
             }
+            if (timeAll == 0L || timeAll <= System.currentTimeMillis()) {
+                if (p.hasPermission("kcore.kit.$kit")) {
+                    if (giveKit(p, kitCache.items.filterNotNull(), equipArmorInPickup, dropItemsInPickup)) {
+                        upDatePlayerKitTime(p, kit)
+                        p.sendMessageWithSound(
+                            pickedSuccess.replace("%kit%", kitCache.realName),
+                            success,
+                            enableSounds
+                        )
+                    }
+                    return
+                }
+                p.sendMessageWithSound(notPerm, problem, enableSounds)
+                return
+            }
+            val remainingTime = timeAll - System.currentTimeMillis()
+            p.sendMessageWithSound(
+                kitPickupMessage.replace(
+                    "%time%",
+                    convertMillisToString(remainingTime, useShortTime)
+                ), problem, enableSounds
+            )
         }
 
         private fun kitGui(kit: String, guiNumber: String, p: Player) {
             val inv = KCoreMain.instance.server.createInventory(null, 45, "$pluginName§eKit $kit $guiNumber")
             val to = kitsCache.getIfPresent(kit)!!
             val pUUID = getPlayerUUID(p)
-            val timePlayerPickedKit = kitPlayerCache.getIfPresent(pUUID)?.getIfPresent(kit)
-            var timeAll = 0L
-            if (timePlayerPickedKit != null) {
-                timeAll = kitsCache.getIfPresent(kit)?.time!! + timePlayerPickedKit
+            val timeAll = kitPlayerCache.getIfPresent(pUUID)?.getIfPresent(kit) ?: 0L.also {
+                it.plus(kitsCache.getIfPresent(kit)?.time!!)
             }
-            for (i in to.items) {
-                if (i == null) continue
+            for (i in to.items.filterNotNull()) {
                 inv.addItem(i)
             }
             for (to1 in 36..44) {
                 if (to1 == 36) {
-                    inv.setItem(to1, Api().item(Material.HOPPER, kitInventoryIconBackName, true))
+                    inv.setItem(to1, Api.item(Material.HOPPER, kitInventoryIconBackName, true))
                     continue
                 }
                 if (to1 == 40) {
                     if (p.hasPermission("kcore.kits.admin")) {
-                        inv.setItem(to1, Api().item(Material.CHEST, kitInventoryIconEditKitName, true))
+                        inv.setItem(to1, Api.item(Material.CHEST, kitInventoryIconEditKitName, true))
                         continue
                     }
                 }
                 if (to1 == 44) {
                     if (p.hasPermission("kcore.kit.$kit")) {
                         if (timeAll <= System.currentTimeMillis() || timeAll == 0L) {
-                            inv.setItem(to1, Api().item(Material.ARROW, kitPickupIcon, true))
-                        } else {
-                            val array = ArrayList<String>()
-                            val remainingTime = timeAll - System.currentTimeMillis()
-                            for (i in kitPickupIconLoreTime) {
-                                array.add(i.replace("%time%", convertMillisToString(remainingTime, useShortTime)))
-                            }
-                            inv.setItem(to1, Api().item(Material.ARROW, kitPickupIconNotPickup, array, true))
+                            inv.setItem(to1, Api.item(Material.ARROW, kitPickupIcon, true))
+                            continue
                         }
-                    } else {
-                        inv.setItem(
-                            to1,
-                            Api().item(Material.ARROW, kitPickupIconNotPickup, kitPickupIconLoreNotPerm, true)
-                        )
+                        val array = ArrayList<String>()
+                        val remainingTime = timeAll - System.currentTimeMillis()
+                        for (i in kitPickupIconLoreTime) {
+                            array.add(i.replace("%time%", convertMillisToString(remainingTime, useShortTime)))
+                        }
+                        inv.setItem(to1, Api.item(Material.ARROW, kitPickupIconNotPickup, array, true))
+                        continue
                     }
+                    inv.setItem(
+                        to1,
+                        Api.item(Material.ARROW, kitPickupIconNotPickup, kitPickupIconLoreNotPerm, true)
+                    )
                     continue
                 }
                 inv.setItem(
                     to1,
-                    Api().item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
+                    Api.item(Dao.Materials["glass"]!!, "${pluginName}§eKIT", true)
                 )
             }
             p.openInventory(inv)
@@ -276,13 +360,8 @@ class Kit : CommandExecutor {
 
         private fun upDatePlayerKitTime(p: Player, kit: String) {
             val pUUID = getPlayerUUID(p)
-            val cache = kitPlayerCache.getIfPresent(pUUID)
-            if (cache != null) {
-                cache.put(kit, System.currentTimeMillis())
-                kitPlayerCache.invalidate(pUUID)
-                kitPlayerCache.put(pUUID, cache)
-            } else {
-                val newCache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
+            val newCache = Caffeine.newBuilder().maximumSize(500).build<String, Long>()
+            val cache = kitPlayerCache.getIfPresent(pUUID) ?: {
                 for (i in kitsCache.asMap()) {
                     val name = i.value.name
                     if (name == kit) continue
@@ -290,7 +369,10 @@ class Kit : CommandExecutor {
                 }
                 newCache.put(kit, System.currentTimeMillis())
                 kitPlayerCache.put(pUUID, newCache)
-            }
+            }.run { return }
+            cache.put(kit, System.currentTimeMillis())
+            kitPlayerCache.invalidate(pUUID)
+            kitPlayerCache.put(pUUID, cache)
             CompletableFuture.runAsync({
                 try {
                     transaction(SqlInstance.SQL) {
@@ -308,9 +390,51 @@ class Kit : CommandExecutor {
                         }
                     }
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
+                    ErrorClass.sendException(ex)
                 }
             }, Executors.newSingleThreadExecutor())
+        }
+
+        fun convertItems(items: Array<ItemStack?>): String {
+            lateinit var toReturn: String
+            try {
+                val outputStream = ByteArrayOutputStream()
+                val dataOutput = try {
+                    BukkitObjectOutputStream(outputStream)
+                } catch (e: NoClassDefFoundError) {
+                    KCoreBukkitObjectOutputStream(outputStream)
+                }
+                dataOutput.writeInt(items.size)
+                for (i in items.indices) {
+                    dataOutput.writeObject(items[i])
+                }
+                dataOutput.close()
+                toReturn = Base64Coder.encodeLines(outputStream.toByteArray())
+            } catch (e: Exception) {
+                ErrorClass.sendException(e)
+            }
+            return toReturn
+        }
+
+        fun convertItems(data: String): Array<ItemStack?> {
+            lateinit var toReturn: Array<ItemStack?>
+            try {
+                val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(data))
+                val dataInput = try {
+                    BukkitObjectInputStream(inputStream)
+                } catch (e: NoClassDefFoundError) {
+                    KCoreBukkitObjectInputStream(inputStream)
+                }
+                val items = arrayOfNulls<ItemStack>(dataInput.readInt())
+                for (i in items.indices) {
+                    items[i] = dataInput.readObject() as ItemStack?
+                }
+                dataInput.close()
+                toReturn = items
+            } catch (e: Exception) {
+                ErrorClass.sendException(e)
+            }
+            return toReturn
         }
     }
 
@@ -345,50 +469,10 @@ class Kit : CommandExecutor {
                         )
                     }
                 }
-                KitsInventory().kitGuiInventory()
+                KitsInventory.kitGuiInventory()
             } catch (ex: Exception) {
-                ErrorClass().sendException(ex)
+                ErrorClass.sendException(ex)
             }
         }, Executors.newCachedThreadPool())
-    }
-
-    fun convertItems(items: Array<ItemStack?>): String {
-        var toReturn = ""
-        try {
-            val outputStream = ByteArrayOutputStream()
-            val dataOutput = try {
-                BukkitObjectOutputStream(outputStream)
-            } catch (e: NoClassDefFoundError) {
-                KCoreBukkitObjectOutputStream(outputStream)
-            }
-            dataOutput.writeInt(items.size)
-            for (i in items.indices) {
-                dataOutput.writeObject(items[i])
-            }
-            dataOutput.close()
-            toReturn = Base64Coder.encodeLines(outputStream.toByteArray())
-        } catch (e: ClassNotFoundException) {
-        }
-        return toReturn
-    }
-
-    @Throws(IOException::class)
-    fun convertItems(data: String): Array<ItemStack?> {
-        return try {
-            val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(data))
-            val dataInput = try {
-                BukkitObjectInputStream(inputStream)
-            } catch (e: NoClassDefFoundError) {
-                KCoreBukkitObjectInputStream(inputStream)
-            }
-            val items = arrayOfNulls<ItemStack>(dataInput.readInt())
-            for (i in items.indices) {
-                items[i] = dataInput.readObject() as ItemStack?
-            }
-            dataInput.close()
-            items
-        } catch (e: ClassNotFoundException) {
-            throw IOException(e)
-        }
     }
 }

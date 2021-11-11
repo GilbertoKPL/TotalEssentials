@@ -2,6 +2,7 @@ package io.github.gilbertodamim.kcore.commands.kits
 
 import io.github.gilbertodamim.kcore.KCoreMain
 import io.github.gilbertodamim.kcore.config.configs.KitsConfig
+import io.github.gilbertodamim.kcore.config.configs.KitsConfig.enableSounds
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.Exist
@@ -34,21 +35,22 @@ class CreateKit : CommandExecutor {
         if (s.hasPermission("kcore.kits.admin")) {
             if (args.size == 1) {
                 if (args[0].length < 17) {
-                    if (Dao.kitsCache.getIfPresent(args[0]) == null) {
+                    Dao.kitsCache.getIfPresent(args[0]).also {
+                        it ?: s.sendMessageWithSound(Exist, KitsConfig.problem, enableSounds).run {
+                            return true
+                        }
                         createKitGui(args[0], s)
-                    } else {
-                        s.sendMessageWithSound(Exist, KitsConfig.problem)
                     }
-                } else {
-                    s.sendMessageWithSound(KitsLang.nameLength, KitsConfig.problem)
+                    return true
                 }
-            } else {
-                s.sendMessageWithSound(createKitUsage, KitsConfig.problem)
+                s.sendMessageWithSound(KitsLang.nameLength, KitsConfig.problem, enableSounds)
+                return true
             }
-            return false
+            s.sendMessageWithSound(createKitUsage, KitsConfig.problem, enableSounds)
+            return true
         }
-        s.sendMessageWithSound(GeneralLang.notPerm, KitsConfig.problem)
-        return false
+        s.sendMessageWithSound(GeneralLang.notPerm, KitsConfig.problem, enableSounds)
+        return true
     }
 
     private fun createKitGui(kit: String, p: Player) {
@@ -63,10 +65,10 @@ class CreateKit : CommandExecutor {
                 val p = e.player as Player
                 try {
                     createKit(Dao.kitInventory[p]!!, e.inventory.contents)
-                    p.sendMessageWithSound(KitsLang.createKitSuccess.replace("%name%", Dao.kitInventory[p]!!), KitsConfig.sucess)
+                    p.sendMessageWithSound(KitsLang.createKitSuccess.replace("%name%", Dao.kitInventory[p]!!), KitsConfig.success, enableSounds)
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
-                    p.sendMessageWithSound(KitsLang.createKitProblem.replace("%name%", Dao.kitInventory[p]!!), KitsConfig.problem)
+                    ErrorClass.sendException(ex)
+                    p.sendMessageWithSound(KitsLang.createKitProblem.replace("%name%", Dao.kitInventory[p]!!), KitsConfig.problem, enableSounds)
                 }
                 Dao.kitInventory.remove(p)
                 return true
@@ -75,17 +77,17 @@ class CreateKit : CommandExecutor {
         }
 
         private fun createKit(kit: String, items: Array<ItemStack?>) {
-            val item = Kit().convertItems(items)
+            val item = Kit.convertItems(items)
             Dao.kitsCache.put(
                 kit,
                 KCoreKit(
                     kit.lowercase(),
                     0,
                     kit,
-                    Kit().convertItems(item)
+                    Kit.convertItems(item)
                 )
             )
-            KitsInventory().kitGuiInventory()
+            KitsInventory.kitGuiInventory()
             CompletableFuture.runAsync({
                 try {
                     transaction(SqlInstance.SQL) {
@@ -97,7 +99,7 @@ class CreateKit : CommandExecutor {
                         }
                     }
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
+                    ErrorClass.sendException(ex)
                 }
             }, Executors.newCachedThreadPool())
         }

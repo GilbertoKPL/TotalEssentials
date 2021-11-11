@@ -22,8 +22,9 @@ object Manager {
         return p.uniqueId.toString()
     }
 
-    fun Player.sendMessageWithSound(message: String, Sound : String) {
+    fun Player.sendMessageWithSound(message: String, Sound : String, sound : Boolean = true) {
         player?.sendMessage(message)
+        if (!sound) return
         try {
             player?.playSound(player!!.location, org.bukkit.Sound.valueOf(Sound), 1F, 1F)
         } catch (il : IllegalArgumentException) {

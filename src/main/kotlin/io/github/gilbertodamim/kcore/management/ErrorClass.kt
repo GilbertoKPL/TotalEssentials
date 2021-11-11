@@ -1,6 +1,6 @@
 package io.github.gilbertodamim.kcore.management
 
-class ErrorClass {
+internal object ErrorClass {
     fun sendException(error: Exception) {
         error.printStackTrace()
     }

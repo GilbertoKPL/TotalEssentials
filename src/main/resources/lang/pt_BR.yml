@@ -30,6 +30,7 @@ Kits:
   del-kit-success: '&eKit %name% &edeletado com sucesso.'
   del-kit-problem: '&cKit %name% &enão foi deletado, possivelmente um bug do plugin peça ajuda ao dono!'
   edit-kit-success: '&eKit %name% &efoi editado com sucesso!'
+  edit-kit-usage: '&c/editkit (Nome do kit).'
   edit-kit-problem: '&cKit %name% &enão foi editado, possivelmente um bug do plugin peça ajuda ao dono!'
   edit-kit-inventory-items-name: '&eEditKit - Items'
   edit-kit-inventory-items-lore:
@@ -65,3 +66,4 @@ Kits:
     - '&fFalta'
     - '&f%time%'
     - '&fPara pegar seu kit'
+  kit-pickup-no-space: '&cLibere mais %slots% slots para pegar esse kit!'

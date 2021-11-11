@@ -17,5 +17,8 @@ Database:
 Kits:
   activated: true
   use-short-time: false
-  sucess: BLOCK_NOTE_BLOCK_PLING
+  drop-items-in-pickup: false
+  equip-armor-in-pickup: true
+  enable-sounds: true
+  success: BLOCK_NOTE_BLOCK_PLING
   problem: BLOCK_NOTE_BLOCK_BASS

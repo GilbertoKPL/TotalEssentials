@@ -2,6 +2,7 @@ package io.github.gilbertodamim.kcore.commands.kits
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import io.github.gilbertodamim.kcore.config.configs.KitsConfig
+import io.github.gilbertodamim.kcore.config.configs.KitsConfig.enableSounds
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang
 import io.github.gilbertodamim.kcore.config.langs.KitsLang.delKitUsage
@@ -35,28 +36,28 @@ class DelKit : CommandExecutor {
         if (s.hasPermission("kcore.kits.admin")) {
             if (args.size == 1) {
                 try {
-                    if (kitsCache.getIfPresent(args[0].lowercase()) == null) {
-                        s.sendMessageWithSound(notExist, KitsConfig.problem)
-                    } else {
+                    kitsCache.getIfPresent(args[0].lowercase()).also {
+                        it ?: s.sendMessageWithSound(notExist, KitsConfig.problem, enableSounds).run {
+                            return true
+                        }
                         delKit(args[0].lowercase(), s)
                     }
-
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
-                    s.sendMessageWithSound(KitsLang.delKitProblem.replace("%name%", args[0]), KitsConfig.problem)
+                    ErrorClass.sendException(ex)
+                    s.sendMessageWithSound(KitsLang.delKitProblem.replace("%name%", args[0]), KitsConfig.problem, enableSounds)
                 }
-            } else {
-                s.sendMessageWithSound(delKitUsage, KitsConfig.problem)
+                return true
             }
-            return false
+            s.sendMessageWithSound(delKitUsage, KitsConfig.problem, enableSounds)
+            return true
         }
-        s.sendMessageWithSound(GeneralLang.notPerm, KitsConfig.problem)
-        return false
+        s.sendMessageWithSound(GeneralLang.notPerm, KitsConfig.problem, enableSounds)
+        return true
     }
 
     private fun delKit(kit: String, p: Player) {
         kitsCache.invalidate(kit)
-        KitsInventory().kitGuiInventory()
+        KitsInventory.kitGuiInventory()
         CompletableFuture.runAsync({
             try {
                 transaction(SqlInstance.SQL) {
@@ -70,15 +71,16 @@ class DelKit : CommandExecutor {
                             null
                         }
                         for (values in i[PlayerKits.kitsTime].split("-")) {
-                            val separate = values.split(".")
-                            if (separate[0] != kit) {
-                                if (list == "") {
-                                    list = values
-                                } else {
-                                    list += "$list-$values"
-                                }
-                                if (present) {
-                                    cache?.put(separate[0], separate[1].toLong())
+                            values.split(".").also {
+                                if (it[0] != kit) {
+                                    if (list == "") {
+                                        list = values
+                                    } else {
+                                        list += "$list-$values"
+                                    }
+                                    if (present) {
+                                        cache?.put(it[0], it[1].toLong())
+                                    }
                                 }
                             }
                         }
@@ -91,9 +93,9 @@ class DelKit : CommandExecutor {
                         }
                     }
                 }
-                p.sendMessageWithSound(KitsLang.delKitSuccess.replace("%name%", kit), KitsConfig.sucess)
+                p.sendMessageWithSound(KitsLang.delKitSuccess.replace("%name%", kit), KitsConfig.success, enableSounds)
             } catch (ex: Exception) {
-                ErrorClass().sendException(ex)
+                ErrorClass.sendException(ex)
             }
         }, Executors.newCachedThreadPool())
     }

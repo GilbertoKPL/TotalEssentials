@@ -2,10 +2,9 @@ package io.github.gilbertodamim.kcore.commands.kits
 
 import io.github.gilbertodamim.kcore.KCoreMain
 import io.github.gilbertodamim.kcore.config.configs.KitsConfig
+import io.github.gilbertodamim.kcore.config.configs.KitsConfig.enableSounds
 import io.github.gilbertodamim.kcore.config.langs.GeneralLang
-import io.github.gilbertodamim.kcore.config.langs.KitsLang
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.editKitInventoryNameMessage
-import io.github.gilbertodamim.kcore.config.langs.KitsLang.editKitInventoryTimeMessage
+import io.github.gilbertodamim.kcore.config.langs.KitsLang.*
 import io.github.gilbertodamim.kcore.dao.Dao
 import io.github.gilbertodamim.kcore.dao.Dao.ChatEventKit
 import io.github.gilbertodamim.kcore.dao.Dao.EditKitGuiCache
@@ -41,14 +40,15 @@ class EditKit : CommandExecutor {
             if (args.isNotEmpty()) {
                 val kit = args[0].lowercase()
                 kitsCache.getIfPresent(kit) ?: run {
-                    s.sendMessageWithSound(KitsLang.notExist, KitsConfig.problem)
+                    s.sendMessageWithSound(notExist, KitsConfig.problem, enableSounds)
                     return false
                 }
                 editKitGui(kit, s)
             }
+            s.sendMessageWithSound(editKitUsage, KitsConfig.problem, enableSounds)
             return false
         }
-        s.sendMessageWithSound(GeneralLang.notPerm, KitsConfig.problem)
+        s.sendMessageWithSound(GeneralLang.notPerm, KitsConfig.problem, enableSounds)
         return false
     }
 
@@ -56,39 +56,44 @@ class EditKit : CommandExecutor {
         fun editKitMessageEvent(e: AsyncPlayerChatEvent): Boolean {
             val toCheck = ChatEventKit[e.player] ?: return false
             ChatEventKit.remove(e.player)
-            e.isCancelled = true
             val split = toCheck.split("-")
             val s = e.player
             if (split[0] == "time") {
+                e.isCancelled = true
                 try {
                     editKit(split[1], e.message, s)
-                    s.sendMessageWithSound(KitsLang.editKitSuccess.replace("%name%", split[1]), KitsConfig.sucess)
+                    s.sendMessageWithSound(editKitSuccess.replace("%name%", split[1]), KitsConfig.success, enableSounds)
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
-                    s.sendMessageWithSound(KitsLang.editKitProblem.replace("%name%", split[1]), KitsConfig.problem)
+                    ErrorClass.sendException(ex)
+                    s.sendMessageWithSound(editKitProblem.replace("%name%", split[1]), KitsConfig.problem, enableSounds)
                 }
+                return true
             }
             if (split[0] == "name") {
+                e.isCancelled = true
                 try {
                     if (e.message.length > 16) {
-                        s.sendMessageWithSound(KitsLang.nameLength, KitsConfig.problem)
-                    } else {
-                        editKit(split[1], e.message.replace("&", "§"))
-                        s.sendMessageWithSound(
-                            KitsLang.editKitSuccess.replace("%name%", split[1]), KitsConfig.sucess
-                        )
+                        s.sendMessageWithSound(nameLength, KitsConfig.problem, enableSounds)
+                        return true
                     }
+                    editKit(split[1], e.message.replace("&", "§"))
+                    s.sendMessageWithSound(
+                        editKitSuccess.replace("%name%", split[1]), KitsConfig.success, enableSounds
+                    )
+                    return true
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
-                    s.sendMessageWithSound(KitsLang.editKitProblem.replace("%name%", split[1]), KitsConfig.problem)
+                    ErrorClass.sendException(ex)
+                    s.sendMessageWithSound(editKitProblem.replace("%name%", split[1]), KitsConfig.problem, enableSounds)
                 }
+                return true
             }
-            return true
+            return false
         }
 
         fun editKitGuiEvent(e: InventoryClickEvent): Boolean {
+            e.currentItem ?: return false
             val inventoryName = e.view.title.split(" ")
-            if (inventoryName[0] == ("${KCoreMain.pluginName}§eEditKit") && e.currentItem != null) {
+            if (inventoryName[0] == ("${KCoreMain.pluginName}§eEditKit")) {
                 e.isCancelled = true
                 val number = e.slot
                 val p = e.whoClicked as Player
@@ -105,13 +110,13 @@ class EditKit : CommandExecutor {
                 }
                 if (number == 13) {
                     p.closeInventory()
-                    p.sendMessageWithSound(editKitInventoryTimeMessage, KitsConfig.sucess)
+                    p.sendMessageWithSound(editKitInventoryTimeMessage, KitsConfig.success, enableSounds)
                     ChatEventKit[p] = "time-${inventoryName[1]}"
                     return true
                 }
                 if (number == 15) {
                     p.closeInventory()
-                    p.sendMessageWithSound(editKitInventoryNameMessage, KitsConfig.sucess)
+                    p.sendMessageWithSound(editKitInventoryNameMessage, KitsConfig.success, enableSounds)
                     ChatEventKit[p] = "name-${inventoryName[1]}"
                     return true
                 }
@@ -130,29 +135,30 @@ class EditKit : CommandExecutor {
 
         private fun editKitGui(kit: String, items: Array<ItemStack?>, p: Player) {
             val inv = KCoreMain.instance.server.createInventory(null, 36, kit)
-            for (i in items) {
-                inv.addItem(i ?: continue)
+            for (i in items.filterNotNull()) {
+                inv.addItem(i)
             }
             p.openInventory(inv)
             Dao.kitEditInventory[p] = kit
         }
 
         private fun editKit(kit: String, nameKit: String) {
-            val editValues = kitsCache.getIfPresent(kit)
-            if (editValues != null) {
-                kitsCache.invalidate(kit)
-                kitsCache.put(
-                    kit,
+            kitsCache.getIfPresent(kit).also { 
+                if (it != null) {
+                    kitsCache.invalidate(kit)
+                    kitsCache.put(
+                        kit,
 
-                    KCoreKit(
-                        editValues.name,
-                        editValues.time,
-                        nameKit,
-                        editValues.items
-                    )
-                )
+                        KCoreKit(
+                            it.name,
+                            it.time,
+                            nameKit,
+                            it.items
+                        )
+                    ) 
+                }
             }
-            KitsInventory().kitGuiInventory()
+            KitsInventory.kitGuiInventory()
             CompletableFuture.runAsync({
                 try {
                     transaction(SqlInstance.SQL) {
@@ -161,7 +167,7 @@ class EditKit : CommandExecutor {
                         }
                     }
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
+                    ErrorClass.sendException(ex)
                 }
             }, Executors.newSingleThreadExecutor())
         }
@@ -197,22 +203,23 @@ class EditKit : CommandExecutor {
                     }
                 }
             }
-            val editValues = kitsCache.getIfPresent(kit)
-            if (editValues != null) {
-                kitsCache.invalidate(kit)
-                kitsCache.put(
-                    kit,
-                    KCoreKit(
-                        editValues.name,
-                        convert,
-                        editValues.realName,
-                        editValues.items
+            kitsCache.getIfPresent(kit).also {
+                if (it != null) {
+                    kitsCache.invalidate(kit)
+                    kitsCache.put(
+                        kit,
+                        KCoreKit(
+                            it.name,
+                            convert,
+                            it.realName,
+                            it.items
+                        )
                     )
-                )
+                }
             }
-            KitsInventory().kitGuiInventory()
+            KitsInventory.kitGuiInventory()
             s.sendMessage(
-                KitsLang.editKitTime.replace(
+                editKitTime.replace(
                     "%time%",
                     Manager.convertMillisToString(convert, KitsConfig.useShortTime)
                 )
@@ -225,37 +232,37 @@ class EditKit : CommandExecutor {
                         }
                     }
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
+                    ErrorClass.sendException(ex)
                 }
             }, Executors.newCachedThreadPool())
         }
 
         private fun editKit(kit: String, items: Array<ItemStack?>) {
-            val editValues = kitsCache.getIfPresent(kit)
-            if (editValues != null) {
-                kitsCache.invalidate(kit)
-                kitsCache.put(
-                    kit,
+            kitsCache.getIfPresent(kit).also {
+                if (it != null) {
+                    kitsCache.invalidate(kit)
+                    kitsCache.put(
+                        kit,
 
-                    KCoreKit(
-                        editValues.name,
-                        editValues.time,
-                        editValues.realName,
-                        items
+                        KCoreKit(
+                            it.name,
+                            it.time,
+                            it.realName,
+                            items
+                        )
                     )
-                )
+                }
             }
-            KitsInventory().kitGuiInventory()
+            KitsInventory.kitGuiInventory()
             CompletableFuture.runAsync({
                 try {
-                    val ite = Kit().convertItems(items)
                     transaction(SqlInstance.SQL) {
                         SqlKits.update({ SqlKits.kitName eq kit.lowercase() }) {
-                            it[kitItems] = ite
+                            it[kitItems] = Kit.convertItems(items)
                         }
                     }
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
+                    ErrorClass.sendException(ex)
                 }
             }, Executors.newCachedThreadPool())
         }
@@ -266,18 +273,18 @@ class EditKit : CommandExecutor {
                 try {
                     editKit(Dao.kitEditInventory[p]!!, e.inventory.contents)
                     p.sendMessageWithSound(
-                        KitsLang.editKitSuccess.replace(
+                        editKitSuccess.replace(
                             "%name%",
                             Dao.kitEditInventory[p]!!
-                        ), KitsConfig.sucess
+                        ), KitsConfig.success, enableSounds
                     )
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
+                    ErrorClass.sendException(ex)
                     p.sendMessageWithSound(
-                        KitsLang.editKitProblem.replace(
+                        editKitProblem.replace(
                             "%name%",
                             Dao.kitEditInventory[p]!!
-                        ), KitsConfig.problem
+                        ), KitsConfig.problem, enableSounds
                     )
                 }
                 Dao.kitEditInventory.remove(p)

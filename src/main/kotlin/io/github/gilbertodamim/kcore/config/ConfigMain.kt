@@ -47,7 +47,7 @@ internal class ConfigMain {
                 try {
                     check = YamlConfiguration.loadConfiguration(File(dir, "${to.name}.yml"))
                 } catch (ex: Exception) {
-                    ErrorClass().sendException(ex)
+                    ErrorClass.sendException(ex)
                     consoleMessage(problemReload.replace("%file%", to.name))
                     to.save(to.currentPath)
                     return
@@ -79,7 +79,7 @@ internal class ConfigMain {
                     }
                 } catch (ex: Exception) {
                     consoleMessage(langError)
-                    ErrorClass().sendException(ex)
+                    ErrorClass.sendException(ex)
                 }
             } else {
                 reloadHelper(langList, pluginLangDir())
@@ -90,7 +90,7 @@ internal class ConfigMain {
                 LibChecker.reloadClass("General", GeneralLang().javaClass, langConfig, true)
             } finally {
                 if (KitsConfig.activated) {
-                    KitsInventory().editKitInventory()
+                    KitsInventory.editKitInventory()
                 }
             }
         }
@@ -164,7 +164,7 @@ internal class ConfigMain {
                 }
             } catch (ex: Exception) {
                 consoleMessage(problemMessage.replace("%to%", message).replace("%file%", source))
-                ErrorClass().sendException(ex)
+                ErrorClass.sendException(ex)
                 disablePlugin()
             }
             return null

@@ -68,4 +68,8 @@ public class KitsLang {
     public static String list;
 
     public static String pickedSuccess;
+
+    public static String kitPickupNoSpace;
+
+    public static String editKitUsage;
 }
