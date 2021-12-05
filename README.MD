@@ -2,7 +2,7 @@
 
 * A core system for minecraft server that supports most versions (1.5.2 - 1.18.0), using only database as a storage medium and various built-in commands / systems, which can be disabled at any time.
 
-##Languages
+## Languages
 
 - pt_BR
 - en_US
