@@ -1,10 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.manager.ICommand
-import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
@@ -32,9 +30,11 @@ class CommandCreateKit : ICommand {
 
         //create cache and sql
         dataInstance.createNewKitData()
-        s.sendMessage(GeneralLang.getInstance().kitsCreateKitSuccess.replace(
-            "%name%",
-            args[0])
+        s.sendMessage(
+            GeneralLang.getInstance().kitsCreateKitSuccess.replace(
+                "%kit%",
+                args[0]
+            )
         )
     }
 }

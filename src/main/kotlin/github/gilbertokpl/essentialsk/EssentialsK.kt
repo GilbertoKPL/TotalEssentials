@@ -64,6 +64,8 @@ class EssentialsK : JavaPlugin() {
 
         TaskUtil.getInstance().disable()
 
+        SqlUtil.getInstance().sql
+
         super.onDisable()
     }
 

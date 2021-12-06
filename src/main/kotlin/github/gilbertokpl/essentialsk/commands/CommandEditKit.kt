@@ -112,11 +112,13 @@ class CommandEditKit : ICommand {
                 e.isCancelled = true
                 val time = PluginUtil.getInstance().convertStringToMillis(e.message)
                 dataInstance.setTime(time)
-                e.player.sendMessage(GeneralLang.getInstance().kitsEditKitTime.replace(
-                    "%time%",
-                    PluginUtil.getInstance().convertMillisToString(time, MainConfig.getInstance().kitsUseShortTime)
-                ))
-                e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%name%", split[1]))
+                e.player.sendMessage(
+                    GeneralLang.getInstance().kitsEditKitTime.replace(
+                        "%time%",
+                        PluginUtil.getInstance().convertMillisToString(time, MainConfig.getInstance().kitsUseShortTime)
+                    )
+                )
+                e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", split[1]))
                 return true
             }
 
@@ -131,7 +133,7 @@ class CommandEditKit : ICommand {
 
                 dataInstance.setFakeName(e.message.replace("&", "§"))
 
-                e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%name%", split[1]))
+                e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", split[1]))
             }
 
             return true
@@ -143,7 +145,7 @@ class CommandEditKit : ICommand {
             if (it == null) return false
             editKit.remove(e.player)
             KitData(it).setItems(e.inventory.contents.filterNotNull().toList())
-            e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%name%", it))
+            e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", it))
             return true
         }
     }

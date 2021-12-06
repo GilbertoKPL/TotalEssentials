@@ -8,20 +8,14 @@ import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.manager.IInstance
-import github.gilbertokpl.essentialsk.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
-import github.gilbertokpl.essentialsk.util.SqlUtil
-import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.concurrent.CompletableFuture
 
 class CommandKit : ICommand {
     override val consoleCanUse: Boolean = false
@@ -47,51 +41,13 @@ class CommandKit : ICommand {
 
         //check if not exist
         if (!dataInstance.checkCache()) {
-            s.sendMessage(GeneralLang.getInstance().kitsList.replace("%kits%", kitList().toString()))
+            s.sendMessage(GeneralLang.getInstance().kitsList.replace("%kits%", dataInstance.kitList().toString()))
             return
         }
 
         //give kit
         pickupKit(s as Player, args[0].lowercase())
 
-    }
-
-    //load cache
-    fun loadKitCache(): CompletableFuture<Boolean> {
-        val future = CompletableFuture<Boolean>()
-        TaskUtil.getInstance().asyncExecutor {
-            Dao.getInstance().kitsCache.synchronous().invalidateAll()
-            transaction(SqlUtil.getInstance().sql) {
-                for (values in KitsDataSQL.selectAll()) {
-                    val kit = values[KitsDataSQL.kitName]
-                    val kitFakeName = values[KitsDataSQL.kitFakeName]
-                    val kitTime = values[KitsDataSQL.kitTime]
-                    val item = values[KitsDataSQL.kitItems]
-                    Dao.getInstance().kitsCache.put(
-                        kit,
-                        CompletableFuture.supplyAsync {
-                            KitData.KitDataInternal(
-                                kit,
-                                kitFakeName,
-                                ItemUtil.getInstance().itemSerializer(item),
-                                kitTime
-                            )
-
-                        }
-                    )
-                }
-                future.complete(true)
-            }
-        }
-        return future
-    }
-
-    private fun kitList(): List<String> {
-        val list = ArrayList<String>()
-        for (i in Dao.getInstance().kitsCache.asMap()) {
-            list.add(i.key)
-        }
-        return list
     }
 
     private fun kitGui(kit: String, guiNumber: String, p: Player) {
@@ -103,7 +59,7 @@ class CommandKit : ICommand {
         val playerCache = PlayerData(p)
 
         //get all time of kits
-        var timeAll = playerCache.getCache().kitsCache.getIfPresent(kit) ?: 0L
+        var timeAll = playerCache.getCache().kitsCache[kit] ?: 0L
 
         timeAll += kitCache.time
 
@@ -191,7 +147,7 @@ class CommandKit : ICommand {
         val playerCache = PlayerData(p)
 
         //get all time of kit
-        var timeAll = playerCache.getCache().kitsCache.getIfPresent(kit) ?: 0L
+        var timeAll = playerCache.getCache().kitsCache[kit] ?: 0L
         timeAll += kitCache.time
 
 
@@ -313,7 +269,12 @@ class CommandKit : ICommand {
         }
 
         //send message if inventory is full
-        p.sendMessage(GeneralLang.getInstance().kitsCatchNoSpace.replace("%slots%", (itemsInternal.size - inventorySpace).toString()))
+        p.sendMessage(
+            GeneralLang.getInstance().kitsCatchNoSpace.replace(
+                "%slots%",
+                (itemsInternal.size - inventorySpace).toString()
+            )
+        )
         return false
     }
 
@@ -352,7 +313,7 @@ class CommandKit : ICommand {
             val number = e.slot
             if (number < 27) {
                 val kit =
-                    Dao.getInstance().kitClickGuiCache.getIfPresent((number + 1) + ((inventoryName[1].toInt() - 1) * 27))
+                    Dao.getInstance().kitClickGuiCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
                 if (kit != null) {
                     kitGui(kit, inventoryName[1], p)
                 }

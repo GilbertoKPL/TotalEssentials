@@ -5,8 +5,8 @@ import com.zaxxer.hikari.HikariDataSource
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.StartLang
 import github.gilbertokpl.essentialsk.manager.IInstance
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.tables.KitsDataSQL
+import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils

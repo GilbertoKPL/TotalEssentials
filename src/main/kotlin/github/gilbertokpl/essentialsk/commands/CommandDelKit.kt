@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import org.bukkit.command.Command
@@ -28,9 +29,12 @@ class CommandDelKit : ICommand {
             return
         }
 
+        //get fakeName to send
+        val fakeName = dataInstance.getCache().fakeName
+
         //delete cache and sql
         dataInstance.delKitData()
-        s.sendMessage(GeneralLang.getInstance().kitsDelKitSuccess.replace("%name%", dataInstance.getCache().fakeName))
+        s.sendMessage(GeneralLang.getInstance().kitsDelKitSuccess.replace("%kit%", fakeName))
 
     }
 }

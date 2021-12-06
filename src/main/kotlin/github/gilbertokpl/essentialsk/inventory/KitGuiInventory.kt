@@ -3,20 +3,21 @@ package github.gilbertokpl.essentialsk.inventory
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.Dao
+import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 object KitGuiInventory {
     fun kitGuiInventory() {
-        Dao.getInstance().kitClickGuiCache.invalidateAll()
+        Dao.getInstance().kitClickGuiCache.clear()
         var size = 1
         var length = 0
         var inv = EssentialsK.instance.server.createInventory(null, 36, "§eKits 1")
-        for (i in Dao.getInstance().kitsCache.asMap()) {
+        for (i in Dao.getInstance().kitsCache) {
             var item = ItemStack(Material.CHEST)
-            val name = GeneralLang.getInstance().kitsInventoryItemsName.replace("%kitrealname%", i.value.get().fakeName)
-            for (to in i.value.get().items) {
+            val name = GeneralLang.getInstance().kitsInventoryItemsName.replace("%kitrealname%", i.value.fakeName)
+            for (to in i.value.items) {
                 item = ItemStack(to.type)
                 break
             }
@@ -27,7 +28,7 @@ object KitGuiInventory {
 
             val itemLore = ArrayList<String>()
             GeneralLang.getInstance().kitsInventoryItemsLore.forEach {
-                itemLore.add(it.replace("%name%", i.key))
+                itemLore.add(it.replace("%realname%", i.key))
             }
 
             meta?.lore = itemLore

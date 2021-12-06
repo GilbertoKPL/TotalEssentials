@@ -4,7 +4,7 @@ import org.jetbrains.exposed.sql.Table
 
 object PlayerDataSQL : Table() {
     val uuid = varchar("uuid", 64)
-    val kitsTime = text("kitsTime")
-    val FakeNick = text("fakeNick")
+    val kitsTime = text("kitsTime").default("")
+    val FakeNick = varchar("fakeNick", 32).default("")
     override val primaryKey = PrimaryKey(uuid)
 }

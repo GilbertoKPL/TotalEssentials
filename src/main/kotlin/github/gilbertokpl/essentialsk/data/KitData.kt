@@ -1,10 +1,7 @@
 package github.gilbertokpl.essentialsk.data
 
-import com.github.benmanes.caffeine.cache.Caffeine
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.tables.KitsDataSQL
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.uuid
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.ReflectUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
@@ -18,11 +15,12 @@ import org.jetbrains.exposed.sql.update
 import java.util.concurrent.CompletableFuture
 
 class KitData(kitName: String) {
+
     private val name = kitName
     private val nameLowerCase = kitName.lowercase()
 
     fun checkCache(): Boolean {
-        Dao.getInstance().kitsCache.getIfPresent(nameLowerCase).also {
+        Dao.getInstance().kitsCache[nameLowerCase].also {
             if (it == null) {
                 return false
             }
@@ -32,9 +30,7 @@ class KitData(kitName: String) {
 
     fun createNewKitData() {
         //cache
-        Dao.getInstance().kitsCache.put(
-            nameLowerCase,
-            CompletableFuture.supplyAsync { KitDataInternal(nameLowerCase, name, emptyList(), 0L) })
+        Dao.getInstance().kitsCache[nameLowerCase] = KitDataInternal(nameLowerCase, name, emptyList(), 0L)
         reloadGui()
 
         TaskUtil.getInstance().asyncExecutor {
@@ -43,45 +39,53 @@ class KitData(kitName: String) {
                 KitsDataSQL.insert {
                     it[kitName] = nameLowerCase
                     it[kitFakeName] = name
-                    it[kitItems] = ""
-                    it[kitTime] = 0L
                 }
             }
         }
     }
 
+    fun loadKitCache(): CompletableFuture<Boolean> {
+        val future = CompletableFuture<Boolean>()
+        Dao.getInstance().kitsCache.clear()
+        transaction(SqlUtil.getInstance().sql) {
+            for (values in KitsDataSQL.selectAll()) {
+                val kit = values[KitsDataSQL.kitName]
+                val kitFakeName = values[KitsDataSQL.kitFakeName]
+                val kitTime = values[KitsDataSQL.kitTime]
+                val item = values[KitsDataSQL.kitItems]
+                Dao.getInstance().kitsCache[kit] = KitDataInternal(
+                    kit,
+                    kitFakeName,
+                    ItemUtil.getInstance().itemSerializer(item),
+                    kitTime
+                )
+            }
+            future.complete(true)
+        }
+        return future
+    }
+
+    fun kitList(): List<String> {
+        val list = ArrayList<String>()
+        for (i in Dao.getInstance().kitsCache) {
+            list.add(i.key)
+        }
+        return list
+    }
+
     fun delKitData() {
         //cache
-        Dao.getInstance().kitsCache.synchronous().invalidate(nameLowerCase)
+        Dao.getInstance().kitsCache.remove(nameLowerCase)
+
+        ReflectUtil.getInstance().getPlayers().forEach {
+            PlayerData(it).delKitTime(nameLowerCase)
+        }
         reloadGui()
 
         TaskUtil.getInstance().asyncExecutor {
-            //cache
-            ReflectUtil.getInstance().getPlayers().forEach {
-                PlayerData(it).delKitTime(nameLowerCase)
-            }
-
             //sql
             transaction(SqlUtil.getInstance().sql) {
                 KitsDataSQL.deleteWhere { KitsDataSQL.kitName eq nameLowerCase }
-
-                for (i in PlayerDataSQL.selectAll()) {
-                    var list = ""
-                    for (values in i[PlayerDataSQL.kitsTime].split("-")) {
-                        values.split(".").also {
-                            if (it[0] != nameLowerCase) {
-                                if (list == "") {
-                                    list = values
-                                } else {
-                                    list += "$list-$values"
-                                }
-                            }
-                        }
-                    }
-                    PlayerDataSQL.update({ uuid like i[uuid] }) {
-                        it[kitsTime] = list
-                    }
-                }
             }
         }
     }
@@ -94,7 +98,7 @@ class KitData(kitName: String) {
         TaskUtil.getInstance().asyncExecutor {
             //sql
             transaction(SqlUtil.getInstance().sql) {
-                KitsDataSQL.update ({ KitsDataSQL.kitName eq nameLowerCase}) {
+                KitsDataSQL.update({ KitsDataSQL.kitName eq nameLowerCase }) {
                     it[kitFakeName] = fakeName
                 }
             }
@@ -106,11 +110,13 @@ class KitData(kitName: String) {
         getCache().items = items
         reloadGui()
 
+        val toSave = ItemUtil.getInstance().itemSerializer(items)
+
         TaskUtil.getInstance().asyncExecutor {
             //sql
             transaction(SqlUtil.getInstance().sql) {
-                KitsDataSQL.update ({ KitsDataSQL.kitName eq nameLowerCase}) {
-                    it[kitItems] = ItemUtil.getInstance().itemSerializer(items)
+                KitsDataSQL.update({ KitsDataSQL.kitName eq nameLowerCase }) {
+                    it[kitItems] = toSave
                 }
             }
         }
@@ -124,7 +130,7 @@ class KitData(kitName: String) {
         TaskUtil.getInstance().asyncExecutor {
             //sql
             transaction(SqlUtil.getInstance().sql) {
-                KitsDataSQL.update ({ KitsDataSQL.kitName eq nameLowerCase}) {
+                KitsDataSQL.update({ KitsDataSQL.kitName eq nameLowerCase }) {
                     it[kitTime] = time
                 }
             }
@@ -132,13 +138,20 @@ class KitData(kitName: String) {
     }
 
     fun getCache(): KitDataInternal {
-        Dao.getInstance().kitsCache.getIfPresent(nameLowerCase).also {
+        Dao.getInstance().kitsCache[nameLowerCase].also {
             if (it == null) {
                 createNewKitData()
-                return Dao.getInstance().kitsCache.getIfPresent(nameLowerCase)!!.get()
+                return Dao.getInstance().kitsCache[nameLowerCase]!!
             }
-            return it.get()
+            return it
         }
+    }
+
+    fun getCache(boolean: Boolean): KitDataInternal? {
+        if (boolean) {
+            return Dao.getInstance().kitsCache[nameLowerCase]
+        }
+        return getCache()
     }
 
     private fun reloadGui() {

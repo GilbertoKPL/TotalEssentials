@@ -1,32 +1,29 @@
 package github.gilbertokpl.essentialsk.data
 
-import com.github.benmanes.caffeine.cache.Caffeine
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.bukkit.Material
-import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 class Dao {
+
     //kits
-    val kitsCache =
-        Caffeine.newBuilder().initialCapacity(20).maximumSize(500).buildAsync<String, KitData.KitDataInternal>()
+    val kitsCache = HashMap<String, KitData.KitDataInternal>(40)
 
     //player
-    val playerCache =
-        Caffeine.newBuilder().initialCapacity(20).maximumSize(500).buildAsync<String, PlayerData.InternalPlayerData>()
+    val playerCache = HashMap<String, PlayerData.InternalPlayerData>(100)
 
     //editKitInv
-    val editKitInventory = HashMap<Int, ItemStack>(10)
+    val editKitInventory = HashMap<Int, ItemStack>(50)
 
     //kitInv
     val kitGuiCache = HashMap<Int, Inventory>(10)
 
     //click kitInv
-    val kitClickGuiCache = Caffeine.newBuilder().initialCapacity(20).maximumSize(500).build<Int, String>()
+    val kitClickGuiCache = HashMap<Int, String>(40)
 
     //material helper
-    val material = HashMap<String, Material>(50)
+    val material = HashMap<String, Material>(10)
 
     companion object : IInstance<Dao> {
         private val instance = createInstance()

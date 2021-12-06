@@ -1,13 +1,11 @@
 package github.gilbertokpl.essentialsk.util
 
+import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.StartLang
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.bukkit.configuration.file.YamlConfiguration
-import org.json.JSONObject
-import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
@@ -16,11 +14,12 @@ import java.nio.file.StandardCopyOption
 
 class VersionUtil {
     fun check(): Boolean {
-        val checkJson = JSONObject(IOUtils.toString(URL("https://pastebin.com/raw/GbxhP7qM"), "UTF-8"))
+        val checkJson =
+            JsonParser.parseString(IOUtils.toString(URL("https://pastebin.com/raw/GbxhP7qM"), "UTF-8")).asJsonObject
 
         PluginUtil.getInstance()
             .consoleMessage(StartLang.getInstance().startVerification.replace("%to%", "versão do plugin"))
-        val versionJson = checkJson.get("version") as String
+        val versionJson = checkJson.get("version").asString
         val versionPlugin = ManifestUtil.getInstance().getManifestValue("Plugin-Version") ?: return false
 
         try {
@@ -29,7 +28,7 @@ class VersionUtil {
                     .consoleMessage(StartLang.getInstance().updatePlugin.replace("%version%", versionJson))
 
                 val newJar =
-                    PluginUtil.getInstance().fileDownloader(checkJson.get("download") as String) ?: return false
+                    PluginUtil.getInstance().fileDownloader(checkJson.get("download").asString) ?: return false
 
                 val pluginPath = File(PluginUtil.getInstance().pluginPath)
 

@@ -47,7 +47,6 @@ dependencies {
     implementation("github.gilbertokpl.lib:libchecker-jar:1.0")
 
     compileOnly("org.spigotmc:spigot-api:$buildVersion-R0.1-SNAPSHOT") {
-        exclude("com.google.guava", "guava")
         exclude("commons-lang", "commons-lang")
         exclude("commons-io", "commons-io")
         exclude("org.yaml", "snakeyaml")
@@ -89,17 +88,13 @@ dependencies {
 
     slim("org.slf4j:slf4j-nop:1.7.32")
 
-    slim("org.json:json:20210307")
+    slim("com.google.code.gson:gson:2.8.9")
 
     slim("com.h2database:h2:1.4.199")
 
-    slim("com.zaxxer:HikariCP:3.4.5") {
+    slim("com.zaxxer:HikariCP:4.0.3") {
         exclude("org.slf4j", "slf4j-api")
     }
-
-    slim("com.github.ben-manes.caffeine:caffeine:2.9.3")
-
-    slim("com.github.ben-manes.caffeine:guava:2.9.3")
 
     slim("commons-io:commons-io:2.11.0")
 
@@ -121,7 +116,7 @@ tasks.slimJar {
     relocate("org.bstats", "$base.bstats")
     relocate("org.apache.commons", "$base.io")
     relocate("org.yaml", "$base.yaml")
-    relocate("com.google.guava", "$base.guava")
+    relocate("com.google.gson", "$base.gson")
 }
 tasks.shadowJar {
     minimize()

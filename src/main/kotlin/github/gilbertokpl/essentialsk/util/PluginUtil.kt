@@ -5,6 +5,7 @@ import github.gilbertokpl.essentialsk.commands.*
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
+import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.events.*
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
@@ -73,7 +74,7 @@ class PluginUtil {
     }
 
     fun startInventories() {
-        if (CommandKit.getInstance().loadKitCache().get()) {
+        if (KitData("").loadKitCache().get()) {
             if (MainConfig.getInstance().kitsActivated) {
                 EditKitInventory.editKitInventory()
                 KitGuiInventory.kitGuiInventory()
@@ -102,8 +103,8 @@ class PluginUtil {
         )
     }
 
-    fun colorPermission(p: Player, message: String) : String {
-        fun colorHelper(color : String) {
+    fun colorPermission(p: Player, message: String): String {
+        fun colorHelper(color: String) {
             if (p.hasPermission("essentialsk.color.$color")) {
                 message.replace(color, color.replace("&", "§"))
             }
