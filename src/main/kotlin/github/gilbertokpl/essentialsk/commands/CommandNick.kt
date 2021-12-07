@@ -5,6 +5,7 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -28,7 +29,13 @@ class CommandNick : ICommand {
             val playerCache = PlayerData(s)
 
             if (args[0].lowercase() == "remove") {
+                //check if is empty
+                if ((playerCache.getCache()?.FakeNick ?: return) == "") {
+                    s.sendMessage(GeneralLang.getInstance().nicksNickAlreadyOriginal)
+                    return
+                }
                 playerCache.removeNick()
+                s.sendMessage(GeneralLang.getInstance().nicksNickRemovedSuccess)
                 return
             }
 
@@ -39,9 +46,14 @@ class CommandNick : ICommand {
                 return
             }
 
-            if (playerCache.setNick(args[0]).get()) {
+            val nick = PluginUtil.getInstance().colorPermission(s, args[0])
+
+            if (playerCache.setNick(nick).get()) {
                 s.sendMessage(GeneralLang.getInstance().nicksExist)
             }
+
+            s.sendMessage(GeneralLang.getInstance().nicksNickSuccess.replace("%nick%", nick))
+
             return
         }
 
@@ -67,6 +79,23 @@ class CommandNick : ICommand {
 
         val playerCache = PlayerData(p)
 
-        playerCache.setNick(args[1], true)
+        if (args[1].lowercase() == "remove") {
+            //check if is empty
+            if ((playerCache.getCache()?.FakeNick ?: return) == "") {
+                s.sendMessage(GeneralLang.getInstance().nicksNickAlreadyOriginalOther)
+                return
+            }
+            playerCache.removeNick()
+            s.sendMessage(GeneralLang.getInstance().nicksNickRemovedOtherSuccess)
+            p.sendMessage(GeneralLang.getInstance().nicksNickRemovedOtherPlayerSuccess)
+            return
+        }
+
+        val nick = args[1].replace("&", "$")
+
+        playerCache.setNick(nick, true)
+
+        s.sendMessage(GeneralLang.getInstance().nicksNickOtherSuccess.replace("%nick%", nick))
+        p.sendMessage(GeneralLang.getInstance().nicksNickOtherPlayerSuccess.replace("%nick%", nick))
     }
 }

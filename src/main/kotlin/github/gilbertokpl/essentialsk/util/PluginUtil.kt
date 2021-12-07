@@ -104,15 +104,17 @@ class PluginUtil {
     }
 
     fun colorPermission(p: Player, message: String): String {
+        if (!message.contains("&")) return message
+        var newMessage = message
         fun colorHelper(color: String) {
             if (p.hasPermission("essentialsk.color.$color")) {
-                message.replace(color, color.replace("&", "§"))
+                newMessage = newMessage.replace(color, color.replace("&", "§"))
             }
         }
         listOf("&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f").forEach {
             colorHelper(it)
         }
-        return message
+        return newMessage
     }
 
     private fun startCommandsHelper(commands: List<CommandExecutor>, boolean: Boolean) {

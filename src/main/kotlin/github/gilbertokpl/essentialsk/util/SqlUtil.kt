@@ -51,6 +51,7 @@ class SqlUtil {
     fun startTables() {
         transaction(sql) {
             SchemaUtils.create(KitsDataSQL, PlayerDataSQL)
+            SchemaUtils.createMissingTablesAndColumns(KitsDataSQL, PlayerDataSQL)
         }
     }
 

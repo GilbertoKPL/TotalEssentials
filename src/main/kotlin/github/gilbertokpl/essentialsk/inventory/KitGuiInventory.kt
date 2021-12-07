@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack
 object KitGuiInventory {
     fun kitGuiInventory() {
         Dao.getInstance().kitClickGuiCache.clear()
+        Dao.getInstance().kitGuiCache.clear()
         var size = 1
         var length = 0
         var inv = EssentialsK.instance.server.createInventory(null, 36, "§eKits 1")

@@ -10,11 +10,11 @@ database:
   #Select Database type, available: H2 or MYSQL.
   type: H2
   #If you have selected MYSQL add ip, port, username, database and password.
-  sql-ip: localhost
-  sql-port: 3306
-  sql-username: u0_essentialsk
-  sql-database: s0_essentialsk
-  sql-password: essentialsk123
+  sql-ip: 'localhost'
+  sql-port: '3306'
+  sql-username: 'u0_essentialsk'
+  sql-database: 's0_essentialsk'
+  sql-password: 'essentialsk123'
 kits:
   #Enabled ?
   activated: true

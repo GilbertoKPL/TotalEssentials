@@ -102,6 +102,22 @@ class GeneralLang {
 
     var nicksExist = ""
 
+    var nicksNickSuccess = ""
+
+    var nicksNickRemovedSuccess = ""
+
+    var nicksNickOtherSuccess = ""
+
+    var nicksNickOtherPlayerSuccess = ""
+
+    var nicksNickRemovedOtherSuccess = ""
+
+    var nicksNickRemovedOtherPlayerSuccess = ""
+
+    var nicksNickAlreadyOriginal = ""
+
+    var nicksNickAlreadyOriginalOther = ""
+
     companion object : IInstance<GeneralLang> {
         private val instance = createInstance()
         override fun createInstance(): GeneralLang = GeneralLang()

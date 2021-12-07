@@ -59,7 +59,7 @@ class CommandKit : ICommand {
         val playerCache = PlayerData(p)
 
         //get all time of kits
-        var timeAll = playerCache.getCache().kitsCache[kit] ?: 0L
+        var timeAll = playerCache.getCache()?.let { it.kitsCache[kit] ?: 0L } ?: return
 
         timeAll += kitCache.time
 
@@ -147,7 +147,7 @@ class CommandKit : ICommand {
         val playerCache = PlayerData(p)
 
         //get all time of kit
-        var timeAll = playerCache.getCache().kitsCache[kit] ?: 0L
+        var timeAll = playerCache.getCache()?.let { it.kitsCache[kit] ?: 0L } ?: return
         timeAll += kitCache.time
 
 

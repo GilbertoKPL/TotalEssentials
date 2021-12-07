@@ -48,48 +48,81 @@ class PlayerData(player: Player) {
                 }
             }
 
+            //cache
+            Dao.getInstance().playerCache[uuid] = InternalPlayerData(
+                uuid,
+                HashMap(40),
+                ""
+            )
+
             if (emptyQuery) {
-                getCache().kitsCache = cache
                 return@asyncExecutor
             }
 
+            var replace = ""
+            var update = false
+
             for (kits in timeKits.split("-")) {
-                if (kits == "") continue
-                val split = kits.split(".")
-                val timeKit = split[1].toLong()
-                val nameKit = split[0]
+                try {
+                    if (kits == "") continue
+                    val split = kits.split(".")
+                    val timeKit = split[1].toLong()
+                    val nameKit = split[0]
 
-                val timeAll = KitData(nameKit).getCache(true)
+                    val kitsCache = KitData(nameKit)
 
-                if (timeKit != 0L && timeAll != null && (timeAll.time + timeKit) > System.currentTimeMillis()) {
-                    cache[nameKit] = timeKit
-                    continue
+                    if (!kitsCache.checkCache()) {
+                        update = true
+                        continue
+                    }
+
+                    val timeAll = KitData(nameKit).getCache(true)
+
+                    if (timeKit != 0L && timeAll != null && (timeAll.time + timeKit) > System.currentTimeMillis()) {
+                        replace += if(replace == "") {
+                            "$nameKit.$timeKit"
+                        } else {
+                            "-$nameKit.$timeKit"
+                        }
+                        cache[nameKit] = timeKit
+                        continue
+                    }
+                } catch (ignored : Exception) {
+                    update = true
                 }
-
             }
 
-            getCache().kitsCache = cache
+            if (update) {
+                transaction(SqlUtil.getInstance().sql) {
+                    PlayerDataSQL.update {
+                        it[kitsTime] = replace
+                    }
+                }
+            }
+
+            getCache()?.let { it.kitsCache = cache } ?: return@asyncExecutor
 
             //nick
             if (fakeNick != "") {
-                getCache().FakeNick = fakeNick
+                getCache()?.let { it.FakeNick = fakeNick } ?: return@asyncExecutor
                 p.setDisplayName(fakeNick)
             }
+
         }
     }
 
     fun delKitTime(kit: String) {
-        val cache = getCache().kitsCache
+        val cache = getCache()?.kitsCache ?: return
         cache.remove(kit)
-        getCache().kitsCache = cache
+        getCache()?.let { it.kitsCache = cache } ?: return
     }
 
     fun setKitTime(kit: String, time: Long) {
         //cache
-        val cache = getCache().kitsCache
+        val cache = getCache()?.kitsCache ?: return
         cache.remove(kit)
         cache[kit] = time
-        getCache().kitsCache = cache
+        getCache()?.let { it.kitsCache = cache } ?: return
 
         //sql
         TaskUtil.getInstance().asyncExecutor {
@@ -139,13 +172,13 @@ class PlayerData(player: Player) {
 
     fun setNick(newNick: String, color: Boolean) {
         if (color) {
-            newNick.replace("&", "§")
-        }
-        getCache().FakeNick = newNick
-        TaskUtil.getInstance().asyncExecutor {
-            transaction(SqlUtil.getInstance().sql) {
-                PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                    it[kitsTime] = newNick
+            getCache()?.let { it.FakeNick = newNick } ?: return
+            p.setDisplayName(newNick)
+            TaskUtil.getInstance().asyncExecutor {
+                transaction(SqlUtil.getInstance().sql) {
+                    PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
+                        it[kitsTime] = newNick
+                    }
                 }
             }
         }
@@ -165,11 +198,11 @@ class PlayerData(player: Player) {
                 }
             }
         }
-        val nick = PluginUtil.getInstance().colorPermission(p, newNick)
-        getCache().FakeNick = nick
+        p.setDisplayName(newNick)
+        getCache()?.let { it.FakeNick = newNick } ?: future.complete(true)
         transaction(SqlUtil.getInstance().sql) {
             PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                it[kitsTime] = nick
+                it[kitsTime] = newNick
             }
             future.complete(false)
         }
@@ -178,7 +211,8 @@ class PlayerData(player: Player) {
 
     fun removeNick() {
         //cache
-        getCache().FakeNick = ""
+        getCache()?.let { it.FakeNick = "" } ?: return
+        p.setDisplayName(p.name)
 
         //sql
         TaskUtil.getInstance().asyncExecutor {
@@ -191,18 +225,9 @@ class PlayerData(player: Player) {
     }
 
 
-    fun getCache(): InternalPlayerData {
+    fun getCache(): InternalPlayerData? {
         Dao.getInstance().playerCache[uuid].also {
-            return if (it != null) {
-                it
-            } else {
-                Dao.getInstance().playerCache[uuid] = InternalPlayerData(
-                    uuid,
-                    HashMap(40),
-                    ""
-                )
-                Dao.getInstance().playerCache[uuid]!!
-            }
+            return it
         }
     }
 
