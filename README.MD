@@ -7,9 +7,10 @@
 - pt_BR
 - en_US
 
-## Commands - Kit System
+## Commands
 |Command         |Description                      |Permission                    |
 |----------------|-------------------------------|-----------------------------|
+|/essentialsk, system, essentials | Main command os plugin |essentialsk.commands.essentialsk    |
 |/createkit and /criarkit |Create a kit with an interface / GUI|essentialsk.commands.createkit    |
 |/delkit |Delete kit with name|essentialsk.commands.delkit    |
 |/editkit and /editarkit |Editkit a kit with an interface / GUI|essentialsk.commands.editkit    |
@@ -48,18 +49,26 @@ To use in chat, commands, signs etc.
 
 
 
-# Resources ( Internal )
+## Resources ( Internal )
 
 * Own Lib using new features such as:
     - MariaDB latest version;
-    - H2 database latest version;
     - HikariCP;
     - Kotlin;
-    - ExposedSql.
-* Lang's system and check;
-* Config system and check;
-* Check system and lib;
+    - ExposedSQL.
+* Reload system.
+    - system based on reload all configuration, besides being possible to change your lang.
+* Lang's and Config system and check;
+    - This system is based on the difference of the configuration file between versions, if it has a new path, it adds it if it doesn't have it, in addition to the comments of the configurations that are updated.
 * Version checker.
+    - For now it auto-updates only on linux systems, as windowns have manage problems.
+
+## TODO List
+- [ ] Add Weight to kits, to organize the GUI.
+- [ ] Add Support to H2 2.0.
+- [ ] Add suport of version Checker for a Windows.
+
+
 
 # Discord
 

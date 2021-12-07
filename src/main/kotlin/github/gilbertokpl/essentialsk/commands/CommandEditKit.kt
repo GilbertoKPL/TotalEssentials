@@ -24,13 +24,13 @@ class CommandEditKit : ICommand {
     override val permission: String = "essentialsk.commands.editkit"
     override val minimumSize = 1
     override val maximumSize = 1
-    override val commandUsage = "/editkit (kitName)"
+    override val commandUsage = listOf("/editkit (kitName)")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) {
+    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean {
         //check length of kit name
         if (args[0].length > 16) {
             s.sendMessage(GeneralLang.getInstance().kitsNameLength)
-            return
+            return false
         }
 
         val dataInstance = KitData(args[0])
@@ -38,12 +38,12 @@ class CommandEditKit : ICommand {
         //check if not exist
         if (!dataInstance.checkCache()) {
             s.sendMessage(GeneralLang.getInstance().kitsNotExist)
-            return
+            return false
         }
 
         //open inventory
         editKitGui(s as Player, args[0].lowercase())
-
+        return false
     }
 
     private fun editKitGuiItems(p: Player, kit: String) {

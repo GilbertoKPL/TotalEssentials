@@ -93,22 +93,8 @@ class ConfigUtil {
                     MainConfig.getInstance().generalSelectedLang = enum
                     internalReloadConfig()
                 }
-                var langSelected =
-                    File(PluginUtil.getInstance().langPath, "${MainConfig.getInstance().generalSelectedLang}.yml")
 
-                if (langSelected.exists()) {
-                    PluginUtil.getInstance().consoleMessage(
-                        StartLang.getInstance().langSelectedMessage.replace(
-                            "%lang%",
-                            "${MainConfig.getInstance().generalSelectedLang}.yml"
-                        )
-                    )
-                } else {
-                    langSelected = File(PluginUtil.getInstance().langPath, "pt_BR.yml")
-                    PluginUtil.getInstance().consoleMessage(StartLang.getInstance().langError)
-                }
-
-                val langYaml = YamlFile(langSelected)
+                val langYaml = YamlFile(langHelper())
                 langYaml.load()
 
                 ReflectUtil.getInstance()
@@ -126,6 +112,24 @@ class ConfigUtil {
         } catch (ex: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
         }
+    }
+
+    private fun langHelper() : File {
+        var langSelected =
+            File(PluginUtil.getInstance().langPath, "${MainConfig.getInstance().generalSelectedLang}.yml")
+
+        if (langSelected.exists()) {
+            PluginUtil.getInstance().consoleMessage(
+                StartLang.getInstance().langSelectedMessage.replace(
+                    "%lang%",
+                    "${MainConfig.getInstance().generalSelectedLang}.yml"
+                )
+            )
+        } else {
+            langSelected = File(PluginUtil.getInstance().langPath, "pt_BR.yml")
+            PluginUtil.getInstance().consoleMessage(StartLang.getInstance().langError)
+        }
+        return langSelected
     }
 
     private fun initializeYml(source: String, lang: Boolean = false): Boolean {
@@ -185,19 +189,22 @@ class ConfigUtil {
         }
     }
 
-    private fun reloadHelper(dir: String) {
-        for (to in configList.values) {
-            val check: YamlFile
-            try {
-                val toLoad = YamlFile(File(dir, "${to.name}.yml"))
-                toLoad.loadWithComments()
-                check = toLoad
-            } catch (ex: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
-                to.save(to.currentPath)
-                return
-            }
-            check.save(to.currentPath)
+    fun reloadConfig(all: Boolean) {
+        if (all) {
+            startFun("configs", false)
+
+            ReflectUtil.getInstance()
+                .setValuesOfClass(MainConfig::class, MainConfig.getInstance(), configList.values.toList())
+
+            startFun("langs", true)
+
+            val langYaml = YamlFile(langHelper())
+            langYaml.load()
+
+            ReflectUtil.getInstance()
+                .setValuesOfClass(GeneralLang::class, GeneralLang.getInstance(), listOf(langYaml))
+
+            return
         }
     }
 
@@ -207,14 +214,21 @@ class ConfigUtil {
         configFile: File
     ) {
         var check = false
-        for (fileKeys in checkerYaml.getKeys(true)) {
-            if (toCheckYaml.get(fileKeys) == null) {
+        for (fileKeys in checkerYaml.getValues(true)) {
+            if (toCheckYaml.get(fileKeys.key) == null) {
                 check = true
                 break
             }
         }
-        for (fileKeys in toCheckYaml.getKeys(true)) {
-            if (checkerYaml.get(fileKeys) == null && !check) {
+        for (fileKeys in toCheckYaml.getValues(true)) {
+            if (checkerYaml.get(fileKeys.key) == null && !check) {
+                check = true
+                break
+            }
+        }
+        for (fileKeys in checkerYaml.getValues(true)) {
+            val comment = toCheckYaml.getComment(fileKeys.key)
+            if (checkerYaml.getComment(fileKeys.key) != comment) {
                 check = true
                 break
             }
@@ -234,11 +248,14 @@ class ConfigUtil {
                 .consoleMessage(StartLang.getInstance().updateHeader.replace("%file%", configFile.name))
         }
 
+        //values
         for (FileKeys in toCheckYaml.getValues(true)) {
             if (checkerYaml.get(FileKeys.key) == null) {
                 toPut[FileKeys.key] = FileKeys.key.split(".").size.plus(1)
+                continue
             }
         }
+
 
         for (createConfig in HashUtil.getInstance().hashMapSortMap(toPut)) {
             checkerYaml.set(createConfig.key, toCheckYaml.get(createConfig.key))
@@ -251,6 +268,7 @@ class ConfigUtil {
             )
         }
 
+        //values
         for (FileKeys in checkerYaml.getValues(true)) {
             if (toCheckYaml.get(FileKeys.key) == null) {
                 toRemove[FileKeys.key] = FileKeys.key.split(".").size.plus(1)
@@ -266,6 +284,19 @@ class ConfigUtil {
                 StartLang.getInstance().removeMessage.replace("%path%", deleteConfig.key)
                     .replace("%file%", configFile.name)
             )
+        }
+
+        //comments
+        for (FileKeys in checkerYaml.getValues(true)) {
+            val comment = toCheckYaml.getComment(FileKeys.key)
+            if (comment == null) {
+                checkerYaml.setComment(FileKeys.key, null)
+                continue
+            }
+            //comments
+            if (checkerYaml.getComment(FileKeys.key) != comment) {
+                checkerYaml.setComment(FileKeys.key, comment)
+            }
         }
 
         checkerYaml.save(configFile)

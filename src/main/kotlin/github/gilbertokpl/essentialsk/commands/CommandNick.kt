@@ -15,8 +15,8 @@ class CommandNick : ICommand {
     override val permission: String = "essentialsk.commands.nick"
     override val minimumSize = 1
     override val maximumSize = 2
-    override val commandUsage = "/nick [(NickName) / remove]"
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) {
+    override val commandUsage = listOf("/nick (NickName)", "/nick remove")
+    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean {
 
         //check if is 1
         if (args.size == 1 && s is Player) {
@@ -24,71 +24,72 @@ class CommandNick : ICommand {
             //check length of name
             if (args[0].length > 16) {
                 s.sendMessage(GeneralLang.getInstance().nicksNameLength)
-                return
+                return false
             }
             val playerCache = PlayerData(s)
 
-            if (args[0].lowercase() == "remove") {
+            if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
                 //check if is empty
-                if ((playerCache.getCache()?.FakeNick ?: return) == "") {
+                if ((playerCache.getCache()?.FakeNick ?: return false) == "") {
                     s.sendMessage(GeneralLang.getInstance().nicksNickAlreadyOriginal)
-                    return
+                    return false
                 }
                 playerCache.removeNick()
                 s.sendMessage(GeneralLang.getInstance().nicksNickRemovedSuccess)
-                return
+                return false
             }
 
             val toCheck = args[0].replace(Regex("&[0-9,a-f]"), "").lowercase()
 
             if (MainConfig.getInstance().nicksBlockedNicks.contains(toCheck)) {
                 s.sendMessage(GeneralLang.getInstance().nicksBlocked)
-                return
+                return false
             }
 
             val nick = PluginUtil.getInstance().colorPermission(s, args[0])
 
             if (playerCache.setNick(nick).get()) {
                 s.sendMessage(GeneralLang.getInstance().nicksExist)
+                return false
             }
 
             s.sendMessage(GeneralLang.getInstance().nicksNickSuccess.replace("%nick%", nick))
 
-            return
+            return false
         }
 
-        if (args.size != 2) return
+        if (args.size != 2) return false
 
         //check length of name
         if (args[1].length > 16) {
             s.sendMessage(GeneralLang.getInstance().kitsNameLength)
-            return
+            return false
         }
 
         //check perm
         if (s is Player && !s.hasPermission("essentialsk.commands.nick.other")) {
             s.sendMessage(GeneralLang.getInstance().generalNotPerm)
-            return
+            return false
         }
 
         //check if player exist
         val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
             s.sendMessage(GeneralLang.getInstance().generalPlayerNotOnline)
-            return
+            return false
         }
 
         val playerCache = PlayerData(p)
 
-        if (args[1].lowercase() == "remove") {
+        if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
             //check if is empty
-            if ((playerCache.getCache()?.FakeNick ?: return) == "") {
+            if ((playerCache.getCache()?.FakeNick ?: return false) == "") {
                 s.sendMessage(GeneralLang.getInstance().nicksNickAlreadyOriginalOther)
-                return
+                return false
             }
             playerCache.removeNick()
             s.sendMessage(GeneralLang.getInstance().nicksNickRemovedOtherSuccess)
             p.sendMessage(GeneralLang.getInstance().nicksNickRemovedOtherPlayerSuccess)
-            return
+            return false
         }
 
         val nick = args[1].replace("&", "$")
@@ -97,5 +98,6 @@ class CommandNick : ICommand {
 
         s.sendMessage(GeneralLang.getInstance().nicksNickOtherSuccess.replace("%nick%", nick))
         p.sendMessage(GeneralLang.getInstance().nicksNickOtherPlayerSuccess.replace("%nick%", nick))
+        return false
     }
 }

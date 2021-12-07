@@ -12,6 +12,8 @@ class GeneralLang {
 
     var generalCommandsUsage = ""
 
+    var generalCommandsUsageList = ""
+
     var kitsNotExist = ""
 
     var kitsExist = ""

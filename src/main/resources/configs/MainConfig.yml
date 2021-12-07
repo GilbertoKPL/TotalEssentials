@@ -25,7 +25,10 @@ kits:
   #equip armour when he gets the kit ?
   equip-armor-in-catch: true
 nicks:
+  #Enabled ?
   activated: true
+  #If enabled players can have same nick
   can-player-have-same-nick: false
+  #List of blocked nicks
   blocked-nicks:
     - essentialsk

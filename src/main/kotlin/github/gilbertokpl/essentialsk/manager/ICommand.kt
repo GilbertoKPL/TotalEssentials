@@ -11,11 +11,11 @@ interface ICommand : CommandExecutor {
 
     val permission: String?
     val consoleCanUse: Boolean
-    val commandUsage: String
+    val commandUsage: List<String>
     val minimumSize: Int
     val maximumSize: Int
 
-    fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>)
+    fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         essentialsKExecutor(sender, command, label, args)
@@ -38,10 +38,18 @@ interface ICommand : CommandExecutor {
         }
         TaskUtil.getInstance().commandExecutor {
             if (args.size > maximumSize || args.size < minimumSize) {
-                s.sendMessage(GeneralLang.getInstance().generalCommandsUsage.replace("%command%", commandUsage))
+                s.sendMessage(GeneralLang.getInstance().generalCommandsUsage)
+                commandUsage.forEach {
+                    s.sendMessage(GeneralLang.getInstance().generalCommandsUsageList.replace("%command%", it))
+                }
                 return@commandExecutor
             }
-            kCommand(s, command, label, args)
+            if (kCommand(s, command, label, args)) {
+                s.sendMessage(GeneralLang.getInstance().generalCommandsUsage)
+                commandUsage.forEach {
+                    s.sendMessage(GeneralLang.getInstance().generalCommandsUsageList.replace("%command%", it))
+                }
+            }
         }
         return false
     }

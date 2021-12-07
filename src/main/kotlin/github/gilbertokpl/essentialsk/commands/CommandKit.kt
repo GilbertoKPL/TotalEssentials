@@ -22,19 +22,19 @@ class CommandKit : ICommand {
     override val permission: String = "essentialsk.commands.kit"
     override val minimumSize = 0
     override val maximumSize = 1
-    override val commandUsage = "/kit (kitName)"
+    override val commandUsage = listOf("/kit (kitName)")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) {
+    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean {
         //send gui
         if (args.isEmpty()) {
             Dao.getInstance().kitGuiCache[1].also {
                 it ?: run {
                     s.sendMessage(GeneralLang.getInstance().kitsNotExistKits)
-                    return
+                    return false
                 }
                 (s as Player).openInventory(it)
             }
-            return
+            return false
         }
 
         val dataInstance = KitData(args[0])
@@ -42,12 +42,12 @@ class CommandKit : ICommand {
         //check if not exist
         if (!dataInstance.checkCache()) {
             s.sendMessage(GeneralLang.getInstance().kitsList.replace("%kits%", dataInstance.kitList().toString()))
-            return
+            return false
         }
 
         //give kit
         pickupKit(s as Player, args[0].lowercase())
-
+        return false
     }
 
     private fun kitGui(kit: String, guiNumber: String, p: Player) {

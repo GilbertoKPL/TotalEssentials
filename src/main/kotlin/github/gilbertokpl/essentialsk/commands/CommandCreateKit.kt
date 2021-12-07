@@ -11,13 +11,19 @@ class CommandCreateKit : ICommand {
     override val permission = "essentialsk.commands.createkit"
     override val minimumSize = 1
     override val maximumSize = 1
-    override val commandUsage = "/createkit (kitName)"
+    override val commandUsage = listOf("/createkit (kitName)")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) {
+    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean {
         //check length of kit name
         if (args[0].length > 16) {
             s.sendMessage(GeneralLang.getInstance().kitsNameLength)
-            return
+            return false
+        }
+
+        //check if kitname do not contain . or - to not bug
+        if(args[0].contains("-") || args[0].contains(".")) {
+            //message
+            return false
         }
 
         val dataInstance = KitData(args[0])
@@ -25,7 +31,7 @@ class CommandCreateKit : ICommand {
         //check if exist
         if (dataInstance.checkCache()) {
             s.sendMessage(GeneralLang.getInstance().kitsExist)
-            return
+            return false
         }
 
         //create cache and sql
@@ -36,5 +42,6 @@ class CommandCreateKit : ICommand {
                 args[0]
             )
         )
+        return false
     }
 }

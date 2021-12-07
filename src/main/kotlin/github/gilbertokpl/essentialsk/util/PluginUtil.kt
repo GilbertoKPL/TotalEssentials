@@ -83,6 +83,13 @@ class PluginUtil {
     }
 
     fun startCommands() {
+        //maincommand
+        startCommandsHelper(
+            listOf(
+                CommandEssentialsK()
+            ),
+            true
+        )
         //kits
         startCommandsHelper(
             listOf(

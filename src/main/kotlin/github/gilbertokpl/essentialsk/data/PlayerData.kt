@@ -4,9 +4,12 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.FakeNick
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.kitsTime
+import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.savedHomes
+import github.gilbertokpl.essentialsk.util.LocationUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
+import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -51,6 +54,7 @@ class PlayerData(player: Player) {
             //cache
             Dao.getInstance().playerCache[uuid] = InternalPlayerData(
                 uuid,
+                HashMap(40),
                 HashMap(40),
                 ""
             )
@@ -170,6 +174,79 @@ class PlayerData(player: Player) {
         }
     }
 
+    fun createHome(name: String, loc : Location) {
+        //cache
+        val cache = getCache()?.homeCache ?:return
+        cache[name] = loc
+        getCache()?.let { it.homeCache = cache } ?: return
+
+        //sql
+        TaskUtil.getInstance().asyncExecutor {
+            lateinit var homes : String
+            val serializedHome = LocationUtil.getInstance().locationSerializer(loc)
+            var emptyQuery = false
+            transaction(SqlUtil.getInstance().sql) {
+                PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.also { query ->
+                    emptyQuery = query.empty()
+                    if (emptyQuery) {
+                        PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
+                            it[savedHomes] = "$name.$serializedHome"
+                        }
+                        return@transaction
+                    }
+                    homes = query.single()[savedHomes]
+                }
+            }
+            if (emptyQuery) return@asyncExecutor
+
+            var newHome = "$name.$serializedHome"
+
+            for (h in homes.split("-")) {
+                newHome += "-$h"
+            }
+
+            transaction(SqlUtil.getInstance().sql) {
+                PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
+                    it[savedHomes] = newHome
+                }
+            }
+        }
+    }
+
+    fun delHome(name: String) {
+        //cache
+        val cache = getCache()?.homeCache ?:return
+        cache.remove(name)
+        getCache()?.let { it.homeCache = cache } ?: return
+
+        //sql
+        TaskUtil.getInstance().asyncExecutor {
+            lateinit var homes : String
+            transaction(SqlUtil.getInstance().sql) {
+                PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.also { query ->
+                    homes = query.single()[savedHomes]
+                }
+            }
+
+            var newHome = ""
+
+            for (h in homes.split("-")) {
+                if (h.split(".")[0] == name) continue
+                if (newHome == "") {
+                    newHome += h
+                    continue
+                }
+                newHome += "-$h"
+            }
+
+            transaction(SqlUtil.getInstance().sql) {
+                PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
+                    it[savedHomes] = newHome
+                }
+            }
+        }
+    }
+
     fun setNick(newNick: String, color: Boolean) {
         if (color) {
             getCache()?.let { it.FakeNick = newNick } ?: return
@@ -177,7 +254,7 @@ class PlayerData(player: Player) {
             TaskUtil.getInstance().asyncExecutor {
                 transaction(SqlUtil.getInstance().sql) {
                     PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                        it[kitsTime] = newNick
+                        it[FakeNick] = newNick
                     }
                 }
             }
@@ -190,9 +267,10 @@ class PlayerData(player: Player) {
         transaction(SqlUtil.getInstance().sql) {
             players = PlayerDataSQL.selectAll().map { it[FakeNick] }
         }
-        if (MainConfig.getInstance().nicksCanPlayerHaveSameNick) {
+        if (!MainConfig.getInstance().nicksCanPlayerHaveSameNick) {
             for (i in players) {
                 if (i.equals(newNick, true)) {
+                    println("")
                     future.complete(true)
                     break
                 }
@@ -202,7 +280,7 @@ class PlayerData(player: Player) {
         getCache()?.let { it.FakeNick = newNick } ?: future.complete(true)
         transaction(SqlUtil.getInstance().sql) {
             PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                it[kitsTime] = newNick
+                it[FakeNick] = newNick
             }
             future.complete(false)
         }
@@ -231,5 +309,5 @@ class PlayerData(player: Player) {
         }
     }
 
-    data class InternalPlayerData(val playerUUID: String, var kitsCache: HashMap<String, Long>, var FakeNick: String)
+    data class InternalPlayerData(val playerUUID: String, var kitsCache: HashMap<String, Long>, var homeCache: HashMap<String, Location>, var FakeNick: String)
 }

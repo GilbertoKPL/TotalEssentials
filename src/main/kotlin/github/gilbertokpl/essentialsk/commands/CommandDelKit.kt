@@ -12,13 +12,13 @@ class CommandDelKit : ICommand {
     override val permission: String = "essentialsk.commands.delkit"
     override val minimumSize = 1
     override val maximumSize = 1
-    override val commandUsage = "/delkit (kitName)"
+    override val commandUsage = listOf("/delkit (kitName)")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) {
+    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean {
         //check length of kit name
         if (args[0].length > 16) {
             s.sendMessage(GeneralLang.getInstance().kitsNameLength)
-            return
+            return false
         }
 
         val dataInstance = KitData(args[0])
@@ -26,7 +26,7 @@ class CommandDelKit : ICommand {
         //check if not exist
         if (!dataInstance.checkCache()) {
             s.sendMessage(GeneralLang.getInstance().kitsNotExist)
-            return
+            return false
         }
 
         //get fakeName to send
@@ -35,6 +35,6 @@ class CommandDelKit : ICommand {
         //delete cache and sql
         dataInstance.delKitData()
         s.sendMessage(GeneralLang.getInstance().kitsDelKitSuccess.replace("%kit%", fakeName))
-
+        return false
     }
 }
