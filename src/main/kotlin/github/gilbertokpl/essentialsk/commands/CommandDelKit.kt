@@ -15,11 +15,6 @@ class CommandDelKit : ICommand {
     override val commandUsage = listOf("/delkit (kitName)")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean {
-        //check length of kit name
-        if (args[0].length > 16) {
-            s.sendMessage(GeneralLang.getInstance().kitsNameLength)
-            return false
-        }
 
         val dataInstance = KitData(args[0])
 
@@ -34,7 +29,9 @@ class CommandDelKit : ICommand {
 
         //delete cache and sql
         dataInstance.delKitData()
+
         s.sendMessage(GeneralLang.getInstance().kitsDelKitSuccess.replace("%kit%", fakeName))
+
         return false
     }
 }

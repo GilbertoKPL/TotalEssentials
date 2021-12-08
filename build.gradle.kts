@@ -5,11 +5,11 @@ version = 1.0
 
 val base = "$group.libs"
 val exposedVersion = "0.36.2"
-val kotlin = "1.6.0"
+val kotlin = "1.6.10-RC"
 val buildVersion = "1.18"
 
 plugins {
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.6.10-RC"
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1"
@@ -174,6 +174,18 @@ bukkit {
         register("nick") {
             description = "This is a nick command!"
             aliases = listOf("nome")
+        }
+        register("home") {
+            description = "This is a home command!"
+            aliases = listOf("h")
+        }
+        register("delhome") {
+            description = "This is a sethome command!"
+            aliases = listOf("deletarhome")
+        }
+        register("sethome") {
+            description = "This is a sethome command!"
+            aliases = listOf("setarhome")
         }
     }
 }

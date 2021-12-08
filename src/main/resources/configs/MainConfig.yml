@@ -4,31 +4,41 @@
 # Any questions, please contact Gilberto_KPL#5620 or even at GitHub;
 # This project is under development please be patient with the final project;
 general:
-  #Selected Lang to run your plugin, it is necessary to have it in your lang folder, You can add more languages by contributing to the plugin....
+  # Selected Lang to run your plugin, it is necessary to have it in your lang folder, You can add more languages by contributing to the plugin....
   selected-lang: en_US
 database:
-  #Select Database type, available: H2 or MYSQL.
+  # Select Database type, available: H2 or MYSQL.
   type: H2
-  #If you have selected MYSQL add ip, port, username, database and password.
+  # If you have selected MYSQL add ip, port, username, database and password.
   sql-ip: 'localhost'
   sql-port: '3306'
   sql-username: 'u0_essentialsk'
   sql-database: 's0_essentialsk'
   sql-password: 'essentialsk123'
 kits:
-  #Enabled ?
+  # Enabled.
   activated: true
-  #Enable short name od time example, seconds to s.
+  # Enable short name of time, example seconds to s.
   use-short-time: false
-  #drop items when he gets the kit ?
+  # Drop items when he gets the kit.
   drop-items-in-catch: false
-  #equip armour when he gets the kit ?
+  # Equip armour when he gets the kit.
   equip-armor-in-catch: true
 nicks:
-  #Enabled ?
+  # Enabled.
   activated: true
-  #If enabled players can have same nick
+  # If enabled players can have same nick.
   can-player-have-same-nick: false
-  #List of blocked nicks
+  # List of blocked nicks.
   blocked-nicks:
+    - essentialsk
+homes:
+  # Enabled.
+  activated: true
+  # default value if player not have permission
+  default-limit-homes: 3
+  # time in seconds to teleport to determined location, has a permission to bypass.
+  time-to-teleport: 5
+  # List of blocked worlds to use sethome.
+  block-worlds:
     - essentialsk

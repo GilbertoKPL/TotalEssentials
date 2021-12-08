@@ -1,10 +1,14 @@
 package github.gilbertokpl.essentialsk.util
 
+import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.bukkit.Bukkit
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
 
 class TaskUtil {
 
@@ -14,12 +18,27 @@ class TaskUtil {
 
     private val poolExecutor = Executors.newCachedThreadPool()
 
+    private val poolExecutorTeleport = Executors.newCachedThreadPool()
+
     fun disable() {
         poolExecutor.shutdown()
     }
 
     fun getExecutor(): ExecutorService {
         return poolExecutor
+    }
+
+    fun teleportExecutor(time : Int): (() -> Unit) -> Unit {
+        return {
+            CompletableFuture.runAsync({
+                TimeUnit.SECONDS.sleep(time.toLong())
+                try {
+                    EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable { it() })
+                } catch (ex: Exception) {
+                    FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                }
+            }, poolExecutorTeleport)
+        }
     }
 
     private fun commandExecutor(): (() -> Unit) -> Unit {

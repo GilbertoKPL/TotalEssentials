@@ -3,6 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
@@ -20,9 +21,9 @@ class CommandCreateKit : ICommand {
             return false
         }
 
-        //check if kitname do not contain . or - to not bug
-        if(args[0].contains("-") || args[0].contains(".")) {
-            //message
+        //check if kit name do not contain . or - to not bug
+        if (PluginUtil.getInstance().checkSpecialCaracteres(args[0])) {
+            s.sendMessage(GeneralLang.getInstance().generalSpecialCaracteresDisabled)
             return false
         }
 

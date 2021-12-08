@@ -8,7 +8,7 @@ import java.util.*
 
 class LocationUtil {
     fun locationSerializer(loc: Location): String {
-        return loc.x.toString() + ";" + loc.y + ";" + loc.z + ";" + loc.world?.uid
+        return loc.x.toString().split(".").first() + ";" + loc.y.toString().split(".").first() + ";" + loc.z.toString().split(".").first() + ";" + loc.world?.uid.toString().replace("-", "_")
     }
 
     fun locationSerializer(s: String): Location {
@@ -16,7 +16,7 @@ class LocationUtil {
         val x = parts[0].toDouble()
         val y = parts[1].toDouble()
         val z = parts[2].toDouble()
-        val u = UUID.fromString(parts[3])
+        val u = UUID.fromString(parts[3].replace("_", "-"))
         val w = Bukkit.getServer().getWorld(u)
         return Location(w, x, y, z)
     }

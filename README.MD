@@ -10,13 +10,16 @@
 ## Commands
 |Command         |Description                      |Permission                    |
 |----------------|-------------------------------|-----------------------------|
-|/essentialsk, system, essentials | Main command os plugin |essentialsk.commands.essentialsk    |
-|/createkit and /criarkit |Create a kit with an interface / GUI|essentialsk.commands.createkit    |
-|/delkit |Delete kit with name|essentialsk.commands.delkit    |
-|/editkit and /editarkit |Editkit a kit with an interface / GUI|essentialsk.commands.editkit    |
+|/essentialsk, /system, /essentials | Main command os plugin. |essentialsk.commands.essentialsk    |
+|/createkit and /criarkit |Create a kit with an interface / GUI.|essentialsk.commands.createkit    |
+|/delkit |Delete kit with name.|essentialsk.commands.delkit    |
+|/editkit and /editarkit |Editkit a kit with an interface / GUI.|essentialsk.commands.editkit    |
 |/kit and /kits |Create a kit with an interface / GUI see all kits through the interface / GUI and also get them|essentialsk.commands.kit    |
 |/givekit and /darkit |Give kit to player.|essentialsk.commands.givekit    |
 |/nick and /nome |Give kit to player.|essentialsk.commands.nick    |
+|/sethome and /setarhome |set home of player with name.| essentialsk.commands.sethome    |
+|/delhome and /deletarhome |del home of player.| essentialsk.commands.delhome    |
+|/home and /h |go to home of player.| essentialsk.commands.home    |
 
 ## Permission Color
 To use in chat, commands, signs etc.
@@ -43,8 +46,10 @@ To use in chat, commands, signs etc.
 ## Other permissions
 |Permission         | Function |
 |----------------|----------------|
-|essentialsk.kit.(kit name) | allow the player to pick up the given kit |
-|essentialsk.commands.nick.other | allow the player rename other players |
+|essentialsk.kit.(kit name) | Allow the player to pick up the given kit |
+|essentialsk.commands.nick.other | Allow the player rename other players |
+|essentialsk.commands.sethome.(number of homes) | Set limit of homes to player |
+|essentialsk.bypass.teleport | bypass time to teleport |
 
 
 

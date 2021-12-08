@@ -33,6 +33,7 @@ import java.net.URLClassLoader
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+
 class PluginUtil {
 
     val mainPath: String = EssentialsK.instance.dataFolder.path
@@ -108,6 +109,15 @@ class PluginUtil {
             ),
             MainConfig.getInstance().nicksActivated
         )
+        //homes
+        startCommandsHelper(
+            listOf(
+                CommandSetHome(),
+                CommandHome(),
+                CommandDelHome()
+            ),
+            MainConfig.getInstance().homesActivated
+        )
     }
 
     fun colorPermission(p: Player, message: String): String {
@@ -124,6 +134,11 @@ class PluginUtil {
         return newMessage
     }
 
+    fun checkSpecialCaracteres(s: String?): Boolean {
+        return s?.matches(Regex("[^A-Za-z0-9 ]")) ?: false
+    }
+
+
     private fun startCommandsHelper(commands: List<CommandExecutor>, boolean: Boolean) {
         if (!boolean) return
         for (to in commands) {
@@ -134,6 +149,17 @@ class PluginUtil {
                 ).lowercase()
             )?.setExecutor(to)
         }
+    }
+
+    fun getNumberPermission(player: Player, permission : String, default : Int): Int {
+        for (perm in player.effectivePermissions) {
+            val permString = perm.permission
+            if (permString.startsWith(permission)) {
+                val amount = permString.split(".").toTypedArray()
+                return amount[2].toInt()
+            }
+        }
+        return default
     }
 
 

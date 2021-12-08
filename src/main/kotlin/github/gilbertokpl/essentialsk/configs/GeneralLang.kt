@@ -14,6 +14,8 @@ class GeneralLang {
 
     var generalCommandsUsageList = ""
 
+    var generalSpecialCaracteresDisabled = ""
+
     var kitsNotExist = ""
 
     var kitsExist = ""
@@ -119,6 +121,26 @@ class GeneralLang {
     var nicksNickAlreadyOriginal = ""
 
     var nicksNickAlreadyOriginalOther = ""
+
+    var homesNameLength = ""
+
+    var homesNameAlreadyExist = ""
+
+    var homesNameDontExist = ""
+
+    var homesTimeToTeleport = ""
+
+    var homesHomeRemoved = ""
+
+    var homesHomeCreated = ""
+
+    var homesHomeLimitCreated = ""
+
+    var homesHomeWorldBlocked = ""
+
+    var homesTeleported = ""
+
+    var homesInTeleport = ""
 
     companion object : IInstance<GeneralLang> {
         private val instance = createInstance()

@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.data
 
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
@@ -12,6 +13,9 @@ class Dao {
 
     //player
     val playerCache = HashMap<String, PlayerData.InternalPlayerData>(100)
+
+    //in teleport
+    val inTeleport = ArrayList<Player>()
 
     //editKitInv
     val editKitInventory = HashMap<Int, ItemStack>(50)

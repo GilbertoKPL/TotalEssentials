@@ -97,7 +97,11 @@ class ReflectUtil {
             "boolean" -> EType.BOOLEAN
             "java.lang.integer" -> EType.INTEGER
             "integer" -> EType.INTEGER
-            else -> null
+            "int" -> EType.INTEGER
+            else -> {
+                println(type)
+                null
+            }
         }
     }
 

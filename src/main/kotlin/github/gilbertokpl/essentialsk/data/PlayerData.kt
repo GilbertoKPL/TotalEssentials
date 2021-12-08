@@ -30,9 +30,16 @@ class PlayerData(player: Player) {
 
     fun loadCache() {
         TaskUtil.getInstance().asyncExecutor {
-            val cache = HashMap<String, Long>(40)
+            //values
+            val cacheKits = HashMap<String, Long>(40)
+            val cacheHomes = HashMap<String, Location>(40)
+            val limitHome: Int =
+                PluginUtil.getInstance().getNumberPermission(p, "essentialsk.commands.sethome.", MainConfig.getInstance().homesDefaultLimitHomes)
+            var fakeNick = ""
+
+            //internal
+            lateinit var homesList: String
             lateinit var timeKits: String
-            lateinit var fakeNick: String
             var emptyQuery = false
 
             transaction(SqlUtil.getInstance().sql) {
@@ -42,24 +49,25 @@ class PlayerData(player: Player) {
                         PlayerDataSQL.insert {
                             it[uuid] = this@PlayerData.uuid
                             it[kitsTime] = ""
+                            it[savedHomes] = ""
                             it[FakeNick] = ""
                         }
                         return@transaction
                     }
                     timeKits = query.single()[kitsTime]
                     fakeNick = query.single()[FakeNick]
+                    homesList = query.single()[savedHomes]
                 }
             }
 
-            //cache
-            Dao.getInstance().playerCache[uuid] = InternalPlayerData(
-                uuid,
-                HashMap(40),
-                HashMap(40),
-                ""
-            )
-
             if (emptyQuery) {
+                Dao.getInstance().playerCache[uuid] = InternalPlayerData(
+                    uuid,
+                    HashMap(40),
+                    HashMap(40),
+                    limitHome,
+                    fakeNick
+                )
                 return@asyncExecutor
             }
 
@@ -88,13 +96,36 @@ class PlayerData(player: Player) {
                         } else {
                             "-$nameKit.$timeKit"
                         }
-                        cache[nameKit] = timeKit
+                        cacheKits[nameKit] = timeKit
                         continue
                     }
                 } catch (ignored : Exception) {
                     update = true
                 }
             }
+
+            //nick
+            if (fakeNick != "") {
+                p.setDisplayName(fakeNick)
+            }
+
+            //home
+            for (h in homesList.split("-")) {
+                if (h == "") continue
+                val split = h.split(".")
+                val locationHome = LocationUtil.getInstance().locationSerializer(split[1])
+                val nameHome = split[0]
+                cacheHomes[nameHome] = locationHome
+            }
+
+            //cache is in final to improve protection to load caches
+            Dao.getInstance().playerCache[uuid] = InternalPlayerData(
+                uuid,
+                cacheKits,
+                cacheHomes,
+                limitHome,
+                fakeNick
+            )
 
             if (update) {
                 transaction(SqlUtil.getInstance().sql) {
@@ -103,15 +134,6 @@ class PlayerData(player: Player) {
                     }
                 }
             }
-
-            getCache()?.let { it.kitsCache = cache } ?: return@asyncExecutor
-
-            //nick
-            if (fakeNick != "") {
-                getCache()?.let { it.FakeNick = fakeNick } ?: return@asyncExecutor
-                p.setDisplayName(fakeNick)
-            }
-
         }
     }
 
@@ -202,6 +224,7 @@ class PlayerData(player: Player) {
             var newHome = "$name.$serializedHome"
 
             for (h in homes.split("-")) {
+                if (h == "") continue
                 newHome += "-$h"
             }
 
@@ -309,5 +332,5 @@ class PlayerData(player: Player) {
         }
     }
 
-    data class InternalPlayerData(val playerUUID: String, var kitsCache: HashMap<String, Long>, var homeCache: HashMap<String, Location>, var FakeNick: String)
+    data class InternalPlayerData(val playerUUID: String, var kitsCache: HashMap<String, Long>, var homeCache: HashMap<String, Location>, var homeLimit : Int, var FakeNick: String)
 }

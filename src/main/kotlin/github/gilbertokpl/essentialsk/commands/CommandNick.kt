@@ -21,6 +21,12 @@ class CommandNick : ICommand {
         //check if is 1
         if (args.size == 1 && s is Player) {
 
+            //check if nickname do not contain . or - to not bug
+            if (PluginUtil.getInstance().checkSpecialCaracteres(args[0])) {
+                s.sendMessage(GeneralLang.getInstance().generalSpecialCaracteresDisabled)
+                return false
+            }
+
             //check length of name
             if (args[0].length > 16) {
                 s.sendMessage(GeneralLang.getInstance().nicksNameLength)
@@ -58,7 +64,13 @@ class CommandNick : ICommand {
             return false
         }
 
-        if (args.size != 2) return false
+        if (args.size != 2) return true
+
+        //check if nickname do not contain . or - to not bug
+        if (PluginUtil.getInstance().checkSpecialCaracteres(args[1])) {
+            s.sendMessage(GeneralLang.getInstance().generalSpecialCaracteresDisabled)
+            return false
+        }
 
         //check length of name
         if (args[1].length > 16) {

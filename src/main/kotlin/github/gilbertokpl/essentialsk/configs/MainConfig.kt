@@ -32,6 +32,14 @@ class MainConfig {
 
     var nicksBlockedNicks: List<String> = emptyList()
 
+    var homesActivated: Boolean = true
+
+    var homesDefaultLimitHomes: Int = 0
+
+    var homesTimeToTeleport: Int = 0
+
+    var homesBlockWorlds: List<String> = emptyList()
+
     companion object : IInstance<MainConfig> {
         private val instance = createInstance()
         override fun createInstance(): MainConfig = MainConfig()
