@@ -11,7 +11,7 @@ class CommandEssentialsK : ICommand {
     override val minimumSize = 1
     override val maximumSize = 1
     override val commandUsage = listOf("/essentialsk reload")
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean {
+    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args[0] == "reload") {
             ConfigUtil.getInstance().reloadConfig(true)
             return false

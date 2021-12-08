@@ -114,7 +114,7 @@ class ConfigUtil {
         }
     }
 
-    private fun langHelper() : File {
+    private fun langHelper(): File {
         var langSelected =
             File(PluginUtil.getInstance().langPath, "${MainConfig.getInstance().generalSelectedLang}.yml")
 
@@ -193,16 +193,7 @@ class ConfigUtil {
         if (all) {
             startFun("configs", false)
 
-            ReflectUtil.getInstance()
-                .setValuesOfClass(MainConfig::class, MainConfig.getInstance(), configList.values.toList())
-
             startFun("langs", true)
-
-            val langYaml = YamlFile(langHelper())
-            langYaml.load()
-
-            ReflectUtil.getInstance()
-                .setValuesOfClass(GeneralLang::class, GeneralLang.getInstance(), listOf(langYaml))
 
             return
         }

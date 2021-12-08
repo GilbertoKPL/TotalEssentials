@@ -1,7 +1,6 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import org.bukkit.command.Command
@@ -14,7 +13,7 @@ class CommandDelKit : ICommand {
     override val maximumSize = 1
     override val commandUsage = listOf("/delkit (kitName)")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean {
+    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         val dataInstance = KitData(args[0])
 

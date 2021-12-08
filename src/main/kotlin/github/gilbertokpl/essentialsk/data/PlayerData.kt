@@ -34,7 +34,11 @@ class PlayerData(player: Player) {
             val cacheKits = HashMap<String, Long>(40)
             val cacheHomes = HashMap<String, Location>(40)
             val limitHome: Int =
-                PluginUtil.getInstance().getNumberPermission(p, "essentialsk.commands.sethome.", MainConfig.getInstance().homesDefaultLimitHomes)
+                PluginUtil.getInstance().getNumberPermission(
+                    p,
+                    "essentialsk.commands.sethome.",
+                    MainConfig.getInstance().homesDefaultLimitHomes
+                )
             var fakeNick = ""
 
             //internal
@@ -74,7 +78,7 @@ class PlayerData(player: Player) {
             var replace = ""
             var update = false
 
-            for (kits in timeKits.split("-")) {
+            for (kits in timeKits.split("|")) {
                 try {
                     if (kits == "") continue
                     val split = kits.split(".")
@@ -91,15 +95,15 @@ class PlayerData(player: Player) {
                     val timeAll = KitData(nameKit).getCache(true)
 
                     if (timeKit != 0L && timeAll != null && (timeAll.time + timeKit) > System.currentTimeMillis()) {
-                        replace += if(replace == "") {
+                        replace += if (replace == "") {
                             "$nameKit.$timeKit"
                         } else {
-                            "-$nameKit.$timeKit"
+                            "|$nameKit.$timeKit"
                         }
                         cacheKits[nameKit] = timeKit
                         continue
                     }
-                } catch (ignored : Exception) {
+                } catch (ignored: Exception) {
                     update = true
                 }
             }
@@ -110,7 +114,7 @@ class PlayerData(player: Player) {
             }
 
             //home
-            for (h in homesList.split("-")) {
+            for (h in homesList.split("|")) {
                 if (h == "") continue
                 val split = h.split(".")
                 val locationHome = LocationUtil.getInstance().locationSerializer(split[1])
@@ -171,7 +175,7 @@ class PlayerData(player: Player) {
                 }
                 return@asyncExecutor
             }
-            val check = kitTime.split("-")
+            val check = kitTime.split("|")
             var newPlace = ""
             for (i in check) {
                 if (i.split(".")[0] != kit) {
@@ -179,7 +183,7 @@ class PlayerData(player: Player) {
                         newPlace += i
                         continue
                     }
-                    newPlace += "-$i"
+                    newPlace += "|$i"
                     continue
                 }
             }
@@ -196,15 +200,15 @@ class PlayerData(player: Player) {
         }
     }
 
-    fun createHome(name: String, loc : Location) {
+    fun createHome(name: String, loc: Location) {
         //cache
-        val cache = getCache()?.homeCache ?:return
+        val cache = getCache()?.homeCache ?: return
         cache[name] = loc
         getCache()?.let { it.homeCache = cache } ?: return
 
         //sql
         TaskUtil.getInstance().asyncExecutor {
-            lateinit var homes : String
+            lateinit var homes: String
             val serializedHome = LocationUtil.getInstance().locationSerializer(loc)
             var emptyQuery = false
             transaction(SqlUtil.getInstance().sql) {
@@ -223,9 +227,9 @@ class PlayerData(player: Player) {
 
             var newHome = "$name.$serializedHome"
 
-            for (h in homes.split("-")) {
+            for (h in homes.split("|")) {
                 if (h == "") continue
-                newHome += "-$h"
+                newHome += "|$h"
             }
 
             transaction(SqlUtil.getInstance().sql) {
@@ -238,13 +242,13 @@ class PlayerData(player: Player) {
 
     fun delHome(name: String) {
         //cache
-        val cache = getCache()?.homeCache ?:return
+        val cache = getCache()?.homeCache ?: return
         cache.remove(name)
         getCache()?.let { it.homeCache = cache } ?: return
 
         //sql
         TaskUtil.getInstance().asyncExecutor {
-            lateinit var homes : String
+            lateinit var homes: String
             transaction(SqlUtil.getInstance().sql) {
                 PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.also { query ->
                     homes = query.single()[savedHomes]
@@ -253,13 +257,13 @@ class PlayerData(player: Player) {
 
             var newHome = ""
 
-            for (h in homes.split("-")) {
+            for (h in homes.split("|")) {
                 if (h.split(".")[0] == name) continue
                 if (newHome == "") {
                     newHome += h
                     continue
                 }
-                newHome += "-$h"
+                newHome += "|$h"
             }
 
             transaction(SqlUtil.getInstance().sql) {
@@ -332,5 +336,11 @@ class PlayerData(player: Player) {
         }
     }
 
-    data class InternalPlayerData(val playerUUID: String, var kitsCache: HashMap<String, Long>, var homeCache: HashMap<String, Location>, var homeLimit : Int, var FakeNick: String)
+    data class InternalPlayerData(
+        val playerUUID: String,
+        var kitsCache: HashMap<String, Long>,
+        var homeCache: HashMap<String, Location>,
+        var homeLimit: Int,
+        var FakeNick: String
+    )
 }

@@ -3,7 +3,6 @@ package github.gilbertokpl.essentialsk.util
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.bukkit.Bukkit
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -28,7 +27,7 @@ class TaskUtil {
         return poolExecutor
     }
 
-    fun teleportExecutor(time : Int): (() -> Unit) -> Unit {
+    fun teleportExecutor(time: Int): (() -> Unit) -> Unit {
         return {
             CompletableFuture.runAsync({
                 TimeUnit.SECONDS.sleep(time.toLong())

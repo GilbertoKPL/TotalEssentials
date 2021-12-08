@@ -8,7 +8,8 @@ import java.util.*
 
 class LocationUtil {
     fun locationSerializer(loc: Location): String {
-        return loc.x.toString().split(".").first() + ";" + loc.y.toString().split(".").first() + ";" + loc.z.toString().split(".").first() + ";" + loc.world?.uid.toString().replace("-", "_")
+        return loc.x.toString().split(".").first() + ";" + loc.y.toString().split(".").first() + ";" + loc.z.toString()
+            .split(".").first() + ";" + loc.world?.uid.toString().replace("-", "_")
     }
 
     fun locationSerializer(s: String): Location {

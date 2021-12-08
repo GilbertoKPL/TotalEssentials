@@ -24,7 +24,7 @@ class CommandKit : ICommand {
     override val maximumSize = 1
     override val commandUsage = listOf("/kit (kitName)")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean {
+    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //send gui
         if (args.isEmpty()) {
             Dao.getInstance().kitGuiCache[1].also {

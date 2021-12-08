@@ -47,9 +47,13 @@ To use in chat, commands, signs etc.
 |Permission         | Function |
 |----------------|----------------|
 |essentialsk.kit.(kit name) | Allow the player to pick up the given kit |
-|essentialsk.commands.nick.other | Allow the player rename other players |
 |essentialsk.commands.sethome.(number of homes) | Set limit of homes to player |
+|essentialsk.commands.nick.other | Allow the player rename other players |
+|"essentialsk.commands.home.other" | allow the player go to other players homes |
+|"essentialsk.commands.delhome.other" | allow the player delhome for other players |
+|"essentialsk.commands.sethome.other" | allow the player sethome for other players |
 |essentialsk.bypass.teleport | bypass time to teleport |
+|essentialsk.bypass.homelimit | bypass home limit |
 
 
 

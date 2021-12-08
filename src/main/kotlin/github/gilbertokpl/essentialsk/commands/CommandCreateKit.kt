@@ -14,7 +14,7 @@ class CommandCreateKit : ICommand {
     override val maximumSize = 1
     override val commandUsage = listOf("/createkit (kitName)")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean {
+    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of kit name
         if (args[0].length > 16) {
             s.sendMessage(GeneralLang.getInstance().kitsNameLength)

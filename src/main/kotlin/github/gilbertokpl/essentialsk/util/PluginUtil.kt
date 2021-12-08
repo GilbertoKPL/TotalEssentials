@@ -1,5 +1,6 @@
 package github.gilbertokpl.essentialsk.util
 
+import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.commands.*
 import github.gilbertokpl.essentialsk.configs.GeneralLang
@@ -11,6 +12,7 @@ import github.gilbertokpl.essentialsk.inventory.EditKitInventory
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.manager.IInstance
+import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
@@ -18,6 +20,7 @@ import org.apache.logging.log4j.core.LoggerContext
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.OfflinePlayer
 import org.bukkit.command.*
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
@@ -53,7 +56,25 @@ class PluginUtil {
     }
 
     fun getPlayerUUID(p: Player): String {
-        return p.uniqueId.toString()
+        return if (EssentialsK.instance.server.onlineMode) {
+            p.uniqueId.toString()
+        } else {
+            p.name.lowercase()
+        }
+    }
+
+    fun getPlayerUUID(p: OfflinePlayer): String {
+        return if (EssentialsK.instance.server.onlineMode) {
+            val jsonPlayer = JsonParser.parseString(
+                IOUtils.toString(
+                    URL("https://api.mojang.com/users/profiles/minecraft/${p.name!!.lowercase()}"),
+                    "UTF-8"
+                )
+            ).asJsonObject
+            jsonPlayer.get("id").asString
+        } else {
+            p.name!!.lowercase()
+        }
     }
 
     fun startEvents() {
@@ -151,7 +172,7 @@ class PluginUtil {
         }
     }
 
-    fun getNumberPermission(player: Player, permission : String, default : Int): Int {
+    fun getNumberPermission(player: Player, permission: String, default: Int): Int {
         for (perm in player.effectivePermissions) {
             val permString = perm.permission
             if (permString.startsWith(permission)) {

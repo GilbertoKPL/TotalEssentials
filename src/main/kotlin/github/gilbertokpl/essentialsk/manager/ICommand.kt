@@ -15,7 +15,7 @@ interface ICommand : CommandExecutor {
     val minimumSize: Int
     val maximumSize: Int
 
-    fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>) : Boolean
+    fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         essentialsKExecutor(sender, command, label, args)
@@ -40,7 +40,12 @@ interface ICommand : CommandExecutor {
             if (args.size > maximumSize || args.size < minimumSize) {
                 s.sendMessage(GeneralLang.getInstance().generalCommandsUsage)
                 commandUsage.forEach {
-                    s.sendMessage(GeneralLang.getInstance().generalCommandsUsageList.replace("%command%", it))
+                    val to = it.split("-")
+                    if (to.size > 1 && s !is Player || to.size > 1 && s.hasPermission(to[0])) {
+                        s.sendMessage(GeneralLang.getInstance().generalCommandsUsageList.replace("%command%", to[1]))
+                    } else {
+                        s.sendMessage(GeneralLang.getInstance().generalCommandsUsageList.replace("%command%", it))
+                    }
                 }
                 return@commandExecutor
             }

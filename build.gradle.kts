@@ -177,7 +177,7 @@ bukkit {
         }
         register("home") {
             description = "This is a home command!"
-            aliases = listOf("h")
+            aliases = listOf("h", "homes")
         }
         register("delhome") {
             description = "This is a sethome command!"

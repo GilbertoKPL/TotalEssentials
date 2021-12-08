@@ -16,6 +16,8 @@ class GeneralLang {
 
     var generalSpecialCaracteresDisabled = ""
 
+    var generalPlayerNotExist = ""
+
     var kitsNotExist = ""
 
     var kitsExist = ""
@@ -132,7 +134,11 @@ class GeneralLang {
 
     var homesHomeRemoved = ""
 
+    var homesHomeOtherRemoved = ""
+
     var homesHomeCreated = ""
+
+    var homesHomeOtherCreated = ""
 
     var homesHomeLimitCreated = ""
 
@@ -140,7 +146,13 @@ class GeneralLang {
 
     var homesTeleported = ""
 
+    var homesTeleportedOther = ""
+
     var homesInTeleport = ""
+
+    var homesHomeList = ""
+
+    var homesHomeOtherList = ""
 
     companion object : IInstance<GeneralLang> {
         private val instance = createInstance()
