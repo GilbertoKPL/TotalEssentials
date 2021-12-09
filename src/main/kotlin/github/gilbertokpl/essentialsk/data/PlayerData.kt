@@ -1,16 +1,14 @@
 package github.gilbertokpl.essentialsk.data
 
+import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.FakeNick
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.kitsTime
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.savedHomes
-import github.gilbertokpl.essentialsk.util.LocationUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
-import github.gilbertokpl.essentialsk.util.SqlUtil
-import github.gilbertokpl.essentialsk.util.TaskUtil
+import github.gilbertokpl.essentialsk.util.*
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
-import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
@@ -19,10 +17,19 @@ import org.jetbrains.exposed.sql.update
 import java.util.concurrent.CompletableFuture
 
 
-class PlayerData(player: Player) {
+class PlayerData(player: String) {
 
-    private val uuid = PluginUtil.getInstance().getPlayerUUID(player)
-    private val p = player
+    private val p = EssentialsK.instance.server.getPlayer(player)
+
+    private val online = p != null
+
+    private val uuid = if (p != null) {
+        PluginUtil.getInstance().getPlayerUUID(p)
+    } else {
+        CompletableFuture.supplyAsync({
+            PluginUtil.getInstance().getPlayerUUID(EssentialsK.instance.server.getOfflinePlayer(player))
+        }, TaskUtil.getInstance().getExecutor()).get()
+    }
 
     fun unloadCache() {
         Dao.getInstance().playerCache.remove(uuid)
@@ -35,7 +42,7 @@ class PlayerData(player: Player) {
             val cacheHomes = HashMap<String, Location>(40)
             val limitHome: Int =
                 PluginUtil.getInstance().getNumberPermission(
-                    p,
+                    p!!,
                     "essentialsk.commands.sethome.",
                     MainConfig.getInstance().homesDefaultLimitHomes
                 )
@@ -141,18 +148,42 @@ class PlayerData(player: Player) {
         }
     }
 
+    fun checkSql(): Boolean {
+        return if (online) {
+            true
+        } else {
+            CompletableFuture.supplyAsync({
+                try {
+                    var check = false
+                    transaction(SqlUtil.getInstance().sql) {
+                        check = PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.empty()
+                    }
+                    return@supplyAsync !check
+                } catch (ex: Exception) {
+                    FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                }
+                return@supplyAsync false
+            }, TaskUtil.getInstance().getExecutor()).get()
+        }
+    }
+
+    //only online
     fun delKitTime(kit: String) {
-        val cache = getCache()?.kitsCache ?: return
-        cache.remove(kit)
-        getCache()?.let { it.kitsCache = cache } ?: return
+        if (online) {
+            val cache = getCache()?.kitsCache ?: return
+            cache.remove(kit)
+            getCache()?.let { it.kitsCache = cache } ?: return
+        }
     }
 
     fun setKitTime(kit: String, time: Long) {
         //cache
-        val cache = getCache()?.kitsCache ?: return
-        cache.remove(kit)
-        cache[kit] = time
-        getCache()?.let { it.kitsCache = cache } ?: return
+        if (online) {
+            val cache = getCache()?.kitsCache ?: return
+            cache.remove(kit)
+            cache[kit] = time
+            getCache()?.let { it.kitsCache = cache } ?: return
+        }
 
         //sql
         TaskUtil.getInstance().asyncExecutor {
@@ -202,9 +233,11 @@ class PlayerData(player: Player) {
 
     fun createHome(name: String, loc: Location) {
         //cache
-        val cache = getCache()?.homeCache ?: return
-        cache[name] = loc
-        getCache()?.let { it.homeCache = cache } ?: return
+        if (online) {
+            val cache = getCache()?.homeCache ?: return
+            cache[name] = loc
+            getCache()?.let { it.homeCache = cache } ?: return
+        }
 
         //sql
         TaskUtil.getInstance().asyncExecutor {
@@ -242,9 +275,11 @@ class PlayerData(player: Player) {
 
     fun delHome(name: String) {
         //cache
-        val cache = getCache()?.homeCache ?: return
-        cache.remove(name)
-        getCache()?.let { it.homeCache = cache } ?: return
+        if (online) {
+            val cache = getCache()?.homeCache ?: return
+            cache.remove(name)
+            getCache()?.let { it.homeCache = cache } ?: return
+        }
 
         //sql
         TaskUtil.getInstance().asyncExecutor {
@@ -274,50 +309,103 @@ class PlayerData(player: Player) {
         }
     }
 
-    fun setNick(newNick: String, color: Boolean) {
-        if (color) {
-            getCache()?.let { it.FakeNick = newNick } ?: return
-            p.setDisplayName(newNick)
-            TaskUtil.getInstance().asyncExecutor {
+    fun getHomeList(): List<String> {
+        return if (online) {
+            getCache()?.let { get -> get.homeCache.map { it.key } } ?: return emptyList()
+        } else {
+            CompletableFuture.supplyAsync({
+                lateinit var homesList: String
+                val cacheHomes = ArrayList<String>()
+                var bol = false
+                transaction(SqlUtil.getInstance().sql) {
+                    PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.also { query ->
+                        if (query.empty()) {
+                            bol = true
+                            return@transaction
+                        }
+                        homesList = query.single()[savedHomes]
+                    }
+                }
+                if (bol) {
+                    return@supplyAsync emptyList()
+                }
+                for (h in homesList.split("|")) {
+                    if (h == "") continue
+                    val split = h.split(".")
+                    val nameHome = split[0]
+                    cacheHomes.add(nameHome)
+                }
+                return@supplyAsync cacheHomes
+            }, TaskUtil.getInstance().getExecutor()).get()
+        }
+    }
+
+    fun getLocationOfHome(home: String): Location? {
+        return if (online) {
+            val cache = getCache() ?: return null
+            cache.homeCache[home.lowercase()]
+        } else {
+            CompletableFuture.supplyAsync({
+                try {
+                    lateinit var homesList: String
+                    transaction(SqlUtil.getInstance().sql) {
+                        PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.also { query ->
+                            homesList = query.single()[savedHomes]
+                        }
+                    }
+                    for (h in homesList.split("|")) {
+                        if (h == "") continue
+                        val split = h.split(".")
+                        if (home.lowercase() == split[0]) {
+                            return@supplyAsync LocationUtil.getInstance().locationSerializer(split[1])
+                        }
+                    }
+                } catch (ex: Exception) {
+                    FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                }
+                return@supplyAsync null
+            }, TaskUtil.getInstance().getExecutor()).get()
+        }
+    }
+
+    fun setNick(newNick: String, other: Boolean = false): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({
+            try {
+                if (online && !other) {
+                    lateinit var players: List<String>
+                    transaction(SqlUtil.getInstance().sql) {
+                        players = PlayerDataSQL.selectAll().map { it[FakeNick] }
+                    }
+                    if (!MainConfig.getInstance().nicksCanPlayerHaveSameNick) {
+                        for (i in players) {
+                            if (i.equals(newNick, true)) {
+                                return@supplyAsync true
+                            }
+                        }
+                    }
+                }
+                if (online && other) {
+                    p!!.setDisplayName(newNick)
+                    getCache()?.let { it.FakeNick = newNick } ?: return@supplyAsync true
+                }
                 transaction(SqlUtil.getInstance().sql) {
                     PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
                         it[FakeNick] = newNick
                     }
                 }
+            } catch (ex: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
             }
-        }
-    }
-
-    fun setNick(newNick: String): CompletableFuture<Boolean> {
-        val future = CompletableFuture<Boolean>()
-        lateinit var players: List<String>
-        transaction(SqlUtil.getInstance().sql) {
-            players = PlayerDataSQL.selectAll().map { it[FakeNick] }
-        }
-        if (!MainConfig.getInstance().nicksCanPlayerHaveSameNick) {
-            for (i in players) {
-                if (i.equals(newNick, true)) {
-                    println("")
-                    future.complete(true)
-                    break
-                }
-            }
-        }
-        p.setDisplayName(newNick)
-        getCache()?.let { it.FakeNick = newNick } ?: future.complete(true)
-        transaction(SqlUtil.getInstance().sql) {
-            PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                it[FakeNick] = newNick
-            }
-            future.complete(false)
-        }
-        return future
+            return@supplyAsync false
+        }, TaskUtil.getInstance().getExecutor())
     }
 
     fun removeNick() {
         //cache
-        getCache()?.let { it.FakeNick = "" } ?: return
-        p.setDisplayName(p.name)
+        if (online) {
+            getCache()?.let { it.FakeNick = "" } ?: return
+            p!!.setDisplayName(p.name)
+        }
 
         //sql
         TaskUtil.getInstance().asyncExecutor {

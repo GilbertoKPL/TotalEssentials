@@ -1,13 +1,10 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.OfflinePlayerData
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 
 class CommandDelHome : ICommand {
     override val consoleCanUse: Boolean = false
@@ -25,11 +22,9 @@ class CommandDelHome : ICommand {
 
             val pName = split[0].lowercase()
 
-            val p = EssentialsK.instance.server.getOfflinePlayer(pName)
+            val otherPlayerInstance = PlayerData(pName)
 
-            val otherPlayerInstance = OfflinePlayerData(p)
-
-            if (!otherPlayerInstance.checkExist().get()) {
+            if (!otherPlayerInstance.checkSql()) {
                 s.sendMessage(GeneralLang.getInstance().generalPlayerNotExist)
                 return false
             }
@@ -37,21 +32,17 @@ class CommandDelHome : ICommand {
             if (split.size < 2) {
                 s.sendMessage(
                     GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
-                        .replace("%list%", otherPlayerInstance.getHomeList().get().toString())
+                        .replace("%list%", otherPlayerInstance.getHomeList().toString())
                 )
                 return false
             }
 
-            if (!otherPlayerInstance.getHomeList().get()!!.contains(split[1])) {
+            if (!otherPlayerInstance.getHomeList().contains(split[1])) {
                 s.sendMessage(GeneralLang.getInstance().homesNameDontExist)
                 return false
             }
 
-            if (p.player == null) {
-                otherPlayerInstance.delHome(split[1])
-            } else {
-                PlayerData(p.player!!).delHome(split[1])
-            }
+            otherPlayerInstance.delHome(split[1])
 
             s.sendMessage(
                 GeneralLang.getInstance().homesHomeOtherRemoved.replace("%player%", pName).replace("%home%", split[1])
@@ -62,7 +53,7 @@ class CommandDelHome : ICommand {
 
         val nameHome = args[0].lowercase()
 
-        val playerInstance = PlayerData(s as Player)
+        val playerInstance = PlayerData(s.name)
 
         val playerCache = playerInstance.getCache() ?: return false
 

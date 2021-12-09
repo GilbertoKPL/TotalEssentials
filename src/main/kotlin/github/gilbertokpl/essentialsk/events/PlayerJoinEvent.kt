@@ -11,7 +11,7 @@ class PlayerJoinEvent : Listener {
     @EventHandler
     fun playerJoinEvent(e: PlayerJoinEvent) {
         try {
-            PlayerData(e.player).loadCache()
+            PlayerData(e.player.name).loadCache()
         } catch (e: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
         }

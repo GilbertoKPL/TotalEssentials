@@ -78,7 +78,7 @@ class KitData(kitName: String) {
         Dao.getInstance().kitsCache.remove(nameLowerCase)
 
         ReflectUtil.getInstance().getPlayers().forEach {
-            PlayerData(it).delKitTime(nameLowerCase)
+            PlayerData(it.name).delKitTime(nameLowerCase)
         }
         reloadGui()
 

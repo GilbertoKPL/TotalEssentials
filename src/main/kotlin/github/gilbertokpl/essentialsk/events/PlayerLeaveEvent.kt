@@ -11,7 +11,7 @@ class PlayerLeaveEvent : Listener {
     @EventHandler
     fun playerLeaveEvent(e: PlayerQuitEvent) {
         try {
-            PlayerData(e.player).unloadCache()
+            PlayerData(e.player.name).unloadCache()
         } catch (e: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
         }

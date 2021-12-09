@@ -177,7 +177,11 @@ class PluginUtil {
             val permString = perm.permission
             if (permString.startsWith(permission)) {
                 val amount = permString.split(".").toTypedArray()
-                return amount[2].toInt()
+                return try {
+                    amount.last().toInt()
+                } catch (e: Exception) {
+                    default
+                }
             }
         }
         return default

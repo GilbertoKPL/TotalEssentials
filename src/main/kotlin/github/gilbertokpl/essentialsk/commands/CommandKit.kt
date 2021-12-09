@@ -56,7 +56,7 @@ class CommandKit : ICommand {
 
         //load caches
         val kitCache = KitData(kit).getCache()
-        val playerCache = PlayerData(p)
+        val playerCache = PlayerData(p.name)
 
         //get all time of kits
         var timeAll = playerCache.getCache()?.let { it.kitsCache[kit] ?: 0L } ?: return
@@ -144,12 +144,11 @@ class CommandKit : ICommand {
 
         //load caches
         val kitCache = KitData(kit).getCache()
-        val playerCache = PlayerData(p)
+        val playerCache = PlayerData(p.name)
 
         //get all time of kit
         var timeAll = playerCache.getCache()?.let { it.kitsCache[kit] ?: 0L } ?: return
         timeAll += kitCache.time
-
 
         // if time is remaining
         if (timeAll >= System.currentTimeMillis()) {

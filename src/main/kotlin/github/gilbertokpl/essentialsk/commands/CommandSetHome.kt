@@ -1,9 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.OfflinePlayerData
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.PluginUtil
@@ -29,11 +27,9 @@ class CommandSetHome : ICommand {
 
             val pName = split[0].lowercase()
 
-            val p = EssentialsK.instance.server.getOfflinePlayer(pName)
+            val otherPlayerInstance = PlayerData(pName)
 
-            val otherPlayerInstance = OfflinePlayerData(p)
-
-            if (!otherPlayerInstance.checkExist().get()) {
+            if (!otherPlayerInstance.checkSql()) {
                 s.sendMessage(GeneralLang.getInstance().generalPlayerNotExist)
                 return false
             }
@@ -41,23 +37,17 @@ class CommandSetHome : ICommand {
             if (split.size < 2) {
                 s.sendMessage(
                     GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
-                        .replace("%list%", otherPlayerInstance.getHomeList().get().toString())
+                        .replace("%list%", otherPlayerInstance.getHomeList().toString())
                 )
                 return false
             }
 
-            if (otherPlayerInstance.getHomeList().get()!!.contains(split[1])) {
+            if (otherPlayerInstance.getHomeList().contains(split[1])) {
                 s.sendMessage(GeneralLang.getInstance().homesNameAlreadyExist)
                 return false
             }
 
-            if (p.player == null) {
-                otherPlayerInstance.createHome(split[1].lowercase(), (s as Player).location)
-            } else {
-                PlayerData(p.player!!).createHome(split[1], (s as Player).location)
-            }
-
-            otherPlayerInstance.createHome(split[1].lowercase(), s.location)
+            otherPlayerInstance.createHome(split[1].lowercase(), (s as Player).location)
 
             s.sendMessage(
                 GeneralLang.getInstance().homesHomeOtherCreated.replace("%player%", pName).replace("%home%", split[1])
@@ -78,7 +68,7 @@ class CommandSetHome : ICommand {
             return false
         }
 
-        val playerInstance = PlayerData(s as Player)
+        val playerInstance = PlayerData(s.name)
 
         val playerCache = playerInstance.getCache() ?: return false
 
@@ -100,7 +90,7 @@ class CommandSetHome : ICommand {
         }
 
         //check if world is blocked
-        if (MainConfig.getInstance().homesBlockWorlds.contains(s.world.name.lowercase())) {
+        if (MainConfig.getInstance().homesBlockWorlds.contains((s as Player).world.name.lowercase())) {
             s.sendMessage(GeneralLang.getInstance().homesHomeWorldBlocked)
             return false
         }

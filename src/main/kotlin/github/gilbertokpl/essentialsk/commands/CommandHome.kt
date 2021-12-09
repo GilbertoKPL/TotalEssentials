@@ -1,10 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.OfflinePlayerData
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.TaskUtil
@@ -25,7 +23,7 @@ class CommandHome : ICommand {
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
-        val playerInstance = PlayerData(s as Player)
+        val playerInstance = PlayerData(s.name)
 
         val playerCache = playerInstance.getCache() ?: return false
 
@@ -45,11 +43,9 @@ class CommandHome : ICommand {
 
             val pName = split[0].lowercase()
 
-            val p = EssentialsK.instance.server.getOfflinePlayer(pName)
+            val otherPlayerInstance = PlayerData(pName)
 
-            val otherPlayerInstance = OfflinePlayerData(p)
-
-            if (!otherPlayerInstance.checkExist().get()) {
+            if (!otherPlayerInstance.checkSql()) {
                 s.sendMessage(GeneralLang.getInstance().generalPlayerNotExist)
                 return false
             }
@@ -57,20 +53,20 @@ class CommandHome : ICommand {
             if (split.size < 2) {
                 s.sendMessage(
                     GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
-                        .replace("%list%", otherPlayerInstance.getHomeList().get().toString())
+                        .replace("%list%", otherPlayerInstance.getHomeList().toString())
                 )
                 return false
             }
 
-            val loc = otherPlayerInstance.getLocationOfHome(split[1]).get() ?: run {
+            val loc = otherPlayerInstance.getLocationOfHome(split[1]) ?: run {
                 s.sendMessage(
                     GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
-                        .replace("%list%", otherPlayerInstance.getHomeList().get().toString())
+                        .replace("%list%", otherPlayerInstance.getHomeList().toString())
                 )
                 return false
             }
 
-            s.teleport(loc)
+            (s as Player).teleport(loc)
 
             s.sendMessage(
                 GeneralLang.getInstance().homesTeleportedOther.replace("%home%", split[1].lowercase())
@@ -95,14 +91,14 @@ class CommandHome : ICommand {
         }
 
         if (s.hasPermission("essentialsk.bypass.teleport")) {
-            s.teleport(playerCache.homeCache[nameHome]!!)
+            (s as Player).teleport(playerCache.homeCache[nameHome]!!)
             s.sendMessage(GeneralLang.getInstance().homesTeleported.replace("%home%", nameHome))
             return false
         }
 
         val time = MainConfig.getInstance().homesTimeToTeleport
 
-        Dao.getInstance().inTeleport.add(s)
+        Dao.getInstance().inTeleport.add((s as Player))
 
         val exe = TaskUtil.getInstance().teleportExecutor(time)
 

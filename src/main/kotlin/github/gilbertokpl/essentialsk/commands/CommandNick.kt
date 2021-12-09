@@ -38,7 +38,7 @@ class CommandNick : ICommand {
                 s.sendMessage(GeneralLang.getInstance().nicksNameLength)
                 return false
             }
-            val playerCache = PlayerData(s)
+            val playerCache = PlayerData(s.name)
 
             if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
                 //check if is empty
@@ -96,7 +96,7 @@ class CommandNick : ICommand {
             return false
         }
 
-        val playerCache = PlayerData(p)
+        val playerCache = PlayerData(p.name)
 
         if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
             //check if is empty
