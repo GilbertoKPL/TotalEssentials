@@ -22,7 +22,6 @@ detekt {
     ignoreFailures = true
 }
 
-
 allprojects {
     repositories {
         mavenCentral()
@@ -145,7 +144,7 @@ bukkit {
     name = project.name
     version = project.version.toString()
     apiVersion = "1.13"
-    load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.STARTUP
+    load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     commands {
         register("essentialsk") {
             description = "This is a main essentialsk command!"
@@ -197,7 +196,7 @@ bukkit {
         }
         register("warp") {
             description = "This is a warp command!"
-            aliases = listOf("w")
+            aliases = listOf("w", "warps")
         }
     }
 }

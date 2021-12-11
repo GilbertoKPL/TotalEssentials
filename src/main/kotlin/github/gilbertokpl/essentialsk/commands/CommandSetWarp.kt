@@ -36,7 +36,7 @@ class CommandSetWarp : ICommand {
         val warpInstance = WarpData(warpName)
 
         //check if exist
-        if (warpInstance.checkCache()) {
+        if (!warpInstance.checkCache()) {
             s.sendMessage(GeneralLang.getInstance().warpsNameAlreadyExist)
             return false
         }
@@ -46,8 +46,13 @@ class CommandSetWarp : ICommand {
 
             //check location
             val loc = try {
-                Location(EssentialsK.instance.server.getWorld(args[1]), args[2].toDouble(), args[3].toDouble(), args[4].toDouble())
-            } catch (e : Exception) {
+                Location(
+                    EssentialsK.instance.server.getWorld(args[1]),
+                    args[2].toDouble(),
+                    args[3].toDouble(),
+                    args[4].toDouble()
+                )
+            } catch (e: Exception) {
                 return true
             }
 

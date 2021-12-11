@@ -11,7 +11,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.concurrent.CompletableFuture
@@ -94,7 +93,7 @@ class PlayerData(player: String) {
 
                     val kitsCache = KitData(nameKit)
 
-                    if (!kitsCache.checkCache()) {
+                    if (kitsCache.checkCache()) {
                         update = true
                         continue
                     }
@@ -103,9 +102,9 @@ class PlayerData(player: String) {
 
                     if (timeKit != 0L && timeAll != null && (timeAll.time + timeKit) > System.currentTimeMillis()) {
                         replace += if (replace == "") {
-                            "$nameKit.$timeKit"
+                            "$nameKit,$timeKit"
                         } else {
-                            "|$nameKit.$timeKit"
+                            "|$nameKit,$timeKit"
                         }
                         cacheKits[nameKit] = timeKit
                         continue
@@ -123,7 +122,7 @@ class PlayerData(player: String) {
             //home
             for (h in homesList.split("|")) {
                 if (h == "") continue
-                val split = h.split(".")
+                val split = h.split(",")
                 val locationHome = LocationUtil.getInstance().locationSerializer(split[1])
                 val nameHome = split[0]
                 cacheHomes[nameHome] = locationHome
@@ -201,7 +200,7 @@ class PlayerData(player: String) {
             if (query || kitTime == "") {
                 transaction(SqlUtil.getInstance().sql) {
                     PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                        it[kitsTime] = "$kit.$time"
+                        it[kitsTime] = "$kit,$time"
                     }
                 }
                 return@asyncExecutor
@@ -209,7 +208,7 @@ class PlayerData(player: String) {
             val check = kitTime.split("|")
             var newPlace = ""
             for (i in check) {
-                if (i.split(".")[0] != kit) {
+                if (i.split(",")[0] != kit) {
                     if (newPlace == "") {
                         newPlace += i
                         continue
@@ -219,9 +218,9 @@ class PlayerData(player: String) {
                 }
             }
             newPlace += if (newPlace == "") {
-                "$kit.${System.currentTimeMillis()}"
+                "$kit,${System.currentTimeMillis()}"
             } else {
-                "-$kit.$time"
+                "-$kit,$time"
             }
             transaction(SqlUtil.getInstance().sql) {
                 PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
@@ -249,7 +248,7 @@ class PlayerData(player: String) {
                     emptyQuery = query.empty()
                     if (emptyQuery) {
                         PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                            it[savedHomes] = "$name.$serializedHome"
+                            it[savedHomes] = "$name,$serializedHome"
                         }
                         return@transaction
                     }
@@ -258,7 +257,7 @@ class PlayerData(player: String) {
             }
             if (emptyQuery) return@asyncExecutor
 
-            var newHome = "$name.$serializedHome"
+            var newHome = "$name,$serializedHome"
 
             for (h in homes.split("|")) {
                 if (h == "") continue
@@ -293,7 +292,7 @@ class PlayerData(player: String) {
             var newHome = ""
 
             for (h in homes.split("|")) {
-                if (h.split(".")[0] == name) continue
+                if (h.split(",")[0] == name) continue
                 if (newHome == "") {
                     newHome += h
                     continue
@@ -331,7 +330,7 @@ class PlayerData(player: String) {
                 }
                 for (h in homesList.split("|")) {
                     if (h == "") continue
-                    val split = h.split(".")
+                    val split = h.split(",")
                     val nameHome = split[0]
                     cacheHomes.add(nameHome)
                 }
@@ -355,7 +354,7 @@ class PlayerData(player: String) {
                     }
                     for (h in homesList.split("|")) {
                         if (h == "") continue
-                        val split = h.split(".")
+                        val split = h.split(",")
                         if (home.lowercase() == split[0]) {
                             return@supplyAsync LocationUtil.getInstance().locationSerializer(split[1])
                         }
@@ -372,15 +371,13 @@ class PlayerData(player: String) {
         return CompletableFuture.supplyAsync({
             try {
                 if (online && !other) {
-                    lateinit var players: List<String>
+                    var exist = false
                     transaction(SqlUtil.getInstance().sql) {
-                        players = PlayerDataSQL.selectAll().map { it[FakeNick] }
+                        exist = PlayerDataSQL.select { FakeNick eq newNick }.empty()
                     }
                     if (!MainConfig.getInstance().nicksCanPlayerHaveSameNick) {
-                        for (i in players) {
-                            if (i.equals(newNick, true)) {
-                                return@supplyAsync true
-                            }
+                        if (!exist) {
+                            return@supplyAsync true
                         }
                     }
                 }

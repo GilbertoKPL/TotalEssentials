@@ -36,7 +36,7 @@ class CommandEditKit : ICommand {
         val dataInstance = KitData(args[0])
 
         //check if not exist
-        if (!dataInstance.checkCache()) {
+        if (dataInstance.checkCache()) {
             s.sendMessage(GeneralLang.getInstance().kitsNotExist)
             return false
         }
@@ -69,7 +69,7 @@ class CommandEditKit : ICommand {
         if (inventoryName[0].equals("§eEditKit", true)) {
             e.isCancelled = true
             val dataInstance = KitData(inventoryName[1])
-            if (!dataInstance.checkCache()) return false
+            if (dataInstance.checkCache()) return false
             val number = e.slot
             val p = e.whoClicked as Player
 

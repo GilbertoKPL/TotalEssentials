@@ -18,7 +18,7 @@ class CommandDelKit : ICommand {
         val dataInstance = KitData(args[0])
 
         //check if not exist
-        if (!dataInstance.checkCache()) {
+        if (dataInstance.checkCache()) {
             s.sendMessage(GeneralLang.getInstance().kitsNotExist)
             return false
         }

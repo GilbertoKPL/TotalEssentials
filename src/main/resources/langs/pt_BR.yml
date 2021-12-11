@@ -11,7 +11,7 @@ general:
   special-caracteres-disabled: '&cCaracteres proibidos'
   commands-usage: '&c[Command Info]'
   commands-usage-list: '&c- %command%'
-  sending-info-to-db: 'Mandando informação para seu Banco de dados...'
+  sending-info-to-db: '&aMandando informação para seu Banco de dados...'
 time:
   seconds: 'segundos'
   second: 'segundo'

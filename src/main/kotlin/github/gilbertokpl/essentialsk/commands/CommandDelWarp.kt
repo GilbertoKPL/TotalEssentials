@@ -1,6 +1,5 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.WarpData
 import github.gilbertokpl.essentialsk.manager.ICommand
@@ -33,7 +32,7 @@ class CommandDelWarp : ICommand {
 
         s.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
         if (warpInstance.delWarp()) {
-            s.sendMessage(GeneralLang.getInstance().warpsWarpCreated.replace("%warp%", warpName))
+            s.sendMessage(GeneralLang.getInstance().warpsWarpRemoved.replace("%warp%", warpName))
         }
 
         return false

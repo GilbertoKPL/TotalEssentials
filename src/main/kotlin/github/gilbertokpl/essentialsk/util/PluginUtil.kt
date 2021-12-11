@@ -97,10 +97,18 @@ class PluginUtil {
         }
     }
 
-    private fun loadCache() : Boolean {
-        return CompletableFuture.supplyAsync ({
-            KitData("").loadKitCache()
-            WarpData("").loadWarpCache()
+    private fun loadCache(): Boolean {
+        return CompletableFuture.supplyAsync({
+            try {
+                KitData("").loadKitCache()
+            } catch (ex: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+            }
+            try {
+                WarpData("").loadWarpCache()
+            } catch (ex: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+            }
             return@supplyAsync true
         }, TaskUtil.getInstance().getExecutor()).get()
     }

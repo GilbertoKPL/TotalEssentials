@@ -1,15 +1,19 @@
 package github.gilbertokpl.essentialsk.data
 
-import github.gilbertokpl.essentialsk.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.tables.WarpsDataSQL
 import github.gilbertokpl.essentialsk.tables.WarpsDataSQL.warpLocation
 import github.gilbertokpl.essentialsk.tables.WarpsDataSQL.warpName
-import github.gilbertokpl.essentialsk.util.*
+import github.gilbertokpl.essentialsk.util.FileLoggerUtil
+import github.gilbertokpl.essentialsk.util.LocationUtil
+import github.gilbertokpl.essentialsk.util.SqlUtil
+import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.CompletableFuture
 
@@ -20,15 +24,15 @@ class WarpData(warpName: String) {
     fun loadWarpCache() {
         Dao.getInstance().warpsCache.clear()
 
-        val hashHomes = HashMap<String, String>(40)
+        val hashWarp = HashMap<String, String>(40)
 
         transaction(SqlUtil.getInstance().sql) {
             for (values in WarpsDataSQL.selectAll()) {
-                hashHomes[values[warpName]] = values[warpLocation]
+                hashWarp[values[warpName]] = values[warpLocation]
             }
         }
 
-        hashHomes.forEach {
+        for (it in hashWarp) {
             Dao.getInstance().warpsCache[it.key] = LocationUtil.getInstance().locationSerializer(it.value)
         }
     }
@@ -36,13 +40,13 @@ class WarpData(warpName: String) {
     fun checkCache(): Boolean {
         Dao.getInstance().warpsCache[name].also {
             if (it == null) {
-                return false
+                return true
             }
-            return true
+            return false
         }
     }
 
-    fun getWarpList(p : Player?) : List<String> {
+    fun getWarpList(p: Player?): List<String> {
         val list = Dao.getInstance().warpsCache.map { it.key }
         if (p != null) {
             val newList = ArrayList<String>()
@@ -56,25 +60,23 @@ class WarpData(warpName: String) {
         return list
     }
 
-    fun getLocation() : Location {
+    fun getLocation(): Location {
         return Dao.getInstance().warpsCache[name]!!
     }
 
-    fun setWarp(location: Location) : Boolean {
+    fun setWarp(location: Location): Boolean {
         //cache
         Dao.getInstance().warpsCache[name] = location
+
+        val loc = LocationUtil.getInstance().locationSerializer(location)
 
         //sql
         return CompletableFuture.supplyAsync({
             try {
                 transaction(SqlUtil.getInstance().sql) {
-                    WarpsDataSQL.select { warpName eq name }.also { query ->
-                        if (query.empty()) {
-                            WarpsDataSQL.insert {
-                                it[warpName] = name
-                                it[warpLocation] = LocationUtil.getInstance().locationSerializer(location)
-                            }
-                        }
+                    WarpsDataSQL.insert {
+                        it[warpName] = name
+                        it[warpLocation] = loc
                     }
                 }
                 return@supplyAsync true
@@ -85,7 +87,7 @@ class WarpData(warpName: String) {
         }, TaskUtil.getInstance().getExecutor()).get()
     }
 
-    fun delWarp() : Boolean {
+    fun delWarp(): Boolean {
         //cache
         Dao.getInstance().warpsCache.remove(name)
 
@@ -93,9 +95,9 @@ class WarpData(warpName: String) {
         return CompletableFuture.supplyAsync({
             try {
                 transaction(SqlUtil.getInstance().sql) {
-                    WarpsDataSQL.select { warpName eq name}.also { query ->
+                    WarpsDataSQL.select { warpName eq name }.also { query ->
                         if (!query.empty()) {
-                            WarpsDataSQL.deleteWhere{ warpName eq name }
+                            WarpsDataSQL.deleteWhere { warpName eq name }
                             return@transaction
                         }
                     }

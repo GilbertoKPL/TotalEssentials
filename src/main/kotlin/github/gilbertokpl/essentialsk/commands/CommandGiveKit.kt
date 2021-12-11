@@ -24,7 +24,7 @@ class CommandGiveKit : ICommand {
         val dataInstance = KitData(args[1])
 
         //check if not exist
-        if (!dataInstance.checkCache()) {
+        if (dataInstance.checkCache()) {
             s.sendMessage(GeneralLang.getInstance().kitsNotExist)
             return false
         }

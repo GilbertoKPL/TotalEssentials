@@ -21,7 +21,22 @@ class CommandWarp : ICommand {
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         if (args.isEmpty() && s is Player) {
-            s.sendMessage(GeneralLang.getInstance().warpsWarpList.replace("%list%", WarpData("").getWarpList(s).toString()))
+            s.sendMessage(
+                GeneralLang.getInstance().warpsWarpList.replace(
+                    "%list%",
+                    WarpData("").getWarpList(s).toString()
+                )
+            )
+            return false
+        }
+
+        if (s !is Player) {
+            s.sendMessage(
+                GeneralLang.getInstance().warpsWarpList.replace(
+                    "%list%",
+                    WarpData("").getWarpList(null).toString()
+                )
+            )
             return false
         }
 
@@ -29,32 +44,32 @@ class CommandWarp : ICommand {
 
         val warpInstance = WarpData(warpName)
 
-        if (args.isEmpty() && s !is Player) {
-            s.sendMessage(GeneralLang.getInstance().warpsWarpList.replace("%list%", warpInstance.getWarpList(null).toString()))
-            return false
-        }
-
         //check length of warp name
         if (args[0].length > 16) {
             s.sendMessage(GeneralLang.getInstance().warpsNameLength)
             return false
         }
 
-        //check if exist
-        if (!warpInstance.checkCache()) {
-            s.sendMessage(GeneralLang.getInstance().warpsNameDontExist)
+        //check if not exist
+        if (warpInstance.checkCache()) {
+            s.sendMessage(
+                GeneralLang.getInstance().warpsWarpList.replace(
+                    "%list%",
+                    warpInstance.getWarpList(null).toString()
+                )
+            )
             return false
         }
 
         if (s.hasPermission("essentialsk.bypass.teleport")) {
-            (s as Player).teleport(warpInstance.getLocation())
+            s.teleport(warpInstance.getLocation())
             s.sendMessage(GeneralLang.getInstance().warpsTeleported.replace("%warp%", warpName))
             return false
         }
 
         val time = MainConfig.getInstance().warpsTimeToTeleport
 
-        Dao.getInstance().inTeleport.add((s as Player))
+        Dao.getInstance().inTeleport.add(s)
 
         val exe = TaskUtil.getInstance().teleportExecutor(time)
 

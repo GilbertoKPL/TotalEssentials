@@ -7,7 +7,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.lang.reflect.TypeVariable
 import java.util.concurrent.CompletableFuture
 
 class KitData(kitName: String) {
@@ -18,13 +17,13 @@ class KitData(kitName: String) {
     fun checkCache(): Boolean {
         Dao.getInstance().kitsCache[nameLowerCase].also {
             if (it == null) {
-                return false
+                return true
             }
             return true
         }
     }
 
-    fun createNewKitData() : Boolean {
+    fun createNewKitData(): Boolean {
         //cache
         Dao.getInstance().kitsCache[nameLowerCase] = KitDataInternal(nameLowerCase, name, emptyList(), 0L)
         reloadGui()
@@ -80,7 +79,7 @@ class KitData(kitName: String) {
         return list
     }
 
-    fun delKitData() : Boolean {
+    fun delKitData(): Boolean {
         //cache
         Dao.getInstance().kitsCache.remove(nameLowerCase)
 
@@ -103,7 +102,7 @@ class KitData(kitName: String) {
         }, TaskUtil.getInstance().getExecutor()).get()
     }
 
-    fun setFakeName(fakeName: String) : Boolean {
+    fun setFakeName(fakeName: String): Boolean {
         //cache
         getCache().fakeName = fakeName
         reloadGui()
@@ -112,7 +111,7 @@ class KitData(kitName: String) {
         return kitHelper(KitsDataSQL.kitFakeName, fakeName).get()
     }
 
-    fun setItems(items: List<ItemStack>) : Boolean {
+    fun setItems(items: List<ItemStack>): Boolean {
         //cache
         getCache().items = items
         reloadGui()
@@ -120,10 +119,10 @@ class KitData(kitName: String) {
         val toSave = ItemUtil.getInstance().itemSerializer(items)
 
         //sql
-        return kitHelper(KitsDataSQL.kitItems, ItemUtil.getInstance().itemSerializer(items)).get()
+        return kitHelper(KitsDataSQL.kitItems, toSave).get()
     }
 
-    fun setTime(time: Long) : Boolean {
+    fun setTime(time: Long): Boolean {
         //cache
         getCache().time = time
         reloadGui()
@@ -132,7 +131,7 @@ class KitData(kitName: String) {
         return kitHelper(KitsDataSQL.kitTime, time).get()
     }
 
-    private fun <T> kitHelper(col : Column<T>, value: T) : CompletableFuture<Boolean> {
+    private fun <T> kitHelper(col: Column<T>, value: T): CompletableFuture<Boolean> {
         return CompletableFuture.supplyAsync({
             try {
                 transaction(SqlUtil.getInstance().sql) {
