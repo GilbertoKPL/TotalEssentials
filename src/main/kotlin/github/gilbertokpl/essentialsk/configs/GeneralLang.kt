@@ -18,6 +18,8 @@ class GeneralLang {
 
     var generalPlayerNotExist = ""
 
+    var generalSendingInfoToDb = ""
+
     var kitsNotExist = ""
 
     var kitsExist = ""
@@ -153,6 +155,22 @@ class GeneralLang {
     var homesHomeList = ""
 
     var homesHomeOtherList = ""
+
+    var warpsNameLength = ""
+
+    var warpsNameAlreadyExist = ""
+
+    var warpsNameDontExist = ""
+
+    var warpsTimeToTeleport = ""
+
+    var warpsTeleported = ""
+
+    var warpsWarpList = ""
+
+    var warpsWarpCreated = ""
+
+    var warpsWarpRemoved = ""
 
     companion object : IInstance<GeneralLang> {
         private val instance = createInstance()

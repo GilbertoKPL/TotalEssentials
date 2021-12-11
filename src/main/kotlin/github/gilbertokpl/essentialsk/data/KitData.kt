@@ -2,16 +2,12 @@ package github.gilbertokpl.essentialsk.data
 
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.tables.KitsDataSQL
-import github.gilbertokpl.essentialsk.util.ItemUtil
-import github.gilbertokpl.essentialsk.util.ReflectUtil
-import github.gilbertokpl.essentialsk.util.SqlUtil
-import github.gilbertokpl.essentialsk.util.TaskUtil
+import github.gilbertokpl.essentialsk.util.*
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
+import java.lang.reflect.TypeVariable
 import java.util.concurrent.CompletableFuture
 
 class KitData(kitName: String) {
@@ -28,41 +24,52 @@ class KitData(kitName: String) {
         }
     }
 
-    fun createNewKitData() {
+    fun createNewKitData() : Boolean {
         //cache
         Dao.getInstance().kitsCache[nameLowerCase] = KitDataInternal(nameLowerCase, name, emptyList(), 0L)
         reloadGui()
 
-        TaskUtil.getInstance().asyncExecutor {
-            //sql
-            transaction(SqlUtil.getInstance().sql) {
-                KitsDataSQL.insert {
-                    it[kitName] = nameLowerCase
-                    it[kitFakeName] = name
+        //sql
+        return CompletableFuture.supplyAsync({
+            try {
+                transaction(SqlUtil.getInstance().sql) {
+                    KitsDataSQL.insert {
+                        it[kitName] = nameLowerCase
+                        it[kitFakeName] = name
+                    }
                 }
+                return@supplyAsync true
+            } catch (ex: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                return@supplyAsync false
             }
-        }
+        }, TaskUtil.getInstance().getExecutor()).get()
     }
 
-    fun loadKitCache(): CompletableFuture<Boolean> {
-        val future = CompletableFuture<Boolean>()
-        Dao.getInstance().kitsCache.clear()
-        transaction(SqlUtil.getInstance().sql) {
-            for (values in KitsDataSQL.selectAll()) {
-                val kit = values[KitsDataSQL.kitName]
-                val kitFakeName = values[KitsDataSQL.kitFakeName]
-                val kitTime = values[KitsDataSQL.kitTime]
-                val item = values[KitsDataSQL.kitItems]
-                Dao.getInstance().kitsCache[kit] = KitDataInternal(
-                    kit,
-                    kitFakeName,
-                    ItemUtil.getInstance().itemSerializer(item),
-                    kitTime
-                )
+    fun loadKitCache(): Boolean {
+        return CompletableFuture.supplyAsync({
+            try {
+                Dao.getInstance().kitsCache.clear()
+                transaction(SqlUtil.getInstance().sql) {
+                    for (values in KitsDataSQL.selectAll()) {
+                        val kit = values[KitsDataSQL.kitName]
+                        val kitFakeName = values[KitsDataSQL.kitFakeName]
+                        val kitTime = values[KitsDataSQL.kitTime]
+                        val item = values[KitsDataSQL.kitItems]
+                        Dao.getInstance().kitsCache[kit] = KitDataInternal(
+                            kit,
+                            kitFakeName,
+                            ItemUtil.getInstance().itemSerializer(item),
+                            kitTime
+                        )
+                    }
+                }
+                return@supplyAsync true
+            } catch (ex: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
             }
-            future.complete(true)
-        }
-        return future
+            return@supplyAsync false
+        }, TaskUtil.getInstance().getExecutor()).get()
     }
 
     fun kitList(): List<String> {
@@ -73,7 +80,7 @@ class KitData(kitName: String) {
         return list
     }
 
-    fun delKitData() {
+    fun delKitData() : Boolean {
         //cache
         Dao.getInstance().kitsCache.remove(nameLowerCase)
 
@@ -82,59 +89,63 @@ class KitData(kitName: String) {
         }
         reloadGui()
 
-        TaskUtil.getInstance().asyncExecutor {
-            //sql
-            transaction(SqlUtil.getInstance().sql) {
-                KitsDataSQL.deleteWhere { KitsDataSQL.kitName eq nameLowerCase }
+        //sql
+        return CompletableFuture.supplyAsync({
+            try {
+                transaction(SqlUtil.getInstance().sql) {
+                    KitsDataSQL.deleteWhere { KitsDataSQL.kitName eq nameLowerCase }
+                }
+                return@supplyAsync true
+            } catch (ex: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                return@supplyAsync false
             }
-        }
+        }, TaskUtil.getInstance().getExecutor()).get()
     }
 
-    fun setFakeName(fakeName: String) {
+    fun setFakeName(fakeName: String) : Boolean {
         //cache
         getCache().fakeName = fakeName
         reloadGui()
 
-        TaskUtil.getInstance().asyncExecutor {
-            //sql
-            transaction(SqlUtil.getInstance().sql) {
-                KitsDataSQL.update({ KitsDataSQL.kitName eq nameLowerCase }) {
-                    it[kitFakeName] = fakeName
-                }
-            }
-        }
+        //sql
+        return kitHelper(KitsDataSQL.kitFakeName, fakeName).get()
     }
 
-    fun setItems(items: List<ItemStack>) {
+    fun setItems(items: List<ItemStack>) : Boolean {
         //cache
         getCache().items = items
         reloadGui()
 
         val toSave = ItemUtil.getInstance().itemSerializer(items)
 
-        TaskUtil.getInstance().asyncExecutor {
-            //sql
-            transaction(SqlUtil.getInstance().sql) {
-                KitsDataSQL.update({ KitsDataSQL.kitName eq nameLowerCase }) {
-                    it[kitItems] = toSave
-                }
-            }
-        }
+        //sql
+        return kitHelper(KitsDataSQL.kitItems, ItemUtil.getInstance().itemSerializer(items)).get()
     }
 
-    fun setTime(time: Long) {
+    fun setTime(time: Long) : Boolean {
         //cache
         getCache().time = time
         reloadGui()
 
-        TaskUtil.getInstance().asyncExecutor {
-            //sql
-            transaction(SqlUtil.getInstance().sql) {
-                KitsDataSQL.update({ KitsDataSQL.kitName eq nameLowerCase }) {
-                    it[kitTime] = time
+        //sql
+        return kitHelper(KitsDataSQL.kitTime, time).get()
+    }
+
+    private fun <T> kitHelper(col : Column<T>, value: T) : CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({
+            try {
+                transaction(SqlUtil.getInstance().sql) {
+                    KitsDataSQL.update({ KitsDataSQL.kitName eq nameLowerCase }) {
+                        it[col] = value
+                    }
                 }
+                return@supplyAsync true
+            } catch (ex: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                return@supplyAsync false
             }
-        }
+        }, TaskUtil.getInstance().getExecutor())
     }
 
     fun getCache(): KitDataInternal {

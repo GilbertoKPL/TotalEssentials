@@ -21,7 +21,7 @@ class CommandCreateKit : ICommand {
             return false
         }
 
-        //check if kit name do not contain . or - to not bug
+        //check if kit name do not contain special
         if (PluginUtil.getInstance().checkSpecialCaracteres(args[0])) {
             s.sendMessage(GeneralLang.getInstance().generalSpecialCaracteresDisabled)
             return false
@@ -36,13 +36,15 @@ class CommandCreateKit : ICommand {
         }
 
         //create cache and sql
-        dataInstance.createNewKitData()
-        s.sendMessage(
-            GeneralLang.getInstance().kitsCreateKitSuccess.replace(
-                "%kit%",
-                args[0]
+        s.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
+        if (dataInstance.createNewKitData()) {
+            s.sendMessage(
+                GeneralLang.getInstance().kitsCreateKitSuccess.replace(
+                    "%kit%",
+                    args[0]
+                )
             )
-        )
+        }
         return false
     }
 }

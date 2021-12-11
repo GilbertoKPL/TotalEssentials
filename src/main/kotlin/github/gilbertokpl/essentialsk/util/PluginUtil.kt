@@ -7,6 +7,7 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.KitData
+import github.gilbertokpl.essentialsk.data.WarpData
 import github.gilbertokpl.essentialsk.events.*
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
@@ -34,6 +35,7 @@ import java.lang.reflect.Field
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 
@@ -95,8 +97,16 @@ class PluginUtil {
         }
     }
 
+    private fun loadCache() : Boolean {
+        return CompletableFuture.supplyAsync ({
+            KitData("").loadKitCache()
+            WarpData("").loadWarpCache()
+            return@supplyAsync true
+        }, TaskUtil.getInstance().getExecutor()).get()
+    }
+
     fun startInventories() {
-        if (KitData("").loadKitCache().get()) {
+        if (loadCache()) {
             if (MainConfig.getInstance().kitsActivated) {
                 EditKitInventory.editKitInventory()
                 KitGuiInventory.kitGuiInventory()
@@ -105,7 +115,6 @@ class PluginUtil {
     }
 
     fun startCommands() {
-        //maincommand
         startCommandsHelper(
             listOf(
                 CommandEssentialsK()
@@ -138,6 +147,14 @@ class PluginUtil {
                 CommandDelHome()
             ),
             MainConfig.getInstance().homesActivated
+        )
+        startCommandsHelper(
+            listOf(
+                CommandDelWarp(),
+                CommandSetWarp(),
+                CommandWarp()
+            ),
+            MainConfig.getInstance().warpsActivated
         )
     }
 

@@ -1,4 +1,8 @@
-# lang pt.br
+# Esse arquivo é configuração de linguagens pt_BR...
+# Criador: Gilberto Damim;
+# Github: https://github.com/GilbertoKPL/EssentialsK;
+# Quaisquer dúvidas, contate no discord Gilberto_KPL#5620 ou mesmo pelo GitHub;
+# Este projeto está em desenvolvimento, por favor, seja paciente com o projeto final;
 general:
   only-player-command: '&cEsse comando é somente para player!'
   not-perm: '&cVocê não tem permissão para executar esse comando.'
@@ -7,6 +11,7 @@ general:
   special-caracteres-disabled: '&cCaracteres proibidos'
   commands-usage: '&c[Command Info]'
   commands-usage-list: '&c- %command%'
+  sending-info-to-db: 'Mandando informação para seu Banco de dados...'
 time:
   seconds: 'segundos'
   second: 'segundo'
@@ -92,6 +97,15 @@ homes:
   home-world-blocked: '&cEsse mundo está bloqueado de criar homes'
   home-list: '&eLista de homes -> %list%'
   home-other-list: '&eLista de homes do %player% -> %list%'
-  teleported: '&eVocê foi teleportado com sucesso para %home%.'
-  teleported-other: '&eVocê foi teleportado com sucesso para %home% do %player%.'
+  teleported: '&eVocê foi teleportado com sucesso para sua home %home%.'
+  teleported-other: '&eVocê foi teleportado com sucesso para home %home% do %player%.'
   in-teleport: '&cVocê já está esperando um teleporte.'
+warps:
+  name-length: '&cTamanho maximo do nome da warp é de 16 caracteres.'
+  name-already-exist: '&cEssa warp já existe.'
+  name-dont-exist: '&cEssa warp não existe.'
+  warp-created: '&eVocê acaba de criar uma warp chamada %warp%.'
+  warp-removed: '&eVocê acaba de deleter uma warp chamada %warp%.'
+  time-to-teleport: '&eEm %time% segundos você será teleportado para warp %warp%.'
+  teleported: '&eVocê foi teleportado com sucesso para warp %warp%.'
+  warp-list: '&eLista de warps -> %list%'

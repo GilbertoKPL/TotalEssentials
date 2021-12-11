@@ -40,6 +40,10 @@ class MainConfig {
 
     var homesBlockWorlds: List<String> = emptyList()
 
+    var warpsActivated: Boolean = true
+
+    var warpsTimeToTeleport: Int = 0
+
     companion object : IInstance<MainConfig> {
         private val instance = createInstance()
         override fun createInstance(): MainConfig = MainConfig()

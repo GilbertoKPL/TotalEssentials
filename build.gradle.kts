@@ -187,5 +187,17 @@ bukkit {
             description = "This is a sethome command!"
             aliases = listOf("setarhome")
         }
+        register("setwarp") {
+            description = "This is a setwarp command!"
+            aliases = listOf("setarwarp")
+        }
+        register("delwarp") {
+            description = "This is a delwarp command!"
+            aliases = listOf("deletarwarp")
+        }
+        register("warp") {
+            description = "This is a warp command!"
+            aliases = listOf("w")
+        }
     }
 }

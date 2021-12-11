@@ -27,7 +27,7 @@ class CommandNick : ICommand {
         //check if is 1
         if (args.size == 1 && s is Player) {
 
-            //check if nickname do not contain . or - to not bug
+            //check if nickname do not contain special
             if (PluginUtil.getInstance().checkSpecialCaracteres(args[0])) {
                 s.sendMessage(GeneralLang.getInstance().generalSpecialCaracteresDisabled)
                 return false

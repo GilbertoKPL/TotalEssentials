@@ -1,12 +1,16 @@
 package github.gilbertokpl.essentialsk.data
 
 import github.gilbertokpl.essentialsk.manager.IInstance
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 class Dao {
+
+    //warps
+    val warpsCache = HashMap<String, Location>(40)
 
     //kits
     val kitsCache = HashMap<String, KitData.KitDataInternal>(40)

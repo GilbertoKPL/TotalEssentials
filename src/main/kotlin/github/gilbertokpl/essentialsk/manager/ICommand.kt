@@ -37,25 +37,22 @@ interface ICommand : CommandExecutor {
             return false
         }
         TaskUtil.getInstance().commandExecutor {
-            fun error() {
-                commandUsage.forEach {
+            if (args.size > maximumSize || args.size < minimumSize || kCommand(s, command, label, args)) {
+                s.sendMessage(GeneralLang.getInstance().generalCommandsUsage)
+                for (it in commandUsage) {
                     val to = it.split("_")
-                    if (to.size > 1 && s !is Player || to.size > 1 && s.hasPermission(to[0])) {
+                    if (to.size == 1) {
+                        s.sendMessage(GeneralLang.getInstance().generalCommandsUsageList.replace("%command%", it))
+                        continue
+                    }
+                    if (to[0] == "C" && s is Player || to[0] == "P" && s !is Player) {
+                        continue
+                    }
+                    if (s !is Player || s.hasPermission(to[0])) {
                         s.sendMessage(GeneralLang.getInstance().generalCommandsUsageList.replace("%command%", to[1]))
-                    } else {
-                        if (to.size == 1) {
-                            s.sendMessage(GeneralLang.getInstance().generalCommandsUsageList.replace("%command%", it))
-                        }
                     }
                 }
-            }
-            if (args.size > maximumSize || args.size < minimumSize) {
-                s.sendMessage(GeneralLang.getInstance().generalCommandsUsage)
-                error()
                 return@commandExecutor
-            }
-            if (kCommand(s, command, label, args)) {
-                error()
             }
         }
         return false

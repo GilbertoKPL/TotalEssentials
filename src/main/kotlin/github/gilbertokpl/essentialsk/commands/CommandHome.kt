@@ -111,7 +111,6 @@ class CommandHome : ICommand {
         s.sendMessage(
             GeneralLang.getInstance().homesTimeToTeleport.replace("%home%", nameHome).replace("%time%", time.toString())
         )
-
         return false
     }
 }

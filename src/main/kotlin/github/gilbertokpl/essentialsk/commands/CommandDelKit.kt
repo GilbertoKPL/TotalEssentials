@@ -27,9 +27,10 @@ class CommandDelKit : ICommand {
         val fakeName = dataInstance.getCache().fakeName
 
         //delete cache and sql
-        dataInstance.delKitData()
-
-        s.sendMessage(GeneralLang.getInstance().kitsDelKitSuccess.replace("%kit%", fakeName))
+        s.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
+        if (dataInstance.delKitData()) {
+            s.sendMessage(GeneralLang.getInstance().kitsDelKitSuccess.replace("%kit%", fakeName))
+        }
 
         return false
     }

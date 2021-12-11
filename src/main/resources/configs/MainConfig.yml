@@ -15,30 +15,3 @@ database:
   sql-username: 'u0_essentialsk'
   sql-database: 's0_essentialsk'
   sql-password: 'essentialsk123'
-kits:
-  # Enabled.
-  activated: true
-  # Enable short name of time, example seconds to s.
-  use-short-time: false
-  # Drop items when he gets the kit.
-  drop-items-in-catch: false
-  # Equip armour when he gets the kit.
-  equip-armor-in-catch: true
-nicks:
-  # Enabled.
-  activated: true
-  # If enabled players can have same nick.
-  can-player-have-same-nick: false
-  # List of blocked nicks.
-  blocked-nicks:
-    - essentialsk
-homes:
-  # Enabled.
-  activated: true
-  # default value if player not have permission
-  default-limit-homes: 3
-  # time in seconds to teleport to determined location, has a permission to bypass.
-  time-to-teleport: 5
-  # List of blocked worlds to use sethome.
-  block-worlds:
-    - essentialsk

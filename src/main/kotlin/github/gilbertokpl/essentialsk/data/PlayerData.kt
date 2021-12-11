@@ -411,7 +411,7 @@ class PlayerData(player: String) {
         TaskUtil.getInstance().asyncExecutor {
             transaction(SqlUtil.getInstance().sql) {
                 PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                    it[kitsTime] = ""
+                    it[FakeNick] = ""
                 }
             }
         }

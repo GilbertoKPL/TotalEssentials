@@ -7,6 +7,7 @@ import github.gilbertokpl.essentialsk.configs.StartLang
 import github.gilbertokpl.essentialsk.manager.IInstance
 import github.gilbertokpl.essentialsk.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
+import github.gilbertokpl.essentialsk.tables.WarpsDataSQL
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -50,8 +51,8 @@ class SqlUtil {
 
     fun startTables() {
         transaction(sql) {
-            SchemaUtils.create(KitsDataSQL, PlayerDataSQL)
-            SchemaUtils.createMissingTablesAndColumns(KitsDataSQL, PlayerDataSQL)
+            SchemaUtils.create(KitsDataSQL, PlayerDataSQL, WarpsDataSQL)
+            SchemaUtils.createMissingTablesAndColumns(KitsDataSQL, PlayerDataSQL, WarpsDataSQL)
         }
     }
 

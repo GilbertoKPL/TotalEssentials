@@ -151,7 +151,7 @@ class CommandKit : ICommand {
         timeAll += kitCache.time
 
         // if time is remaining
-        if (timeAll >= System.currentTimeMillis()) {
+        if (timeAll >= System.currentTimeMillis() && !p.hasPermission("essentialsk.bypass.kitcatch")) {
             val remainingTime = timeAll - System.currentTimeMillis()
             p.sendMessage(
                 GeneralLang.getInstance().kitsCatchMessage.replace(
