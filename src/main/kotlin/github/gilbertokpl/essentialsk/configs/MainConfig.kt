@@ -44,6 +44,16 @@ class MainConfig {
 
     var warpsTimeToTeleport: Int = 0
 
+    var tpActivated: Boolean = true
+
+    var tpaActivated: Boolean = true
+
+    var tpaTimeToAccept: Int = 0
+
+    var tpaTimeToTeleport: Int = 0
+
+    var echestActivated: Boolean = true
+
     companion object : IInstance<MainConfig> {
         private val instance = createInstance()
         override fun createInstance(): MainConfig = MainConfig()

@@ -15,7 +15,7 @@ class CommandSetHome : ICommand {
     override val minimumSize = 1
     override val maximumSize = 1
     override val commandUsage =
-        listOf("/sethome (homeName)", "essentialsk.commands.sethome.other_/sethome (playername):(homeName)")
+        listOf("/sethome <homeName>", "essentialsk.commands.sethome.other_/sethome <playername>:<homeName>")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

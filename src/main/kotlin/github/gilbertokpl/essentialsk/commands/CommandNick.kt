@@ -16,10 +16,10 @@ class CommandNick : ICommand {
     override val minimumSize = 1
     override val maximumSize = 2
     override val commandUsage = listOf(
-        "/nick (NickName)",
+        "/nick <NickName>",
         "/nick remove",
-        "essentialsk.commands.nick.other_/nick (player) (NickName)",
-        "essentialsk.commands.nick.other_/nick (player) remove"
+        "essentialsk.commands.nick.other_/nick <player> <NickName>",
+        "essentialsk.commands.nick.other_/nick <player> remove"
     )
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {

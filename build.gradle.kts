@@ -198,5 +198,22 @@ bukkit {
             description = "This is a warp command!"
             aliases = listOf("w", "warps")
         }
+        register("tp") {
+            description = "This is a tp command!"
+            aliases = listOf("teleport")
+        }
+        register("tpa") {
+            description = "This is a tpa command!"
+        }
+        register("tpaccept") {
+            description = "This is a tpaccept command!"
+        }
+        register("tpdeny") {
+            description = "This is a tpdeny command!"
+        }
+        register("echest") {
+            description = "This is a echest command!"
+            aliases = listOf("ec")
+        }
     }
 }

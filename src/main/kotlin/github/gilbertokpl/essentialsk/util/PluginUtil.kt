@@ -156,6 +156,7 @@ class PluginUtil {
             ),
             MainConfig.getInstance().homesActivated
         )
+        //warps
         startCommandsHelper(
             listOf(
                 CommandDelWarp(),
@@ -163,6 +164,29 @@ class PluginUtil {
                 CommandWarp()
             ),
             MainConfig.getInstance().warpsActivated
+        )
+        //tpa
+        startCommandsHelper(
+            listOf(
+                CommandTpa(),
+                CommandTpaccept(),
+                CommandTpdeny()
+            ),
+            MainConfig.getInstance().tpaActivated
+        )
+        //tp
+        startCommandsHelper(
+            listOf(
+                CommandTp()
+            ),
+            MainConfig.getInstance().tpActivated
+        )
+        //echest
+        startCommandsHelper(
+            listOf(
+                CommandEchest()
+            ),
+            MainConfig.getInstance().echestActivated
         )
     }
 

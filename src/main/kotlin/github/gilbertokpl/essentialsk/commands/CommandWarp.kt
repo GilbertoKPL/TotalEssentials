@@ -16,7 +16,7 @@ class CommandWarp : ICommand {
     override val minimumSize = 0
     override val maximumSize = 1
     override val commandUsage =
-        listOf("/warp (warpName)")
+        listOf("/warp <warpName>")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

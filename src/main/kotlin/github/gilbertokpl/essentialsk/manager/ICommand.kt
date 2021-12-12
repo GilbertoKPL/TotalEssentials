@@ -17,17 +17,7 @@ interface ICommand : CommandExecutor {
 
     fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        essentialsKExecutor(sender, command, label, args)
-        return false
-    }
-
-    private fun essentialsKExecutor(
-        s: CommandSender,
-        command: Command,
-        label: String,
-        args: Array<out String>
-    ): Boolean {
+    override fun onCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (s !is Player && !consoleCanUse) {
             s.sendMessage(GeneralLang.getInstance().generalOnlyPlayerCommand)
             return false

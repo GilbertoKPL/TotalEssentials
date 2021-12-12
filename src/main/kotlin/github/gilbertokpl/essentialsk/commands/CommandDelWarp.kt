@@ -12,7 +12,7 @@ class CommandDelWarp : ICommand {
     override val minimumSize = 1
     override val maximumSize = 1
     override val commandUsage =
-        listOf("/delwarp (warpName)")
+        listOf("/delwarp <warpName>")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of warp name

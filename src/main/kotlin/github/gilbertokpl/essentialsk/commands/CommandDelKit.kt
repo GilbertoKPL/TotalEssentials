@@ -11,7 +11,7 @@ class CommandDelKit : ICommand {
     override val permission: String = "essentialsk.commands.delkit"
     override val minimumSize = 1
     override val maximumSize = 1
-    override val commandUsage = listOf("/delkit (kitName)")
+    override val commandUsage = listOf("/delkit <kitName>")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

@@ -19,12 +19,27 @@ class TaskUtil {
 
     private val poolExecutorTeleport = Executors.newCachedThreadPool()
 
+    private val poolExecutorCoolDown = Executors.newCachedThreadPool()
+
     fun disable() {
         poolExecutor.shutdown()
     }
 
     fun getExecutor(): ExecutorService {
         return poolExecutor
+    }
+
+    fun coolDownExecutor(time: Int): (() -> Unit) -> Unit {
+        return {
+            CompletableFuture.runAsync({
+                TimeUnit.SECONDS.sleep(time.toLong())
+                try {
+                    it()
+                } catch (ex: Exception) {
+                    FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                }
+            }, poolExecutorCoolDown)
+        }
     }
 
     fun teleportExecutor(time: Int): (() -> Unit) -> Unit {

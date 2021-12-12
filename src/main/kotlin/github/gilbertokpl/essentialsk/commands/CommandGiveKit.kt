@@ -12,7 +12,7 @@ class CommandGiveKit : ICommand {
     override val permission: String = "essentialsk.commands.givekit"
     override val minimumSize = 2
     override val maximumSize = 2
-    override val commandUsage = listOf("/givekit (kitName) (player)")
+    override val commandUsage = listOf("/givekit <kitName> <playerName>")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of kit name

@@ -12,7 +12,7 @@ class CommandCreateKit : ICommand {
     override val permission = "essentialsk.commands.createkit"
     override val minimumSize = 1
     override val maximumSize = 1
-    override val commandUsage = listOf("/createkit (kitName)")
+    override val commandUsage = listOf("/createkit <kitName>")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of kit name

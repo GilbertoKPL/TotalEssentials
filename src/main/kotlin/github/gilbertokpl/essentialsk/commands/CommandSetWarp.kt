@@ -16,7 +16,7 @@ class CommandSetWarp : ICommand {
     override val minimumSize = 1
     override val maximumSize = 1
     override val commandUsage =
-        listOf("/setwarp (warpName)", "/setwarp (warpName) (worldName) x y z")
+        listOf("/setwarp <warpName>", "/setwarp <warpName> <worldName> <x> <y> <z>")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of warp name

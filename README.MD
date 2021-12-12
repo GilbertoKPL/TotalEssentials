@@ -22,6 +22,9 @@
 |/home and /h |go to home of player.| essentialsk.commands.home    |
 |/setwarp and /setarwarp | set determined warp in location.| essentialsk.commands.setwarp    |
 |/delwarp and /deletarwarp |delete warp with determined name.| essentialsk.commands.delwarp    |
+|/tp |tp to other player or location.| essentialsk.commands.tp |
+|/tpa, /tpaccept and /tpadeny |tp to other player or location.| essentialsk.commands.tpa |
+|/echest and /ec |open enderchest.| essentialsk.commands.ec |
 
 ## Permission Color
 To use in chat, commands, signs etc.
@@ -53,6 +56,7 @@ To use in chat, commands, signs etc.
 |essentialsk.commands.sethome.(number of homes) | Set limit of homes to player |
 |essentialsk.commands.nick.other | Allow the player rename other players |
 |essentialsk.commands.home.other | allow the player go to other players homes |
+|essentialsk.commands.ec.other | allow the player open others enderChest |
 |essentialsk.commands.delhome.other | allow the player delhome for other players |
 |essentialsk.commands.sethome.other | allow the player sethome for other players |
 |essentialsk.bypass.teleport | bypass time to teleport |

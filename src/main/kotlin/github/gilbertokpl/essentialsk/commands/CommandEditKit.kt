@@ -14,6 +14,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.bukkit.inventory.ItemStack
 
 class CommandEditKit : ICommand {
 
@@ -24,7 +25,7 @@ class CommandEditKit : ICommand {
     override val permission: String = "essentialsk.commands.editkit"
     override val minimumSize = 1
     override val maximumSize = 1
-    override val commandUsage = listOf("/editkit (kitName)")
+    override val commandUsage = listOf("/editkit <kitName>")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of kit name
@@ -46,11 +47,10 @@ class CommandEditKit : ICommand {
         return false
     }
 
-    private fun editKitGuiItems(p: Player, kit: String) {
+    private fun editKitGuiItems(p: Player, kit : String, items : List<ItemStack>) {
         val inv = EssentialsK.instance.server.createInventory(null, 36, kit)
-        val dataInstance = KitData(kit)
-        for (i in dataInstance.getCache().items) {
-            inv.addItem(i)
+        items.forEach {
+            inv.addItem(it)
         }
         p.openInventory(inv)
     }
@@ -69,14 +69,16 @@ class CommandEditKit : ICommand {
         if (inventoryName[0].equals("§eEditKit", true)) {
             e.isCancelled = true
             val dataInstance = KitData(inventoryName[1])
-            if (dataInstance.checkCache()) return false
+            if (!dataInstance.checkCache()) {
+                return false
+            }
             val number = e.slot
             val p = e.whoClicked as Player
 
             //items
             if (number == 11) {
                 p.closeInventory()
-                editKitGuiItems(p, inventoryName[1])
+                editKitGuiItems(p, inventoryName[1], dataInstance.getCache().items)
                 editKit[p] = inventoryName[1]
             }
 

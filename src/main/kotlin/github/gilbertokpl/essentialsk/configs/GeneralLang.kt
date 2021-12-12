@@ -172,6 +172,36 @@ class GeneralLang {
 
     var warpsWarpRemoved = ""
 
+    var tpTeleportedSuccess = ""
+
+    var tpTeleportedOtherSuccess = ""
+
+    var tpaSendSuccess = ""
+
+    var tpaOtherReceived = ""
+
+    var tpaAlreadySend = ""
+
+    var tpaNotAnyRequest = ""
+
+    var tpaRequestAccepted = ""
+
+    var tpaRequestOtherAccepted = ""
+
+    var tpaRequestOtherNoDelayAccepted = ""
+
+    var tpaAlreadyInAccept = ""
+
+    var tpaRequestDeny = ""
+
+    var tpaRequestOtherDeny = ""
+
+    var tpaSameName = ""
+
+    var echestSendSuccess = ""
+
+    var echestSendOtherSuccess = ""
+
     companion object : IInstance<GeneralLang> {
         private val instance = createInstance()
         override fun createInstance(): GeneralLang = GeneralLang()

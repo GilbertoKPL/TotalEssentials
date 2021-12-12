@@ -23,9 +23,9 @@ nicks:
 homes:
   # Enabled.
   activated: true
-  # default value if player not have permission
+  # Default value if player not have permission
   default-limit-homes: 3
-  # time in seconds to teleport to determined location, has a permission to bypass.
+  # Time in seconds to teleport to determined location, has a permission to bypass.
   time-to-teleport: 5
   # List of blocked worlds to use sethome.
   block-worlds:
@@ -33,5 +33,18 @@ homes:
 warps:
   # Enabled.
   activated: true
-  # time in seconds to teleport to determined location, has a permission to bypass.
+  # Time in seconds to teleport to determined location, has a permission to bypass.
   time-to-teleport: 5
+tp:
+  # Enabled.
+  activated: true
+tpa:
+  # Enabled.
+  activated: true
+  # Time in seconds to accept order.
+  time-to-accept: 10
+  # Time in seconds to teleport to determined location, has a permission to bypass.
+  time-to-teleport: 5
+echest:
+  # Enabled.
+  activated: true

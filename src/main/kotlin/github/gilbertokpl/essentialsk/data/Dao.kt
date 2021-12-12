@@ -18,6 +18,9 @@ class Dao {
     //player
     val playerCache = HashMap<String, PlayerData.InternalPlayerData>(100)
 
+    //tpa
+    val tpaHash = HashMap<Player, Player>()
+
     //in teleport
     val inTeleport = ArrayList<Player>()
 

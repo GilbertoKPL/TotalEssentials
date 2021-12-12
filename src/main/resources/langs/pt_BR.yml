@@ -9,8 +9,8 @@ general:
   player-not-online: '&cEsse player não está online.'
   player-not-exist: '&cEsse player não existe.'
   special-caracteres-disabled: '&cCaracteres proibidos'
-  commands-usage: '&c[Command Info]'
-  commands-usage-list: '&c- %command%'
+  commands-usage: '&9[EssentialsK Help]'
+  commands-usage-list: '&9> &a%command%'
   sending-info-to-db: '&aMandando informação para seu Banco de dados...'
 time:
   seconds: 'segundos'
@@ -109,3 +109,21 @@ warps:
   time-to-teleport: '&eEm %time% segundos você será teleportado para warp %warp%.'
   teleported: '&eVocê foi teleportado com sucesso para warp %warp%.'
   warp-list: '&eLista de warps -> %list%'
+tp:
+  teleported-success: '&eVocê foi teleportado com sucesso'
+  teleported-other-success: '&eVocê foi teleportado do além'
+tpa:
+  send-success: '&eVocê mandou com sucesso o pedido de teleporte para %player%.'
+  other-received: '&eVocê acaba de receber um pedido de teleporte de %player%, você tem %time% segundos para aceita-lo com /tpaccept ou rejeita-lo com /tpdeny'
+  already-send: '&cVocê acabou de enviar um TPA aguarde para enviar novamente.'
+  already-in-accept: '&cO player já tem o pedido ativo de outra pessoa aguarde.'
+  not-any-request: '&cVocê não tem nenhum pedido para aceitar.'
+  request-accepted: '&eVocê acaba de aceitar o pedido de %player%'
+  request-other-accepted: '&eO %player% acaba de aceitar seu pedido de teleporte, teleportando em %time% segundos.'
+  request-other-no-delay-accepted: '&eO %player% acaba de aceitar seu pedido de teleporte, teleportando.'
+  request-deny: '&eVocê acaba de cancelar o pedido de %player%'
+  request-other-deny: '&eSeu pedido acaba de ser cancelado pelo(a) %player%'
+  same-name: '&cVocê não pode enviar tpa para você mesmo.'
+echest:
+  send-success: '&eVocê acabou de abrir seu enderChest'
+  send-other-success: '&eVocê acabou de abrir o enderChest de %player%'
