@@ -67,6 +67,7 @@ To use in chat, commands, signs etc.
 | essentialsk.bypass.teleport                    | bypass time to teleport                    |
 | essentialsk.bypass.homelimit                   | bypass home limit                          |
 | essentialsk.bypass.kitcatch                    | bypass kit time limit                      |
+| essentialsk.bypass.vanish                      | bypass the vanish                          |
 
 ## Resources ( Internal )
 

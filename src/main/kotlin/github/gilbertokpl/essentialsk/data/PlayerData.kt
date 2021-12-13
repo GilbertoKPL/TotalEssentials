@@ -142,7 +142,9 @@ class PlayerData(player: String) {
                 else -> GameMode.SURVIVAL
             }
             if (p.gameMode != gameModeName) {
-                p.gameMode = gameModeName
+                EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
+                    p.gameMode = gameModeName
+                })
             }
 
             //home
@@ -156,7 +158,8 @@ class PlayerData(player: String) {
 
             //vanish
             if (vanish) {
-                ReflectUtil.getInstance().getPlayers().forEach {
+                for (it in ReflectUtil.getInstance().getPlayers()){
+                    if (it.player!!.hasPermission("essentialsk.commands.vanish") || it.player!!.hasPermission("essentialsk.bypass.vanish")) continue
                     it.hidePlayer(p)
                 }
             }
@@ -227,10 +230,7 @@ class PlayerData(player: String) {
         if (online) {
             val cache = getCache() ?: return false
 
-            val newValue = when (cache.Vanish) {
-                false -> true
-                true -> false
-            }
+            val newValue = cache.Vanish.not()
 
             cache.Vanish = newValue
 

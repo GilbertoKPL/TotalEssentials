@@ -86,7 +86,8 @@ class PluginUtil {
                 CloseInventoryEvent(),
                 PlayerAsyncChatEvent(),
                 PlayerJoinEvent(),
-                PlayerLeaveEvent()
+                PlayerLeaveEvent(),
+                PlayerPreCommandEvent()
             )
         )
     }

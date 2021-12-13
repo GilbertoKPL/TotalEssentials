@@ -219,5 +219,9 @@ bukkit {
             description = "This is a gamemode command!"
             aliases = listOf("gm")
         }
+        register("vanish") {
+            description = "This is a vanish command!"
+            aliases = listOf("v")
+        }
     }
 }
