@@ -54,6 +54,10 @@ class MainConfig {
 
     var echestActivated: Boolean = true
 
+    var gamemodeActivated: Boolean = true
+
+    var vanishActivated: Boolean = true
+
     companion object : IInstance<MainConfig> {
         private val instance = createInstance()
         override fun createInstance(): MainConfig = MainConfig()

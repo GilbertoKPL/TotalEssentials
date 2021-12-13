@@ -50,7 +50,9 @@ class CommandTpa : ICommand {
         coolDown(s as Player, p, time)
 
         s.sendMessage(GeneralLang.getInstance().tpaSendSuccess.replace("%player%", p.name))
-        p.sendMessage(GeneralLang.getInstance().tpaOtherReceived.replace("%player%", s.name).replace("%time%", time.toString()))
+        p.sendMessage(
+            GeneralLang.getInstance().tpaOtherReceived.replace("%player%", s.name).replace("%time%", time.toString())
+        )
         return false
     }
 

@@ -59,7 +59,7 @@ class CommandTp : ICommand {
         if (args.size == 3) {
             val loc = try {
                 Location((s as Player).world, args[0].toDouble(), args[1].toDouble(), args[2].toDouble())
-            } catch (ex : Exception) {
+            } catch (ex: Exception) {
                 return true
             }
             s.teleport(loc)
@@ -70,14 +70,17 @@ class CommandTp : ICommand {
         //only x y and z world
         if (args.size == 4) {
             val world = try {
-                EssentialsK.instance.server.getWorld(args[0]) ?: EssentialsK.instance.server.getWorld(args[3]) ?: return true
+                EssentialsK.instance.server.getWorld(args[0]) ?: EssentialsK.instance.server.getWorld(args[3])
+                ?: return true
             } catch (ex: Exception) {
                 return true
             }
             val loc = try {
                 Location(world, args[0].toDouble(), args[1].toDouble(), args[2].toDouble())
             } catch (ex: Exception) {
-                try { Location(world, args[1].toDouble(), args[2].toDouble(), args[3].toDouble())  } catch (ex: Exception) {
+                try {
+                    Location(world, args[1].toDouble(), args[2].toDouble(), args[3].toDouble())
+                } catch (ex: Exception) {
                     return true
                 }
             }

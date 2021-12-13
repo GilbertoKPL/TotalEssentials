@@ -35,7 +35,7 @@ interface ICommand : CommandExecutor {
                         s.sendMessage(GeneralLang.getInstance().generalCommandsUsageList.replace("%command%", it))
                         continue
                     }
-                    if (to[0] == "C" && s is Player || to[0] == "P" && s !is Player) {
+                    if (to[0] == "C" && s is Player || to[0] == "P" && s !is Player || to[0] == "CP") {
                         continue
                     }
                     if (s !is Player || s.hasPermission(to[0])) {

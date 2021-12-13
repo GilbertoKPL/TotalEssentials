@@ -10,7 +10,7 @@ general:
   player-not-exist: '&cEsse player não existe.'
   special-caracteres-disabled: '&cCaracteres proibidos'
   commands-usage: '&9[EssentialsK Help]'
-  commands-usage-list: '&9> &a%command%'
+  commands-usage-list: '&9> &e%command%'
   sending-info-to-db: '&aMandando informação para seu Banco de dados...'
 time:
   seconds: 'segundos'
@@ -125,5 +125,13 @@ tpa:
   request-other-deny: '&eSeu pedido acaba de ser cancelado pelo(a) %player%'
   same-name: '&cVocê não pode enviar tpa para você mesmo.'
 echest:
-  send-success: '&eVocê acabou de abrir seu enderChest'
-  send-other-success: '&eVocê acabou de abrir o enderChest de %player%'
+  send-success: '&eVocê acabou de abrir seu enderChest.'
+  send-other-success: '&eVocê acabou de abrir o enderChest de %player%.'
+gamemode:
+  use-success: '&eVocê acabou de entrar no gameMode %gamemode%.'
+  use-other-success: '&eAlguem do além setou seu gameMode de %gamemode%.'
+vanish:
+  send-active: '&eSeu vanish foi ativado com sucesso.'
+  send-disable: '&eSeu vanish foi desativado com sucesso.'
+  send-other-active: '&eAlguém ativou seu vanish.'
+  send-other-disable: '&eAlguém desativou seu vanish.'

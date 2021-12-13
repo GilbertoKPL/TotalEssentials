@@ -3,9 +3,11 @@ package github.gilbertokpl.essentialsk.tables
 import org.jetbrains.exposed.sql.Table
 
 object PlayerDataSQL : Table() {
-    val uuid = varchar("uuid", 64)
-    val kitsTime = text("kitsTime").default("")
-    val savedHomes = text("savedHomes").default("")
+    val PlayerInfo = varchar("uuid", 64)
+    val KitsTime = text("kitsTime").default("")
+    val SavedHomes = text("savedHomes").default("")
     val FakeNick = varchar("fakeNick", 32).default("")
-    override val primaryKey = PrimaryKey(uuid)
+    val GameMode = integer("Gamemode").default(0)
+    val Vanish = bool("Vanish").default(false)
+    override val primaryKey = PrimaryKey(PlayerInfo)
 }

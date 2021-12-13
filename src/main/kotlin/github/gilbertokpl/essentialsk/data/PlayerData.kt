@@ -4,11 +4,14 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.FakeNick
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.kitsTime
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.savedHomes
+import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.KitsTime
+import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.PlayerInfo
+import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.SavedHomes
 import github.gilbertokpl.essentialsk.util.*
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.bukkit.GameMode
 import org.bukkit.Location
+import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -46,6 +49,8 @@ class PlayerData(player: String) {
                     MainConfig.getInstance().homesDefaultLimitHomes
                 )
             var fakeNick = ""
+            var gameMode = 0
+            var vanish = false
 
             //internal
             lateinit var homesList: String
@@ -53,20 +58,19 @@ class PlayerData(player: String) {
             var emptyQuery = false
 
             transaction(SqlUtil.getInstance().sql) {
-                PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.also { query ->
+                PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
                     emptyQuery = query.empty()
                     if (emptyQuery) {
                         PlayerDataSQL.insert {
-                            it[uuid] = this@PlayerData.uuid
-                            it[kitsTime] = ""
-                            it[savedHomes] = ""
-                            it[FakeNick] = ""
+                            it[PlayerInfo] = this@PlayerData.uuid
                         }
                         return@transaction
                     }
-                    timeKits = query.single()[kitsTime]
+                    timeKits = query.single()[KitsTime]
                     fakeNick = query.single()[FakeNick]
-                    homesList = query.single()[savedHomes]
+                    homesList = query.single()[SavedHomes]
+                    gameMode = query.single()[PlayerDataSQL.GameMode]
+                    vanish = query.single()[PlayerDataSQL.Vanish]
                 }
             }
 
@@ -76,7 +80,9 @@ class PlayerData(player: String) {
                     HashMap(40),
                     HashMap(40),
                     limitHome,
-                    fakeNick
+                    fakeNick,
+                    0,
+                    false
                 )
                 return@asyncExecutor
             }
@@ -119,6 +125,26 @@ class PlayerData(player: String) {
                 p.setDisplayName(fakeNick)
             }
 
+            //gamemode
+            val gameModeName: GameMode = when (gameMode) {
+                0 -> GameMode.SURVIVAL
+                1 -> GameMode.CREATIVE
+                2 -> try {
+                    GameMode.ADVENTURE
+                } catch (e: Exception) {
+                    GameMode.SURVIVAL
+                }
+                3 -> try {
+                    GameMode.SPECTATOR
+                } catch (e: Exception) {
+                    GameMode.SURVIVAL
+                }
+                else -> GameMode.SURVIVAL
+            }
+            if (p.gameMode != gameModeName) {
+                p.gameMode = gameModeName
+            }
+
             //home
             for (h in homesList.split("|")) {
                 if (h == "") continue
@@ -128,19 +154,28 @@ class PlayerData(player: String) {
                 cacheHomes[nameHome] = locationHome
             }
 
+            //vanish
+            if (vanish) {
+                ReflectUtil.getInstance().getPlayers().forEach {
+                    it.hidePlayer(p)
+                }
+            }
+
             //cache is in final to improve protection to load caches
             Dao.getInstance().playerCache[uuid] = InternalPlayerData(
                 uuid,
                 cacheKits,
                 cacheHomes,
                 limitHome,
-                fakeNick
+                fakeNick,
+                gameMode,
+                vanish
             )
 
             if (update) {
                 transaction(SqlUtil.getInstance().sql) {
                     PlayerDataSQL.update {
-                        it[kitsTime] = replace
+                        it[KitsTime] = replace
                     }
                 }
             }
@@ -155,7 +190,7 @@ class PlayerData(player: String) {
                 try {
                     var check = false
                     transaction(SqlUtil.getInstance().sql) {
-                        check = PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.empty()
+                        check = PlayerDataSQL.select { PlayerInfo eq uuid }.empty()
                     }
                     return@supplyAsync !check
                 } catch (ex: Exception) {
@@ -164,6 +199,57 @@ class PlayerData(player: String) {
                 return@supplyAsync false
             }, TaskUtil.getInstance().getExecutor()).get()
         }
+    }
+
+    //only online
+    fun setGamemode(gm: GameMode, value: Int) {
+        if (online) {
+            p!!.gameMode = gm
+            val cache = getCache() ?: return
+            cache.Gamemode = value
+
+            //sql
+            helperUpdater(PlayerDataSQL.GameMode, value)
+        }
+    }
+
+    fun checkVanish() : Boolean {
+        if (online) {
+            val cache = getCache() ?: return false
+
+            return cache.Vanish
+        }
+        return false
+    }
+
+    //only online
+    fun switchVanish() : Boolean {
+        if (online) {
+            val cache = getCache() ?: return false
+
+            val newValue = when (cache.Vanish) {
+                false -> true
+                true -> false
+            }
+
+            cache.Vanish = newValue
+
+            //sql
+            helperUpdater(PlayerDataSQL.Vanish , newValue)
+
+            return if (newValue) {
+                ReflectUtil.getInstance().getPlayers().forEach {
+                    it.hidePlayer(p!!)
+                }
+                true
+            } else {
+                ReflectUtil.getInstance().getPlayers().forEach {
+                    it.showPlayer(p!!)
+                }
+                false
+            }
+        }
+        return false
     }
 
     //only online
@@ -191,16 +277,16 @@ class PlayerData(player: String) {
             lateinit var kitTime: String
 
             transaction(SqlUtil.getInstance().sql) {
-                PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.also {
+                PlayerDataSQL.select { PlayerInfo eq uuid }.also {
                     query = it.empty()
-                    kitTime = it.single()[kitsTime]
+                    kitTime = it.single()[KitsTime]
                 }
             }
 
             if (query || kitTime == "") {
                 transaction(SqlUtil.getInstance().sql) {
-                    PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                        it[kitsTime] = "$kit,$time"
+                    PlayerDataSQL.update({ PlayerInfo eq uuid }) {
+                        it[KitsTime] = "$kit,$time"
                     }
                 }
                 return@asyncExecutor
@@ -223,8 +309,8 @@ class PlayerData(player: String) {
                 "-$kit,$time"
             }
             transaction(SqlUtil.getInstance().sql) {
-                PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                    it[kitsTime] = newPlace
+                PlayerDataSQL.update({ PlayerInfo eq uuid }) {
+                    it[KitsTime] = newPlace
                 }
             }
         }
@@ -244,15 +330,15 @@ class PlayerData(player: String) {
             val serializedHome = LocationUtil.getInstance().locationSerializer(loc)
             var emptyQuery = false
             transaction(SqlUtil.getInstance().sql) {
-                PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.also { query ->
+                PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
                     emptyQuery = query.empty()
                     if (emptyQuery) {
-                        PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                            it[savedHomes] = "$name,$serializedHome"
+                        PlayerDataSQL.update({ PlayerInfo eq uuid }) {
+                            it[SavedHomes] = "$name,$serializedHome"
                         }
                         return@transaction
                     }
-                    homes = query.single()[savedHomes]
+                    homes = query.single()[SavedHomes]
                 }
             }
             if (emptyQuery) return@asyncExecutor
@@ -265,8 +351,8 @@ class PlayerData(player: String) {
             }
 
             transaction(SqlUtil.getInstance().sql) {
-                PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                    it[savedHomes] = newHome
+                PlayerDataSQL.update({ PlayerInfo eq uuid }) {
+                    it[SavedHomes] = newHome
                 }
             }
         }
@@ -284,8 +370,8 @@ class PlayerData(player: String) {
         TaskUtil.getInstance().asyncExecutor {
             lateinit var homes: String
             transaction(SqlUtil.getInstance().sql) {
-                PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.also { query ->
-                    homes = query.single()[savedHomes]
+                PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
+                    homes = query.single()[SavedHomes]
                 }
             }
 
@@ -301,8 +387,8 @@ class PlayerData(player: String) {
             }
 
             transaction(SqlUtil.getInstance().sql) {
-                PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                    it[savedHomes] = newHome
+                PlayerDataSQL.update({ PlayerInfo eq uuid }) {
+                    it[SavedHomes] = newHome
                 }
             }
         }
@@ -317,12 +403,12 @@ class PlayerData(player: String) {
                 val cacheHomes = ArrayList<String>()
                 var bol = false
                 transaction(SqlUtil.getInstance().sql) {
-                    PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.also { query ->
+                    PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
                         if (query.empty()) {
                             bol = true
                             return@transaction
                         }
-                        homesList = query.single()[savedHomes]
+                        homesList = query.single()[SavedHomes]
                     }
                 }
                 if (bol) {
@@ -348,8 +434,8 @@ class PlayerData(player: String) {
                 try {
                     lateinit var homesList: String
                     transaction(SqlUtil.getInstance().sql) {
-                        PlayerDataSQL.select { PlayerDataSQL.uuid eq uuid }.also { query ->
-                            homesList = query.single()[savedHomes]
+                        PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
+                            homesList = query.single()[SavedHomes]
                         }
                     }
                     for (h in homesList.split("|")) {
@@ -386,7 +472,7 @@ class PlayerData(player: String) {
                     getCache()?.let { it.FakeNick = newNick } ?: return@supplyAsync true
                 }
                 transaction(SqlUtil.getInstance().sql) {
-                    PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
+                    PlayerDataSQL.update({ PlayerInfo eq uuid }) {
                         it[FakeNick] = newNick
                     }
                 }
@@ -405,10 +491,14 @@ class PlayerData(player: String) {
         }
 
         //sql
+        helperUpdater(FakeNick, "")
+    }
+
+    private fun <T> helperUpdater(col : Column<T>, value : T) {
         TaskUtil.getInstance().asyncExecutor {
             transaction(SqlUtil.getInstance().sql) {
-                PlayerDataSQL.update({ PlayerDataSQL.uuid eq uuid }) {
-                    it[FakeNick] = ""
+                PlayerDataSQL.update({ PlayerInfo eq uuid }) {
+                    it[col] = value
                 }
             }
         }
@@ -426,6 +516,8 @@ class PlayerData(player: String) {
         var kitsCache: HashMap<String, Long>,
         var homeCache: HashMap<String, Location>,
         var homeLimit: Int,
-        var FakeNick: String
+        var FakeNick: String,
+        var Gamemode: Int,
+        var Vanish: Boolean
     )
 }

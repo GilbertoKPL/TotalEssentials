@@ -16,7 +16,7 @@ import java.util.stream.Collectors
 
 
 class ConfigUtil {
-    private val configList = HashMap<String, YamlFile>()
+    val configList = HashMap<String, YamlFile>()
 
     private var bol = false
 
@@ -24,6 +24,8 @@ class ConfigUtil {
         PluginUtil.getInstance().consoleMessage(StartLang.getInstance().startVerification.replace("%to%", "config"))
 
         startFun("configs", false)
+
+        OtherConfigUtil.getInstance().start()
 
         PluginUtil.getInstance().consoleMessage(StartLang.getInstance().completeVerification)
 
@@ -192,6 +194,8 @@ class ConfigUtil {
     fun reloadConfig(all: Boolean) {
         if (all) {
             startFun("configs", false)
+
+            OtherConfigUtil.getInstance().start()
 
             startFun("langs", true)
 

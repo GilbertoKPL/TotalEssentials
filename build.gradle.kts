@@ -215,5 +215,9 @@ bukkit {
             description = "This is a echest command!"
             aliases = listOf("ec")
         }
+        register("gamemode") {
+            description = "This is a gamemode command!"
+            aliases = listOf("gm")
+        }
     }
 }

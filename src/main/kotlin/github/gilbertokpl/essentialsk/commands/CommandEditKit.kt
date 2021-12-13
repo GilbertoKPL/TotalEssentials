@@ -47,7 +47,7 @@ class CommandEditKit : ICommand {
         return false
     }
 
-    private fun editKitGuiItems(p: Player, kit : String, items : List<ItemStack>) {
+    private fun editKitGuiItems(p: Player, kit: String, items: List<ItemStack>) {
         val inv = EssentialsK.instance.server.createInventory(null, 36, kit)
         items.forEach {
             inv.addItem(it)

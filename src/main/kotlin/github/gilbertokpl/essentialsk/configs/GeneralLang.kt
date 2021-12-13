@@ -202,6 +202,18 @@ class GeneralLang {
 
     var echestSendOtherSuccess = ""
 
+    var gamemodeUseSuccess = ""
+
+    var gamemodeUseOtherSuccess = ""
+
+    var vanishSendActive = ""
+
+    var vanishSendDisable = ""
+
+    var vanishSendOtherActive = ""
+
+    var vanishSendOtherDisable = ""
+
     companion object : IInstance<GeneralLang> {
         private val instance = createInstance()
         override fun createInstance(): GeneralLang = GeneralLang()

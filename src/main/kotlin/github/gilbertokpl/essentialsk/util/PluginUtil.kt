@@ -188,6 +188,20 @@ class PluginUtil {
             ),
             MainConfig.getInstance().echestActivated
         )
+        //gamemode
+        startCommandsHelper(
+            listOf(
+                CommandGamemode()
+            ),
+            MainConfig.getInstance().gamemodeActivated
+        )
+        //vanish
+        startCommandsHelper(
+            listOf(
+                CommandVanish()
+            ),
+            MainConfig.getInstance().vanishActivated
+        )
     }
 
     fun colorPermission(p: Player, message: String): String {

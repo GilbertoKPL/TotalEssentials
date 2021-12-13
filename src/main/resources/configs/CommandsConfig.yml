@@ -48,3 +48,13 @@ tpa:
 echest:
   # Enabled.
   activated: true
+gamemode:
+  # Enabled.
+  activated: true
+vanish:
+  # Enabled.
+  activated: true
+  # Blocked cmds from others Players when Player is vanished, <player> is vanished Player and <arg> if other value from cmd.
+  blocked-other-cmds:
+    - "/tell <player>"
+    - "/money <arg> <player>"

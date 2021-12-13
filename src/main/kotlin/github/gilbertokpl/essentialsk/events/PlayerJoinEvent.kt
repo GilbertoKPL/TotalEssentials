@@ -1,5 +1,6 @@
 package github.gilbertokpl.essentialsk.events
 
+import github.gilbertokpl.essentialsk.commands.CommandVanish
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -12,6 +13,11 @@ class PlayerJoinEvent : Listener {
     fun playerJoinEvent(e: PlayerJoinEvent) {
         try {
             PlayerData(e.player.name).loadCache()
+        } catch (e: Exception) {
+            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+        }
+        try {
+            CommandVanish.getInstance().vanishLoginEvent(e)
         } catch (e: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
         }
