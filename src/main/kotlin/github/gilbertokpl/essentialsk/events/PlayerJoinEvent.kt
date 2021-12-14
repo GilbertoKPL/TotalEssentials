@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 
 class PlayerJoinEvent : Listener {
     @EventHandler
-    fun playerJoinEvent(e: PlayerJoinEvent) {
+    fun event(e: PlayerJoinEvent) {
         try {
             PlayerData(e.player.name).loadCache()
         } catch (e: Exception) {

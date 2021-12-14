@@ -9,7 +9,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 
 class CloseInventoryEvent : Listener {
     @EventHandler
-    fun closeInventory(e: InventoryCloseEvent) {
+    fun event(e: InventoryCloseEvent) {
         try {
             if (CommandEditKit.getInstance().editKitInventoryCloseEvent(e)) return
         } catch (e: Exception) {

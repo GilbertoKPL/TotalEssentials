@@ -6,7 +6,7 @@ import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.bukkit.Material
 
 object EditKitInventory {
-    fun editKitInventory() {
+    fun setup() {
         for (inventory in 0..26) {
             if (inventory == 11) {
                 Dao.getInstance().editKitInventory[inventory] =

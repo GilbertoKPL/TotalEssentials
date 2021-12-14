@@ -52,7 +52,7 @@ class ReflectUtil {
         @Suppress("UNCHECKED_CAST")
         return try {
             val onlinePlayersMethod =
-                Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers", *arrayOfNulls(0))
+                Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers")
             if (onlinePlayersMethod.returnType.equals(MutableCollection::class.java)) (onlinePlayersMethod.invoke(
                 Bukkit.getServer(),
                 arrayOfNulls<Any>(0)

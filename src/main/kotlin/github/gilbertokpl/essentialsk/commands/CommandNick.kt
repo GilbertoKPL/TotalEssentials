@@ -42,7 +42,7 @@ class CommandNick : ICommand {
 
             if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
                 //check if is empty
-                if ((playerCache.getCache()?.FakeNick ?: return false) == "") {
+                if ((playerCache.getCache()?.fakeNick ?: return false) == "") {
                     s.sendMessage(GeneralLang.getInstance().nicksNickAlreadyOriginal)
                     return false
                 }
@@ -100,7 +100,7 @@ class CommandNick : ICommand {
 
         if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
             //check if is empty
-            if ((playerCache.getCache()?.FakeNick ?: return false) == "") {
+            if ((playerCache.getCache()?.fakeNick ?: return false) == "") {
                 s.sendMessage(GeneralLang.getInstance().nicksNickAlreadyOriginalOther)
                 return false
             }

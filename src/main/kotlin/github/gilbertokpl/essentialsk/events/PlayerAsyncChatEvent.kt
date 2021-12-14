@@ -9,7 +9,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 
 class PlayerAsyncChatEvent : Listener {
     @EventHandler
-    fun closeInventory(e: AsyncPlayerChatEvent) {
+    fun event(e: AsyncPlayerChatEvent) {
         try {
             if (CommandEditKit.getInstance().editKitChatEvent(e)) return
         } catch (e: Exception) {

@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 class PlayerLeaveEvent : Listener {
     @EventHandler
-    fun playerLeaveEvent(e: PlayerQuitEvent) {
+    fun event(e: PlayerQuitEvent) {
         try {
             PlayerData(e.player.name).unloadCache()
         } catch (e: Exception) {

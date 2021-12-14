@@ -117,8 +117,8 @@ class PluginUtil {
     fun startInventories() {
         if (loadCache()) {
             if (MainConfig.getInstance().kitsActivated) {
-                EditKitInventory.editKitInventory()
-                KitGuiInventory.kitGuiInventory()
+                EditKitInventory.setup()
+                KitGuiInventory.setup()
             }
         }
     }
@@ -411,7 +411,6 @@ class PluginUtil {
         } catch (ioe: IOException) {
             ExceptionUtils.getStackTrace(ioe)
         }
-        System.gc()
     }
 
     fun startMetrics() {

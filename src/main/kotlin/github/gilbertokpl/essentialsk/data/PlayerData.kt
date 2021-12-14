@@ -20,7 +20,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.concurrent.CompletableFuture
 
-
 class PlayerData(player: String) {
 
     private val p = EssentialsK.instance.server.getPlayer(player)
@@ -215,7 +214,7 @@ class PlayerData(player: String) {
         if (online) {
             p!!.gameMode = gm
             val cache = getCache() ?: return
-            cache.Gamemode = value
+            cache.gameMode = value
 
             //sql
             helperUpdater(PlayerDataSQL.GameMode, value)
@@ -223,22 +222,25 @@ class PlayerData(player: String) {
     }
 
     fun checkVanish() : Boolean {
-        if (online) {
-            val cache = getCache() ?: return false
-
-            return cache.Vanish
+        val cache = getCache()
+        return if (online && cache != null) {
+            cache.vanish
         }
-        return false
+        else {
+            false
+        }
     }
 
     //only online
     fun switchVanish() : Boolean {
-        if (online) {
-            val cache = getCache() ?: return false
 
-            val newValue = cache.Vanish.not()
+        val cache = getCache()
 
-            cache.Vanish = newValue
+        if (online && cache != null) {
+
+            val newValue = cache.vanish.not()
+
+            cache.vanish = newValue
 
             //sql
             helperUpdater(PlayerDataSQL.Vanish , newValue)
@@ -477,7 +479,7 @@ class PlayerData(player: String) {
                 }
                 if (online && other) {
                     p!!.setDisplayName(newNick)
-                    getCache()?.let { it.FakeNick = newNick } ?: return@supplyAsync true
+                    getCache()?.let { it.fakeNick = newNick } ?: return@supplyAsync true
                 }
                 transaction(SqlUtil.getInstance().sql) {
                     PlayerDataSQL.update({ PlayerInfo eq uuid }) {
@@ -494,7 +496,7 @@ class PlayerData(player: String) {
     fun removeNick() {
         //cache
         if (online) {
-            getCache()?.let { it.FakeNick = "" } ?: return
+            getCache()?.let { it.fakeNick = "" } ?: return
             p!!.setDisplayName(p.name)
         }
 
@@ -512,7 +514,6 @@ class PlayerData(player: String) {
         }
     }
 
-
     fun getCache(): InternalPlayerData? {
         Dao.getInstance().playerCache[uuid].also {
             return it
@@ -524,8 +525,8 @@ class PlayerData(player: String) {
         var kitsCache: HashMap<String, Long>,
         var homeCache: HashMap<String, Location>,
         var homeLimit: Int,
-        var FakeNick: String,
-        var Gamemode: Int,
-        var Vanish: Boolean
+        var fakeNick: String,
+        var gameMode: Int,
+        var vanish: Boolean
     )
 }

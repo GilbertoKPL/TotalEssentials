@@ -8,7 +8,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 object KitGuiInventory {
-    fun kitGuiInventory() {
+    fun setup() {
         Dao.getInstance().kitClickGuiCache.clear()
         Dao.getInstance().kitGuiCache.clear()
         var size = 1

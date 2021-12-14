@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 
 class ClickInventoryEvent : Listener {
     @EventHandler
-    fun clickInventory(e: InventoryClickEvent) {
+    fun event(e: InventoryClickEvent) {
         try {
             if (CommandEditKit.getInstance().editKitInventoryClickEvent(e)) return
         } catch (e: Exception) {

@@ -4,7 +4,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization
 import java.io.InputStream
 import java.io.ObjectInputStream
 
-internal class InternalBukkitObjectInputStream(`in`: InputStream?) : ObjectInputStream(`in`) {
+internal class InternalBukkitObjectInputStream(input: InputStream?) : ObjectInputStream(input) {
     init {
         enableResolveObject(true)
     }

@@ -165,7 +165,7 @@ class KitData(kitName: String) {
     }
 
     private fun reloadGui() {
-        KitGuiInventory.kitGuiInventory()
+        KitGuiInventory.setup()
     }
 
     //data class

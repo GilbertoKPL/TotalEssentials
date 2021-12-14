@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 
 class PlayerPreCommandEvent : Listener {
     @EventHandler
-    fun playerPreCommandEvent(e: PlayerCommandPreprocessEvent) {
+    fun event(e: PlayerCommandPreprocessEvent) {
         try {
             val split = e.message.split(" ")
             CommandVanish.getInstance().vanishPreCommandEvent(e, split)
