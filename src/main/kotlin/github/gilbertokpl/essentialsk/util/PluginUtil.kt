@@ -210,6 +210,20 @@ class PluginUtil {
             ),
             MainConfig.getInstance().feedActivated
         )
+        //heal
+        startCommandsHelper(
+            listOf(
+                CommandHeal()
+            ),
+            MainConfig.getInstance().healActivated
+        )
+        //light
+        startCommandsHelper(
+            listOf(
+                CommandLight()
+            ),
+            MainConfig.getInstance().lightActivated
+        )
     }
 
     fun colorPermission(p: Player, message: String): String {

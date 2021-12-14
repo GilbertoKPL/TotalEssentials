@@ -2,18 +2,18 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandFeed : ICommand {
+class CommandLight : ICommand {
     override val consoleCanUse: Boolean = true
-    override val permission: String = "essentialsk.commands.feed"
+    override val permission: String = "essentialsk.commands.light"
     override val minimumSize = 0
     override val maximumSize = 1
-    override val commandUsage = listOf("P_/feed", "essentialsk.commands.feed.other_/feed <playerName>")
+    override val commandUsage = listOf("P_/heal", "essentialsk.commands.light.other_/heal <playerName>")
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         if (args.isEmpty() && s !is Player) {
@@ -23,7 +23,7 @@ class CommandFeed : ICommand {
         if (args.size == 1) {
 
             //check perms
-            if (s is Player && s.hasPermission("essentialsk.commands.feed.other")) {
+            if (s is Player && s.hasPermission("essentialsk.commands.light.other")) {
                 s.sendMessage(GeneralLang.getInstance().generalNotPerm)
                 return false
             }
@@ -34,24 +34,25 @@ class CommandFeed : ICommand {
                 return false
             }
 
-            if (p.foodLevel >= 15 && MainConfig.getInstance().feedNeedEatBelow) {
-                s.sendMessage(GeneralLang.getInstance().feedSendOtherFullMessage)
-                return false
+            if (PlayerData(p.name).switchLight()) {
+                p.sendMessage(GeneralLang.getInstance().lightSendOtherActive)
+                s.sendMessage(GeneralLang.getInstance().lightSendActivatedOther)
+            }
+            else {
+                p.sendMessage(GeneralLang.getInstance().lightSendOtherDisable)
+                s.sendMessage(GeneralLang.getInstance().lightSendDisabledOther)
             }
 
-            p.foodLevel = 15
-            p.sendMessage(GeneralLang.getInstance().feedSendOtherMessage)
-            s.sendMessage(GeneralLang.getInstance().feedSendSuccessOtherMessage.replace("%player%", p.name))
-
             return false
         }
 
-        if ((s as Player).foodLevel >= 15 && MainConfig.getInstance().feedNeedEatBelow) {
-            s.sendMessage(GeneralLang.getInstance().feedSendFullMessage)
-            return false
+        if (PlayerData(s.name).switchLight()) {
+            s.sendMessage(GeneralLang.getInstance().lightSendActive)
         }
-        s.foodLevel = 15
-        s.sendMessage(GeneralLang.getInstance().feedSendMessage)
+        else {
+            s.sendMessage(GeneralLang.getInstance().lightSendDisable)
+        }
+
         return true
     }
 }

@@ -62,6 +62,12 @@ class MainConfig {
 
     var feedNeedEatBelow: Boolean = false
 
+    var healActivated: Boolean = true
+
+    var healNeedHealBelow: Boolean = false
+
+    var lightActivated: Boolean = true
+
     companion object : IInstance<MainConfig> {
         private val instance = createInstance()
         override fun createInstance(): MainConfig = MainConfig()

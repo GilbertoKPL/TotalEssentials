@@ -26,7 +26,6 @@ allprojects {
     repositories {
         mavenCentral()
 
-        //não esquecer de ocultar
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/GilbertoKpl/EssentialsK")
@@ -226,6 +225,14 @@ bukkit {
         register("feed") {
             description = "This is a feed command!"
             aliases = listOf("comer")
+        }
+        register("heal") {
+            description = "This is a heal command!"
+            aliases = listOf("h")
+        }
+        register("light") {
+            description = "This is a light command!"
+            aliases = listOf("luz")
         }
     }
 }

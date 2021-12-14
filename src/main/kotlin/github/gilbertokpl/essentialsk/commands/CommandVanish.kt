@@ -20,7 +20,7 @@ class CommandVanish : ICommand {
     override val maximumSize = 1
     override val commandUsage = listOf(
         "P_/vanish",
-        "CP_/vanish <PlayerName>"
+        "essentialsk.commands.vanish.other_/vanish <PlayerName>"
     )
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -29,33 +29,40 @@ class CommandVanish : ICommand {
             return true
         }
 
-        if (args.isEmpty()) {
-            if (PlayerData(s.name.lowercase()).switchVanish()) {
-                s.sendMessage(GeneralLang.getInstance().vanishSendActive)
+        if (args.size == 1) {
+
+            //check perms
+            if (s is Player && s.hasPermission("essentialsk.commands.vanish.other")) {
+                s.sendMessage(GeneralLang.getInstance().generalNotPerm)
+                return false
             }
-            else {
-                s.sendMessage(GeneralLang.getInstance().vanishSendDisable)
+
+            //check if player is online
+            val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
+                s.sendMessage(GeneralLang.getInstance().generalPlayerNotOnline)
+                return false
             }
+
+            if (PlayerData(p.name.lowercase()).switchVanish()) {
+                p.sendMessage(GeneralLang.getInstance().vanishSendOtherActive)
+                s.sendMessage(GeneralLang.getInstance().vanishSendActivatedOther)
+            } else {
+                p.sendMessage(GeneralLang.getInstance().vanishSendOtherDisable)
+                s.sendMessage(GeneralLang.getInstance().vanishSendDisabledOther)
+            }
+
             return false
         }
 
-        //check if player is online
-        val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-            s.sendMessage(GeneralLang.getInstance().generalPlayerNotOnline)
-            return false
+        if (PlayerData(s.name.lowercase()).switchVanish()) {
+            s.sendMessage(GeneralLang.getInstance().vanishSendActive)
+        } else {
+            s.sendMessage(GeneralLang.getInstance().vanishSendDisable)
         }
-
-        if (PlayerData(p.name.lowercase()).switchVanish()) {
-            s.sendMessage(GeneralLang.getInstance().vanishSendOtherActive)
-        }
-        else {
-            s.sendMessage(GeneralLang.getInstance().vanishSendOtherDisable)
-        }
-
         return false
     }
 
-    fun vanishLoginEvent(e: PlayerJoinEvent)  {
+    fun vanishLoginEvent(e: PlayerJoinEvent) {
         if (e.player.hasPermission("essentialsk.commands.vanish") || e.player.hasPermission("essentialsk.bypass.vanish")) return
         ReflectUtil.getInstance().getPlayers().forEach {
             if (PlayerData(it.name).checkVanish()) {
@@ -64,7 +71,7 @@ class CommandVanish : ICommand {
         }
     }
 
-    fun vanishPreCommandEvent(e: PlayerCommandPreprocessEvent, split : List<String>) {
+    fun vanishPreCommandEvent(e: PlayerCommandPreprocessEvent, split: List<String>) {
         if (split.isEmpty()) {
             return
         }

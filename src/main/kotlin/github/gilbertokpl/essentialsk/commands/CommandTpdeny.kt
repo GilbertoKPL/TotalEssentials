@@ -30,7 +30,7 @@ class CommandTpdeny : ICommand {
         s.sendMessage(GeneralLang.getInstance().tpaRequestDeny.replace("%player%", p.name))
 
         if (EssentialsK.instance.server.getPlayer(p.name) != null) {
-            p.sendMessage(GeneralLang.getInstance().tpaRequestDeny.replace("%player%", s.name))
+            p.sendMessage(GeneralLang.getInstance().tpaRequestOtherDeny.replace("%player%", s.name))
         }
         return false
     }

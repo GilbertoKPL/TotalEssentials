@@ -29,6 +29,9 @@
 | /echest and /ec                    | Open enderchest.                                                                                | essentialsk.commands.ec          |
 | /gamemode and /gm                  | Switch gamemode.                                                                                | essentialsk.commands.gamemode    |
 | /vanish and /v                     | Switch vanish.                                                                                  | essentialsk.commands.vanish      |
+| /feed and /comer                   | Allow player to set max food.                                                                   | essentialsk.commands.feed        |
+| /heal and /h                       | Allow player to set max health.                                                                 | essentialsk.commands.heal        |
+| /light and /luz                    | Switch light.                                                                                   | essentialsk.commands.light       |
 
 ## Permission Color
 
@@ -55,20 +58,25 @@ To use in chat, commands, signs etc.
 
 ## Other permissions
 
-| Permission                                     | Function                                   |
-|------------------------------------------------|--------------------------------------------|
-| essentialsk.commands.sethome.(number of homes) | Set limit of homes to player               |
-| essentialsk.commands.kit.(kit name)            | Allow the player to pick up the given kit  |
-| essentialsk.commands.warp.(warp name)          | Allow the player go to determined warp     |
-| essentialsk.commands.nick.other                | Allow the player rename other players      |
-| essentialsk.commands.home.other                | Allow the player go to other players homes |
-| essentialsk.commands.ec.other                  | Allow the player open others enderChest    |
-| essentialsk.commands.delhome.other             | Allow the player delhome for other players |
-| essentialsk.commands.sethome.other             | Allow the player sethome for other players |
-| essentialsk.bypass.teleport                    | Bypass time to teleport                    |
-| essentialsk.bypass.homelimit                   | Bypass home limit                          |
-| essentialsk.bypass.kitcatch                    | Bypass kit time limit                      |
-| essentialsk.bypass.vanish                      | Bypass the vanish                          |
+| Permission                                     | Function                                          |
+|------------------------------------------------|---------------------------------------------------|
+| essentialsk.commands.sethome.(number of homes) | Set limit of homes to player                      |
+| essentialsk.commands.kit.(kit name)            | Allow the player to pick up the given kit         |
+| essentialsk.commands.warp.(warp name)          | Allow the player go to determined warp            |
+| essentialsk.commands.nick.other                | Allow the player rename other players             |
+| essentialsk.commands.ec.other                  | Allow the player open others enderChest           |
+| essentialsk.commands.gamemode.other            | Allow the player switch gamemode for other player |
+| essentialsk.commands.heal.other                | Allow the player use heal for other players       |
+| essentialsk.commands.feed.other                | Allow the player use feed for other players       |
+| essentialsk.commands.vanish.other              | Allow the player use vanish to other player       |
+| essentialsk.commands.light.other               | Allow the player use light to other player        |
+| essentialsk.commands.home.other                | Allow the player go to other players homes        |
+| essentialsk.commands.delhome.other             | Allow the player delhome for other players        |
+| essentialsk.commands.sethome.other             | Allow the player sethome for other players        |
+| essentialsk.bypass.teleport                    | Bypass time to teleport                           |
+| essentialsk.bypass.homelimit                   | Bypass home limit                                 |
+| essentialsk.bypass.kitcatch                    | Bypass kit time limit                             |
+| essentialsk.bypass.vanish                      | Bypass the vanish                                 |
 
 ## Resources ( Internal )
 

@@ -8,12 +8,12 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandFeed : ICommand {
+class CommandHeal : ICommand {
     override val consoleCanUse: Boolean = true
-    override val permission: String = "essentialsk.commands.feed"
+    override val permission: String = "essentialsk.commands.heal"
     override val minimumSize = 0
     override val maximumSize = 1
-    override val commandUsage = listOf("P_/feed", "essentialsk.commands.feed.other_/feed <playerName>")
+    override val commandUsage = listOf("P_/heal", "essentialsk.commands.heal.other_/heal <playerName>")
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         if (args.isEmpty() && s !is Player) {
@@ -23,7 +23,7 @@ class CommandFeed : ICommand {
         if (args.size == 1) {
 
             //check perms
-            if (s is Player && s.hasPermission("essentialsk.commands.feed.other")) {
+            if (s is Player && s.hasPermission("essentialsk.commands.heal.other")) {
                 s.sendMessage(GeneralLang.getInstance().generalNotPerm)
                 return false
             }
@@ -34,24 +34,25 @@ class CommandFeed : ICommand {
                 return false
             }
 
-            if (p.foodLevel >= 15 && MainConfig.getInstance().feedNeedEatBelow) {
-                s.sendMessage(GeneralLang.getInstance().feedSendOtherFullMessage)
+            if (p.health >= 20.0 && MainConfig.getInstance().healNeedHealBelow) {
+                s.sendMessage(GeneralLang.getInstance().healSendOtherFullMessage)
                 return false
             }
 
-            p.foodLevel = 15
-            p.sendMessage(GeneralLang.getInstance().feedSendOtherMessage)
-            s.sendMessage(GeneralLang.getInstance().feedSendSuccessOtherMessage.replace("%player%", p.name))
+            p.health = 20.0
+            p.sendMessage(GeneralLang.getInstance().healSendOtherMessage)
+            s.sendMessage(GeneralLang.getInstance().healSendSuccessOtherMessage.replace("%player%", p.name))
 
             return false
         }
 
-        if ((s as Player).foodLevel >= 15 && MainConfig.getInstance().feedNeedEatBelow) {
-            s.sendMessage(GeneralLang.getInstance().feedSendFullMessage)
+        if ((s as Player).health >= 20.0 && MainConfig.getInstance().healNeedHealBelow) {
+            s.sendMessage(GeneralLang.getInstance().healSendFullMessage)
             return false
         }
-        s.foodLevel = 15
-        s.sendMessage(GeneralLang.getInstance().feedSendMessage)
+
+        s.health = 20.0
+        s.sendMessage(GeneralLang.getInstance().healSendMessage)
         return true
     }
 }

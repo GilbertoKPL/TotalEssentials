@@ -130,11 +130,32 @@ echest:
 gamemode:
   use-success: '&eVocê acabou de entrar no gameMode %gamemode%.'
   use-other-success: '&eAlguem do além setou seu gameMode de %gamemode%.'
+  same-gamemode: '&cVocê já está nesse gamemode.'
+  same-other-gamemode: '&cEle já está nesse gamemode.'
+  send-success-other-message: '&eVocê acaba de setar o gamemode do(a) %player% para %gamemode%.'
 vanish:
   send-active: '&eSeu vanish foi ativado com sucesso.'
   send-disable: '&eSeu vanish foi desativado com sucesso.'
   send-other-active: '&eAlguém ativou seu vanish.'
   send-other-disable: '&eAlguém desativou seu vanish.'
+  send-activated-other: '&eO Vanish do(a) foi ativado'
+  send-disabled-other: '&eO Vanish do(a) foi desativado'
 feed:
   send-message: '&eVocê encheu com sucesso sua barra de comida.'
   send-full-message: '&eVocê já está cheio seu guloso.'
+  send-other-message: '&eAlguém do além encheu sua barra de comida.'
+  send-other-full-message: '&eO player já está com a barra de comida cheia.'
+  send-success-other-message: '&eVocê encheu com sucesso a barra de comida do %player%'
+heal:
+  send-message: '&eVocê encheu com sucesso sua barra de vida.'
+  send-full-message: '&eVocê já está com vida cheia.'
+  send-other-message: '&eAlguém do além encheu sua barra de vida.'
+  send-other-full-message: '&eO player já está com vida cheio.'
+  send-success-other-message: '&eVocê encheu com sucesso a barra de vide do %player%'
+light:
+  send-active: '&eA Luz foi ativado com sucesso.'
+  send-disable: '&eA Luz foi desativado com sucesso.'
+  send-other-active: '&eAlguém ativou sua Luz.'
+  send-other-disable: '&eAlguém desativou sua Luz.'
+  send-activated-other: '&eA Luz do(a) foi ativado'
+  send-disabled-other: '&eA Luz do(a) foi desativado'

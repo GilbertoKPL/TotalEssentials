@@ -41,21 +41,14 @@ class PlayerData(player: String) {
     fun loadCache() {
         TaskUtil.getInstance().asyncExecutor {
             //values
-            val cacheKits = HashMap<String, Long>(40)
-            val cacheHomes = HashMap<String, Location>(40)
-            val limitHome: Int =
-                PluginUtil.getInstance().getNumberPermission(
-                    p!!,
-                    "essentialsk.commands.sethome.",
-                    MainConfig.getInstance().homesDefaultLimitHomes
-                )
+            var timeKits = ""
             var fakeNick = ""
+            var homesList = ""
             var gameMode = 0
             var vanish = false
+            var light = false
 
             //internal
-            lateinit var homesList: String
-            lateinit var timeKits: String
             var emptyQuery = false
 
             transaction(SqlUtil.getInstance().sql) {
@@ -72,49 +65,52 @@ class PlayerData(player: String) {
                     homesList = query.single()[SavedHomes]
                     gameMode = query.single()[PlayerDataSQL.GameMode]
                     vanish = query.single()[PlayerDataSQL.Vanish]
+                    light = query.single()[PlayerDataSQL.Light]
                 }
             }
 
-            if (emptyQuery) {
-                Dao.getInstance().playerCache[uuid] = InternalPlayerData(
-                    uuid,
-                    HashMap(40),
-                    HashMap(40),
-                    limitHome,
-                    fakeNick,
-                    0,
-                    false
+            val limitHome: Int =
+                PluginUtil.getInstance().getNumberPermission(
+                    p!!,
+                    "essentialsk.commands.sethome.",
+                    MainConfig.getInstance().homesDefaultLimitHomes
                 )
+
+            if (emptyQuery) {
+                Dao.getInstance().playerCache[uuid] = createEmptyCache(limitHome)
                 return@asyncExecutor
             }
 
+            //other values
+            val cacheKits = HashMap<String, Long>(40)
+            val cacheHomes = HashMap<String, Location>(40)
             var replace = ""
             var update = false
 
             for (kits in timeKits.split("|")) {
                 try {
-                    if (kits == "") continue
-                    val split = kits.split(".")
-                    val timeKit = split[1].toLong()
-                    val nameKit = split[0]
+                    if (kits != "") {
+                        val split = kits.split(".")
+                        val timeKit = split[1].toLong()
+                        val nameKit = split[0]
 
-                    val kitsCache = KitData(nameKit)
+                        val kitsCache = KitData(nameKit)
 
-                    if (kitsCache.checkCache()) {
-                        update = true
-                        continue
-                    }
-
-                    val timeAll = KitData(nameKit).getCache(true)
-
-                    if (timeKit != 0L && timeAll != null && (timeAll.time + timeKit) > System.currentTimeMillis()) {
-                        replace += if (replace == "") {
-                            "$nameKit,$timeKit"
+                        if (kitsCache.checkCache()) {
+                            update = true
                         } else {
-                            "|$nameKit,$timeKit"
+                            val timeAll = KitData(nameKit).getCache(true)
+
+                            if (timeKit != 0L && timeAll != null && (timeAll.time + timeKit) > System.currentTimeMillis()) {
+                                replace += if (replace == "") {
+                                    "$nameKit,$timeKit"
+                                } else {
+                                    "|$nameKit,$timeKit"
+                                }
+                                cacheKits[nameKit] = timeKit
+                                continue
+                            }
                         }
-                        cacheKits[nameKit] = timeKit
-                        continue
                     }
                 } catch (ignored: Exception) {
                     update = true
@@ -151,11 +147,19 @@ class PlayerData(player: String) {
 
                 //vanish
                 if (vanish) {
-                    p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY,  Int.MAX_VALUE, 1))
-                    for (it in ReflectUtil.getInstance().getPlayers()){
-                        if (it.player!!.hasPermission("essentialsk.commands.vanish") || it.player!!.hasPermission("essentialsk.bypass.vanish")) continue
+                    p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
+                    for (it in ReflectUtil.getInstance().getPlayers()) {
+                        if (it.player!!.hasPermission("essentialsk.commands.vanish")
+                            || it.player!!.hasPermission("essentialsk.bypass.vanish")
+                        ) {
+                            continue
+                        }
                         it.hidePlayer(p)
                     }
+                }
+                //light
+                if (light) {
+                    p.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 1))
                 }
             })
 
@@ -177,7 +181,8 @@ class PlayerData(player: String) {
                 limitHome,
                 fakeNick,
                 gameMode,
-                vanish
+                vanish,
+                light
             )
 
             if (update) {
@@ -188,6 +193,19 @@ class PlayerData(player: String) {
                 }
             }
         }
+    }
+
+    private fun createEmptyCache(limitHome : Int) : InternalPlayerData {
+        return InternalPlayerData(
+            uuid,
+            HashMap(40),
+            HashMap(40),
+            limitHome,
+            "",
+            0,
+            vanish = false,
+            light = false
+        )
     }
 
     fun checkSql(): Boolean {
@@ -221,18 +239,17 @@ class PlayerData(player: String) {
         }
     }
 
-    fun checkVanish() : Boolean {
+    fun checkVanish(): Boolean {
         val cache = getCache()
         return if (online && cache != null) {
             cache.vanish
-        }
-        else {
+        } else {
             false
         }
     }
 
     //only online
-    fun switchVanish() : Boolean {
+    fun switchVanish(): Boolean {
 
         val cache = getCache()
 
@@ -243,10 +260,10 @@ class PlayerData(player: String) {
             cache.vanish = newValue
 
             //sql
-            helperUpdater(PlayerDataSQL.Vanish , newValue)
+            helperUpdater(PlayerDataSQL.Vanish, newValue)
 
             return if (newValue) {
-                p!!.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY,  Int.MAX_VALUE, 1))
+                p!!.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
                 ReflectUtil.getInstance().getPlayers().forEach {
                     it.hidePlayer(p)
                 }
@@ -256,6 +273,31 @@ class PlayerData(player: String) {
                 ReflectUtil.getInstance().getPlayers().forEach {
                     it.showPlayer(p)
                 }
+                false
+            }
+        }
+        return false
+    }
+
+    //only online
+    fun switchLight(): Boolean {
+
+        val cache = getCache()
+
+        if (online && cache != null) {
+
+            val newValue = cache.light.not()
+
+            cache.light = newValue
+
+            //sql
+            helperUpdater(PlayerDataSQL.Light, newValue)
+
+            return if (newValue) {
+                p!!.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 1))
+                true
+            } else {
+                p!!.removePotionEffect(PotionEffectType.NIGHT_VISION)
                 false
             }
         }
@@ -305,12 +347,11 @@ class PlayerData(player: String) {
             var newPlace = ""
             for (i in check) {
                 if (i.split(",")[0] != kit) {
-                    if (newPlace == "") {
-                        newPlace += i
-                        continue
+                    newPlace += if (newPlace == "") {
+                        i
+                    } else {
+                        "|$i"
                     }
-                    newPlace += "|$i"
-                    continue
                 }
             }
             newPlace += if (newPlace == "") {
@@ -389,11 +430,11 @@ class PlayerData(player: String) {
 
             for (h in homes.split("|")) {
                 if (h.split(",")[0] == name) continue
-                if (newHome == "") {
-                    newHome += h
-                    continue
+                newHome += if (newHome == "") {
+                    h
+                } else {
+                    "|$h"
                 }
-                newHome += "|$h"
             }
 
             transaction(SqlUtil.getInstance().sql) {
@@ -504,7 +545,7 @@ class PlayerData(player: String) {
         helperUpdater(FakeNick, "")
     }
 
-    private fun <T> helperUpdater(col : Column<T>, value : T) {
+    private fun <T> helperUpdater(col: Column<T>, value: T) {
         TaskUtil.getInstance().asyncExecutor {
             transaction(SqlUtil.getInstance().sql) {
                 PlayerDataSQL.update({ PlayerInfo eq uuid }) {
@@ -527,6 +568,7 @@ class PlayerData(player: String) {
         var homeLimit: Int,
         var fakeNick: String,
         var gameMode: Int,
-        var vanish: Boolean
+        var vanish: Boolean,
+        var light: Boolean
     )
 }

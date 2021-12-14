@@ -206,6 +206,12 @@ class GeneralLang {
 
     var gamemodeUseOtherSuccess = ""
 
+    var gamemodeSameGamemode = ""
+
+    var gamemodeSameOtherGamemode = ""
+
+    var gamemodeSendSuccessOtherMessage = ""
+
     var vanishSendActive = ""
 
     var vanishSendDisable = ""
@@ -214,9 +220,41 @@ class GeneralLang {
 
     var vanishSendOtherDisable = ""
 
+    var vanishSendActivatedOther = ""
+
+    var vanishSendDisabledOther = ""
+
     var feedSendMessage = ""
 
     var feedSendFullMessage = ""
+
+    var feedSendOtherMessage = ""
+
+    var feedSendOtherFullMessage = ""
+
+    var feedSendSuccessOtherMessage = ""
+
+    var healSendMessage = ""
+
+    var healSendFullMessage = ""
+
+    var healSendOtherMessage = ""
+
+    var healSendOtherFullMessage = ""
+
+    var healSendSuccessOtherMessage = ""
+
+    var lightSendActive = ""
+
+    var lightSendDisable = ""
+
+    var lightSendOtherActive = ""
+
+    var lightSendOtherDisable = ""
+
+    var lightSendActivatedOther = ""
+
+    var lightSendDisabledOther = ""
 
 
     companion object : IInstance<GeneralLang> {
