@@ -89,7 +89,7 @@ class CommandKit : ICommand {
                 }
             }
             if (to1 == 44) {
-                if (p.hasPermission("essentialsk.kit.$kit")) {
+                if (p.hasPermission("essentialsk.commands.kit.$kit")) {
                     if (timeAll <= System.currentTimeMillis() || timeAll == 0L) {
                         inv.setItem(
                             to1,
@@ -137,7 +137,7 @@ class CommandKit : ICommand {
     private fun pickupKit(p: Player, kit: String) {
 
         // check if player don't have permission
-        if (!p.hasPermission("essentialsk.kit.$kit")) {
+        if (!p.hasPermission("essentialsk.commands.kit.$kit")) {
             p.sendMessage(GeneralLang.getInstance().generalNotPerm)
             return
         }

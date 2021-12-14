@@ -11,6 +11,8 @@ import github.gilbertokpl.essentialsk.util.*
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.GameMode
 import org.bukkit.Location
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -141,11 +143,22 @@ class PlayerData(player: String) {
                 }
                 else -> GameMode.SURVIVAL
             }
-            if (p.gameMode != gameModeName) {
-                EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
+
+            EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
+                //gamemode
+                if (p.gameMode != gameModeName) {
                     p.gameMode = gameModeName
-                })
-            }
+                }
+
+                //vanish
+                if (vanish) {
+                    p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY,  Int.MAX_VALUE, 1))
+                    for (it in ReflectUtil.getInstance().getPlayers()){
+                        if (it.player!!.hasPermission("essentialsk.commands.vanish") || it.player!!.hasPermission("essentialsk.bypass.vanish")) continue
+                        it.hidePlayer(p)
+                    }
+                }
+            })
 
             //home
             for (h in homesList.split("|")) {
@@ -156,13 +169,6 @@ class PlayerData(player: String) {
                 cacheHomes[nameHome] = locationHome
             }
 
-            //vanish
-            if (vanish) {
-                for (it in ReflectUtil.getInstance().getPlayers()){
-                    if (it.player!!.hasPermission("essentialsk.commands.vanish") || it.player!!.hasPermission("essentialsk.bypass.vanish")) continue
-                    it.hidePlayer(p)
-                }
-            }
 
             //cache is in final to improve protection to load caches
             Dao.getInstance().playerCache[uuid] = InternalPlayerData(
@@ -238,13 +244,15 @@ class PlayerData(player: String) {
             helperUpdater(PlayerDataSQL.Vanish , newValue)
 
             return if (newValue) {
+                p!!.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY,  Int.MAX_VALUE, 1))
                 ReflectUtil.getInstance().getPlayers().forEach {
-                    it.hidePlayer(p!!)
+                    it.hidePlayer(p)
                 }
                 true
             } else {
+                p!!.removePotionEffect(PotionEffectType.INVISIBILITY)
                 ReflectUtil.getInstance().getPlayers().forEach {
-                    it.showPlayer(p!!)
+                    it.showPlayer(p)
                 }
                 false
             }

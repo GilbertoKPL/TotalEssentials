@@ -19,15 +19,16 @@
 | /kit and /kits                     | Create a kit with an interface / GUI see all kits through the interface / GUI and also get them | essentialsk.commands.kit         |
 | /givekit and /darkit               | Give kit to player.                                                                             | essentialsk.commands.givekit     |
 | /nick and /nome                    | Give kit to player.                                                                             | essentialsk.commands.nick        |
-| /sethome and /setarhome            | set home of player with name.                                                                   | essentialsk.commands.sethome     |
-| /delhome and /deletarhome          | del home of player.                                                                             | essentialsk.commands.delhome     |
-| /home and /h                       | go to home of player.                                                                           | essentialsk.commands.home        |
-| /setwarp and /setarwarp            | set determined warp in location.                                                                | essentialsk.commands.setwarp     |
-| /delwarp and /deletarwarp          | delete warp with determined name.                                                               | essentialsk.commands.delwarp     |
-| /tp                                | tp to other player or location.                                                                 | essentialsk.commands.tp          |
-| /tpa, /tpaccept and /tpadeny       | tp to other player or location.                                                                 | essentialsk.commands.tpa         |
-| /echest and /ec                    | open enderchest.                                                                                | essentialsk.commands.ec          |
-| /gamemode and /gm                  | switch gamemode.                                                                                | essentialsk.commands.gamemode    |
+| /sethome and /setarhome            | Set home of player with name.                                                                   | essentialsk.commands.sethome     |
+| /delhome and /deletarhome          | Del home of player.                                                                             | essentialsk.commands.delhome     |
+| /home and /h                       | Go to home of player.                                                                           | essentialsk.commands.home        |
+| /setwarp and /setarwarp            | Set determined warp in location.                                                                | essentialsk.commands.setwarp     |
+| /delwarp and /deletarwarp          | Delete warp with determined name.                                                               | essentialsk.commands.delwarp     |
+| /tp                                | Tp to other player or location.                                                                 | essentialsk.commands.tp          |
+| /tpa, /tpaccept and /tpadeny       | Tp to other player or location.                                                                 | essentialsk.commands.tpa         |
+| /echest and /ec                    | Open enderchest.                                                                                | essentialsk.commands.ec          |
+| /gamemode and /gm                  | Switch gamemode.                                                                                | essentialsk.commands.gamemode    |
+| /vanish and /v                     | Switch vanish.                                                                                  | essentialsk.commands.vanish      |
 
 ## Permission Color
 
@@ -56,18 +57,18 @@ To use in chat, commands, signs etc.
 
 | Permission                                     | Function                                   |
 |------------------------------------------------|--------------------------------------------|
-| essentialsk.kit.(kit name)                     | Allow the player to pick up the given kit  |
-| essentialsk.warp.(warp name)                   | Allow the player go to determined warp     |
 | essentialsk.commands.sethome.(number of homes) | Set limit of homes to player               |
+| essentialsk.commands.kit.(kit name)            | Allow the player to pick up the given kit  |
+| essentialsk.commands.warp.(warp name)          | Allow the player go to determined warp     |
 | essentialsk.commands.nick.other                | Allow the player rename other players      |
-| essentialsk.commands.home.other                | allow the player go to other players homes |
-| essentialsk.commands.ec.other                  | allow the player open others enderChest    |
-| essentialsk.commands.delhome.other             | allow the player delhome for other players |
-| essentialsk.commands.sethome.other             | allow the player sethome for other players |
-| essentialsk.bypass.teleport                    | bypass time to teleport                    |
-| essentialsk.bypass.homelimit                   | bypass home limit                          |
-| essentialsk.bypass.kitcatch                    | bypass kit time limit                      |
-| essentialsk.bypass.vanish                      | bypass the vanish                          |
+| essentialsk.commands.home.other                | Allow the player go to other players homes |
+| essentialsk.commands.ec.other                  | Allow the player open others enderChest    |
+| essentialsk.commands.delhome.other             | Allow the player delhome for other players |
+| essentialsk.commands.sethome.other             | Allow the player sethome for other players |
+| essentialsk.bypass.teleport                    | Bypass time to teleport                    |
+| essentialsk.bypass.homelimit                   | Bypass home limit                          |
+| essentialsk.bypass.kitcatch                    | Bypass kit time limit                      |
+| essentialsk.bypass.vanish                      | Bypass the vanish                          |
 
 ## Resources ( Internal )
 

@@ -51,7 +51,7 @@ class WarpData(warpName: String) {
         if (p != null) {
             val newList = ArrayList<String>()
             list.forEach {
-                if (p.hasPermission("essentialsk.warp.$it")) {
+                if (p.hasPermission("essentialsk.commands.warp.$it")) {
                     newList.add(it)
                 }
             }
