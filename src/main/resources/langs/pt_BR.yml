@@ -135,3 +135,6 @@ vanish:
   send-disable: '&eSeu vanish foi desativado com sucesso.'
   send-other-active: '&eAlguém ativou seu vanish.'
   send-other-disable: '&eAlguém desativou seu vanish.'
+feed:
+  send-message: '&eVocê encheu com sucesso sua barra de comida.'
+  send-full-message: '&eVocê já está cheio seu guloso.'

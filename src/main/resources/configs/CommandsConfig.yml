@@ -58,3 +58,8 @@ vanish:
   blocked-other-cmds:
     - "/tell <player>"
     - "/money <arg> <player>"
+feed:
+  # Enabled.
+  activated: true
+  # Only run if it's eaten below, for low versions it may bug if it's true.
+  need-eat-below: false

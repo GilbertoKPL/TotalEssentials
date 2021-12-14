@@ -58,6 +58,10 @@ class MainConfig {
 
     var vanishActivated: Boolean = true
 
+    var feedActivated: Boolean = true
+
+    var feedNeedEatBelow: Boolean = false
+
     companion object : IInstance<MainConfig> {
         private val instance = createInstance()
         override fun createInstance(): MainConfig = MainConfig()

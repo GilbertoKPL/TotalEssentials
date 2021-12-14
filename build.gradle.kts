@@ -5,11 +5,11 @@ version = 1.0
 
 val base = "$group.libs"
 val exposedVersion = "0.36.2"
-val kotlin = "1.6.10-RC"
+val kotlin = "1.6.10"
 val buildVersion = "1.18"
 
 plugins {
-    kotlin("jvm") version "1.6.10-RC"
+    kotlin("jvm") version "1.6.10"
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1"
@@ -222,6 +222,10 @@ bukkit {
         register("vanish") {
             description = "This is a vanish command!"
             aliases = listOf("v")
+        }
+        register("feed") {
+            description = "This is a feed command!"
+            aliases = listOf("comer")
         }
     }
 }

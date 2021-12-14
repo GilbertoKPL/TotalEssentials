@@ -214,6 +214,11 @@ class GeneralLang {
 
     var vanishSendOtherDisable = ""
 
+    var feedSendMessage = ""
+
+    var feedSendFullMessage = ""
+
+
     companion object : IInstance<GeneralLang> {
         private val instance = createInstance()
         override fun createInstance(): GeneralLang = GeneralLang()
