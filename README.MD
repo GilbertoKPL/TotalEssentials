@@ -32,6 +32,7 @@
 | /feed and /comer                   | Allow player to set max food.                                                                   | essentialsk.commands.feed        |
 | /heal and /h                       | Allow player to set max health.                                                                 | essentialsk.commands.heal        |
 | /light and /luz                    | Switch light.                                                                                   | essentialsk.commands.light       |
+| /back                              | Back to old location.                                                                           | essentialsk.commands.back        |
 
 ## Permission Color
 

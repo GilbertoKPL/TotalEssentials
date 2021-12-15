@@ -234,5 +234,8 @@ bukkit {
             description = "This is a light command!"
             aliases = listOf("luz")
         }
+        register("back") {
+            description = "This is a back command!"
+        }
     }
 }

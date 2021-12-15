@@ -71,3 +71,9 @@ heal:
 light:
   # Enabled.
   activated: true
+back:
+  # Enabled.
+  activated: true
+  # Disabled Worlds
+  disabled-worlds:
+    - essentialk

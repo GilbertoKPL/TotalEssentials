@@ -2,9 +2,14 @@ package github.gilbertokpl.essentialsk.inventory
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
+import github.gilbertokpl.essentialsk.data.KitData
+import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.util.ItemUtil
+import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 object KitGuiInventory {
@@ -88,5 +93,89 @@ object KitGuiInventory {
             }
             Dao.getInstance().kitGuiCache[size] = inv
         }
+    }
+
+    fun kitGui(kit: String, guiNumber: String, p: Player) {
+        //create gui
+        val inv = EssentialsK.instance.server.createInventory(null, 45, "§eKit $kit $guiNumber")
+
+        //load caches
+        val kitCache = KitData(kit).getCache()
+        val playerCache = PlayerData(p.name)
+
+        //get all time of kits
+        var timeAll = playerCache.getCache()?.let { it.kitsCache[kit] ?: 0L } ?: return
+
+        timeAll += kitCache.time
+
+        //all items
+        for (items in kitCache.items) {
+            inv.addItem(items)
+        }
+
+
+        for (to1 in 36..44) {
+            if (to1 == 36) {
+                inv.setItem(
+                    to1,
+                    ItemUtil.getInstance()
+                        .item(Material.HOPPER, GeneralLang.getInstance().kitsInventoryIconBackName, true)
+                )
+                continue
+            }
+            if (to1 == 40) {
+                if (p.hasPermission("essentialsk.commands.editkit")) {
+                    inv.setItem(
+                        to1,
+                        ItemUtil.getInstance()
+                            .item(Material.CHEST, GeneralLang.getInstance().kitsInventoryIconEditKitName, true)
+                    )
+                    continue
+                }
+            }
+            if (to1 == 44) {
+                if (p.hasPermission("essentialsk.commands.kit.$kit")) {
+                    if (timeAll <= System.currentTimeMillis() || timeAll == 0L) {
+                        inv.setItem(
+                            to1,
+                            ItemUtil.getInstance().item(Material.ARROW, GeneralLang.getInstance().kitsCatchIcon, true)
+                        )
+                        continue
+                    }
+                    val array = ArrayList<String>()
+                    val remainingTime = timeAll - System.currentTimeMillis()
+                    for (i in GeneralLang.getInstance().kitsCatchIconLoreTime) {
+                        array.add(
+                            i.replace(
+                                "%time%",
+                                PluginUtil.getInstance()
+                                    .convertMillisToString(remainingTime, MainConfig.getInstance().kitsUseShortTime)
+                            )
+                        )
+                    }
+                    inv.setItem(
+                        to1,
+                        ItemUtil.getInstance()
+                            .item(Material.ARROW, GeneralLang.getInstance().kitsCatchIconNotCatch, array, true)
+                    )
+                    continue
+                }
+                inv.setItem(
+                    to1,
+                    ItemUtil.getInstance().item(
+                        Material.ARROW,
+                        GeneralLang.getInstance().kitsCatchIconNotCatch,
+                        GeneralLang.getInstance().kitsCatchIconLoreNotPerm,
+                        true
+                    )
+                )
+                continue
+            }
+            inv.setItem(
+                to1,
+                ItemUtil.getInstance().item(Dao.getInstance().material["glass"]!!, "§eKIT", true)
+            )
+        }
+        p.openInventory(inv)
     }
 }

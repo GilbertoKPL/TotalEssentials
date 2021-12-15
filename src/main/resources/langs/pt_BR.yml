@@ -159,3 +159,6 @@ light:
   send-other-disable: '&eAlguém desativou sua Luz.'
   send-activated-other: '&eA Luz do(a) foi ativado'
   send-disabled-other: '&eA Luz do(a) foi desativado'
+back:
+  send-not-to-back: '&cVocê não tem nenhuma localização salva para voltar'
+  send-succes: '&eVocê voltou a sua ultima localização'

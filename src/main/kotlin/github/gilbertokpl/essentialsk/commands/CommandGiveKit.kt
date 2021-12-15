@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
@@ -36,7 +37,7 @@ class CommandGiveKit : ICommand {
         }
 
         //give kit
-        CommandKit.getInstance().giveKit(p, dataInstance.getCache().items, true, drop = true)
+        ItemUtil.getInstance().giveKit(p, dataInstance.getCache().items, true, drop = true)
         p.sendMessage(GeneralLang.getInstance().kitsGiveKitMessage.replace("%kit%", dataInstance.getCache().fakeName))
         return false
     }

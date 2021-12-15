@@ -9,6 +9,9 @@ import org.bukkit.inventory.ItemStack
 
 class Dao {
 
+    //back Command
+    val backLocation = HashMap<Player, Location>(40)
+
     //warps
     val warpsCache = HashMap<String, Location>(40)
 
@@ -35,6 +38,11 @@ class Dao {
 
     //material helper
     val material = HashMap<String, Material>(10)
+
+    //editKit
+    val editKit = HashMap<Player, String>(10)
+
+    val editKitChat = HashMap<Player, String>(10)
 
     companion object : IInstance<Dao> {
         private val instance = createInstance()

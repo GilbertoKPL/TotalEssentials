@@ -68,6 +68,10 @@ class MainConfig {
 
     var lightActivated: Boolean = true
 
+    var backActivated: Boolean = true
+
+    var backDisabledWorlds: List<String> = emptyList()
+
     companion object : IInstance<MainConfig> {
         private val instance = createInstance()
         override fun createInstance(): MainConfig = MainConfig()

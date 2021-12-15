@@ -256,6 +256,9 @@ class GeneralLang {
 
     var lightSendDisabledOther = ""
 
+    var backSendNotToBack = ""
+
+    var backSendSuccess = ""
 
     companion object : IInstance<GeneralLang> {
         private val instance = createInstance()

@@ -87,7 +87,9 @@ class PluginUtil {
                 PlayerAsyncChatEvent(),
                 PlayerJoinEvent(),
                 PlayerLeaveEvent(),
-                PlayerPreCommandEvent()
+                PlayerPreCommandEvent(),
+                PlayerDeathEvent(),
+                PlayerTeleportEvent()
             )
         )
     }
@@ -223,6 +225,13 @@ class PluginUtil {
                 CommandLight()
             ),
             MainConfig.getInstance().lightActivated
+        )
+        //back
+        startCommandsHelper(
+            listOf(
+                CommandBack()
+            ),
+            MainConfig.getInstance().backActivated
         )
     }
 

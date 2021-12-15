@@ -20,6 +20,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.concurrent.CompletableFuture
 
+@Suppress("DEPRECATION")
 class PlayerData(player: String) {
 
     private val p = EssentialsK.instance.server.getPlayer(player)
@@ -195,7 +196,7 @@ class PlayerData(player: String) {
         }
     }
 
-    private fun createEmptyCache(limitHome : Int) : InternalPlayerData {
+    private fun createEmptyCache(limitHome: Int): InternalPlayerData {
         return InternalPlayerData(
             uuid,
             HashMap(40),

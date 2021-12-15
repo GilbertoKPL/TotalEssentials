@@ -1,9 +1,12 @@
 package github.gilbertokpl.essentialsk.inventory
 
+import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 object EditKitInventory {
     fun setup() {
@@ -38,5 +41,21 @@ object EditKitInventory {
             Dao.getInstance().editKitInventory[inventory] =
                 ItemUtil.getInstance().item(Dao.getInstance().material["glass"]!!, "", true)
         }
+    }
+
+    fun editKitGui(p: Player, kit: String) {
+        val inv = EssentialsK.instance.server.createInventory(null, 27, "§eEditKit $kit")
+        for (i in Dao.getInstance().editKitInventory) {
+            inv.setItem(i.key, i.value)
+        }
+        p.openInventory(inv)
+    }
+
+    fun editKitGuiItems(p: Player, kit: String, items: List<ItemStack>) {
+        val inv = EssentialsK.instance.server.createInventory(null, 36, kit)
+        items.forEach {
+            inv.addItem(it)
+        }
+        p.openInventory(inv)
     }
 }

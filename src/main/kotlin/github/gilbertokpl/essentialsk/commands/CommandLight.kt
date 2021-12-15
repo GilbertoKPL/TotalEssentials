@@ -37,8 +37,7 @@ class CommandLight : ICommand {
             if (PlayerData(p.name).switchLight()) {
                 p.sendMessage(GeneralLang.getInstance().lightSendOtherActive)
                 s.sendMessage(GeneralLang.getInstance().lightSendActivatedOther)
-            }
-            else {
+            } else {
                 p.sendMessage(GeneralLang.getInstance().lightSendOtherDisable)
                 s.sendMessage(GeneralLang.getInstance().lightSendDisabledOther)
             }
@@ -48,8 +47,7 @@ class CommandLight : ICommand {
 
         if (PlayerData(s.name).switchLight()) {
             s.sendMessage(GeneralLang.getInstance().lightSendActive)
-        }
-        else {
+        } else {
             s.sendMessage(GeneralLang.getInstance().lightSendDisable)
         }
 
