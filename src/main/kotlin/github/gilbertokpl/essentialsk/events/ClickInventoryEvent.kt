@@ -10,6 +10,7 @@ import github.gilbertokpl.essentialsk.inventory.KitGuiInventory.kitGui
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -26,6 +27,13 @@ class ClickInventoryEvent : Listener {
             }
             try {
                 if (kitGuiEvent(e)) return
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
+        }
+        if (MainConfig.getInstance().containersBlockShiftEnable) {
+            try {
+                blockShiftInInventory(e)
             } catch (e: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
@@ -89,7 +97,7 @@ class ClickInventoryEvent : Listener {
     }
 
     //editkit event
-    fun editKitInventoryClickEvent(e: InventoryClickEvent): Boolean {
+    private fun editKitInventoryClickEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
         val inventoryName = e.view.title.split(" ")
         if (inventoryName[0].equals("§eEditKit", true)) {
@@ -125,5 +133,18 @@ class ClickInventoryEvent : Listener {
         }
 
         return false
+    }
+
+    //block shift
+    private fun blockShiftInInventory(e: InventoryClickEvent) {
+        if ((e.currentItem ?: return).type == Material.AIR) return
+        if (e.click.isShiftClick &&
+            MainConfig.getInstance().containersBlockShift.contains(e.inventory.type.name.lowercase()) &&
+            !e.whoClicked.hasPermission("essentialsk.bypass.shiftcontainer")
+        ) {
+            e.whoClicked.sendMessage(GeneralLang.getInstance().generalNotPermAction)
+            e.isCancelled = true
+            return
+        }
     }
 }

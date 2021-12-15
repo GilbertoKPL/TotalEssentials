@@ -54,11 +54,9 @@ class ReflectUtil {
             val onlinePlayersMethod =
                 Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers")
             if (onlinePlayersMethod.returnType.equals(MutableCollection::class.java)) (onlinePlayersMethod.invoke(
-                Bukkit.getServer(),
-                arrayOfNulls<Any>(0)
+                Bukkit.getServer()
             ) as List<Player>) else (onlinePlayersMethod.invoke(
-                Bukkit.getServer(),
-                arrayOfNulls<Any>(0)
+                Bukkit.getServer()
             ) as List<Player>)
         } catch (e: java.lang.Exception) {
             Bukkit.getOnlinePlayers().toList()

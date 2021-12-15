@@ -77,3 +77,10 @@ back:
   # Disabled Worlds, use world name example: world.
   disabled-worlds:
     - essentialk
+spawn:
+  # Enabled.
+  activated: true
+  # if enabled player is send to spawn on login.
+  send-to-spawn-on-login: true
+  # Time in seconds to teleport to determined location, has a permission to bypass.
+  time-to-teleport: 5

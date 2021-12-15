@@ -5,10 +5,14 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 
 class CommandTpa : ICommand {
     override val consoleCanUse: Boolean = false
@@ -56,15 +60,28 @@ class CommandTpa : ICommand {
         return false
     }
 
+
+
     private fun coolDown(pSender: Player, pReceived: Player, time: Int) {
         Dao.getInstance().tpaHash[pSender] = pReceived
         Dao.getInstance().tpaHash[pReceived] = pSender
+        Dao.getInstance().tpAcceptHash[pSender] = 1
 
-        val exe = TaskUtil.getInstance().coolDownExecutor(time)
-
-        exe {
-            Dao.getInstance().tpaHash.remove(pSender)
-            Dao.getInstance().tpaHash.remove(pReceived)
-        }
+        CompletableFuture.supplyAsync({
+            TimeUnit.SECONDS.sleep(time.toLong())
+            try {
+                val value = Dao.getInstance().tpAcceptHash[pSender]
+                if (value != null && value == 1) {
+                    Dao.getInstance().tpAcceptHash.remove(pSender)
+                    EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
+                        Dao.getInstance().tpaHash.remove(pSender)
+                        Dao.getInstance().tpaHash.remove(pReceived)
+                    })
+                }
+            } catch (ex: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+            }
+            return@supplyAsync false
+        }, TaskUtil.getInstance().getTeleportExecutor())
     }
 }

@@ -1,7 +1,9 @@
 package github.gilbertokpl.essentialsk.events
 
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.SpawnData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.ReflectUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -12,6 +14,13 @@ import org.bukkit.event.player.PlayerJoinEvent
 class PlayerJoinEvent : Listener {
     @EventHandler
     fun event(e: PlayerJoinEvent) {
+        if (MainConfig.getInstance().spawnSendToSpawnOnLogin) {
+            try {
+                spawnLogin(e)
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
+        }
         try {
             PlayerData(e.player.name).loadCache()
         } catch (e: Exception) {
@@ -34,5 +43,14 @@ class PlayerJoinEvent : Listener {
                 e.player.hidePlayer(it)
             }
         }
+    }
+
+    private fun spawnLogin(e: PlayerJoinEvent) {
+        val loc = SpawnData("spawn")
+        if (loc.checkCache()) {
+            e.player.sendMessage(GeneralLang.getInstance().spawnSendNotSet)
+            return
+        }
+        e.player.teleport(SpawnData("spawn").getLocation())
     }
 }

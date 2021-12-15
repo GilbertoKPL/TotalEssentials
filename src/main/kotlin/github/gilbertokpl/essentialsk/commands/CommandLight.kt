@@ -23,7 +23,7 @@ class CommandLight : ICommand {
         if (args.size == 1) {
 
             //check perms
-            if (s is Player && s.hasPermission("essentialsk.commands.light.other")) {
+            if (s is Player && !s.hasPermission("essentialsk.commands.light.other")) {
                 s.sendMessage(GeneralLang.getInstance().generalNotPerm)
                 return false
             }

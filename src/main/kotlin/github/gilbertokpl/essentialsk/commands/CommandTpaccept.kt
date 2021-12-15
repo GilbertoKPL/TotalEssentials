@@ -26,7 +26,13 @@ class CommandTpaccept : ICommand {
         }
 
         //remove checker
+        val value = Dao.getInstance().tpAcceptHash[p]
+
         Dao.getInstance().tpaHash.remove(s)
+
+        if (value!! == 1) {
+            Dao.getInstance().tpAcceptHash.remove(p)
+        }
 
         //check if player is online
         if (EssentialsK.instance.server.getPlayer(p.name) == null) {
@@ -37,6 +43,7 @@ class CommandTpaccept : ICommand {
         s.sendMessage(GeneralLang.getInstance().tpaRequestAccepted.replace("%player%", p.name))
 
         if (p.hasPermission("essentialsk.bypass.teleport")) {
+            Dao.getInstance().tpaHash.remove(p)
             p.sendMessage(GeneralLang.getInstance().tpaRequestOtherNoDelayAccepted.replace("%player%", s.name))
             p.teleport(s.location)
             return false
@@ -53,6 +60,7 @@ class CommandTpaccept : ICommand {
 
         exe {
             p.teleport(s.location)
+            Dao.getInstance().tpaHash.remove(p)
         }
 
         return false

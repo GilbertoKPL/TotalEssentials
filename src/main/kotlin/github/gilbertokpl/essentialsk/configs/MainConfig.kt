@@ -72,17 +72,31 @@ class MainConfig {
 
     var backDisabledWorlds: List<String> = emptyList()
 
-    var antibugsBlockBed : Boolean = true
+    var spawnActivated: Boolean = true
 
-    var antibugsBlockClimbingOnVehicles : Boolean = true
+    var spawnSendToSpawnOnLogin: Boolean = true
 
-    var antibugsBlockNametag : Boolean = false
+    var spawnTimeToTeleport: Int = 0
 
-    var antibugsPlayerGoToNetherCeiling : Boolean = true
+    var antibugsBlockBed: Boolean = true
 
-    var antibugsBlockMobCatch : Boolean = false
+    var antibugsBlockClimbingOnVehicles: Boolean = true
 
-    var antibugsBlockGoingEdgeEnderearl : Boolean = true
+    var antibugsBlockNametag: Boolean = false
+
+    var antibugsPlayerGoToNetherCeiling: Boolean = true
+
+    var antibugsBlockMobCatch: Boolean = false
+
+    var antibugsBlockGoingEdgeEnderearl: Boolean = true
+
+    var containersBlockShiftEnable: Boolean = true
+
+    var containersBlockShift: List<String> = emptyList()
+
+    var containersBlockOpenEnable: Boolean = true
+
+    var containersBlockOpen: List<String> = emptyList()
 
     companion object : IInstance<MainConfig> {
         private val instance = createInstance()

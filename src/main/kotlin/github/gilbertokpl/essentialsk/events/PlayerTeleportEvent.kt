@@ -1,5 +1,6 @@
 package github.gilbertokpl.essentialsk.events
 
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -39,20 +40,25 @@ class PlayerTeleportEvent : Listener {
     }
 
     private fun setBackLocation(e: PlayerTeleportEvent) {
-        if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.getInstance().backDisabledWorlds.contains(e.player.world.name.lowercase())) return
+        if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.getInstance().backDisabledWorlds.contains(
+                e.player.world.name.lowercase()
+            )
+        ) return
         Dao.getInstance().backLocation[e.player] = e.player.location
     }
 
     private fun blockPassEdgeEnderPearl(e: PlayerTeleportEvent) {
         if (
             e.cause === PlayerTeleportEvent.TeleportCause.ENDER_PEARL &&
-            e.to != null) {
+            e.to != null
+        ) {
             val p = e.player
             val wB = p.world.worldBorder.size / 2.0
-            val center  = p.world.worldBorder.center
-            val to  = e.to!!
+            val center = p.world.worldBorder.center
+            val to = e.to!!
             if (center.x + wB < to.x || center.x - wB > to.x || center.z + wB < to.z || center.z - wB > to.z) {
                 p.inventory.addItem(ItemStack(Material.ENDER_PEARL, 1))
+                e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
                 e.isCancelled = true
             }
         }
@@ -60,10 +66,11 @@ class PlayerTeleportEvent : Listener {
 
     private fun blockPassNetherCeiling(e: PlayerTeleportEvent) {
         if (
-            !e.player.hasPermission("essentialsk.resources.bypass.netherceiling") &&
+            !e.player.hasPermission("essentialsk.bypass.netherceiling") &&
             e.to != null && e.to!!.world!!.environment === World.Environment.NETHER && e.to!!.y > 124.0
         ) {
-
+            //teleport to spawn
+            e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
         }
     }
 }

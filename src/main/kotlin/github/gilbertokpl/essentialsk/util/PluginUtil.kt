@@ -7,6 +7,7 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.KitData
+import github.gilbertokpl.essentialsk.data.SpawnData
 import github.gilbertokpl.essentialsk.data.WarpData
 import github.gilbertokpl.essentialsk.events.*
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory
@@ -93,7 +94,8 @@ class PluginUtil {
                 PlayerBedEnterEvent(),
                 PlayerVehicleEnterEvent(),
                 PlayerInteractEntityEvent(),
-                CreatureSpawnEvent()
+                CreatureSpawnEvent(),
+                OpenInventoryEvent()
             )
         )
     }
@@ -113,6 +115,11 @@ class PluginUtil {
             }
             try {
                 WarpData("").loadWarpCache()
+            } catch (ex: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+            }
+            try {
+                SpawnData("").loadSpawnCache()
             } catch (ex: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
             }
@@ -236,6 +243,14 @@ class PluginUtil {
                 CommandBack()
             ),
             MainConfig.getInstance().backActivated
+        )
+        //spawn
+        startCommandsHelper(
+            listOf(
+                CommandSpawn(),
+                CommandSetSpawn()
+            ),
+            MainConfig.getInstance().spawnActivated
         )
     }
 

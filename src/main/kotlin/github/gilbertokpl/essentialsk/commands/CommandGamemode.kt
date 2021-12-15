@@ -57,7 +57,7 @@ class CommandGamemode : ICommand {
         if (args.size == 2) {
 
             //check perms
-            if (s is Player && s.hasPermission("essentialsk.commands.gamemode.other")) {
+            if (s is Player && !s.hasPermission("essentialsk.commands.gamemode.other")) {
                 s.sendMessage(GeneralLang.getInstance().generalNotPerm)
                 return false
             }
@@ -74,7 +74,7 @@ class CommandGamemode : ICommand {
                 return false
             }
 
-            PlayerData(p.name.lowercase()).setGamemode(playerGameMode, args[1].toInt())
+            PlayerData(p.name.lowercase()).setGamemode(playerGameMode, args[0].toInt())
             p.sendMessage(
                 GeneralLang.getInstance().gamemodeUseOtherSuccess.replace(
                     "%gamemode%",

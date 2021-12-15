@@ -27,7 +27,7 @@ class CommandVanish : ICommand {
         if (args.size == 1) {
 
             //check perms
-            if (s is Player && s.hasPermission("essentialsk.commands.vanish.other")) {
+            if (s is Player && !s.hasPermission("essentialsk.commands.vanish.other")) {
                 s.sendMessage(GeneralLang.getInstance().generalNotPerm)
                 return false
             }

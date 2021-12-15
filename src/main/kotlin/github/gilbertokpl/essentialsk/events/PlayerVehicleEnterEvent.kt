@@ -1,5 +1,6 @@
 package github.gilbertokpl.essentialsk.events
 
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -22,7 +23,9 @@ class PlayerVehicleEnterEvent : Listener {
 
     private fun blockEnterInVehicles(e: VehicleEnterEvent) {
         if (e.entered is Player &&
-            !e.entered.hasPermission("essentialsk.resources.bypass.vehicles")) {
+            !e.entered.hasPermission("essentialsk.bypass.vehicles")
+        ) {
+            e.entered.sendMessage(GeneralLang.getInstance().generalNotPermAction)
             e.isCancelled = true
         }
     }

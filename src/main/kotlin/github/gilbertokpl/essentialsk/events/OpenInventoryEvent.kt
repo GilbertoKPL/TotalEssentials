@@ -4,29 +4,29 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerInteractEntityEvent
+import org.bukkit.event.inventory.InventoryOpenEvent
 
-class PlayerInteractEntityEvent : Listener {
+class OpenInventoryEvent : Listener {
     @EventHandler
-    fun event(e: PlayerInteractEntityEvent) {
-        if (MainConfig.getInstance().antibugsBlockNametag) {
+    fun event(e: InventoryOpenEvent) {
+        if (MainConfig.getInstance().containersBlockOpenEnable) {
             try {
-                blockNameTag(e)
+                blockOpenInventory(e)
             } catch (e: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
 
-    private fun blockNameTag(e: PlayerInteractEntityEvent) {
-        if (e.player.itemInHand.type == Material.NAME_TAG &&
-            !e.player.hasPermission("essentialsk.bypass.nametag")
+    //block open
+    private fun blockOpenInventory(e: InventoryOpenEvent) {
+        if (!e.player.hasPermission("essentialsk.bypass.opencontainer") &&
+            MainConfig.getInstance().containersBlockOpen.contains(e.inventory.type.name.lowercase())
         ) {
-            e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
             e.isCancelled = true
+            e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
         }
     }
 }

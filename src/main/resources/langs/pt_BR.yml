@@ -6,6 +6,7 @@
 general:
   only-player-command: '&cEsse comando é somente para player!'
   not-perm: '&cVocê não tem permissão para executar esse comando.'
+  not-perm-action: '&cVocê não tem permissão para fazer isso.'
   player-not-online: '&cEsse player não está online.'
   player-not-exist: '&cEsse player não existe.'
   special-caracteres-disabled: '&cCaracteres proibidos'
@@ -88,7 +89,7 @@ homes:
   name-length: '&cTamanho maximo do nome da home é de 16 caracteres.'
   name-already-exist: '&cEssa home já existe.'
   name-dont-exist: '&cEssa home não existe.'
-  time-to-teleport: '&eEm %time% segundos você será teleportado para %home%.'
+  send-time-to-teleport: '&eEm %time% segundos você será teleportado para %home%.'
   home-removed: '&eVocê acaba de apagar sua home %home%.'
   home-other-removed: '&eVocê acaba de apagar uma home %home% do %player%.'
   home-created: '&eVocê acaba de criar sua home %home%.'
@@ -106,7 +107,7 @@ warps:
   name-dont-exist: '&cEssa warp não existe.'
   warp-created: '&eVocê acaba de criar uma warp chamada %warp%.'
   warp-removed: '&eVocê acaba de deleter uma warp chamada %warp%.'
-  time-to-teleport: '&eEm %time% segundos você será teleportado para warp %warp%.'
+  send-time-to-teleport: '&eEm %time% segundos você será teleportado para warp %warp%.'
   teleported: '&eVocê foi teleportado com sucesso para warp %warp%.'
   warp-list: '&eLista de warps -> %list%'
 tp:
@@ -162,3 +163,11 @@ light:
 back:
   send-not-to-back: '&cVocê não tem nenhuma localização salva para voltar.'
   send-success: '&eVocê voltou a sua ultima localização.'
+spawn:
+  send-message: '&eVocê teleportou com sucesso para o spawn.'
+  send-other-message: '&eAlguém teleportou você para o spawn.'
+  send-success-other-message: '&eVocê teleportou com sucesso o(a) %player% para o spawn.'
+  send-not-set: '&cO Spawn ainda não está setado, utilize /setspawn para setar.'
+  send-set-message: '&eSpawn setado com sucesso.'
+  send-time-to-teleport: '&eEm %time% segundos você será teleportado para o spawn.'
+  send-in-teleport: '&cVocê já está esperando um teleporte.'

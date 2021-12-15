@@ -1,5 +1,6 @@
 package github.gilbertokpl.essentialsk.events
 
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -20,8 +21,8 @@ class PlayerBedEnterEvent : Listener {
     }
 
     private fun blockEnterInBed(e: PlayerBedEnterEvent) {
-        if (
-            !e.player.hasPermission("essentialsk.resources.bypass.bed")) {
+        if (!e.player.hasPermission("essentialsk.bypass.bed")) {
+            e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
             e.isCancelled = true
         }
     }

@@ -33,6 +33,8 @@
 | /heal and /h                       | Allow player to set max health.                                                                 | essentialsk.commands.heal        |
 | /light and /luz                    | Switch light.                                                                                   | essentialsk.commands.light       |
 | /back                              | Back to old location.                                                                           | essentialsk.commands.back        |
+| /spawn                             | Go to spawn lo location.                                                                        | essentialsk.commands.spawn       |
+| /setspawn                          | Set Location of spawn.                                                                          | essentialsk.commands.setspawn    |
 
 ## Permission Color
 
@@ -59,25 +61,32 @@ To use in chat, commands, signs etc.
 
 ## Other permissions
 
-| Permission                                     | Function                                          |
-|------------------------------------------------|---------------------------------------------------|
-| essentialsk.commands.sethome.(number of homes) | Set limit of homes to player                      |
-| essentialsk.commands.kit.(kit name)            | Allow the player to pick up the given kit         |
-| essentialsk.commands.warp.(warp name)          | Allow the player go to determined warp            |
-| essentialsk.commands.nick.other                | Allow the player rename other players             |
-| essentialsk.commands.ec.other                  | Allow the player open others enderChest           |
-| essentialsk.commands.gamemode.other            | Allow the player switch gamemode for other player |
-| essentialsk.commands.heal.other                | Allow the player use heal for other players       |
-| essentialsk.commands.feed.other                | Allow the player use feed for other players       |
-| essentialsk.commands.vanish.other              | Allow the player use vanish to other player       |
-| essentialsk.commands.light.other               | Allow the player use light to other player        |
-| essentialsk.commands.home.other                | Allow the player go to other players homes        |
-| essentialsk.commands.delhome.other             | Allow the player delhome for other players        |
-| essentialsk.commands.sethome.other             | Allow the player sethome for other players        |
-| essentialsk.bypass.teleport                    | Bypass time to teleport                           |
-| essentialsk.bypass.homelimit                   | Bypass home limit                                 |
-| essentialsk.bypass.kitcatch                    | Bypass kit time limit                             |
-| essentialsk.bypass.vanish                      | Bypass the vanish                                 |
+| Permission                                     | Function                                            |
+|------------------------------------------------|-----------------------------------------------------|
+| essentialsk.commands.sethome.(number of homes) | Set limit of homes to player                        |
+| essentialsk.commands.kit.(kit name)            | Allow the player to pick up the given kit           |
+| essentialsk.commands.warp.(warp name)          | Allow the player go to determined warp              |
+| essentialsk.commands.nick.other                | Allow the player rename other players               |
+| essentialsk.commands.ec.other                  | Allow the player open others enderChest             |
+| essentialsk.commands.gamemode.other            | Allow the player switch gamemode for other player   |
+| essentialsk.commands.heal.other                | Allow the player use heal for other players         |
+| essentialsk.commands.feed.other                | Allow the player use feed for other players         |
+| essentialsk.commands.vanish.other              | Allow the player use vanish to other player         |
+| essentialsk.commands.light.other               | Allow the player use light to other player          |
+| essentialsk.commands.home.other                | Allow the player go to other players homes          |
+| essentialsk.commands.delhome.other             | Allow the player delhome for other players          |
+| essentialsk.commands.sethome.other             | Allow the player sethome for other players          |
+| essentialsk.commands.spawn.other               | Allow the player telepot to spawn for other players |
+| essentialsk.bypass.teleport                    | Bypass time to teleport                             |
+| essentialsk.bypass.homelimit                   | Bypass home limit                                   |
+| essentialsk.bypass.kitcatch                    | Bypass kit time limit                               |
+| essentialsk.bypass.vanish                      | Bypass the vanish                                   |
+| essentialsk.bypass.bed                         | Bypass the block bed                                |
+| essentialsk.bypass.vehicles                    | Bypass the block vehicles                           |
+| essentialsk.bypass.nametag                     | Bypass the block nametag                            |
+| essentialsk.bypass.netherceiling               | Bypass the block nether ceiling                     |
+| essentialsk.bypass.shiftcontainer              | Bypass the block shift in container                 |
+| essentialsk.bypass.opencontainer               | Bypass the block open container                     |
 
 ## Resources ( Internal )
 

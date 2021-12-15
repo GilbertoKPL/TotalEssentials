@@ -8,6 +8,8 @@ class GeneralLang {
 
     var generalNotPerm = ""
 
+    var generalNotPermAction = ""
+
     var generalPlayerNotOnline = ""
 
     var generalCommandsUsage = ""
@@ -132,7 +134,7 @@ class GeneralLang {
 
     var homesNameDontExist = ""
 
-    var homesTimeToTeleport = ""
+    var homesSendTimeToTeleport = ""
 
     var homesHomeRemoved = ""
 
@@ -162,7 +164,7 @@ class GeneralLang {
 
     var warpsNameDontExist = ""
 
-    var warpsTimeToTeleport = ""
+    var warpsSendTimeToTeleport = ""
 
     var warpsTeleported = ""
 
@@ -259,6 +261,20 @@ class GeneralLang {
     var backSendNotToBack = ""
 
     var backSendSuccess = ""
+
+    var spawnSendMessage = ""
+
+    var spawnSendOtherMessage = ""
+
+    var spawnSendSucessOtherMessage = ""
+
+    var spawnSendNotSet = ""
+
+    var spawnSendSetMessage = ""
+
+    var spawnSendTimeToTeleport = ""
+
+    var spawnSendInTeleport = ""
 
     companion object : IInstance<GeneralLang> {
         private val instance = createInstance()

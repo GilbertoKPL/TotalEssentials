@@ -27,7 +27,10 @@ class PlayerLeaveEvent : Listener {
     }
 
     private fun setBackLocation(e: PlayerQuitEvent) {
-        if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.getInstance().backDisabledWorlds.contains(e.player.world.name.lowercase())) return
+        if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.getInstance().backDisabledWorlds.contains(
+                e.player.world.name.lowercase()
+            )
+        ) return
         Dao.getInstance().backLocation[e.player] = e.player.location
     }
 }

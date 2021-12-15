@@ -237,5 +237,11 @@ bukkit {
         register("back") {
             description = "This is a back command!"
         }
+        register("spawn") {
+            description = "This is a spawn command!"
+        }
+        register("setspawn") {
+            description = "This is a setspawn command!"
+        }
     }
 }

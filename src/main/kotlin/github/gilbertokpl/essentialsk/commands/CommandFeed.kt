@@ -23,7 +23,7 @@ class CommandFeed : ICommand {
         if (args.size == 1) {
 
             //check perms
-            if (s is Player && s.hasPermission("essentialsk.commands.feed.other")) {
+            if (s is Player && !s.hasPermission("essentialsk.commands.feed.other")) {
                 s.sendMessage(GeneralLang.getInstance().generalNotPerm)
                 return false
             }
