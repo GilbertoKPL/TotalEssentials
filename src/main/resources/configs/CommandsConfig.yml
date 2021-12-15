@@ -27,7 +27,7 @@ homes:
   default-limit-homes: 3
   # Time in seconds to teleport to determined location, has a permission to bypass.
   time-to-teleport: 5
-  # List of blocked worlds to use sethome.
+  # List of blocked worlds to use sethome, use world name example: world.
   block-worlds:
     - essentialsk
 warps:
@@ -74,6 +74,6 @@ light:
 back:
   # Enabled.
   activated: true
-  # Disabled Worlds
+  # Disabled Worlds, use world name example: world.
   disabled-worlds:
     - essentialk

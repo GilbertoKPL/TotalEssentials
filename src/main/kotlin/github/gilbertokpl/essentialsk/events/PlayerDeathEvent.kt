@@ -11,10 +11,12 @@ import org.bukkit.event.entity.PlayerDeathEvent
 class PlayerDeathEvent : Listener {
     @EventHandler
     fun event(e: PlayerDeathEvent) {
-        try {
-            setBackLocation(e)
-        } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+        if (MainConfig.getInstance().backActivated) {
+            try {
+                setBackLocation(e)
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
         }
     }
 

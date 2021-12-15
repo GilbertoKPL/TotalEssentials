@@ -17,10 +17,12 @@ class PlayerLeaveEvent : Listener {
         } catch (e: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
         }
-        try {
-            setBackLocation(e)
-        } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+        if (MainConfig.getInstance().backActivated) {
+            try {
+                setBackLocation(e)
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
         }
     }
 

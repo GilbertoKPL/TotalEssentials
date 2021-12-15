@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGui
@@ -17,15 +18,17 @@ import org.bukkit.event.inventory.InventoryClickEvent
 class ClickInventoryEvent : Listener {
     @EventHandler
     fun event(e: InventoryClickEvent) {
-        try {
-            if (editKitInventoryClickEvent(e)) return
-        } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
-        }
-        try {
-            if (kitGuiEvent(e)) return
-        } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+        if (MainConfig.getInstance().kitsActivated) {
+            try {
+                if (editKitInventoryClickEvent(e)) return
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
+            try {
+                if (kitGuiEvent(e)) return
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
         }
     }
 

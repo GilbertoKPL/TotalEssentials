@@ -53,6 +53,6 @@ class CommandHeal : ICommand {
 
         s.health = 20.0
         s.sendMessage(GeneralLang.getInstance().healSendMessage)
-        return true
+        return false
     }
 }

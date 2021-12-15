@@ -14,10 +14,12 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 class PlayerAsyncChatEvent : Listener {
     @EventHandler
     fun event(e: AsyncPlayerChatEvent) {
-        try {
-            if (editKitChatEvent(e)) return
-        } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+        if (MainConfig.getInstance().kitsActivated) {
+            try {
+                if (editKitChatEvent(e)) return
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
         }
     }
 

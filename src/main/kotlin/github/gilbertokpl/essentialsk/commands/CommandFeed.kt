@@ -34,12 +34,12 @@ class CommandFeed : ICommand {
                 return false
             }
 
-            if (p.foodLevel >= 15 && MainConfig.getInstance().feedNeedEatBelow) {
+            if (p.foodLevel >= 20 && MainConfig.getInstance().feedNeedEatBelow) {
                 s.sendMessage(GeneralLang.getInstance().feedSendOtherFullMessage)
                 return false
             }
 
-            p.foodLevel = 15
+            p.foodLevel = 20
             p.sendMessage(GeneralLang.getInstance().feedSendOtherMessage)
             s.sendMessage(GeneralLang.getInstance().feedSendSuccessOtherMessage.replace("%player%", p.name))
 
@@ -50,8 +50,8 @@ class CommandFeed : ICommand {
             s.sendMessage(GeneralLang.getInstance().feedSendFullMessage)
             return false
         }
-        s.foodLevel = 15
+        s.foodLevel = 20
         s.sendMessage(GeneralLang.getInstance().feedSendMessage)
-        return true
+        return false
     }
 }

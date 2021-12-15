@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -12,10 +13,12 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 class CloseInventoryEvent : Listener {
     @EventHandler
     fun event(e: InventoryCloseEvent) {
-        try {
-            if (editKitInventoryCloseEvent(e)) return
-        } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+        if (MainConfig.getInstance().kitsActivated) {
+            try {
+                if (editKitInventoryCloseEvent(e)) return
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
         }
     }
 

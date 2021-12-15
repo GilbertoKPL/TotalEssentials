@@ -21,13 +21,15 @@ class CommandBack : ICommand {
         }
 
         val loc = Dao.getInstance().backLocation[s]!!
-        Dao.getInstance().backLocation.remove(s)
 
         if (MainConfig.getInstance().backDisabledWorlds.contains(loc.world!!.name.lowercase())) {
             s.sendMessage(GeneralLang.getInstance().backSendNotToBack)
+            Dao.getInstance().backLocation.remove(s)
             return false
         }
+
         (s as Player).teleport(loc)
+        Dao.getInstance().backLocation.remove(s)
         s.sendMessage(GeneralLang.getInstance().backSendSuccess)
         return false
     }

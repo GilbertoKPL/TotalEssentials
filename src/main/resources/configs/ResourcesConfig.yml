@@ -1,0 +1,24 @@
+# This file is the main configuration of the resource's will influence its operation...
+# Creator: Gilberto Damim;
+# Github: https://github.com/GilbertoKPL/EssentialsK;
+# Any questions, please contact Gilberto_KPL#5620 or even at GitHub;
+# This project is under development please be patient with the final project;
+
+# In this location, various anti-bugs system, can disable or add option for all.
+antibugs:
+  # In this feature the player is blocked from climbing on the bed.
+  # Permission Bypass -> essentialsk.resources.bypass.bed
+  block-bed: true
+  # In this feature the player is blocked from climbing on the vehicles.
+  # Permission Bypass -> essentialsk.resources.bypass.vehicles
+  block-climbing-on-vehicles: true
+  # In this feature, the player is prevented from using nametag on mobs.
+  # Permission Bypass -> essentialsk.resources.bypass.nametag
+  block-nametag: false
+  # In this feature, blocks player from going to nether ceiling.
+  # Permission Bypass -> essentialsk.resources.bypass.netherceiling
+  player-go-to-nether-ceiling: true
+  # In this feature, mobs are prohibited from picking up items from the ground.
+  block-mob-catch: false
+  # In this feature, blocks the player from going over the edge with Ender Pearls.
+  block-going-edge-enderpearl: true

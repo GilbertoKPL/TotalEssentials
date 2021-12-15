@@ -89,7 +89,11 @@ class PluginUtil {
                 PlayerLeaveEvent(),
                 PlayerPreCommandEvent(),
                 PlayerDeathEvent(),
-                PlayerTeleportEvent()
+                PlayerTeleportEvent(),
+                PlayerBedEnterEvent(),
+                PlayerVehicleEnterEvent(),
+                PlayerInteractEntityEvent(),
+                CreatureSpawnEvent()
             )
         )
     }

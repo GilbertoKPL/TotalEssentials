@@ -23,10 +23,10 @@ class CommandEditKit : ICommand {
             return false
         }
 
-        val dataInstance = KitData(args[0])
+        val dataInstance = KitData(args[0].lowercase())
 
         //check if not exist
-        if (dataInstance.checkCache()) {
+        if (!dataInstance.checkCache()) {
             s.sendMessage(GeneralLang.getInstance().kitsNotExist)
             return false
         }

@@ -72,6 +72,18 @@ class MainConfig {
 
     var backDisabledWorlds: List<String> = emptyList()
 
+    var antibugsBlockBed : Boolean = true
+
+    var antibugsBlockClimbingOnVehicles : Boolean = true
+
+    var antibugsBlockNametag : Boolean = false
+
+    var antibugsPlayerGoToNetherCeiling : Boolean = true
+
+    var antibugsBlockMobCatch : Boolean = false
+
+    var antibugsBlockGoingEdgeEnderearl : Boolean = true
+
     companion object : IInstance<MainConfig> {
         private val instance = createInstance()
         override fun createInstance(): MainConfig = MainConfig()

@@ -1,5 +1,6 @@
 package github.gilbertokpl.essentialsk.events
 
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.ReflectUtil
@@ -16,10 +17,12 @@ class PlayerJoinEvent : Listener {
         } catch (e: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
         }
-        try {
-            vanishLoginEvent(e)
-        } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+        if (MainConfig.getInstance().vanishActivated) {
+            try {
+                vanishLoginEvent(e)
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
         }
     }
 

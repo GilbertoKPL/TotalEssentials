@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.EssentialsK
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -12,11 +13,13 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 class PlayerPreCommandEvent : Listener {
     @EventHandler
     fun event(e: PlayerCommandPreprocessEvent) {
-        try {
-            val split = e.message.split(" ")
-            vanishPreCommandEvent(e, split)
-        } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+        val split = e.message.split(" ")
+        if (MainConfig.getInstance().vanishActivated) {
+            try {
+                vanishPreCommandEvent(e, split)
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
         }
     }
 
