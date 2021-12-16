@@ -43,7 +43,7 @@ class ConfigUtil {
     }
 
     internal fun getStringList(source: YamlFile, path: String, color: Boolean = true): List<String> {
-        if (source.name == "commandsConfig" || source.name == "ResourcesConfig") {
+        if (source.filePath.contains("commandsConfig.yml") || source.filePath.contains("ResourcesConfig.yml")) {
             return source.getStringList(path).stream().map { to -> to.lowercase() }.collect(Collectors.toList())
         }
         return if (color) {

@@ -61,7 +61,6 @@ class CommandTpa : ICommand {
     }
 
 
-
     private fun coolDown(pSender: Player, pReceived: Player, time: Int) {
         Dao.getInstance().tpaHash[pSender] = pReceived
         Dao.getInstance().tpaHash[pReceived] = pSender

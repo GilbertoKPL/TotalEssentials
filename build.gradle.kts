@@ -88,6 +88,8 @@ dependencies {
 
     slim("com.google.code.gson:gson:2.8.9")
 
+    slim("com.googlecode.json-simple:json-simple:1.1.1")
+
     slim("com.h2database:h2:1.4.199")
 
     slim("com.zaxxer:HikariCP:4.0.3") {
@@ -99,6 +101,7 @@ dependencies {
     slim("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2")
 
     slim("org.apache.commons:commons-lang3:3.12.0")
+
 }
 
 project.gradle.startParameter.excludedTaskNames.also {
@@ -242,6 +245,9 @@ bukkit {
         }
         register("setspawn") {
             description = "This is a setspawn command!"
+        }
+        register("fly") {
+            description = "This is a fly command!"
         }
     }
 }

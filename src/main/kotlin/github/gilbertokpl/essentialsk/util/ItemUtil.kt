@@ -43,7 +43,7 @@ class ItemUtil {
             p.sendMessage(
                 GeneralLang.getInstance().kitsCatchMessage.replace(
                     "%time%",
-                    PluginUtil.getInstance()
+                    TimeUtil.getInstance()
                         .convertMillisToString(remainingTime, MainConfig.getInstance().kitsUseShortTime)
                 )
             )

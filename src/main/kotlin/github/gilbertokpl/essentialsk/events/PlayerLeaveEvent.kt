@@ -12,11 +12,6 @@ import org.bukkit.event.player.PlayerQuitEvent
 class PlayerLeaveEvent : Listener {
     @EventHandler
     fun event(e: PlayerQuitEvent) {
-        try {
-            PlayerData(e.player.name).unloadCache()
-        } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
-        }
         if (MainConfig.getInstance().backActivated) {
             try {
                 setBackLocation(e)

@@ -139,8 +139,8 @@ vanish:
   send-disable: '&eSeu vanish foi desativado com sucesso.'
   send-other-active: '&eAlguém ativou seu vanish.'
   send-other-disable: '&eAlguém desativou seu vanish.'
-  send-activated-other: '&eO Vanish do(a) foi ativado.'
-  send-disabled-other: '&eO Vanish do(a) foi desativado.'
+  send-activated-other: '&eO Vanish do(a) %player% foi ativado.'
+  send-disabled-other: '&eO Vanish do(a) %player% foi desativado.'
 feed:
   send-message: '&eVocê encheu com sucesso sua barra de comida.'
   send-full-message: '&eVocê já está cheio seu guloso.'
@@ -171,3 +171,10 @@ spawn:
   send-set-message: '&eSpawn setado com sucesso.'
   send-time-to-teleport: '&eEm %time% segundos você será teleportado para o spawn.'
   send-in-teleport: '&cVocê já está esperando um teleporte.'
+fly:
+  send-active: '&eSeu fly foi ativado com sucesso.'
+  send-disable: '&eSeu fly foi desativado com sucesso.'
+  send-other-active: '&eAlguém ativou seu fly.'
+  send-other-disable: '&eAlguém desativou seu fly.'
+  send-activated-other: '&eO fly do(a) %player% foi ativado.'
+  send-disabled-other: '&eO fly do(a) %player% foi desativado.'

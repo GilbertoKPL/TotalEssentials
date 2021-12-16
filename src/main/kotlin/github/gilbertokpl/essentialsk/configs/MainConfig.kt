@@ -6,6 +6,8 @@ class MainConfig {
 
     var generalSelectedLang: String = "pt_BR"
 
+    var generalServerMame: String = ""
+
     var databaseType: String = ""
 
     var databaseSqlIp: String = ""
@@ -72,6 +74,10 @@ class MainConfig {
 
     var backDisabledWorlds: List<String> = emptyList()
 
+    var flyActivated: Boolean = true
+
+    var flyDisabledWorlds: List<String> = emptyList()
+
     var spawnActivated: Boolean = true
 
     var spawnSendToSpawnOnLogin: Boolean = true
@@ -84,7 +90,11 @@ class MainConfig {
 
     var antibugsBlockNametag: Boolean = false
 
-    var antibugsPlayerGoToNetherCeiling: Boolean = true
+    var antibugsBlockPlayerGoToNetherCeiling: Boolean = true
+
+    var antibugsBlockPlayerTeleportPortal: Boolean = true
+
+    var antibugsBlockCreatePortal: Boolean = true
 
     var antibugsBlockMobCatch: Boolean = false
 
@@ -97,6 +107,22 @@ class MainConfig {
     var containersBlockOpenEnable: Boolean = true
 
     var containersBlockOpen: List<String> = emptyList()
+
+    var addonsInfinityAnvil : Boolean = true
+
+    var addonsBlockPlayerGoToVoid : Boolean = true
+
+    var addonsBlockExplodeItems : Boolean = true
+
+    var addonsBlockPlayerBreakPlantationFall : Boolean = true
+
+    var addonsBlockPropagationFire : Boolean = true
+
+    var addonsColorInAnvil : Boolean = true
+
+    var addonsColorInSign : Boolean = true
+
+    var addonsColorInChat : Boolean = true
 
     companion object : IInstance<MainConfig> {
         private val instance = createInstance()

@@ -276,6 +276,18 @@ class GeneralLang {
 
     var spawnSendInTeleport = ""
 
+    var flySendActive = ""
+
+    var flySendDisable = ""
+
+    var flySendOtherActive = ""
+
+    var flySendOtherDisable = ""
+
+    var flySendActivatedOther = ""
+
+    var flySendDisabledOther = ""
+
     companion object : IInstance<GeneralLang> {
         private val instance = createInstance()
         override fun createInstance(): GeneralLang = GeneralLang()

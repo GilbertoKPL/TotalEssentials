@@ -22,6 +22,7 @@
 | /sethome and /setarhome            | Set home of player with name.                                                                   | essentialsk.commands.sethome     |
 | /delhome and /deletarhome          | Del home of player.                                                                             | essentialsk.commands.delhome     |
 | /home and /h                       | Go to home of player.                                                                           | essentialsk.commands.home        |
+| /warp                              | go to warp location.                                                                            | essentialsk.commands.warp        |
 | /setwarp and /setarwarp            | Set determined warp in location.                                                                | essentialsk.commands.setwarp     |
 | /delwarp and /deletarwarp          | Delete warp with determined name.                                                               | essentialsk.commands.delwarp     |
 | /tp                                | Tp to other player or location.                                                                 | essentialsk.commands.tp          |

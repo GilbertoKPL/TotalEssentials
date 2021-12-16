@@ -3,6 +3,7 @@ package github.gilbertokpl.essentialsk.events
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
+import github.gilbertokpl.essentialsk.data.SpawnData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Material
@@ -30,7 +31,7 @@ class PlayerTeleportEvent : Listener {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
         }
-        if (MainConfig.getInstance().antibugsPlayerGoToNetherCeiling) {
+        if (MainConfig.getInstance().antibugsBlockPlayerGoToNetherCeiling) {
             try {
                 blockPassNetherCeiling(e)
             } catch (e: Exception) {
@@ -69,7 +70,12 @@ class PlayerTeleportEvent : Listener {
             !e.player.hasPermission("essentialsk.bypass.netherceiling") &&
             e.to != null && e.to!!.world!!.environment === World.Environment.NETHER && e.to!!.y > 124.0
         ) {
-            //teleport to spawn
+            val loc = SpawnData("spawn")
+            if (loc.checkCache()) {
+                e.player.sendMessage(GeneralLang.getInstance().spawnSendNotSet)
+                return
+            }
+            e.player.teleport(loc.getLocation())
             e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
         }
     }

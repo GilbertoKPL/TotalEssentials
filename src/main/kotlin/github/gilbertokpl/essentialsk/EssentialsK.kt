@@ -51,7 +51,7 @@ class EssentialsK : JavaPlugin() {
 
         PluginUtil.getInstance().startCommands()
 
-        PluginUtil.getInstance().startMaterials()
+        MaterialUtil.getInstance().startMaterials()
 
         PluginUtil.getInstance().startInventories()
 
@@ -63,8 +63,6 @@ class EssentialsK : JavaPlugin() {
     override fun onDisable() {
 
         TaskUtil.getInstance().disable()
-
-        SqlUtil.getInstance().sql
 
         super.onDisable()
     }

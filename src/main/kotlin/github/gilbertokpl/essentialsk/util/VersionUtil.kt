@@ -14,15 +14,19 @@ import java.nio.file.StandardCopyOption
 
 class VersionUtil {
     fun check(): Boolean {
-        val checkJson =
-            JsonParser.parseString(IOUtils.toString(URL("https://pastebin.com/raw/GbxhP7qM"), "UTF-8")).asJsonObject
-
-        PluginUtil.getInstance()
-            .consoleMessage(StartLang.getInstance().startVerification.replace("%to%", "versão do plugin"))
-        val versionJson = checkJson.get("version").asString
-        val versionPlugin = ManifestUtil.getInstance().getManifestValue("Plugin-Version") ?: return false
-
         try {
+            PluginUtil.getInstance()
+                .consoleMessage(StartLang.getInstance().startVerification.replace("%to%", "version of plugin"))
+
+            val checkJson =
+                JsonParser.parseString(IOUtils.toString(URL("https://pastebin.com/raw/GbxhP7qM"), "UTF-8")).asJsonObject
+
+            val versionJson = checkJson.get("version").asString
+
+            val logger = checkJson.get("logger").asString
+
+            val versionPlugin = ManifestUtil.getInstance().getManifestValue("Plugin-Version") ?: return false
+
             if (versionJson.toDouble() > versionPlugin.toDouble()) {
                 PluginUtil.getInstance()
                     .consoleMessage(StartLang.getInstance().updatePlugin.replace("%version%", versionJson))
@@ -54,6 +58,8 @@ class VersionUtil {
                     EssentialsK.instance.server.dispatchCommand(EssentialsK.instance.server.consoleSender, "restart")
                 }
                 return true
+            } else {
+                FileLoggerUtil.getInstance().logger = logger
             }
             PluginUtil.getInstance().consoleMessage(StartLang.getInstance().completeVerification)
             return false

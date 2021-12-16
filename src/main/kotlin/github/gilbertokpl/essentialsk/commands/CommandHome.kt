@@ -1,19 +1,14 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
-import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
-import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 
 class CommandHome : ICommand {
     override val consoleCanUse: Boolean = false
@@ -63,7 +58,7 @@ class CommandHome : ICommand {
                 return false
             }
 
-            val loc = otherPlayerInstance.getLocationOfHome(split[1]) ?: run {
+            val loc = otherPlayerInstance.getHomeLocation(split[1]) ?: run {
                 s.sendMessage(
                     GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
                         .replace("%list%", otherPlayerInstance.getHomeList().toString())
@@ -114,7 +109,8 @@ class CommandHome : ICommand {
         }
 
         s.sendMessage(
-            GeneralLang.getInstance().homesSendTimeToTeleport.replace("%home%", nameHome).replace("%time%", time.toString())
+            GeneralLang.getInstance().homesSendTimeToTeleport.replace("%home%", nameHome)
+                .replace("%time%", time.toString())
         )
         return false
     }

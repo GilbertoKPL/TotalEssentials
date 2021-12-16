@@ -7,7 +7,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandSetSpawn  : ICommand {
+class CommandSetSpawn : ICommand {
     override val consoleCanUse: Boolean = false
     override val permission: String = "essentialsk.commands.setspawn"
     override val minimumSize = 0

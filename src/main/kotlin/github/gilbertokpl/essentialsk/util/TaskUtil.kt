@@ -21,6 +21,7 @@ class TaskUtil {
 
     fun disable() {
         poolExecutor.shutdown()
+        poolExecutorTeleport.shutdown()
     }
 
     fun getTeleportExecutor(): ExecutorService {

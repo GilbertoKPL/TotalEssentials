@@ -8,14 +8,14 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandVanish : ICommand {
+class CommandFly : ICommand {
     override val consoleCanUse: Boolean = true
-    override val permission: String = "essentialsk.commands.vanish"
+    override val permission: String = "essentialsk.commands.fly"
     override val minimumSize = 0
     override val maximumSize = 1
     override val commandUsage = listOf(
-        "P_/vanish",
-        "essentialsk.commands.vanish.other_/vanish <PlayerName>"
+        "P_/fly",
+        "essentialsk.commands.fly.other_/fly <PlayerName>"
     )
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -27,7 +27,7 @@ class CommandVanish : ICommand {
         if (args.size == 1) {
 
             //check perms
-            if (s is Player && !s.hasPermission("essentialsk.commands.vanish.other")) {
+            if (s is Player && !s.hasPermission("essentialsk.commands.fly.other")) {
                 s.sendMessage(GeneralLang.getInstance().generalNotPerm)
                 return false
             }
@@ -38,21 +38,21 @@ class CommandVanish : ICommand {
                 return false
             }
 
-            if (PlayerData(p.name.lowercase()).switchVanish()) {
-                p.sendMessage(GeneralLang.getInstance().vanishSendOtherActive)
-                s.sendMessage(GeneralLang.getInstance().vanishSendActivatedOther.replace("%player", p.name))
+            if (PlayerData(p.name.lowercase()).switchFly()) {
+                p.sendMessage(GeneralLang.getInstance().flySendOtherActive)
+                s.sendMessage(GeneralLang.getInstance().flySendActivatedOther.replace("%player", p.name))
             } else {
-                p.sendMessage(GeneralLang.getInstance().vanishSendOtherDisable)
-                s.sendMessage(GeneralLang.getInstance().vanishSendDisabledOther.replace("%player", p.name))
+                p.sendMessage(GeneralLang.getInstance().flySendOtherDisable)
+                s.sendMessage(GeneralLang.getInstance().flySendDisabledOther.replace("%player", p.name))
             }
 
             return false
         }
 
-        if (PlayerData(s.name.lowercase()).switchVanish()) {
-            s.sendMessage(GeneralLang.getInstance().vanishSendActive)
+        if (PlayerData(s.name.lowercase()).switchFly()) {
+            s.sendMessage(GeneralLang.getInstance().flySendActive)
         } else {
-            s.sendMessage(GeneralLang.getInstance().vanishSendDisable)
+            s.sendMessage(GeneralLang.getInstance().flySendDisable)
         }
         return false
     }

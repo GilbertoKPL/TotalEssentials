@@ -8,6 +8,7 @@ import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
+import github.gilbertokpl.essentialsk.util.TimeUtil
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -148,7 +149,7 @@ object KitGuiInventory {
                         array.add(
                             i.replace(
                                 "%time%",
-                                PluginUtil.getInstance()
+                                TimeUtil.getInstance()
                                     .convertMillisToString(remainingTime, MainConfig.getInstance().kitsUseShortTime)
                             )
                         )

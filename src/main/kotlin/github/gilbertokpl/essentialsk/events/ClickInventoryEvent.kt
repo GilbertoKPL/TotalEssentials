@@ -9,12 +9,14 @@ import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGuiItems
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory.kitGui
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.ItemUtil
+import github.gilbertokpl.essentialsk.util.PermissionUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryType
 
 class ClickInventoryEvent : Listener {
     @EventHandler
@@ -34,6 +36,13 @@ class ClickInventoryEvent : Listener {
         if (MainConfig.getInstance().containersBlockShiftEnable) {
             try {
                 blockShiftInInventory(e)
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
+        }
+        if (MainConfig.getInstance().addonsColorInAnvil) {
+            try {
+                anvilColor(e)
             } catch (e: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
@@ -145,6 +154,33 @@ class ClickInventoryEvent : Listener {
             e.whoClicked.sendMessage(GeneralLang.getInstance().generalNotPermAction)
             e.isCancelled = true
             return
+        }
+    }
+
+    //anvil color
+
+    private fun anvilColor(e: InventoryClickEvent) {
+        if (e.inventory.type == InventoryType.ANVIL && e.slotType == InventoryType.SlotType.RESULT) {
+            val item = e.currentItem ?: return
+            if (item.type == Material.AIR || !item.itemMeta!!.hasDisplayName()) {
+                return
+            }
+            val meta = item.itemMeta ?: return
+            val name = meta.displayName
+            val oldItem = e.inventory.getItem(0) ?: return
+            val oldMeta = oldItem.itemMeta ?: return
+            if (oldMeta.hasDisplayName()) {
+                val oldName = oldMeta.displayName.replace("§", "")
+                if (name == oldName) {
+                    meta.setDisplayName(oldMeta.displayName)
+                    item.itemMeta = meta
+                    e.currentItem = item
+                    return
+                }
+            }
+            meta.setDisplayName(PermissionUtil.getInstance().colorPermission(e.whoClicked as Player, name))
+            item.itemMeta = meta
+            e.currentItem = item
         }
     }
 }

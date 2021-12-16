@@ -5,7 +5,9 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
+import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
+import github.gilbertokpl.essentialsk.util.TimeUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -17,6 +19,13 @@ class PlayerAsyncChatEvent : Listener {
         if (MainConfig.getInstance().kitsActivated) {
             try {
                 if (editKitChatEvent(e)) return
+            } catch (e: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
+        }
+        if (MainConfig.getInstance().addonsColorInChat) {
+            try {
+                colorChat(e)
             } catch (e: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
@@ -34,13 +43,13 @@ class PlayerAsyncChatEvent : Listener {
             //time
             if (split[0] == "time") {
                 e.isCancelled = true
-                val time = PluginUtil.getInstance().convertStringToMillis(e.message)
+                val time = TimeUtil.getInstance().convertStringToMillis(e.message)
                 e.player.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
                 if (dataInstance.setTime(time)) {
                     e.player.sendMessage(
                         GeneralLang.getInstance().kitsEditKitTime.replace(
                             "%time%",
-                            PluginUtil.getInstance()
+                            TimeUtil.getInstance()
                                 .convertMillisToString(time, MainConfig.getInstance().kitsUseShortTime)
                         )
                     )
@@ -66,5 +75,9 @@ class PlayerAsyncChatEvent : Listener {
 
             return true
         }
+    }
+
+    private fun colorChat(e: AsyncPlayerChatEvent) {
+        e.message = PermissionUtil.getInstance().colorPermission(e.player, e.message)
     }
 }

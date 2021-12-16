@@ -58,28 +58,6 @@ class PluginUtil {
         println("${EColor.CYAN.color}[${EssentialsK.instance.name}]${EColor.RESET.color} $message")
     }
 
-    fun getPlayerUUID(p: Player): String {
-        return if (EssentialsK.instance.server.onlineMode) {
-            p.uniqueId.toString()
-        } else {
-            p.name.lowercase()
-        }
-    }
-
-    fun getPlayerUUID(p: OfflinePlayer): String {
-        return if (EssentialsK.instance.server.onlineMode) {
-            val jsonPlayer = JsonParser.parseString(
-                IOUtils.toString(
-                    URL("https://api.mojang.com/users/profiles/minecraft/${p.name!!.lowercase()}"),
-                    "UTF-8"
-                )
-            ).asJsonObject
-            jsonPlayer.get("id").asString
-        } else {
-            p.name!!.lowercase()
-        }
-    }
-
     fun startEvents() {
         startEventsHelper(
             listOf(
@@ -95,7 +73,17 @@ class PluginUtil {
                 PlayerVehicleEnterEvent(),
                 PlayerInteractEntityEvent(),
                 CreatureSpawnEvent(),
-                OpenInventoryEvent()
+                OpenInventoryEvent(),
+                PortalCreateEvent(),
+                PlayerPortalEvent(),
+                EntityDamageEvent(),
+                PlayerInteractEvent(),
+                EntityDamageByEntityEvent(),
+                EntityChangeBlockEvent(),
+                BlockBurnEvent(),
+                BlockIgniteEvent(),
+                SignChangeEvent(),
+                PlayerChangeWorldEvent()
             )
         )
     }
@@ -252,26 +240,18 @@ class PluginUtil {
             ),
             MainConfig.getInstance().spawnActivated
         )
-    }
-
-    fun colorPermission(p: Player, message: String): String {
-        if (!message.contains("&")) return message
-        var newMessage = message
-        fun colorHelper(color: String) {
-            if (p.hasPermission("essentialsk.color.$color")) {
-                newMessage = newMessage.replace(color, color.replace("&", "§"))
-            }
-        }
-        listOf("&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f").forEach {
-            colorHelper(it)
-        }
-        return newMessage
+        //fly
+        startCommandsHelper(
+            listOf(
+                CommandFly(),
+            ),
+            MainConfig.getInstance().flyActivated
+        )
     }
 
     fun checkSpecialCaracteres(s: String?): Boolean {
         return s?.matches(Regex("[^A-Za-z0-9 ]")) ?: false
     }
-
 
     private fun startCommandsHelper(commands: List<CommandExecutor>, boolean: Boolean) {
         if (!boolean) return
@@ -283,113 +263,6 @@ class PluginUtil {
                 ).lowercase()
             )?.setExecutor(to)
         }
-    }
-
-    fun getNumberPermission(player: Player, permission: String, default: Int): Int {
-        for (perm in player.effectivePermissions) {
-            val permString = perm.permission
-            if (permString.startsWith(permission)) {
-                val amount = permString.split(".").toTypedArray()
-                return try {
-                    amount.last().toInt()
-                } catch (e: Exception) {
-                    default
-                }
-            }
-        }
-        return default
-    }
-
-
-    fun convertStringToMillis(timeString: String): Long {
-        val messageSplit = timeString.split(" ")
-        var convert = 0L
-        for (i in messageSplit) {
-            val split = i.replace("(?<=[A-Z])(?=[A-Z])|(?<=[a-z])(?=[A-Z])|(?<=\\D)$".toRegex(), "1")
-                .split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)".toRegex())
-            val unit = try {
-                split[1]
-            } catch (e: Exception) {
-                null
-            }
-            convert += if (unit == null) {
-                try {
-                    TimeUnit.MINUTES.toMillis(split[0].toLong())
-                } catch (e: Exception) {
-                    0L
-                }
-            } else {
-                try {
-                    when (unit.lowercase()) {
-                        "s" -> TimeUnit.SECONDS.toMillis(split[0].toLong())
-                        "m" -> TimeUnit.MINUTES.toMillis(split[0].toLong())
-                        "h" -> TimeUnit.HOURS.toMillis(split[0].toLong())
-                        "d" -> TimeUnit.DAYS.toMillis(split[0].toLong())
-                        else -> TimeUnit.MINUTES.toMillis(split[0].toLong())
-                    }
-                } catch (e: Exception) {
-                    0L
-                }
-            }
-        }
-        return convert
-    }
-
-
-    fun convertMillisToString(time: Long, short: Boolean): String {
-        val toSend = ArrayList<String>()
-        fun helper(time: Long, sendShort: String, send: String) {
-            if (time > 0L) {
-                if (short) {
-                    toSend.add(sendShort)
-                } else {
-                    toSend.add(send)
-                }
-            }
-        }
-
-        var seconds = time / 1000
-        var minutes = seconds / 60
-        var hours = minutes / 60
-        val days = hours / 24
-        seconds %= 60
-        minutes %= 60
-        hours %= 24
-        val uniDays = if (days < 2) {
-            GeneralLang.getInstance().timeDay
-        } else GeneralLang.getInstance().timeDays
-        helper(days, "$days ${GeneralLang.getInstance().timeDayShort}", "$days $uniDays")
-        val uniHours = if (hours < 2) {
-            GeneralLang.getInstance().timeHour
-        } else GeneralLang.getInstance().timeHours
-        helper(hours, "$hours ${GeneralLang.getInstance().timeHourShort}", "${hours % 24} $uniHours")
-        val uniMinutes = if (minutes < 2) {
-            GeneralLang.getInstance().timeMinute
-        } else GeneralLang.getInstance().timeMinutes
-        helper(minutes, "$minutes ${GeneralLang.getInstance().timeMinuteShort}", "${minutes % 60} $uniMinutes")
-        val uniSeconds = if (seconds < 2) {
-            GeneralLang.getInstance().timeSecond
-        } else GeneralLang.getInstance().timeSeconds
-        helper(seconds, "$seconds ${GeneralLang.getInstance().timeSecondShort}", "${seconds % 60} $uniSeconds")
-        var toReturn = ""
-        var quaint = 0
-        for (values in toSend) {
-            quaint += 1
-            toReturn = if (quaint == values.length) {
-                if (toReturn == "") {
-                    "$values."
-                } else {
-                    "$toReturn, $values."
-                }
-            } else {
-                if (toReturn == "") {
-                    values
-                } else {
-                    "$toReturn, $values"
-                }
-            }
-        }
-        return toReturn
     }
 
     fun unloadPlugin(plugin: Plugin) {
@@ -457,25 +330,6 @@ class PluginUtil {
 
     fun startMetrics() {
         Metrics(EssentialsK.instance, 13441)
-    }
-
-    fun startMaterials() {
-        Dao.getInstance().material["glass"] =
-            materialHelper(listOf("STAINED_GLASS_PANE", "THIN_GLASS", "YELLOW_STAINED_GLASS"))
-        Dao.getInstance().material["clock"] = materialHelper(listOf("CLOCK", "WATCH"))
-        Dao.getInstance().material["feather"] = materialHelper(listOf("FEATHER"))
-    }
-
-    private fun materialHelper(material: List<String>): Material {
-        var mat = Material.AIR
-        for (i in material) {
-            val toPut = Material.getMaterial(i)
-            if (toPut != null) {
-                mat = toPut
-                break
-            }
-        }
-        return mat
     }
 
     fun disableLoggers() {

@@ -47,7 +47,7 @@ class CommandSetHome : ICommand {
                 return false
             }
 
-            otherPlayerInstance.createHome(split[1].lowercase(), (s as Player).location)
+            otherPlayerInstance.setHome(split[1].lowercase(), (s as Player).location)
 
             s.sendMessage(
                 GeneralLang.getInstance().homesHomeOtherCreated.replace("%player%", pName).replace("%home%", split[1])
@@ -79,11 +79,11 @@ class CommandSetHome : ICommand {
         }
 
         //check limit of homes
-        if (playerCache.homeCache.size >= playerCache.homeLimit && !s.hasPermission("essentialsk.bypass.homelimit")) {
+        if (playerCache.homeCache.size >= playerCache.homeLimitCache && !s.hasPermission("essentialsk.bypass.homelimit")) {
             s.sendMessage(
                 GeneralLang.getInstance().homesHomeLimitCreated.replace(
                     "%limit%",
-                    playerCache.homeLimit.toString()
+                    playerCache.homeLimitCache.toString()
                 )
             )
             return false
@@ -95,7 +95,7 @@ class CommandSetHome : ICommand {
             return false
         }
 
-        playerInstance.createHome(nameHome, s.location)
+        playerInstance.setHome(nameHome, s.location)
         s.sendMessage(GeneralLang.getInstance().homesHomeCreated.replace("%home%", nameHome))
 
         return false

@@ -10,13 +10,26 @@ import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.tables.SpawnDataSQL
 import github.gilbertokpl.essentialsk.tables.WarpsDataSQL
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 class SqlUtil {
 
     lateinit var sql: Database
+
+    fun <T> helperUpdater(field: String, col: Column<T>, value: T) {
+        TaskUtil.getInstance().asyncExecutor {
+            transaction(sql) {
+                PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq field }) {
+                    it[col] = value
+                }
+            }
+        }
+    }
 
     fun startSql() {
         PluginUtil.getInstance().consoleMessage(StartLang.getInstance().connectDatabase)
