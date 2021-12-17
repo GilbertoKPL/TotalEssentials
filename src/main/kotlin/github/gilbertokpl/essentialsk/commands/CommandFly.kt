@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import org.bukkit.command.Command
@@ -46,6 +47,11 @@ class CommandFly : ICommand {
                 s.sendMessage(GeneralLang.getInstance().flySendDisabledOther.replace("%player", p.name))
             }
 
+            return false
+        }
+
+        if (MainConfig.getInstance().flyDisabledWorlds.contains((s as Player).location.world!!.name.lowercase())) {
+            s.sendMessage(GeneralLang.getInstance().flySendDisabledWorld)
             return false
         }
 

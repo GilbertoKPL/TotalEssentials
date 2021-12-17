@@ -23,8 +23,11 @@ class PortalCreateEvent : Listener {
 
     private fun blockCreationPortal(e: PortalCreateEvent) {
         e.isCancelled = true
-        if (e.entity is Player) {
-            (e.entity as Player).sendMessage(GeneralLang.getInstance().generalNotPermAction)
+        try {
+            if (e.entity is Player) {
+                (e.entity as Player).sendMessage(GeneralLang.getInstance().generalNotPermAction)
+            }
         }
+        catch (ignored : NoSuchMethodError) {}
     }
 }

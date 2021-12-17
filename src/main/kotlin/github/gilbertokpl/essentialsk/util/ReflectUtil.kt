@@ -7,58 +7,50 @@ import org.bukkit.entity.Player
 import org.simpleyaml.configuration.file.YamlFile
 import java.io.File
 import java.lang.reflect.Type
-import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.javaType
-
 
 class ReflectUtil {
 
-    @OptIn(ExperimentalStdlibApi::class)
-    fun setValuesOfClass(cl: KClass<*>, clInstance: Any, configList: List<YamlFile>) {
-        for (it in cl.declaredMemberProperties) {
-            if (it !is KMutableProperty<*>) continue
-            val checkedValue = checkTypeField(it.returnType.javaType) ?: continue
+    private var getPlayersList : Boolean? = null
+
+    fun setValuesOfClass(cl: Class<*>, clInstance: Any, configList: List<YamlFile>) {
+        for (it in cl.declaredFields) {
+            val checkedValue = checkTypeField(it.genericType) ?: continue
 
             val nameFieldComplete = nameFieldHelper(it.name)
 
             for (yml in configList) {
                 val value = checkedValue.getValueConfig(yml, nameFieldComplete) ?: continue
-                it.setter.call(clInstance, value)
+                it.set(clInstance, value)
                 break
             }
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    fun setValuesFromClass(cl: KClass<*>, clInstance: Any, configList: List<YamlFile>, file: File) {
-        for (it in cl.declaredMemberProperties) {
-            if (it !is KMutableProperty<*>) continue
-            val checkedValue = checkTypeField(it.returnType.javaType) ?: continue
+    fun setValuesFromClass(cl: Class<*>, clInstance: Any, configList: List<YamlFile>) {
+        for (it in cl.declaredFields) {
+            val checkedValue = checkTypeField(it.genericType) ?: continue
 
             val nameFieldComplete = nameFieldHelper(it.name)
 
             for (yml in configList) {
                 val value = checkedValue.setValueConfig(yml, nameFieldComplete) ?: continue
-                value.set(nameFieldComplete, it.getter.call(clInstance))
-                value.save(file)
+                value.set(nameFieldComplete, it.get(clInstance))
+                value.save(File(yml.filePath))
                 break
             }
         }
     }
 
     fun getPlayers(): List<Player> {
-        @Suppress("UNCHECKED_CAST")
-        return try {
-            val onlinePlayersMethod =
-                Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers")
-            if (onlinePlayersMethod.returnType.equals(MutableCollection::class.java)) (onlinePlayersMethod.invoke(
-                Bukkit.getServer()
-            ) as List<Player>) else (onlinePlayersMethod.invoke(
-                Bukkit.getServer()
-            ) as List<Player>)
-        } catch (e: java.lang.Exception) {
+        if (getPlayersList == null) {
+            val onlinePlayersMethod = Bukkit.getServer()::class.java.getMethod("getOnlinePlayers")
+            getPlayersList = !onlinePlayersMethod.returnType.equals(Collection::class.java)
+        }
+        return if (getPlayersList!!) {
+            val list = Bukkit.getServer()::class.java.getMethod("getOnlinePlayers")
+            @Suppress("UNCHECKED_CAST")
+            (list.invoke(Bukkit.getServer()) as Array<Player>).toList()
+        } else {
             Bukkit.getOnlinePlayers().toList()
         }
     }
@@ -97,8 +89,35 @@ class ReflectUtil {
             "integer" -> EType.INTEGER
             "int" -> EType.INTEGER
             else -> {
-                println(type)
                 null
+            }
+        }
+    }
+
+    fun getHealth(p: Player): Double {
+        return try {
+            p.health
+        } catch (e: NoSuchMethodError) {
+            try {
+                (p.javaClass.getMethod("getHealth", *arrayOfNulls(0)).invoke(p, *arrayOfNulls(0)) as Int).toInt()
+                    .toDouble()
+            } catch (e1: Throwable) {
+                0.0
+            }
+        }
+    }
+
+    fun setHealth(p: Player, health: Int) {
+        try {
+            p.javaClass.getMethod("setHealth", Double::class.javaPrimitiveType)
+                .invoke(p, java.lang.Double.valueOf(health.toDouble()))
+        } catch (e: Throwable) {
+            try {
+                p.javaClass.getMethod("setHealth", Int::class.javaPrimitiveType).invoke(
+                    p, Integer.valueOf(health)
+                )
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
         }
     }

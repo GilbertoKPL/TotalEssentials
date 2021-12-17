@@ -6,7 +6,6 @@ import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
@@ -45,16 +44,16 @@ class PlayerAsyncChatEvent : Listener {
                 e.isCancelled = true
                 val time = TimeUtil.getInstance().convertStringToMillis(e.message)
                 e.player.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-                if (dataInstance.setTime(time)) {
-                    e.player.sendMessage(
-                        GeneralLang.getInstance().kitsEditKitTime.replace(
-                            "%time%",
-                            TimeUtil.getInstance()
-                                .convertMillisToString(time, MainConfig.getInstance().kitsUseShortTime)
-                        )
+                dataInstance.setTime(time)
+                e.player.sendMessage(
+                    GeneralLang.getInstance().kitsEditKitTime.replace(
+                        "%time%",
+                        TimeUtil.getInstance()
+                            .convertMillisToString(time, MainConfig.getInstance().kitsUseShortTime)
                     )
-                    e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", split[1]))
-                }
+                )
+                e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", split[1]))
+
                 return true
             }
 
@@ -68,9 +67,8 @@ class PlayerAsyncChatEvent : Listener {
                 }
 
                 e.player.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-                if (dataInstance.setFakeName(e.message.replace("&", "§"))) {
-                    e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", split[1]))
-                }
+                dataInstance.setFakeName(e.message.replace("&", "§"))
+                e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", split[1]))
             }
 
             return true

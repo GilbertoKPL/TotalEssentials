@@ -57,10 +57,9 @@ class ConfigUtil {
 
     private fun internalReloadConfig() {
         ReflectUtil.getInstance().setValuesFromClass(
-            MainConfig::class,
+            MainConfig::class.java,
             MainConfig.getInstance(),
-            configList.values.toList(),
-            File(PluginUtil.getInstance().mainPath, "MainConfig.yml")
+            configList.values.toList()
         )
     }
 
@@ -103,7 +102,7 @@ class ConfigUtil {
                 langYaml.load()
 
                 ReflectUtil.getInstance()
-                    .setValuesOfClass(GeneralLang::class, GeneralLang.getInstance(), listOf(langYaml))
+                    .setValuesOfClass(GeneralLang::class.java, GeneralLang.getInstance(), listOf(langYaml))
 
             } catch (ex: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
@@ -113,7 +112,7 @@ class ConfigUtil {
 
         try {
             ReflectUtil.getInstance()
-                .setValuesOfClass(MainConfig::class, MainConfig.getInstance(), configList.values.toList())
+                .setValuesOfClass(MainConfig::class.java, MainConfig.getInstance(), configList.values.toList())
         } catch (ex: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
         }

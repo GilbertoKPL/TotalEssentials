@@ -102,13 +102,13 @@ class KitData(kitName: String) {
         }, TaskUtil.getInstance().getExecutor()).get()
     }
 
-    fun setFakeName(fakeName: String): Boolean {
+    fun setFakeName(fakeName: String) {
         //cache
         getCache().fakeName = fakeName
         reloadGui()
 
         //sql
-        return kitHelper(KitsDataSQL.kitFakeName, fakeName).get()
+        kitHelper(KitsDataSQL.kitFakeName, fakeName)
     }
 
     fun setItems(items: List<ItemStack>): Boolean {
@@ -122,13 +122,13 @@ class KitData(kitName: String) {
         return kitHelper(KitsDataSQL.kitItems, toSave).get()
     }
 
-    fun setTime(time: Long): Boolean {
+    fun setTime(time: Long) {
         //cache
         getCache().time = time
         reloadGui()
 
         //sql
-        return kitHelper(KitsDataSQL.kitTime, time).get()
+        kitHelper(KitsDataSQL.kitTime, time)
     }
 
     private fun <T> kitHelper(col: Column<T>, value: T): CompletableFuture<Boolean> {

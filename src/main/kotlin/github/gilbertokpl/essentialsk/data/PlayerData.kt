@@ -331,6 +331,11 @@ class PlayerData(player: String) {
 
     //Nick
 
+    fun checkNick(): Boolean {
+        val cache = getCache()
+        return online && cache != null && cache.fakeNickCache != ""
+    }
+
     private fun startNickCache(fakeNick: String): String {
         if (fakeNick != "") {
             p!!.setDisplayName(fakeNick)
@@ -454,7 +459,9 @@ class PlayerData(player: String) {
                 p!!.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
                 ReflectUtil.getInstance().getPlayers().forEach {
                     @Suppress("DEPRECATION")
-                    it.hidePlayer(p)
+                    if (!it.hasPermission("essentialsk.commands.vanish") && !it.hasPermission("essentialsk.bypass.vanish")) {
+                        it.hidePlayer(p)
+                    }
                 }
                 true
             } else {

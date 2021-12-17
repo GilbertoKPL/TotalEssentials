@@ -24,7 +24,7 @@ class PlayerTeleportEvent : Listener {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
         }
-        if (MainConfig.getInstance().antibugsBlockGoingEdgeEnderearl) {
+        if (MainConfig.getInstance().antibugsBlockGoingEdgeEnderpearl) {
             try {
                 blockPassEdgeEnderPearl(e)
             } catch (e: Exception) {

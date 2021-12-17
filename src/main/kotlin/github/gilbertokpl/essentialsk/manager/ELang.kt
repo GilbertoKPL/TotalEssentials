@@ -17,5 +17,5 @@ enum class ELang(val locale: String) {
     MANAUS("pt_BR"),
     EIRUNEPE("pt_BR"),
     RIO_BRANCO("pt_BR"),
-    OTHER("en_US")
+    OTHER("pt_BR")
 }

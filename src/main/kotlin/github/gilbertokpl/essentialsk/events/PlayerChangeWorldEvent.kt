@@ -1,5 +1,6 @@
 package github.gilbertokpl.essentialsk.events
 
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -28,6 +29,7 @@ class PlayerChangeWorldEvent : Listener {
             e.player.isFlying = true
         }
         else {
+            e.player.sendMessage(GeneralLang.getInstance().flySendDisabledWorld)
             e.player.allowFlight = false
             e.player.isFlying = false
         }

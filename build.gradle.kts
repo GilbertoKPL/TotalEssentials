@@ -54,8 +54,6 @@ dependencies {
     //exclude messages
     compileOnly("org.apache.logging.log4j:log4j-core:2.14.1")
 
-    slim("org.jetbrains.kotlin:kotlin-reflect:$kotlin")
-
     slim("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
 
     slim("org.jetbrains:annotations:23.0.0")
@@ -107,7 +105,6 @@ dependencies {
 project.gradle.startParameter.excludedTaskNames.also {
     it.add("compileTestKotlin")
     it.add("compileTestJava")
-    it.add("compileJava")
     it.add("processTestResources")
     it.add("testClasses")
 }
@@ -134,7 +131,6 @@ tasks.shadowJar {
 }
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {

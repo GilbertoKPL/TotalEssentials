@@ -7,7 +7,6 @@ import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.util.ItemUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
 import org.bukkit.Material
 import org.bukkit.entity.Player

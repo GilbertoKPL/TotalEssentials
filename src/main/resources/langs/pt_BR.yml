@@ -178,3 +178,4 @@ fly:
   send-other-disable: '&eAlguém desativou seu fly.'
   send-activated-other: '&eO fly do(a) %player% foi ativado.'
   send-disabled-other: '&eO fly do(a) %player% foi desativado.'
+  send-disabled-world: '&cEste mundo está com fly desativado.'

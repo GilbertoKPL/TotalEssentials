@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.util.ReflectUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -34,24 +35,24 @@ class CommandHeal : ICommand {
                 return false
             }
 
-            if (p.health >= 20.0 && MainConfig.getInstance().healNeedHealBelow) {
+            if (MainConfig.getInstance().healNeedHealBelow && ReflectUtil.getInstance().getHealth(p) >= 20.0) {
                 s.sendMessage(GeneralLang.getInstance().healSendOtherFullMessage)
                 return false
             }
 
-            p.health = 20.0
+            ReflectUtil.getInstance().setHealth(p,20)
             p.sendMessage(GeneralLang.getInstance().healSendOtherMessage)
             s.sendMessage(GeneralLang.getInstance().healSendSuccessOtherMessage.replace("%player%", p.name))
 
             return false
         }
 
-        if ((s as Player).health >= 20.0 && MainConfig.getInstance().healNeedHealBelow) {
+        if (MainConfig.getInstance().healNeedHealBelow && ReflectUtil.getInstance().getHealth(s as Player) >= 20.0) {
             s.sendMessage(GeneralLang.getInstance().healSendFullMessage)
             return false
         }
 
-        s.health = 20.0
+        ReflectUtil.getInstance().setHealth(s as Player,20)
         s.sendMessage(GeneralLang.getInstance().healSendMessage)
         return false
     }

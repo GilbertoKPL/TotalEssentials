@@ -22,7 +22,7 @@ class SignChangeEvent : Listener {
     }
 
     private fun signColor(e: SignChangeEvent) {
-        for (i in 0..e.lines.size) {
+        for (i in 0 until e.lines.size) {
             e.setLine(i, PermissionUtil.getInstance().colorPermission(e.player, e.getLine(i) ?: continue))
         }
     }

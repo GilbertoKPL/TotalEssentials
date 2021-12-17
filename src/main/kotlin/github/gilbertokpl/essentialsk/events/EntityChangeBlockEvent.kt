@@ -13,14 +13,14 @@ class EntityChangeBlockEvent : Listener {
     fun event(e: EntityChangeBlockEvent) {
         if (MainConfig.getInstance().addonsBlockPlayerBreakPlantationFall) {
             try {
-                blockPlayerBreakPlatantion(e)
+                blockPlayerBreakPlantation(e)
             } catch (e: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
 
-    private fun blockPlayerBreakPlatantion(e: EntityChangeBlockEvent) {
+    private fun blockPlayerBreakPlantation(e: EntityChangeBlockEvent) {
         if (e.block.type == Dao.getInstance().material["soil"]) {
             e.isCancelled = true
         }

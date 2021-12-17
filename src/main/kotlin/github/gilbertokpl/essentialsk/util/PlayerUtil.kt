@@ -17,12 +17,12 @@ class PlayerUtil {
             "1" -> GameMode.CREATIVE
             "2" -> try {
                 GameMode.ADVENTURE
-            } catch (e: Exception) {
+            } catch (e: NoSuchMethodError) {
                 GameMode.SURVIVAL
             }
             "3" -> try {
                 GameMode.SPECTATOR
-            } catch (e: Exception) {
+            } catch (e: NoSuchMethodError) {
                 GameMode.SURVIVAL
             }
             else -> GameMode.SURVIVAL

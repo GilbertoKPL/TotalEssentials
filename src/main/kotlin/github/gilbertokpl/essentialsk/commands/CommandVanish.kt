@@ -40,10 +40,10 @@ class CommandVanish : ICommand {
 
             if (PlayerData(p.name.lowercase()).switchVanish()) {
                 p.sendMessage(GeneralLang.getInstance().vanishSendOtherActive)
-                s.sendMessage(GeneralLang.getInstance().vanishSendActivatedOther.replace("%player", p.name))
+                s.sendMessage(GeneralLang.getInstance().vanishSendActivatedOther.replace("%player%", p.name))
             } else {
                 p.sendMessage(GeneralLang.getInstance().vanishSendOtherDisable)
-                s.sendMessage(GeneralLang.getInstance().vanishSendDisabledOther.replace("%player", p.name))
+                s.sendMessage(GeneralLang.getInstance().vanishSendDisabledOther.replace("%player%", p.name))
             }
 
             return false

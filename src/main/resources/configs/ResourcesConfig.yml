@@ -3,8 +3,6 @@
 # Github: https://github.com/GilbertoKPL/EssentialsK;
 # Any questions, please contact Gilberto_KPL#5620 or even at GitHub;
 # This project is under development please be patient with the final project;
-
-# In this location, various anti-bugs system, can disable or add option for all.
 antibugs:
   # In this feature the player is blocked from climbing on the bed.
   # Permission Bypass -> essentialsk.bypass.bed

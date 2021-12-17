@@ -6,7 +6,7 @@
 general:
   # Selected Lang to run your plugin, it is necessary to have it in your lang folder, You can add more languages by contributing to the plugin....
   selected-lang: en_US
-  # this line its nessesary to log errors.
+  # this line its necessary to log errors.
   server-name: unamed
 database:
   # Select Database type, available: H2 or MYSQL.

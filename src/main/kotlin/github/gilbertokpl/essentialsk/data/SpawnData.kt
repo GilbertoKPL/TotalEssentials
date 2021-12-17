@@ -7,9 +7,12 @@ import github.gilbertokpl.essentialsk.util.SqlUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import java.util.concurrent.CompletableFuture
 
 class SpawnData(spawnName: String) {
@@ -55,8 +58,14 @@ class SpawnData(spawnName: String) {
         return CompletableFuture.supplyAsync({
             try {
                 transaction(SqlUtil.getInstance().sql) {
-                    SpawnDataSQL.insert {
-                        it[spawnName] = name
+                    if (SpawnDataSQL.select { SpawnDataSQL.spawnName eq name }.empty()) {
+                        SpawnDataSQL.insert {
+                            it[spawnName] = name
+                            it[spawnLocation] = loc
+                        }
+                        return@transaction
+                    }
+                    SpawnDataSQL.update ({SpawnDataSQL.spawnName eq name }) {
                         it[spawnLocation] = loc
                     }
                 }
