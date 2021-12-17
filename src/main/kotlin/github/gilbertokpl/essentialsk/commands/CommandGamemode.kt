@@ -4,6 +4,8 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.util.PlayerUtil
+import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.bukkit.GameMode
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -20,21 +22,7 @@ class CommandGamemode : ICommand {
     )
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        val playerGameMode: GameMode = when (args[0]) {
-            "0" -> GameMode.SURVIVAL
-            "1" -> GameMode.CREATIVE
-            "2" -> try {
-                GameMode.ADVENTURE
-            } catch (e: Exception) {
-                null
-            }
-            "3" -> try {
-                GameMode.SPECTATOR
-            } catch (e: Exception) {
-                null
-            }
-            else -> null
-        } ?: return true
+        val playerGameMode = PlayerUtil.getInstance().getGamemodeNumber(args[0])
 
         if (args.size == 1 && s is Player) {
 

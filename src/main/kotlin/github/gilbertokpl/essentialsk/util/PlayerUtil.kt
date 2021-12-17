@@ -11,16 +11,16 @@ import java.net.URL
 
 class PlayerUtil {
 
-    fun getGamemodeNumber(number: Int) : GameMode{
+    fun getGamemodeNumber(number: String) : GameMode{
         return when (number) {
-            0 -> GameMode.SURVIVAL
-            1 -> GameMode.CREATIVE
-            2 -> try {
+            "0" -> GameMode.SURVIVAL
+            "1" -> GameMode.CREATIVE
+            "2" -> try {
                 GameMode.ADVENTURE
             } catch (e: Exception) {
                 GameMode.SURVIVAL
             }
-            3 -> try {
+            "3" -> try {
                 GameMode.SPECTATOR
             } catch (e: Exception) {
                 GameMode.SURVIVAL

@@ -33,7 +33,7 @@ class PlayerData(player: String) {
         var flyCache: Boolean
     )
 
-    private val p = EssentialsK.instance.server.getPlayer(player)
+    private val p = EssentialsK.instance.server.getPlayerExact(player)
 
     private val online = p != null
 
@@ -383,7 +383,7 @@ class PlayerData(player: String) {
     //gamemode
 
     private fun startGamemodeCache(gameMode: Int): Int {
-        val gameModeName = PlayerUtil.getInstance().getGamemodeNumber(gameMode)
+        val gameModeName = PlayerUtil.getInstance().getGamemodeNumber(gameMode.toString())
 
         if (p!!.gameMode != gameModeName) {
             p.gameMode = gameModeName

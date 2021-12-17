@@ -10,13 +10,19 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandKit : ICommand {
-    override val consoleCanUse: Boolean = false
+    override val consoleCanUse: Boolean = true
     override val permission: String = "essentialsk.commands.kit"
     override val minimumSize = 0
     override val maximumSize = 1
-    override val commandUsage = listOf("/kit <kitName>")
+    override val commandUsage = listOf("/kit","/kit <kitName>")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+
+        if (s !is Player) {
+            s.sendMessage(GeneralLang.getInstance().kitsList.replace("%kits%", KitData("").kitList().toString()))
+            return false
+        }
+
         //send gui
         if (args.isEmpty()) {
             Dao.getInstance().kitGuiCache[1].also {
@@ -24,7 +30,7 @@ class CommandKit : ICommand {
                     s.sendMessage(GeneralLang.getInstance().kitsNotExistKits)
                     return false
                 }
-                (s as Player).openInventory(it)
+                s.openInventory(it)
             }
             return false
         }
@@ -38,7 +44,7 @@ class CommandKit : ICommand {
         }
 
         //give kit
-        ItemUtil.getInstance().pickupKit(s as Player, args[0].lowercase())
+        ItemUtil.getInstance().pickupKit(s, args[0].lowercase())
         return false
     }
 }
