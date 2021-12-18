@@ -2,7 +2,6 @@ package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler

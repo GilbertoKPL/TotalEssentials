@@ -1,62 +1,21 @@
-# This file is the main configuration of the resource's will influence its operation...
-# Creator: Gilberto Damim;
-# Github: https://github.com/GilbertoKPL/EssentialsK;
-# Any questions, please contact Gilberto_KPL#5620 or even at GitHub;
-# This project is under development please be patient with the final project;
-antibugs:
-  # In this feature the player is blocked from climbing on the bed.
-  # Permission Bypass -> essentialsk.bypass.bed
-  block-bed: true
-  # In this feature the player is blocked from climbing on the vehicles.
-  # Permission Bypass -> essentialsk.bypass.vehicles
-  block-climbing-on-vehicles: true
-  # In this feature, the player is prevented from using nametag on mobs.
-  # Permission Bypass -> essentialsk.bypass.nametag
-  block-nametag: false
-  # In this feature, mobs are prohibited from picking up items from the ground.
-  block-mob-catch: false
-  # In this feature, blocks the player from going over the edge with Ender Pearls.
-  block-going-edge-enderpearl: true
-  # In this feature, blocks player from going to nether ceiling.
-  # Permission Bypass -> essentialsk.bypass.netherceiling
-  block-player-go-to-nether-ceiling: true
-  # In this feature, blocks players teleport in portals.
-  # Permission Bypass -> essentialsk.bypass.teleportportal
-  block-player-teleport-portal: true
-  # In this feature, blocks all entitys create portals.
-  block-create-portal: true
+motd:
+  # Enabled
+  enabled: true
+  # Add List to see in motd use (/n > 1.5.2) to skip lines.
+  # Variables -> %players_online%.
+  list-motd:
+    - '&1Minecraft Server \n&1its open with %players_online% online!'
+    - '&2Minecraft Server \n&2its open with %players_online% online!'
+    - '&3Minecraft Server \n&3its open with %players_online% online!'
+    - '&4Minecraft Server \n&4its open with %players_online% online!'
 
-# In this location, contain container options, List of values in (unavailable for now).
-containers:
-  # Enabled cancel shift in containers with list.
-  block-shift-enable: false
-  # Permission Bypass -> essentialsk.bypass.shiftcontainer
-  block-shift:
-    - 'ANVIL'
-  # Enabled cancel open in containers with list.
-  block-open-enable: false
-  # Permission Bypass -> essentialsk.bypass.opencontainer
-  block-open:
-    - 'ANVIL'
-
-# In this location, has addons for minecraft.
-addons:
-  # In this feature, anvil is infinity.
-  infinity-anvil: true
-  # In this feature, player is teleported to spawn if player fall into the void.
-  block-player-go-to-void: true
-  # In this feature, items droped can not explode.
-  block-explode-items: true
-  # In this feature, player can not break platation on fall.
-  block-player-break-plantation-fall: true
-  # In this feature, fire can not propagate.
-  block-propagation-fire: true
-  # In this feature, can be put & in name of item, has a permission for that.
-  # Permission -> essentialsk.color.&0 (Example)
-  color-in-anvil: true
-  # In this feature, can be put & in sign, has a permission for that.
-  # Permission -> essentialsk.color.&0 (Example)
-  color-in-sign: true
-  # In this feature, can be put & in chat, has a permission for that.
-  # Permission -> essentialsk.color.&0 (Example)
-  color-in-chat: true
+announcements:
+  # Enabled
+  enabled: true
+  # Time to send in minutes
+  time: 5
+  # Add List to send.
+  # Variables -> %players_online%.
+  list-announce:
+    - '&1Your server has using EssentialsK plugin!'
+    - '&2Thanks for using me the plugin!'

@@ -1,8 +1,3 @@
-# This file is the main configuration of the EssentialsK plugin where it will influence its operation...
-# Creator: Gilberto Damim;
-# Github: https://github.com/GilbertoKPL/EssentialsK;
-# Any questions, please contact Gilberto_KPL#5620 or even at GitHub;
-# This project is under development please be patient with the final project;
 general:
   # Selected Lang to run your plugin, it is necessary to have it in your lang folder, You can add more languages by contributing to the plugin....
   selected-lang: en_US

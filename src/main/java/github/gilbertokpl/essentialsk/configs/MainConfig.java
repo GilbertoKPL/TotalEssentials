@@ -130,4 +130,17 @@ public class MainConfig {
     public Boolean addonsColorInSign;
 
     public Boolean addonsColorInChat;
+
+    public Boolean onlineActivated;
+
+    public Boolean onlineCountRemoveVanish;
+
+    public Boolean motdEnabled;
+
+    public List<String> motdListMotd;
+
+    public Boolean announcementsEnabled;
+
+    public int announcementsTime;
+
 }

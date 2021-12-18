@@ -2,7 +2,6 @@ package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.manager.IInstance
-import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 
 class TimeUtil {

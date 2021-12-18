@@ -10,7 +10,7 @@ import java.lang.reflect.Type
 
 class ReflectUtil {
 
-    private var getPlayersList : Boolean? = null
+    private var getPlayersList: Boolean? = null
 
     fun setValuesOfClass(cl: Class<*>, clInstance: Any, configList: List<YamlFile>) {
         for (it in cl.declaredFields) {
@@ -43,11 +43,19 @@ class ReflectUtil {
 
     fun getPlayers(): List<Player> {
         if (getPlayersList == null) {
-            val onlinePlayersMethod = Bukkit.getServer()::class.java.getMethod("getOnlinePlayers")
-            getPlayersList = !onlinePlayersMethod.returnType.equals(Collection::class.java)
+            val onlinePlayersMethod = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers")
+            return try {
+                @Suppress("UNCHECKED_CAST")
+                val to = (onlinePlayersMethod.invoke(Bukkit.getServer()) as Array<Player>).toList()
+                getPlayersList = true
+                to
+            } catch (e: ClassCastException) {
+                getPlayersList = false
+                Bukkit.getOnlinePlayers().toList()
+            }
         }
         return if (getPlayersList!!) {
-            val list = Bukkit.getServer()::class.java.getMethod("getOnlinePlayers")
+            val list = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers")
             @Suppress("UNCHECKED_CAST")
             (list.invoke(Bukkit.getServer()) as Array<Player>).toList()
         } else {

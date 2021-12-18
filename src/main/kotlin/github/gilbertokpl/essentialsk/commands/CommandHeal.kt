@@ -40,7 +40,7 @@ class CommandHeal : ICommand {
                 return false
             }
 
-            ReflectUtil.getInstance().setHealth(p,20)
+            ReflectUtil.getInstance().setHealth(p, 20)
             p.sendMessage(GeneralLang.getInstance().healSendOtherMessage)
             s.sendMessage(GeneralLang.getInstance().healSendSuccessOtherMessage.replace("%player%", p.name))
 
@@ -52,7 +52,7 @@ class CommandHeal : ICommand {
             return false
         }
 
-        ReflectUtil.getInstance().setHealth(s as Player,20)
+        ReflectUtil.getInstance().setHealth(s as Player, 20)
         s.sendMessage(GeneralLang.getInstance().healSendMessage)
         return false
     }

@@ -300,4 +300,6 @@ public class GeneralLang {
 
     public String flySendDisabledWorld;
 
+    public String onlineSendOnline;
+
 }

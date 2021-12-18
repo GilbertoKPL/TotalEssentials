@@ -75,7 +75,8 @@ class PluginUtil {
                 BlockBurnEvent(),
                 BlockIgniteEvent(),
                 SignChangeEvent(),
-                PlayerChangeWorldEvent()
+                PlayerChangeWorldEvent(),
+                ServerListPing()
             )
         )
     }
@@ -238,6 +239,13 @@ class PluginUtil {
                 CommandFly(),
             ),
             MainConfig.getInstance().flyActivated
+        )
+        //online
+        startCommandsHelper(
+            listOf(
+                CommandOnline(),
+            ),
+            MainConfig.getInstance().onlineActivated
         )
     }
 

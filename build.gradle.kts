@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "github.gilbertokpl.essentialsk"
-version = 1.0
+version = "1.0.1"
 
 val base = "$group.libs"
 val exposedVersion = "0.36.2"
@@ -244,6 +244,9 @@ bukkit {
         }
         register("fly") {
             description = "This is a fly command!"
+        }
+        register("online") {
+            description = "This is a online command!"
         }
     }
 }

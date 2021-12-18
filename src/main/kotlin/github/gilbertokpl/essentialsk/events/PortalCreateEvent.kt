@@ -27,7 +27,7 @@ class PortalCreateEvent : Listener {
             if (e.entity is Player) {
                 (e.entity as Player).sendMessage(GeneralLang.getInstance().generalNotPermAction)
             }
+        } catch (ignored: NoSuchMethodError) {
         }
-        catch (ignored : NoSuchMethodError) {}
     }
 }

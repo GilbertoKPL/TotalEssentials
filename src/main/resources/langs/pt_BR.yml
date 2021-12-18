@@ -1,8 +1,3 @@
-# Esse arquivo é configuração de linguagens pt_BR...
-# Criador: Gilberto Damim;
-# Github: https://github.com/GilbertoKPL/EssentialsK;
-# Quaisquer dúvidas, contate no discord Gilberto_KPL#5620 ou mesmo pelo GitHub;
-# Este projeto está em desenvolvimento, por favor, seja paciente com o projeto final;
 general:
   only-player-command: '&cEsse comando é somente para player!'
   not-perm: '&cVocê não tem permissão para executar esse comando.'
@@ -179,3 +174,5 @@ fly:
   send-activated-other: '&eO fly do(a) %player% foi ativado.'
   send-disabled-other: '&eO fly do(a) %player% foi desativado.'
   send-disabled-world: '&cEste mundo está com fly desativado.'
+online:
+  send-online: '&eExiste %amount% players online.'

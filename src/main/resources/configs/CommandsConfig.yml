@@ -1,8 +1,3 @@
-# This file is the main configuration of the command's will influence its operation...
-# Creator: Gilberto Damim;
-# Github: https://github.com/GilbertoKPL/EssentialsK;
-# Any questions, please contact Gilberto_KPL#5620 or even at GitHub;
-# This project is under development please be patient with the final project;
 kits:
   # Enabled.
   activated: true
@@ -105,3 +100,8 @@ fly:
   disabled-worlds:
     - essentialk
 
+online:
+  # Enabled.
+  activated: true
+  # count vanish players ?
+  count-remove-vanish: false

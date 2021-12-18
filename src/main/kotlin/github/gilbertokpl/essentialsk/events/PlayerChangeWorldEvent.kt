@@ -27,8 +27,7 @@ class PlayerChangeWorldEvent : Listener {
         if (p.checkFly() && !MainConfig.getInstance().flyDisabledWorlds.contains(e.player.world.name)) {
             e.player.allowFlight = true
             e.player.isFlying = true
-        }
-        else {
+        } else {
             e.player.sendMessage(GeneralLang.getInstance().flySendDisabledWorld)
             e.player.allowFlight = false
             e.player.isFlying = false

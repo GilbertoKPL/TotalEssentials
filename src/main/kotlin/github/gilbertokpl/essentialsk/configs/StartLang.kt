@@ -19,8 +19,6 @@ class StartLang {
 
     val createMessage = "${EColor.YELLOW.color}Created file from %to%, %file%.${EColor.RESET.color}"
 
-    val updateHeader = "${EColor.YELLOW.color}Updated Header of file %file%.${EColor.RESET.color}"
-
     val addMessage = "${EColor.YELLOW.color}Added path %path% to file %file%.${EColor.RESET.color}"
 
     val removeMessage = "${EColor.RED.color}Removed path %path% in file %file%.${EColor.RESET.color}"

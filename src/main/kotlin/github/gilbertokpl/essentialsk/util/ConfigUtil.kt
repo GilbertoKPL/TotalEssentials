@@ -43,7 +43,7 @@ class ConfigUtil {
     }
 
     internal fun getStringList(source: YamlFile, path: String, color: Boolean = true): List<String> {
-        if (source.filePath.contains("commandsConfig.yml") || source.filePath.contains("ResourcesConfig.yml")) {
+        if (source.filePath.contains("CommandsConfig.yml") || source.filePath.contains("ProtectConfig.yml")) {
             return source.getStringList(path).stream().map { to -> to.lowercase() }.collect(Collectors.toList())
         }
         return if (color) {
@@ -236,14 +236,6 @@ class ConfigUtil {
         val toRemove = HashMap<String, Int>()
 
         val toPut = HashMap<String, Int>()
-
-        val header = checkerYaml.options()
-        val newHeader = toCheckYaml.options()
-        if (header.header().toString() != newHeader.header().toString()) {
-            checkerYaml.options().header(newHeader.header().toString())
-            PluginUtil.getInstance()
-                .consoleMessage(StartLang.getInstance().updateHeader.replace("%file%", configFile.name))
-        }
 
         //values
         for (FileKeys in toCheckYaml.getValues(true)) {

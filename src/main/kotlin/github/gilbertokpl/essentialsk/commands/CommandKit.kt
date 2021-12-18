@@ -14,7 +14,7 @@ class CommandKit : ICommand {
     override val permission: String = "essentialsk.commands.kit"
     override val minimumSize = 0
     override val maximumSize = 1
-    override val commandUsage = listOf("/kit","/kit <kitName>")
+    override val commandUsage = listOf("/kit", "/kit <kitName>")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

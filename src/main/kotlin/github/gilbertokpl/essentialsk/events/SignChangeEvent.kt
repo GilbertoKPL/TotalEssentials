@@ -3,7 +3,6 @@ package github.gilbertokpl.essentialsk.events
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

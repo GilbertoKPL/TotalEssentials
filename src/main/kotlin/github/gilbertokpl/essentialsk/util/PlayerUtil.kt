@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.util
 
 import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
+import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.io.IOUtils
 import org.bukkit.GameMode
@@ -11,7 +12,15 @@ import java.net.URL
 
 class PlayerUtil {
 
-    fun getGamemodeNumber(number: String) : GameMode{
+    fun getIntOnlinePlayers(vanish: Boolean): Int {
+        var amount = ReflectUtil.getInstance().getPlayers()
+        if (!vanish) {
+            amount = amount.filter { !PlayerData(it.name).checkVanish() }
+        }
+        return amount.size
+    }
+
+    fun getGamemodeNumber(number: String): GameMode {
         return when (number) {
             "0" -> GameMode.SURVIVAL
             "1" -> GameMode.CREATIVE

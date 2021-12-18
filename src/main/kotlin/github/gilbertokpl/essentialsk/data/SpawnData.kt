@@ -7,7 +7,6 @@ import github.gilbertokpl.essentialsk.util.SqlUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
@@ -65,7 +64,7 @@ class SpawnData(spawnName: String) {
                         }
                         return@transaction
                     }
-                    SpawnDataSQL.update ({SpawnDataSQL.spawnName eq name }) {
+                    SpawnDataSQL.update({ SpawnDataSQL.spawnName eq name }) {
                         it[spawnLocation] = loc
                     }
                 }

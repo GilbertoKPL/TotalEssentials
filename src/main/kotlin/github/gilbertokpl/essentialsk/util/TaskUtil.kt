@@ -3,10 +3,7 @@ package github.gilbertokpl.essentialsk.util
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 
 
 class TaskUtil {
@@ -19,9 +16,20 @@ class TaskUtil {
 
     private val poolExecutorTeleport = Executors.newCachedThreadPool()
 
+    private var announceExecutor = Executors.newSingleThreadScheduledExecutor()
+
     fun disable() {
         poolExecutor.shutdown()
         poolExecutorTeleport.shutdown()
+    }
+
+    fun getAnnounceExecutor(): ScheduledExecutorService {
+        return announceExecutor
+    }
+
+    fun restartAnnounceExecutor() {
+        announceExecutor.shutdownNow()
+        announceExecutor = Executors.newSingleThreadScheduledExecutor()
     }
 
     fun getTeleportExecutor(): ExecutorService {

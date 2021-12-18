@@ -584,26 +584,26 @@ class PlayerData(player: String) {
         var light = false
         var fly = false
         if (CompletableFuture.supplyAsync({
-            transaction(SqlUtil.getInstance().sql) {
-                PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
-                    if (query.empty()) {
-                        PlayerDataSQL.insert {
-                            it[PlayerInfo] = this@PlayerData.uuid
+                transaction(SqlUtil.getInstance().sql) {
+                    PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
+                        if (query.empty()) {
+                            PlayerDataSQL.insert {
+                                it[PlayerInfo] = this@PlayerData.uuid
+                            }
+                            Dao.getInstance().playerCache[uuid] = createEmptyCache(limitHome)
+                            return@transaction
                         }
-                        Dao.getInstance().playerCache[uuid] = createEmptyCache(limitHome)
-                        return@transaction
+                        timeKits = query.single()[KitsTime]
+                        homesList = query.single()[SavedHomes]
+                        fakeNick = query.single()[FakeNick]
+                        gameMode = query.single()[PlayerDataSQL.GameMode]
+                        vanish = query.single()[PlayerDataSQL.Vanish]
+                        light = query.single()[PlayerDataSQL.Light]
+                        fly = query.single()[PlayerDataSQL.Fly]
                     }
-                    timeKits = query.single()[KitsTime]
-                    homesList = query.single()[SavedHomes]
-                    fakeNick = query.single()[FakeNick]
-                    gameMode = query.single()[PlayerDataSQL.GameMode]
-                    vanish = query.single()[PlayerDataSQL.Vanish]
-                    light = query.single()[PlayerDataSQL.Light]
-                    fly = query.single()[PlayerDataSQL.Fly]
                 }
-            }
-            return@supplyAsync true
-        },TaskUtil.getInstance().getExecutor()).get()) {
+                return@supplyAsync true
+            }, TaskUtil.getInstance().getExecutor()).get()) {
             Dao.getInstance().playerCache[uuid] = InternalPlayerData(
                 uuid,
                 kitsCache = startKitCache(timeKits),
