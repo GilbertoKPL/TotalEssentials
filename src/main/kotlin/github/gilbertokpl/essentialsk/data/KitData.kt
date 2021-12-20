@@ -17,7 +17,7 @@ class KitData(kitName: String) {
     fun checkCache(): Boolean {
         Dao.getInstance().kitsCache[nameLowerCase].also {
             if (it == null) {
-                return true
+                return false
             }
             return true
         }

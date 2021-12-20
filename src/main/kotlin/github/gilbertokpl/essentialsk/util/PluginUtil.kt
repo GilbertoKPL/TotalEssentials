@@ -76,7 +76,8 @@ class PluginUtil {
                 BlockIgniteEvent(),
                 SignChangeEvent(),
                 PlayerChangeWorldEvent(),
-                ServerListPing()
+                ServerListPing(),
+                PlayerRespawnEvent()
             )
         )
     }

@@ -30,7 +30,7 @@ class CommandCreateKit : ICommand {
         val dataInstance = KitData(args[0])
 
         //check if exist
-        if (!dataInstance.checkCache()) {
+        if (dataInstance.checkCache()) {
             s.sendMessage(GeneralLang.getInstance().kitsExist)
             return false
         }
