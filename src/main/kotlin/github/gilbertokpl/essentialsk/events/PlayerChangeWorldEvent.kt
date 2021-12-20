@@ -24,14 +24,16 @@ class PlayerChangeWorldEvent : Listener {
     //fly command
     private fun flyEvent(e: PlayerChangedWorldEvent) {
         val p = PlayerData(e.player.name)
-        if (p.checkFly() && !MainConfig.getInstance().flyDisabledWorlds.contains(e.player.world.name)) {
+        if (!p.checkFly()) {
+            return
+        }
+        if (!MainConfig.getInstance().flyDisabledWorlds.contains(e.player.world.name)) {
             e.player.allowFlight = true
             e.player.isFlying = true
-        } else {
-            e.player.sendMessage(GeneralLang.getInstance().flySendDisabledWorld)
-            e.player.allowFlight = false
-            e.player.isFlying = false
+            return
         }
+        e.player.sendMessage(GeneralLang.getInstance().flySendDisabledWorld)
+        e.player.allowFlight = false
+        e.player.isFlying = false
     }
-
 }

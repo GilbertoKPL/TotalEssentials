@@ -1,5 +1,6 @@
 package github.gilbertokpl.essentialsk.commands
 
+import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.SpawnData
 import github.gilbertokpl.essentialsk.manager.ICommand

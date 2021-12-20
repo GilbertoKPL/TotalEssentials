@@ -1,8 +1,10 @@
 package github.gilbertokpl.essentialsk.events
 
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
+import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -17,6 +19,15 @@ class PlayerLeaveEvent : Listener {
             } catch (e: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
+        }
+        try {
+            e.quitMessage = null
+            PluginUtil.getInstance().serverMessage(
+                GeneralLang.getInstance().messagesLeaveMessage
+                    .replace("%player%", e.player.name)
+            )
+        } catch (e: Exception) {
+            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
         }
     }
 

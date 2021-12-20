@@ -27,6 +27,6 @@ class PlayerRespawnEvent : Listener {
             e.player.sendMessage(GeneralLang.getInstance().spawnSendNotSet)
             return
         }
-        e.player.teleport(SpawnData("spawn").getLocation())
+        e.respawnLocation = loc.getLocation()
     }
 }

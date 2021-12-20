@@ -143,4 +143,8 @@ public class MainConfig {
 
     public int announcementsTime;
 
+    public Boolean deathmessagesEnabled;
+
+    public Boolean addonsPlayerPreventLoseXp;
+
 }

@@ -18,6 +18,8 @@ import java.util.stream.Collectors
 class ConfigUtil {
     val configList = HashMap<String, YamlFile>()
 
+    lateinit var langYaml : YamlFile
+
     private var bol = false
 
     fun start() {
@@ -25,13 +27,13 @@ class ConfigUtil {
 
         startFun("configs", false)
 
-        OtherConfigUtil.getInstance().start()
-
         PluginUtil.getInstance().consoleMessage(StartLang.getInstance().completeVerification)
 
         PluginUtil.getInstance().consoleMessage(StartLang.getInstance().startVerification.replace("%to%", "lang"))
 
         startFun("langs", true)
+
+        OtherConfigUtil.getInstance().start()
 
         PluginUtil.getInstance().consoleMessage(StartLang.getInstance().completeVerification)
     }
@@ -100,6 +102,8 @@ class ConfigUtil {
 
                 val langYaml = YamlFile(langHelper())
                 langYaml.load()
+
+                this@ConfigUtil.langYaml = langYaml
 
                 ReflectUtil.getInstance()
                     .setValuesOfClass(GeneralLang::class.java, GeneralLang.getInstance(), listOf(langYaml))
@@ -197,9 +201,9 @@ class ConfigUtil {
         if (all) {
             startFun("configs", false)
 
-            OtherConfigUtil.getInstance().start()
-
             startFun("langs", true)
+
+            OtherConfigUtil.getInstance().start()
 
             return
         }

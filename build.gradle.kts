@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "github.gilbertokpl.essentialsk"
-version = "1.1"
+version = "1.2"
 
 val base = "$group.libs"
 val exposedVersion = "0.36.2"

@@ -7,9 +7,11 @@ import java.util.List;
 
 public class GeneralLang {
     private static final GeneralLang instance = createInstance();
+
     public static GeneralLang createInstance() {
         return new GeneralLang();
     }
+
     public static GeneralLang getInstance() {
         return instance;
     }
@@ -302,4 +304,15 @@ public class GeneralLang {
 
     public String onlineSendOnline;
 
+    public String deathmessagesPlayerKillPlayer;
+
+    public String deathmessagesEntityKillPlayer;
+
+    public String deathmessagesNothingKillPlayer;
+
+    public String deathmessagesCauseNotExist;
+
+    public String messagesEnterMessage;
+
+    public String messagesLeaveMessage;
 }

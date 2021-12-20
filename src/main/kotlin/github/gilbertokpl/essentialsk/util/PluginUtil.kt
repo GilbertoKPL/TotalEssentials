@@ -50,6 +50,12 @@ class PluginUtil {
         println("${EColor.CYAN.color}[${EssentialsK.instance.name}]${EColor.RESET.color} $message")
     }
 
+    fun serverMessage(message: String) {
+        ReflectUtil.getInstance().getPlayers().forEach {
+            it.sendMessage(message)
+        }
+    }
+
     fun startEvents() {
         startEventsHelper(
             listOf(

@@ -85,6 +85,16 @@ class PlayerData(player: String) {
         )
     }
 
+    //death
+
+    fun death() {
+        val cache = getCache()!!
+        startGamemodeCache(cache.gameModeCache)
+        startVanishCache(cache.vanishCache)
+        startLightCache(cache.lightCache)
+        startFlyCache(cache.flyCache)
+    }
+
     //Kits
 
     private fun startKitCache(timeKits: String): HashMap<String, Long> {

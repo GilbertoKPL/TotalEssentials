@@ -18,4 +18,9 @@ announcements:
   # Variables -> %players_online%.
   list-announce:
     - '&1Your server has using EssentialsK plugin!'
-    - '&2Thanks for using me the plugin!'
+    - '&2Thanks for using my plugin!'
+
+deathmessages:
+  # Enabled
+  enabled: true
+

@@ -5,6 +5,7 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.data.SpawnData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
+import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.gilbertokpl.essentialsk.util.ReflectUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
@@ -32,6 +33,15 @@ class PlayerJoinEvent : Listener {
             } catch (e: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
+        }
+        try {
+            e.joinMessage = null
+            PluginUtil.getInstance().serverMessage(
+                GeneralLang.getInstance().messagesEnterMessage
+                    .replace("%player%", e.player.name)
+            )
+        } catch (e: Exception) {
+            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
         }
     }
 
