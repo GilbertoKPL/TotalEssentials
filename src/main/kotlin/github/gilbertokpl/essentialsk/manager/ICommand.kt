@@ -1,7 +1,8 @@
 package github.gilbertokpl.essentialsk.manager
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.util.TaskUtil
+import github.gilbertokpl.essentialsk.util.FileLoggerUtil
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -26,7 +27,7 @@ interface ICommand : CommandExecutor {
             s.sendMessage(GeneralLang.getInstance().generalNotPerm)
             return false
         }
-        TaskUtil.getInstance().commandExecutor {
+        try {
             if (args.size > maximumSize || args.size < minimumSize || kCommand(s, command, label, args)) {
                 s.sendMessage(GeneralLang.getInstance().generalCommandsUsage)
                 for (it in commandUsage) {
@@ -42,8 +43,10 @@ interface ICommand : CommandExecutor {
                         s.sendMessage(GeneralLang.getInstance().generalCommandsUsageList.replace("%command%", to[1]))
                     }
                 }
-                return@commandExecutor
+                return false
             }
+        } catch (ex: Exception) {
+            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
         }
         return false
     }

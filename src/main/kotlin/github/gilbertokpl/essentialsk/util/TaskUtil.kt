@@ -10,8 +10,6 @@ class TaskUtil {
 
     internal val asyncExecutor = asyncFuture()
 
-    internal val commandExecutor = commandExecutor()
-
     private val poolExecutor = Executors.newCachedThreadPool()
 
     private val poolExecutorTeleport = Executors.newCachedThreadPool()
@@ -21,6 +19,7 @@ class TaskUtil {
     fun disable() {
         poolExecutor.shutdown()
         poolExecutorTeleport.shutdown()
+        announceExecutor.shutdown()
     }
 
     fun getAnnounceExecutor(): ScheduledExecutorService {
@@ -50,16 +49,6 @@ class TaskUtil {
                     FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
                 }
             }, poolExecutorTeleport)
-        }
-    }
-
-    private fun commandExecutor(): (() -> Unit) -> Unit {
-        return {
-            try {
-                it()
-            } catch (ex: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
-            }
         }
     }
 
