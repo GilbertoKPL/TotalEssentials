@@ -1,14 +1,296 @@
 general:
   # Selected Lang to run your plugin, it is necessary to have it in your lang folder, You can add more languages by contributing to the plugin....
-  selected-lang: en_US
+  selected-lang: pt_BR
   # this line its necessary to log errors.
+  # Nome do seu servidor.
   server-name: unamed
 database:
-  # Select Database type, available: H2 or MYSQL.
+  # Select Database type, available: H2 or MYSQL;
+  # Selecione seu tipo de conexão, Disponiveis H2 (Local) e Mysql (Nuvem).
   type: H2
-  # If you have selected MYSQL add ip, port, username, database and password.
+  # If you have selected MYSQL add ip, port, username, database and password;
+  # Se você selecionou MYSQL coloque essas informações paar conexão.
   sql-ip: 'localhost'
   sql-port: '3306'
   sql-username: 'u0_essentialsk'
   sql-database: 's0_essentialsk'
   sql-password: 'essentialsk123'
+#
+# Config dos comandos kits.
+kits:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # Enable short name of time, example seconds to s;
+  # Se estiver ativado (true), será enviado o tempo em pequena escala, exemplo segundos para s.
+  use-short-time: false
+  # Drop items when he gets the kit;
+  # Se estiver ativado (true) dropar items caso o invetário esteja cheio.
+  drop-items-in-catch: false
+  # Equip armour when he gets the kit;
+  # Se estiver ativado (true), será Equipado a armadura caso tenha no kit.
+  equip-armor-in-catch: true
+#
+# Config dos comandos nick.
+nicks:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # If enabled players can have same nick;
+  # Se estiver ativado (true) players poderão usar o mesmo nick.
+  can-player-have-same-nick: false
+  # List of blocked nicks;
+  # Lista de nicks bloqueados.
+  blocked-nicks:
+    - essentialsk
+#
+# Config dos comandos home.
+homes:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # Default value if player not have permission;
+  # Quantidade de homes maximas caso não tenha a permissão.
+  default-limit-homes: 3
+  # Time in seconds to teleport to determined location, has a permission to bypass;
+  # Tempo para teleportar, tem permissão para burlar isso.
+  time-to-teleport: 5
+  # List of blocked worlds to use sethome, use world name example: world;
+  # Lista de mundos bloqueados de usar sethome, use o nome do mundo exemplo: world.
+  block-worlds:
+    - essentialsk
+#
+# Config dos comandos warp.
+warps:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # Time in seconds to teleport to determined location, has a permission to bypass;
+  # Tempo para teleportar, tem permissão para burlar isso.
+  time-to-teleport: 5
+# Config dos comandos tp.
+tp:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+#
+# Config dos comandos tpa.
+tpa:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # Time in seconds to accept order;
+  # Tempo para aceitar o pedido.
+  time-to-accept: 10
+  # Time in seconds to teleport to determined location, has a permission to bypass;
+  # Tempo para teleportar, tem permissão para burlar isso.
+  time-to-teleport: 5
+#
+# Config dos comandos echest.
+echest:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+#
+# Config dos comandos gamemode.
+gamemode:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+#
+# Config dos comandos vanish.
+vanish:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # Blocked cmds from others Players when Player is vanished, <player> is vanished Player and <arg> if other value from cmd;
+  # Comandos Bloqueados se um outro player executar em nome da pessoa de vanish bloquear.
+  blocked-other-cmds:
+    - "/tell <player>"
+    - "/money <arg> <player>"
+#
+# Config dos comandos feed.
+feed:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # Only run if it's eaten below, for low versions it may bug if it's true;
+  # Só vai executar se sua fome não estiver cheia, em versões antias pode bugar no true.
+  need-eat-below: false
+#
+# Config dos comandos heal.
+heal:
+  # Enabled.
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # Only run if it's health below, for low versions it may bug if it's true;
+  # Só vai executar se sua vida não estiver cheia, em versões antias pode bugar no true.
+  need-heal-below: false
+#
+# Config dos comandos light.
+light:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+#
+# Config dos comandos back.
+back:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # Disabled Worlds, use world name example: world;
+  # Lista de mundos bloqueados de salvarem no back, use o nome do mundo exemplo: world.
+  disabled-worlds:
+    - essentialk
+#
+# Config dos comandos spawn.
+spawn:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # if enabled player is sent to spawn on login;
+  # se estiver ativado o player será mandado para o spawn no login.
+  send-to-spawn-on-login: true
+  # Time in seconds to teleport to determined location, has a permission to bypass;
+  # Tempo para teleportar, tem permissão para burlar isso.
+  time-to-teleport: 5
+#
+# Config dos comandos fly.
+fly:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # Disabled Worlds, use world name example: world.
+  # Lista de mundos bloqueados de usar o fly, use o nome do mundo exemplo: world.
+  disabled-worlds:
+    - essentialk
+#
+# Config dos comandos online.
+online:
+  # Enabled;
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
+  # count vanish players;# Recursos anti-bug que podem ser ligados ou desligados # Recursos anti-bug que podem ser ligados ou desligados
+  # Se estiver ativado (true), O comando online contará também os players de vanish.
+  count-remove-vanish: false
+#
+# Config da motd.
+motd:
+  # Enabled;
+  # Se estiver ativado (true), O Motd será ativado.
+  enabled: true
+  # Add List to see in motd use (/n > 1.5.2) to skip lines.
+  # Variables -> %players_online%.
+  list-motd:
+    - '&1Minecraft Server \n&1its open with %players_online% online!'
+    - '&2Minecraft Server \n&2its open with %players_online% online!'
+    - '&3Minecraft Server \n&3its open with %players_online% online!'
+    - '&4Minecraft Server \n&4its open with %players_online% online!'
+#
+# Config das mensagens automáticas.
+announcements:
+  # Enabled;
+  # Se estiver ativado (true), as mensagens automáticas serão ativadas.
+  enabled: true
+  # Time to send in minutes;
+  # Tempo entre as mensagens em minutos para enviar.
+  time: 5
+  # Add List to send;
+
+  # Variables -> %players_online%.
+  list-announce:
+    - '&1Your server has using EssentialsK plugin!'
+    - '&2Thanks for using my plugin!'
+    - '&3No servidor tem %players_online% players online!'
+#
+# Config das mensagens de morte, as mensagens é configurado na sua Lang.
+deathmessages:
+  # Enabled
+  enabled: true
+#
+# In this location, anti-bug features that can be turned on or off;
+# Neste local, contém os recursos antibugs que podem ser ativados ou desativados.
+antibugs:
+  # In this feature the player is blocked from climbing on the bed;
+  # Neste recurso, o jogador é impedido de subir na cama;
+  # Permission Bypass -> essentialsk.bypass.bed.
+  block-bed: true
+  # In this feature the player is blocked from climbing on the vehicles;
+  # Neste recurso, o jogador é impedido de subir nos veículos;
+  # Permission Bypass -> essentialsk.bypass.vehicles.
+  block-climbing-on-vehicles: true
+  # In this feature, the player is prevented from using NameTag on mobs;
+  # Neste recurso, o jogador é impedido de usar NameTag em mobs;
+  # Permission Bypass -> essentialsk.bypass.nametag.
+  block-nametag: false
+  # In this feature, mobs are prohibited from picking up items from the ground;
+  # Neste recurso, os mobs são proibidos de pegar itens do chão.
+  block-mob-catch: false
+  # In this feature, blocks the player from going over the edge with Ender Pearls.
+  # Neste recurso, bloqueia o jogador de ir além da borda com Ender Pearls.
+  block-going-edge-enderpearl: true
+  # In this feature, blocks player from going to nether ceiling;
+  # Neste recurso, bloqueia o jogador de ir para o teto do Nether;
+  # Permission Bypass -> essentialsk.bypass.netherceiling.
+  block-player-go-to-nether-ceiling: true
+  # In this feature, blocks players teleport in portals;
+  # Neste recurso, os blocos de jogadores se teletransportam em portais;
+  # Permission Bypass -> essentialsk.bypass.teleportportal.
+  block-player-teleport-portal: true
+  # In this feature, blocks all entitys create portals;
+  # Neste recurso, bloqueia todas as entidades criar portais.
+  block-create-portal: false
+#
+# In this location, contains containers options, List of values in (unavailable for now).
+# Neste local, contém as opções do container, Lista de valores em (indisponível por enquanto).
+containers:
+  # Cancel the use of shift on list containers;
+  # Cancelar o uso de shift nos contêineres da lista;
+  # Permission Bypass -> essentialsk.bypass.shiftcontainer.
+  block-shift-enable: false
+  # List to block shift;
+  # Lista para bloquear shift.
+  block-shift:
+    - 'ANVIL'
+  # Cancel open the containers from the list;
+  # Cancelar abrir os contêineres da lista;
+  # Permission Bypass -> essentialsk.bypass.opencontainer.
+  block-open-enable: false
+  # List to block from opening;
+  # Lista para bloquear de abrir.
+  block-open:
+    - 'ANVIL'
+#
+# In this location, has addons for minecraft;
+# Neste local, possui addons para minecraft.
+addons:
+  # In this feature, anvil is infinity;
+  # Neste recurso, a bigorna é infinita.
+  infinity-anvil: true
+  # In this feature, player is teleported to spawn if player fall into the void;
+  # Neste recurso, o jogador é teletransportado para o spawn se o jogador cair no void.
+  block-player-go-to-void: true
+  # In this feature, items droped can not explode.
+  # Neste recurso, os itens dropados não podem explodir.
+  block-explode-items: true
+  # In this feature, the player cannot break the crop when he falls;
+  # Neste recurso, o jogador não pode quebrar a plantação quando cair.
+  block-player-break-plantation-fall: true
+  # In this feature, fire can not propagate;
+  # Neste recurso, o fogo não pode se propagar.
+  block-propagation-fire: true
+  # In this feature, can be put & in name of item, has a permission for that;
+  # Neste recurso, pode ser colocado & no nome do item, tem permissão para isso;
+  # Permission -> essentialsk.color.&0 (Example).
+  color-in-anvil: true
+  # In this feature, can be put & in sign, has a permission for that;
+  # Neste recurso, pode ser colocado & no sinal, tem uma permissão para isso;
+  # Permission -> essentialsk.color.&0 (Example).
+  color-in-sign: true
+  # In this feature, can be put & in chat, has a permission for that.
+  # Neste recurso, pode ser colocado & no bate-papo, tem permissão para isso.
+  # Permission -> essentialsk.color.&0 (Example).
+  color-in-chat: true
+  # In this feature, prevent player lose XP on death.
+  # Neste recurso, evita que o jogador perca XP na morte.
+  player-prevent-lose-xp: true
