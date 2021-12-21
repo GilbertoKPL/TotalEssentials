@@ -16,7 +16,7 @@ import java.util.stream.Collectors
 
 
 class ConfigUtil {
-    val configList = HashMap<String, YamlFile>()
+    lateinit var configYaml : YamlFile
 
     lateinit var langYaml : YamlFile
 
@@ -61,7 +61,7 @@ class ConfigUtil {
         ReflectUtil.getInstance().setValuesFromClass(
             MainConfig::class.java,
             MainConfig.getInstance(),
-            configList.values.toList()
+            configYaml
         )
     }
 
@@ -75,11 +75,11 @@ class ConfigUtil {
 
         if (directoryStream != null) {
             for (i in directoryStream) {
-                if (i.fileName.toString() == "MainConfig.yml") {
-                    bol = initializeYml(i.fileName.toString().replace(".yml", ""), lang)
+                if (!lang) {
+                    bol = initializeYml(i.fileName.toString().replace(".yml", ""), false)
                     continue
                 }
-                initializeYml(i.fileName.toString().replace(".yml", ""), lang)
+                initializeYml(i.fileName.toString().replace(".yml", ""), true)
             }
         }
 
@@ -100,13 +100,13 @@ class ConfigUtil {
                     internalReloadConfig()
                 }
 
-                val langYaml = YamlFile(langHelper())
-                langYaml.load()
+                val langY = YamlFile(langHelper())
+                langY.load()
 
-                this@ConfigUtil.langYaml = langYaml
+                this@ConfigUtil.langYaml = langY
 
                 ReflectUtil.getInstance()
-                    .setValuesOfClass(GeneralLang::class.java, GeneralLang.getInstance(), listOf(langYaml))
+                    .setValuesOfClass(GeneralLang::class.java, GeneralLang.getInstance(), langYaml)
 
             } catch (ex: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
@@ -116,7 +116,7 @@ class ConfigUtil {
 
         try {
             ReflectUtil.getInstance()
-                .setValuesOfClass(MainConfig::class.java, MainConfig.getInstance(), configList.values.toList())
+                .setValuesOfClass(MainConfig::class.java, MainConfig.getInstance(), configYaml)
         } catch (ex: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
         }
@@ -177,7 +177,7 @@ class ConfigUtil {
                 val finalConfigYaml = YamlFile(configFile)
                 finalConfigYaml.loadWithComments()
 
-                configList[source] = finalConfigYaml
+                this.configYaml[source] = finalConfigYaml
                 return false
             }
             File(dir).mkdirs()
@@ -185,10 +185,11 @@ class ConfigUtil {
             PluginUtil.getInstance().consoleMessage(
                 StartLang.getInstance().createMessage.replace("%to%", message).replace("%file%", configFile.name)
             )
-
-            val finalConfigYaml = YamlFile(configFile)
-            finalConfigYaml.loadWithComments()
-            configList[source] = finalConfigYaml
+            if (!lang) {
+                val finalConfigYaml = YamlFile(configFile)
+                finalConfigYaml.loadWithComments()
+                configYaml[source] = finalConfigYaml
+            }
 
             return true
         } catch (ex: Exception) {

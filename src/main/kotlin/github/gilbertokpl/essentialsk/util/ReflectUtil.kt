@@ -12,32 +12,29 @@ class ReflectUtil {
 
     private var getPlayersList: Boolean? = null
 
-    fun setValuesOfClass(cl: Class<*>, clInstance: Any, configList: List<YamlFile>) {
+    fun setValuesOfClass(cl: Class<*>, clInstance: Any, config: YamlFile) {
         for (it in cl.declaredFields) {
             val checkedValue = checkTypeField(it.genericType) ?: continue
 
             val nameFieldComplete = nameFieldHelper(it.name)
 
-            for (yml in configList) {
-                val value = checkedValue.getValueConfig(yml, nameFieldComplete) ?: continue
-                it.set(clInstance, value)
-                break
-            }
+
+            val value = checkedValue.getValueConfig(config, nameFieldComplete) ?: continue
+            it.set(clInstance, value)
+            break
         }
     }
 
-    fun setValuesFromClass(cl: Class<*>, clInstance: Any, configList: List<YamlFile>) {
+    fun setValuesFromClass(cl: Class<*>, clInstance: Any, config: YamlFile) {
         for (it in cl.declaredFields) {
             val checkedValue = checkTypeField(it.genericType) ?: continue
 
             val nameFieldComplete = nameFieldHelper(it.name)
 
-            for (yml in configList) {
-                val value = checkedValue.setValueConfig(yml, nameFieldComplete) ?: continue
-                value.set(nameFieldComplete, it.get(clInstance))
-                value.save(File(yml.filePath))
-                break
-            }
+            val value = checkedValue.setValueConfig(config, nameFieldComplete) ?: continue
+            value.set(nameFieldComplete, it.get(clInstance))
+            value.save(File(config.filePath))
+            break
         }
     }
 

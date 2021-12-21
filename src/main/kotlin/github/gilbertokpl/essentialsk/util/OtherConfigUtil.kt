@@ -9,9 +9,9 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 class OtherConfigUtil {
 
     fun start() {
-        val commandsConfig = ConfigUtil.getInstance().configList["CommandsConfig"]!!
+        val commandsConfig = ConfigUtil.getInstance().configYaml["CommandsConfig"]!!
 
-        val resourcesConfig = ConfigUtil.getInstance().configList["ResourcesConfig"]!!
+        val resourcesConfig = ConfigUtil.getInstance().configYaml["ResourcesConfig"]!!
 
         val vanish = ConfigUtil.getInstance().getStringList(commandsConfig, "vanish.blocked-other-cmds", false)
 
