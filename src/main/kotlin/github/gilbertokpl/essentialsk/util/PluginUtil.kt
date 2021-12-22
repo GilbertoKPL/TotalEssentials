@@ -269,14 +269,19 @@ class PluginUtil {
     }
 
     private fun startCommandsHelper(commands: List<CommandExecutor>, boolean: Boolean) {
-        if (!boolean) return
         for (to in commands) {
-            EssentialsK.instance.getCommand(
-                to.javaClass.name.replace(
+            val cmdName = to.javaClass.name.replace(
                     "github.gilbertokpl.essentialsk.commands.Command",
                     ""
                 ).lowercase()
-            )?.setExecutor(to)
+            if (!boolean) {
+                ReflectUtil.getInstance().removeCommand(cmdName)
+                return
+            }
+            EssentialsK.instance.getCommand(
+                cmdName
+            )?.setExecutor(EssentialsK.instance)
+
         }
     }
 
