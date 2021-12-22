@@ -16,6 +16,8 @@ import java.util.concurrent.TimeUnit
 
 class CommandTpa : ICommand {
     override val consoleCanUse: Boolean = false
+    override val commandName = "tpa"
+    override val timeCoolDown : Long? = null
     override val permission: String = "essentialsk.commands.tpa"
     override val minimumSize = 1
     override val maximumSize = 1
@@ -66,7 +68,7 @@ class CommandTpa : ICommand {
         Dao.getInstance().tpaHash[pReceived] = pSender
         Dao.getInstance().tpAcceptHash[pSender] = 1
 
-        CompletableFuture.supplyAsync({
+        CompletableFuture.runAsync({
             TimeUnit.SECONDS.sleep(time.toLong())
             try {
                 val value = Dao.getInstance().tpAcceptHash[pSender]
@@ -80,7 +82,6 @@ class CommandTpa : ICommand {
             } catch (ex: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
             }
-            return@supplyAsync false
         }, TaskUtil.getInstance().getTeleportExecutor())
     }
 }

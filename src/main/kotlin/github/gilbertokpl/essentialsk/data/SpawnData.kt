@@ -1,18 +1,17 @@
 package github.gilbertokpl.essentialsk.data
 
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.tables.SpawnDataSQL
-import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.LocationUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
-import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
+import org.bukkit.command.CommandSender
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import java.util.concurrent.CompletableFuture
 
 class SpawnData(spawnName: String) {
 
@@ -47,33 +46,28 @@ class SpawnData(spawnName: String) {
         return Dao.getInstance().spawnCache[name]!!
     }
 
-    fun setSpawn(location: Location): Boolean {
+    fun setSpawn(location: Location, s: CommandSender? = null) {
         //cache
         Dao.getInstance().spawnCache[name] = location
 
         val loc = LocationUtil.getInstance().locationSerializer(location)
 
         //sql
-        return CompletableFuture.supplyAsync({
-            try {
-                transaction(SqlUtil.getInstance().sql) {
-                    if (SpawnDataSQL.select { SpawnDataSQL.spawnName eq name }.empty()) {
-                        SpawnDataSQL.insert {
-                            it[spawnName] = name
-                            it[spawnLocation] = loc
-                        }
-                        return@transaction
-                    }
-                    SpawnDataSQL.update({ SpawnDataSQL.spawnName eq name }) {
+        TaskUtil.getInstance().asyncExecutor {
+            transaction(SqlUtil.getInstance().sql) {
+                if (SpawnDataSQL.select { SpawnDataSQL.spawnName eq name }.empty()) {
+                    SpawnDataSQL.insert {
+                        it[spawnName] = name
                         it[spawnLocation] = loc
                     }
+                    return@transaction
                 }
-                return@supplyAsync true
-            } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
-                return@supplyAsync false
+                SpawnDataSQL.update({ SpawnDataSQL.spawnName eq name }) {
+                    it[spawnLocation] = loc
+                }
             }
-        }, TaskUtil.getInstance().getExecutor()).get()
+            s?.sendMessage(GeneralLang.getInstance().spawnSendSetMessage)
+        }
     }
 
 }

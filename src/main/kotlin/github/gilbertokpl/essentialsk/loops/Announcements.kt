@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.loops
 
 import github.gilbertokpl.essentialsk.configs.OtherConfig
 import github.gilbertokpl.essentialsk.manager.IInstance
+import github.gilbertokpl.essentialsk.util.PlayerUtil
 import github.gilbertokpl.essentialsk.util.ReflectUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import java.util.concurrent.TimeUnit
@@ -17,8 +18,11 @@ class Announcements {
         locValues = 1
 
         TaskUtil.getInstance().getAnnounceExecutor().scheduleWithFixedDelay({
+
+            val online = PlayerUtil.getInstance().getIntOnlinePlayers(false)
+
             ReflectUtil.getInstance().getPlayers().forEach {
-                it.sendMessage(OtherConfig.getInstance().announcementsListAnnounce[locValues])
+                it.sendMessage(OtherConfig.getInstance().announcementsListAnnounce[locValues]!!.replace("%players_online%", online.toString()))
             }
             if (locValues == maxValue) {
                 locValues = 1

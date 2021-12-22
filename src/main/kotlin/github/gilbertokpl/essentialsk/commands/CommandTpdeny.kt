@@ -10,6 +10,8 @@ import org.bukkit.entity.Player
 
 class CommandTpdeny : ICommand {
     override val consoleCanUse: Boolean = false
+    override val commandName = "tpdeny"
+    override val timeCoolDown : Long? = null
     override val permission: String = "essentialsk.commands.tpa"
     override val minimumSize = 0
     override val maximumSize = 0
@@ -24,8 +26,15 @@ class CommandTpdeny : ICommand {
         }
 
         //remove checker
+
+        val value = Dao.getInstance().tpAcceptHash[p]
+
         Dao.getInstance().tpaHash.remove(s)
         Dao.getInstance().tpaHash.remove(p)
+
+        if (value!! == 1) {
+            Dao.getInstance().tpAcceptHash.remove(p)
+        }
 
         s.sendMessage(GeneralLang.getInstance().tpaRequestDeny.replace("%player%", p.name))
 

@@ -107,6 +107,8 @@ public class MainConfig {
 
     public Boolean antibugsBlockGoingEdgeEnderpearl;
 
+    public List<String> antibugsBlockCmds;
+
     public Boolean containersBlockShiftEnable;
 
     public List<String> containersBlockShift;
@@ -135,6 +137,10 @@ public class MainConfig {
 
     public Boolean onlineCountRemoveVanish;
 
+    public Boolean announceActivated;
+
+    public int announceCooldown;
+
     public Boolean motdEnabled;
 
     public List<String> motdListMotd;
@@ -146,5 +152,7 @@ public class MainConfig {
     public Boolean deathmessagesEnabled;
 
     public Boolean addonsPlayerPreventLoseXp;
+
+    public Boolean addonsDisableRain;
 
 }

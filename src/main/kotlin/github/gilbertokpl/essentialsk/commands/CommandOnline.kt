@@ -9,6 +9,8 @@ import org.bukkit.command.CommandSender
 
 class CommandOnline : ICommand {
     override val consoleCanUse: Boolean = true
+    override val commandName = "online"
+    override val timeCoolDown : Long? = null
     override val permission: String = "essentialsk.commands.online"
     override val minimumSize = 0
     override val maximumSize = 0

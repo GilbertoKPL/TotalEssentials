@@ -9,6 +9,8 @@ import org.bukkit.entity.Player
 
 class CommandEchest : ICommand {
     override val consoleCanUse: Boolean = false
+    override val commandName = "echest"
+    override val timeCoolDown : Long? = null
     override val permission: String = "essentialsk.commands.ec"
     override val minimumSize = 0
     override val maximumSize = 1

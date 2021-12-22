@@ -12,6 +12,8 @@ import org.bukkit.entity.Player
 
 class CommandHome : ICommand {
     override val consoleCanUse: Boolean = false
+    override val commandName = "home"
+    override val timeCoolDown : Long? = null
     override val permission: String = "essentialsk.commands.home"
     override val minimumSize = 0
     override val maximumSize = 1
@@ -39,41 +41,44 @@ class CommandHome : ICommand {
 
         //admin
         if (args[0].contains(":") && s.hasPermission("essentialsk.commands.home.other")) {
-            val split = args[0].split(":")
+            TaskUtil.getInstance().asyncExecutor {
+                val split = args[0].split(":")
 
-            val pName = split[0].lowercase()
+                val pName = split[0].lowercase()
 
-            val otherPlayerInstance = PlayerData(pName)
+                val otherPlayerInstance = PlayerData(pName)
 
-            if (!otherPlayerInstance.checkSql()) {
-                s.sendMessage(GeneralLang.getInstance().generalPlayerNotExist)
-                return false
-            }
+                if (!otherPlayerInstance.checkSql()) {
+                    s.sendMessage(GeneralLang.getInstance().generalPlayerNotExist)
+                    return@asyncExecutor
+                }
 
-            if (split.size < 2) {
+                if (split.size < 2) {
+                    s.sendMessage(
+                        GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
+                            .replace("%list%", otherPlayerInstance.getHomeList().toString())
+                    )
+                    return@asyncExecutor
+                }
+
+                val loc = otherPlayerInstance.getHomeLocation(split[1]) ?: run {
+                    TaskUtil.getInstance().asyncExecutor {
+                        s.sendMessage(
+                            GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
+                                .replace("%list%", otherPlayerInstance.getHomeList().toString())
+                        )
+                    }
+                    return@asyncExecutor
+                }
+
+                (s as Player).teleport(loc)
+
                 s.sendMessage(
-                    GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
-                        .replace("%list%", otherPlayerInstance.getHomeList().toString())
+                    GeneralLang.getInstance().homesTeleportedOther.replace("%home%", split[1].lowercase())
+                        .replace("%player%", split[0])
                 )
-                return false
+
             }
-
-            val loc = otherPlayerInstance.getHomeLocation(split[1]) ?: run {
-                s.sendMessage(
-                    GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
-                        .replace("%list%", otherPlayerInstance.getHomeList().toString())
-                )
-                return false
-            }
-
-            (s as Player).teleport(loc)
-
-            s.sendMessage(
-                GeneralLang.getInstance().homesTeleportedOther.replace("%home%", split[1].lowercase())
-                    .replace("%player%", split[0])
-            )
-
-
             return false
         }
 

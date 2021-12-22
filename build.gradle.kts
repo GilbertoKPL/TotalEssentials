@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "github.gilbertokpl.essentialsk"
-version = "1.2"
+version = "1.3"
 
 val base = "$group.libs"
 val exposedVersion = "0.36.2"
@@ -247,6 +247,10 @@ bukkit {
         }
         register("online") {
             description = "This is a online command!"
+        }
+        register("announce") {
+            description = "This is a announce command!"
+            aliases = listOf("anunciar")
         }
     }
 }

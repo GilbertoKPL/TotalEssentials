@@ -22,8 +22,9 @@ class PlayerInteractEvent : Listener {
     }
 
     private fun infinityAnvil(e: PlayerInteractEvent) {
-        if ((e.action == Action.RIGHT_CLICK_BLOCK) && ((e.clickedBlock ?: return).type == Material.ANVIL)) {
-            e.clickedBlock!!.state.rawData = 1.toByte()
+        e.clickedBlock ?: return
+        if (e.action == Action.RIGHT_CLICK_BLOCK && e.clickedBlock!!.type == Material.ANVIL) {
+            e.clickedBlock!!.type = Material.ANVIL
         }
     }
 }

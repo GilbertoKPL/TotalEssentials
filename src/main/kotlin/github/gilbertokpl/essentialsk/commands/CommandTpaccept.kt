@@ -12,6 +12,8 @@ import org.bukkit.entity.Player
 
 class CommandTpaccept : ICommand {
     override val consoleCanUse: Boolean = false
+    override val commandName = "tpaccept"
+    override val timeCoolDown : Long? = null
     override val permission: String = "essentialsk.commands.tpa"
     override val minimumSize = 0
     override val maximumSize = 0

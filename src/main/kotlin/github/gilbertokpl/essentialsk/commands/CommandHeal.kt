@@ -11,6 +11,8 @@ import org.bukkit.entity.Player
 
 class CommandHeal : ICommand {
     override val consoleCanUse: Boolean = true
+    override val commandName = "heal"
+    override val timeCoolDown : Long? = null
     override val permission: String = "essentialsk.commands.heal"
     override val minimumSize = 0
     override val maximumSize = 1

@@ -83,7 +83,8 @@ class PluginUtil {
                 SignChangeEvent(),
                 PlayerChangeWorldEvent(),
                 ServerListPing(),
-                PlayerRespawnEvent()
+                PlayerRespawnEvent(),
+                WeatherChangeEvent()
             )
         )
     }
@@ -254,6 +255,13 @@ class PluginUtil {
             ),
             MainConfig.getInstance().onlineActivated
         )
+        //announce
+        startCommandsHelper(
+            listOf(
+                CommandAnnounce(),
+            ),
+            MainConfig.getInstance().announceActivated
+        )
     }
 
     fun checkSpecialCaracteres(s: String?): Boolean {
@@ -345,7 +353,7 @@ class PluginUtil {
         } catch (e: ClassNotFoundException) {
             return
         }
-        val ctx = LogManager.getContext(false) as LoggerContext
+        val ctx = LogManager.getContext(true) as LoggerContext
         val config = ctx.configuration
         val toRemove = ArrayList<String>()
         toRemove.add("com.zaxxer.hikari.pool.PoolBase")

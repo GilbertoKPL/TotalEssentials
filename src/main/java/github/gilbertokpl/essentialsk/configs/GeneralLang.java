@@ -34,6 +34,8 @@ public class GeneralLang {
 
     public String generalSendingInfoToDb;
 
+    public String generalCooldownMoreTime;
+
     public String kitsNotExist;
 
     public String kitsExist;
@@ -315,4 +317,6 @@ public class GeneralLang {
     public String messagesEnterMessage;
 
     public String messagesLeaveMessage;
+
+    public String announceSendAnnounce;
 }

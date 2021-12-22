@@ -4,6 +4,7 @@ general:
   not-perm-action: '&cVocê não tem permissão para fazer isso.'
   player-not-online: '&cEsse player não está online.'
   player-not-exist: '&cEsse player não existe.'
+  cooldown-more-time: '&cFalta %time% para executar novamente esse comando.'
   special-caracteres-disabled: '&cCaracteres proibidos'
   commands-usage: '&9[EssentialsK Help]'
   commands-usage-list: '&9> &e%command%'
@@ -176,7 +177,8 @@ fly:
   send-disabled-world: '&cEste mundo está com fly desativado.'
 online:
   send-online: '&eExiste %amount% players online.'
-
+announce:
+  send-announce: '&e[Anuncio] &9%name%&e: %message%'
 deathmessages:
   # Player mata outro player.
   player-kill-player: '&cO %player% morreu para o(a) %killer%.'

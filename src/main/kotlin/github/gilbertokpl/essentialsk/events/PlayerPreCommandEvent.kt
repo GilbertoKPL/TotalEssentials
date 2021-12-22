@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.EssentialsK
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
 import github.gilbertokpl.essentialsk.data.PlayerData
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
+import java.util.*
 
 class PlayerPreCommandEvent : Listener {
     @EventHandler
@@ -19,6 +21,25 @@ class PlayerPreCommandEvent : Listener {
                 vanishPreCommandEvent(e, split)
             } catch (e: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            }
+        }
+        try {
+            blockCommands(e, split)
+        } catch (e: Exception) {
+            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+        }
+    }
+
+    fun blockCommands(e: PlayerCommandPreprocessEvent, split: List<String>) {
+        val cmd = split[0]
+        for (blockedCmd in MainConfig.getInstance().antibugsBlockCmds) {
+            if ((blockedCmd == cmd || cmd.split(":").toTypedArray().size > 1 && blockedCmd == "/" + cmd.split(":")
+                    .toTypedArray()[1]) &&
+                !e.player.hasPermission("essentialsk.bypass.blockedcmd")
+            ) {
+                e.player.sendMessage(GeneralLang.getInstance().generalNotPerm)
+                e.isCancelled = true
+                return
             }
         }
     }

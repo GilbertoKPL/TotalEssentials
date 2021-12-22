@@ -29,9 +29,7 @@ class CloseInventoryEvent : Listener {
             if (it == null) return false
             Dao.getInstance().editKit.remove(p)
             p.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-            if (KitData(it).setItems(e.inventory.contents.filterNotNull().toList())) {
-                p.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", it))
-            }
+            KitData(it).setItems(e.inventory.contents.filterNotNull().toList(), p)
             return true
         }
     }

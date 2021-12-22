@@ -10,6 +10,8 @@ import org.bukkit.entity.Player
 
 class CommandFeed : ICommand {
     override val consoleCanUse: Boolean = true
+    override val commandName = "feed"
+    override val timeCoolDown : Long? = null
     override val permission: String = "essentialsk.commands.feed"
     override val minimumSize = 0
     override val maximumSize = 1

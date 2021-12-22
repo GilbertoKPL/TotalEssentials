@@ -11,6 +11,8 @@ import org.bukkit.entity.Player
 class CommandEditKit : ICommand {
 
     override val consoleCanUse: Boolean = false
+    override val commandName = "editkit"
+    override val timeCoolDown : Long? = null
     override val permission: String = "essentialsk.commands.editkit"
     override val minimumSize = 1
     override val maximumSize = 1

@@ -5,12 +5,15 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.PluginUtil
+import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandSetHome : ICommand {
     override val consoleCanUse: Boolean = false
+    override val commandName = "sethome"
+    override val timeCoolDown : Long? = null
     override val permission: String = "essentialsk.commands.sethome"
     override val minimumSize = 1
     override val maximumSize = 1
@@ -23,35 +26,37 @@ class CommandSetHome : ICommand {
 
         //admin
         if (args[0].contains(":") && s.hasPermission("essentialsk.commands.sethome.other")) {
-            val split = args[0].split(":")
+            TaskUtil.getInstance().asyncExecutor {
+                val split = args[0].split(":")
 
-            val pName = split[0].lowercase()
+                val pName = split[0].lowercase()
 
-            val otherPlayerInstance = PlayerData(pName)
+                val otherPlayerInstance = PlayerData(pName)
 
-            if (!otherPlayerInstance.checkSql()) {
-                s.sendMessage(GeneralLang.getInstance().generalPlayerNotExist)
-                return false
-            }
+                if (!otherPlayerInstance.checkSql()) {
+                    s.sendMessage(GeneralLang.getInstance().generalPlayerNotExist)
+                    return@asyncExecutor
+                }
 
-            if (split.size < 2) {
+                if (split.size < 2) {
+                    s.sendMessage(
+                        GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
+                            .replace("%list%", otherPlayerInstance.getHomeList().toString())
+                    )
+                    return@asyncExecutor
+                }
+
+                if (otherPlayerInstance.getHomeList().contains(split[1])) {
+                    s.sendMessage(GeneralLang.getInstance().homesNameAlreadyExist)
+                    return@asyncExecutor
+                }
+
+                otherPlayerInstance.setHome(split[1].lowercase(), (s as Player).location)
+
                 s.sendMessage(
-                    GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
-                        .replace("%list%", otherPlayerInstance.getHomeList().toString())
+                    GeneralLang.getInstance().homesHomeOtherCreated.replace("%player%", pName).replace("%home%", split[1])
                 )
-                return false
             }
-
-            if (otherPlayerInstance.getHomeList().contains(split[1])) {
-                s.sendMessage(GeneralLang.getInstance().homesNameAlreadyExist)
-                return false
-            }
-
-            otherPlayerInstance.setHome(split[1].lowercase(), (s as Player).location)
-
-            s.sendMessage(
-                GeneralLang.getInstance().homesHomeOtherCreated.replace("%player%", pName).replace("%home%", split[1])
-            )
 
             return false
         }

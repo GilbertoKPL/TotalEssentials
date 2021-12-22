@@ -18,10 +18,8 @@ class ReflectUtil {
 
             val nameFieldComplete = nameFieldHelper(it.name)
 
-
             val value = checkedValue.getValueConfig(config, nameFieldComplete) ?: continue
             it.set(clInstance, value)
-            break
         }
     }
 
@@ -34,7 +32,6 @@ class ReflectUtil {
             val value = checkedValue.setValueConfig(config, nameFieldComplete) ?: continue
             value.set(nameFieldComplete, it.get(clInstance))
             value.save(File(config.filePath))
-            break
         }
     }
 

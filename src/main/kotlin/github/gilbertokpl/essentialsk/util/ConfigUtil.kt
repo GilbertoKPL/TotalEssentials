@@ -20,6 +20,8 @@ class ConfigUtil {
 
     lateinit var langYaml : YamlFile
 
+    private val lowercaseValues = listOf("nicks.blocked-nicks", "homes.block-worlds", "vanish.blocked-other-cmds", "back.disabled-worlds", "fly.disabled-worlds", "containers.block-shift", "containers.block-open")
+
     private var bol = false
 
     fun start() {
@@ -45,7 +47,7 @@ class ConfigUtil {
     }
 
     internal fun getStringList(source: YamlFile, path: String, color: Boolean = true): List<String> {
-        if (source.filePath.contains("CommandsConfig.yml") || source.filePath.contains("ProtectConfig.yml")) {
+        if (lowercaseValues.contains(path)) {
             return source.getStringList(path).stream().map { to -> to.lowercase() }.collect(Collectors.toList())
         }
         return if (color) {
@@ -103,7 +105,7 @@ class ConfigUtil {
                 val langY = YamlFile(langHelper())
                 langY.load()
 
-                this@ConfigUtil.langYaml = langY
+                langYaml = langY
 
                 ReflectUtil.getInstance()
                     .setValuesOfClass(GeneralLang::class.java, GeneralLang.getInstance(), langYaml)
@@ -157,8 +159,8 @@ class ConfigUtil {
             val configFile = File(dir, "$source.yml")
             val resource = EssentialsK.instance.javaClass.getResourceAsStream(location)
             if (configFile.exists()) {
-                val configYaml = YamlFile(configFile)
-                configYaml.loadWithComments()
+                val internalConfigYaml = YamlFile(configFile)
+                internalConfigYaml.loadWithComments()
                 if (resource == null) return false
                 val tempFile = File.createTempFile("check", ".yml")
                 FileUtils.copyToFile(resource, tempFile)
@@ -168,16 +170,17 @@ class ConfigUtil {
 
                 configHelper(
                     tempConfig,
-                    configYaml,
+                    internalConfigYaml,
                     configFile
                 )
 
                 tempFile.delete()
 
-                val finalConfigYaml = YamlFile(configFile)
-                finalConfigYaml.loadWithComments()
-
-                this.configYaml[source] = finalConfigYaml
+                if (!lang) {
+                    val finalConfigYaml = YamlFile(configFile)
+                    finalConfigYaml.loadWithComments()
+                    configYaml = finalConfigYaml
+                }
                 return false
             }
             File(dir).mkdirs()
@@ -188,7 +191,7 @@ class ConfigUtil {
             if (!lang) {
                 val finalConfigYaml = YamlFile(configFile)
                 finalConfigYaml.loadWithComments()
-                configYaml[source] = finalConfigYaml
+                configYaml = finalConfigYaml
             }
 
             return true

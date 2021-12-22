@@ -7,12 +7,16 @@ import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
+import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.concurrent.CompletableFuture
 
 class CommandNick : ICommand {
     override val consoleCanUse: Boolean = true
+    override val commandName = "nick"
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.nick"
     override val minimumSize = 1
     override val maximumSize = 2
@@ -62,12 +66,14 @@ class CommandNick : ICommand {
 
             val nick = PermissionUtil.getInstance().colorPermission(s, args[0])
 
-            if (playerCache.setNick(nick).get()) {
-                s.sendMessage(GeneralLang.getInstance().nicksExist)
-                return false
-            }
+            TaskUtil.getInstance().asyncExecutor {
+                if (playerCache.setNick(nick)) {
+                    s.sendMessage(GeneralLang.getInstance().nicksExist)
+                    return@asyncExecutor
+                }
 
-            s.sendMessage(GeneralLang.getInstance().nicksNickSuccess.replace("%nick%", nick))
+                s.sendMessage(GeneralLang.getInstance().nicksNickSuccess.replace("%nick%", nick))
+            }
 
             return false
         }

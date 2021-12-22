@@ -42,20 +42,11 @@ class PlayerDeathEvent : Listener {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
         }
-        try {
-            playerData(e)
-        } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
-        }
     }
 
     private fun loseXP(e: PlayerDeathEvent) {
         e.keepLevel = true
         e.droppedExp = 0
-    }
-
-    private fun playerData(e: PlayerDeathEvent) {
-        PlayerData(e.entity.player!!.name.lowercase()).death()
     }
 
     private fun setBackLocation(e: PlayerDeathEvent) {

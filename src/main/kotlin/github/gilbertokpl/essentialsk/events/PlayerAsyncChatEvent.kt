@@ -44,7 +44,6 @@ class PlayerAsyncChatEvent : Listener {
                 e.isCancelled = true
                 val time = TimeUtil.getInstance().convertStringToMillis(e.message)
                 e.player.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-                dataInstance.setTime(time)
                 e.player.sendMessage(
                     GeneralLang.getInstance().kitsEditKitTime.replace(
                         "%time%",
@@ -52,7 +51,7 @@ class PlayerAsyncChatEvent : Listener {
                             .convertMillisToString(time, MainConfig.getInstance().kitsUseShortTime)
                     )
                 )
-                e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", split[1]))
+                dataInstance.setTime(time, e.player)
 
                 return true
             }
@@ -67,8 +66,7 @@ class PlayerAsyncChatEvent : Listener {
                 }
 
                 e.player.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-                dataInstance.setFakeName(e.message.replace("&", "§"))
-                e.player.sendMessage(GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", split[1]))
+                dataInstance.setFakeName(e.message.replace("&", "§"), e.player)
             }
 
             return true

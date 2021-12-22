@@ -12,6 +12,8 @@ import org.bukkit.entity.Player
 
 class CommandSetWarp : ICommand {
     override val consoleCanUse: Boolean = true
+    override val commandName = "setwarp"
+    override val timeCoolDown : Long? = null
     override val permission: String = "essentialsk.commands.setwarp"
     override val minimumSize = 1
     override val maximumSize = 1
@@ -57,18 +59,15 @@ class CommandSetWarp : ICommand {
             }
 
             s.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-            if (warpInstance.setWarp(loc)) {
-                s.sendMessage(GeneralLang.getInstance().warpsWarpCreated.replace("%warp%", warpName))
-            }
+            warpInstance.setWarp(loc, s)
+
 
             return false
         }
 
         if (args.size == 1 && s is Player) {
             s.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-            if (warpInstance.setWarp(s.location)) {
-                s.sendMessage(GeneralLang.getInstance().warpsWarpCreated.replace("%warp%", warpName))
-            }
+            warpInstance.setWarp(s.location, s)
             return false
         }
 

@@ -9,13 +9,10 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 class OtherConfigUtil {
 
     fun start() {
-        val commandsConfig = ConfigUtil.getInstance().configYaml["CommandsConfig"]!!
 
-        val resourcesConfig = ConfigUtil.getInstance().configYaml["ResourcesConfig"]!!
+        val vanish = ConfigUtil.getInstance().getStringList(ConfigUtil.getInstance().configYaml, "vanish.blocked-other-cmds", false)
 
-        val vanish = ConfigUtil.getInstance().getStringList(commandsConfig, "vanish.blocked-other-cmds", false)
-
-        val announce = ConfigUtil.getInstance().getStringList(resourcesConfig, "announcements.list-announce", true)
+        val announce = ConfigUtil.getInstance().getStringList(ConfigUtil.getInstance().configYaml, "announcements.list-announce", true)
 
         val deathMessage = ConfigUtil.getInstance().getStringList(ConfigUtil.getInstance().langYaml, "deathmessages.cause-replacer", true)
 

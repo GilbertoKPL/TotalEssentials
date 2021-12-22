@@ -23,6 +23,7 @@ class PlayerData(player: String) {
 
     data class InternalPlayerData(
         val playerUUID: String,
+        val coolDownCommand: HashMap<String, Long>,
         var kitsCache: HashMap<String, Long>,
         var homeCache: HashMap<String, Location>,
         var homeLimitCache: Int,
@@ -56,24 +57,23 @@ class PlayerData(player: String) {
         return if (online) {
             true
         } else {
-            CompletableFuture.supplyAsync({
-                try {
-                    var check = false
-                    transaction(SqlUtil.getInstance().sql) {
-                        check = PlayerDataSQL.select { PlayerInfo eq uuid }.empty()
-                    }
-                    return@supplyAsync !check
-                } catch (ex: Exception) {
-                    FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+            try {
+                var check = false
+                transaction(SqlUtil.getInstance().sql) {
+                    check = PlayerDataSQL.select { PlayerInfo eq uuid }.empty()
                 }
-                return@supplyAsync false
-            }, TaskUtil.getInstance().getExecutor()).get()
+                return !check
+            } catch (ex: Exception) {
+                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+            }
+            return false
         }
     }
 
     private fun createEmptyCache(limitHome: Int): InternalPlayerData {
         return InternalPlayerData(
             uuid,
+            HashMap(5),
             HashMap(40),
             HashMap(40),
             limitHome,
@@ -93,6 +93,18 @@ class PlayerData(player: String) {
         startVanishCache(cache.vanishCache)
         startLightCache(cache.lightCache)
         startFlyCache(cache.flyCache)
+    }
+
+    //coolDown
+
+    fun setCoolDown(commandName: String, Long: Long) {
+        val cache = getCache()!!
+        cache.coolDownCommand[commandName] = Long
+    }
+
+    fun getCoolDown(commandName: String): Long {
+        val cache = getCache()!!
+        return cache.coolDownCommand[commandName] ?: 0
     }
 
     //Kits
@@ -284,30 +296,28 @@ class PlayerData(player: String) {
         return if (online) {
             getCache()?.let { get -> get.homeCache.map { it.key } } ?: return emptyList()
         } else {
-            CompletableFuture.supplyAsync({
-                lateinit var homesList: String
-                val cacheHomes = ArrayList<String>()
-                var bol = false
-                transaction(SqlUtil.getInstance().sql) {
-                    PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
-                        if (query.empty()) {
-                            bol = true
-                            return@transaction
-                        }
-                        homesList = query.single()[SavedHomes]
+            lateinit var homesList: String
+            val cacheHomes = ArrayList<String>()
+            var bol = false
+            transaction(SqlUtil.getInstance().sql) {
+                PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
+                    if (query.empty()) {
+                        bol = true
+                        return@transaction
                     }
+                    homesList = query.single()[SavedHomes]
                 }
-                if (bol) {
-                    return@supplyAsync emptyList()
-                }
-                for (h in homesList.split("|")) {
-                    if (h == "") continue
-                    val split = h.split(",")
-                    val nameHome = split[0]
-                    cacheHomes.add(nameHome)
-                }
-                return@supplyAsync cacheHomes
-            }, TaskUtil.getInstance().getExecutor()).get()
+            }
+            if (bol) {
+                return emptyList()
+            }
+            for (h in homesList.split("|")) {
+                if (h == "") continue
+                val split = h.split(",")
+                val nameHome = split[0]
+                cacheHomes.add(nameHome)
+            }
+            cacheHomes
         }
     }
 
@@ -316,26 +326,20 @@ class PlayerData(player: String) {
             val cache = getCache() ?: return null
             cache.homeCache[home.lowercase()]
         } else {
-            CompletableFuture.supplyAsync({
-                try {
-                    lateinit var homesList: String
-                    transaction(SqlUtil.getInstance().sql) {
-                        PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
-                            homesList = query.single()[SavedHomes]
-                        }
-                    }
-                    for (h in homesList.split("|")) {
-                        if (h == "") continue
-                        val split = h.split(",")
-                        if (home.lowercase() == split[0]) {
-                            return@supplyAsync LocationUtil.getInstance().locationSerializer(split[1])
-                        }
-                    }
-                } catch (ex: Exception) {
-                    FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+            lateinit var homesList: String
+            transaction(SqlUtil.getInstance().sql) {
+                PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
+                    homesList = query.single()[SavedHomes]
                 }
-                return@supplyAsync null
-            }, TaskUtil.getInstance().getExecutor()).get()
+            }
+            for (h in homesList.split("|")) {
+                if (h == "") continue
+                val split = h.split(",")
+                if (home.lowercase() == split[0]) {
+                    return LocationUtil.getInstance().locationSerializer(split[1])
+                }
+            }
+            null
         }
     }
 
@@ -353,35 +357,29 @@ class PlayerData(player: String) {
         return fakeNick
     }
 
-    fun setNick(newNick: String, other: Boolean = false): CompletableFuture<Boolean> {
-        return CompletableFuture.supplyAsync({
-            try {
-                if (online && !other) {
-                    var exist = false
-                    transaction(SqlUtil.getInstance().sql) {
-                        exist = PlayerDataSQL.select { FakeNick eq newNick }.empty()
-                    }
-                    if (!MainConfig.getInstance().nicksCanPlayerHaveSameNick) {
-                        if (!exist) {
-                            return@supplyAsync true
-                        }
-                    }
-                    p!!.setDisplayName(newNick)
-                }
-                if (online && other) {
-                    p!!.setDisplayName(newNick)
-                    getCache()?.let { it.fakeNickCache = newNick } ?: return@supplyAsync true
-                }
-                transaction(SqlUtil.getInstance().sql) {
-                    PlayerDataSQL.update({ PlayerInfo eq uuid }) {
-                        it[FakeNick] = newNick
-                    }
-                }
-            } catch (ex: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+    fun setNick(newNick: String, other: Boolean = false): Boolean {
+        if (online && !other) {
+            var exist = false
+            transaction(SqlUtil.getInstance().sql) {
+                exist = PlayerDataSQL.select { FakeNick eq newNick }.empty()
             }
-            return@supplyAsync false
-        }, TaskUtil.getInstance().getExecutor())
+            if (!MainConfig.getInstance().nicksCanPlayerHaveSameNick) {
+                if (!exist) {
+                    return true
+                }
+            }
+            p!!.setDisplayName(newNick)
+        }
+        if (online && other) {
+            p!!.setDisplayName(newNick)
+            getCache()?.let { it.fakeNickCache = newNick } ?: return true
+        }
+        transaction(SqlUtil.getInstance().sql) {
+            PlayerDataSQL.update({ PlayerInfo eq uuid }) {
+                it[FakeNick] = newNick
+            }
+        }
+        return false
     }
 
     fun delNick() {
@@ -400,8 +398,8 @@ class PlayerData(player: String) {
     private fun startGamemodeCache(gameMode: Int): Int {
         val gameModeName = PlayerUtil.getInstance().getGamemodeNumber(gameMode.toString())
 
-        if (p!!.gameMode != gameModeName) {
-            p.gameMode = gameModeName
+        if (p?.gameMode != gameModeName) {
+            p?.gameMode = gameModeName
         }
 
         return gameMode
@@ -593,38 +591,40 @@ class PlayerData(player: String) {
         var vanish = false
         var light = false
         var fly = false
-        if (CompletableFuture.supplyAsync({
-                transaction(SqlUtil.getInstance().sql) {
-                    PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
-                        if (query.empty()) {
-                            PlayerDataSQL.insert {
-                                it[PlayerInfo] = this@PlayerData.uuid
-                            }
-                            Dao.getInstance().playerCache[uuid] = createEmptyCache(limitHome)
-                            return@transaction
+
+        TaskUtil.getInstance().asyncExecutor {
+            transaction(SqlUtil.getInstance().sql) {
+                PlayerDataSQL.select { PlayerInfo eq uuid }.also { query ->
+                    if (query.empty()) {
+                        PlayerDataSQL.insert {
+                            it[PlayerInfo] = this@PlayerData.uuid
                         }
-                        timeKits = query.single()[KitsTime]
-                        homesList = query.single()[SavedHomes]
-                        fakeNick = query.single()[FakeNick]
-                        gameMode = query.single()[PlayerDataSQL.GameMode]
-                        vanish = query.single()[PlayerDataSQL.Vanish]
-                        light = query.single()[PlayerDataSQL.Light]
-                        fly = query.single()[PlayerDataSQL.Fly]
+                        Dao.getInstance().playerCache[uuid] = createEmptyCache(limitHome)
+                        return@transaction
                     }
+                    timeKits = query.single()[KitsTime]
+                    homesList = query.single()[SavedHomes]
+                    fakeNick = query.single()[FakeNick]
+                    gameMode = query.single()[PlayerDataSQL.GameMode]
+                    vanish = query.single()[PlayerDataSQL.Vanish]
+                    light = query.single()[PlayerDataSQL.Light]
+                    fly = query.single()[PlayerDataSQL.Fly]
                 }
-                return@supplyAsync true
-            }, TaskUtil.getInstance().getExecutor()).get()) {
-            Dao.getInstance().playerCache[uuid] = InternalPlayerData(
-                uuid,
-                kitsCache = startKitCache(timeKits),
-                homeCache = startHomeCache(homesList),
-                homeLimitCache = limitHome,
-                fakeNickCache = startNickCache(fakeNick),
-                gameModeCache = startGamemodeCache(gameMode),
-                vanishCache = startVanishCache(vanish),
-                lightCache = startLightCache(light),
-                flyCache = startFlyCache(fly)
-            )
+            }
+            EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
+                Dao.getInstance().playerCache[uuid] = InternalPlayerData(
+                    uuid,
+                    HashMap(5),
+                    kitsCache = startKitCache(timeKits),
+                    homeCache = startHomeCache(homesList),
+                    homeLimitCache = limitHome,
+                    fakeNickCache = startNickCache(fakeNick),
+                    gameModeCache = startGamemodeCache(gameMode),
+                    vanishCache = startVanishCache(vanish),
+                    lightCache = startLightCache(light),
+                    flyCache = startFlyCache(fly)
+                )
+            })
         }
     }
 }

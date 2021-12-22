@@ -10,6 +10,8 @@ import org.bukkit.command.CommandSender
 class CommandCreateKit : ICommand {
     override val consoleCanUse = false
     override val permission = "essentialsk.commands.createkit"
+    override val commandName = "createkit"
+    override val timeCoolDown : Long? = null
     override val minimumSize = 1
     override val maximumSize = 1
     override val commandUsage = listOf("/createkit <kitName>")
@@ -37,14 +39,7 @@ class CommandCreateKit : ICommand {
 
         //create cache and sql
         s.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-        if (dataInstance.createNewKitData()) {
-            s.sendMessage(
-                GeneralLang.getInstance().kitsCreateKitSuccess.replace(
-                    "%kit%",
-                    args[0]
-                )
-            )
-        }
+        dataInstance.createNewKitData(s)
         return false
     }
 }
