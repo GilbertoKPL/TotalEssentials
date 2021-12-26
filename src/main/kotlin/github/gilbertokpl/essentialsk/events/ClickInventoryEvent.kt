@@ -18,9 +18,13 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 
+
 class ClickInventoryEvent : Listener {
     @EventHandler
     fun event(e: InventoryClickEvent) {
+        if (e.slot == 45) {
+            return
+        }
         if (MainConfig.getInstance().kitsActivated) {
             try {
                 if (editKitInventoryClickEvent(e)) return
@@ -57,6 +61,7 @@ class ClickInventoryEvent : Listener {
             val meta = e.currentItem!!.itemMeta ?: return false
             val p = e.whoClicked as Player
             e.isCancelled = true
+
             val number = e.slot
             if (number == 36) {
                 p.openInventory(Dao.getInstance().kitGuiCache[inventoryName[2].toInt()]!!)

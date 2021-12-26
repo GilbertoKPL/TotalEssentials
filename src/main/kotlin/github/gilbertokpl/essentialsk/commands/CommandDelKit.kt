@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender
 class CommandDelKit : ICommand {
     override val consoleCanUse: Boolean = true
     override val commandName = "delkit"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.delkit"
     override val minimumSize = 1
     override val maximumSize = 1

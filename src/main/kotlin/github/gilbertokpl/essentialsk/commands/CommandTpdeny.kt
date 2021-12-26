@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
 class CommandTpdeny : ICommand {
     override val consoleCanUse: Boolean = false
     override val commandName = "tpdeny"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.tpa"
     override val minimumSize = 0
     override val maximumSize = 0
@@ -21,18 +21,21 @@ class CommandTpdeny : ICommand {
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val p = Dao.getInstance().tpaHash[s as Player] ?: run {
-            s.sendMessage(GeneralLang.getInstance().tpaNotAnyRequest)
+            s.sendMessage(GeneralLang.getInstance().tpaNotAnyRequestToDeny)
             return false
         }
 
         //remove checker
 
-        val value = Dao.getInstance().tpAcceptHash[p]
+        val value = Dao.getInstance().tpAcceptHash[p] ?: run {
+            s.sendMessage(GeneralLang.getInstance().tpaNotAnyRequestToDeny)
+            return false
+        }
 
         Dao.getInstance().tpaHash.remove(s)
         Dao.getInstance().tpaHash.remove(p)
 
-        if (value!! == 1) {
+        if (value == 1) {
             Dao.getInstance().tpAcceptHash.remove(p)
         }
 

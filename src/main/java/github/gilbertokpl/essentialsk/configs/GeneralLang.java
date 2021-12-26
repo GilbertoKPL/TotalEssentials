@@ -1,8 +1,5 @@
 package github.gilbertokpl.essentialsk.configs;
 
-import github.gilbertokpl.essentialsk.manager.IInstance;
-import org.bukkit.entity.Player;
-
 import java.util.List;
 
 public class GeneralLang {
@@ -35,6 +32,8 @@ public class GeneralLang {
     public String generalSendingInfoToDb;
 
     public String generalCooldownMoreTime;
+
+    public String generalVaultNotExist;
 
     public String kitsNotExist;
 
@@ -200,6 +199,8 @@ public class GeneralLang {
 
     public String tpaNotAnyRequest;
 
+    public String tpaNotAnyRequestToDeny;
+
     public String tpaRequestAccepted;
 
     public String tpaRequestOtherAccepted;
@@ -319,4 +320,22 @@ public class GeneralLang {
     public String messagesLeaveMessage;
 
     public String announceSendAnnounce;
+
+    public String discordchatNoToken;
+
+    public String discordchatNoChatId;
+
+    public String discordchatMessageToDiscordPattern;
+
+    public String discordchatDiscordToServerPattern;
+
+    public String discordchatMessageNotSendToServer;
+
+    public String discordchatDiscordSendLoginMessage;
+
+    public String discordchatDiscordSendLeaveMessage;
+
+    public String tphereTeleportedSuccess;
+
+    public String tphereTeleportedOtherSuccess;
 }

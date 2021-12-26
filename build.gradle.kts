@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "github.gilbertokpl.essentialsk"
-version = "1.3"
+version = "1.4"
 
 val base = "$group.libs"
 val exposedVersion = "0.36.2"
 val kotlin = "1.6.10"
-val buildVersion = "1.18"
+val buildVersion = "1.16.5"
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -36,6 +36,7 @@ allprojects {
         }
 
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+        maven("https://repo.codemc.io/repository/maven-snapshots/")
         maven("https://mvnrepository.com/artifact/")
         maven("https://jitpack.io")
     }
@@ -51,8 +52,10 @@ dependencies {
         exclude("com.google.code.gson", "gson")
     }
 
-    //exclude messages
-    compileOnly("org.apache.logging.log4j:log4j-core:2.14.1")
+    //vault api
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+        exclude("org.bukkit", "bukkit")
+    }
 
     slim("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
 
@@ -80,8 +83,6 @@ dependencies {
 
     slim("org.mariadb.jdbc:mariadb-java-client:2.7.4")
 
-    slim("org.slf4j:slf4j-api:1.7.32")
-
     slim("org.slf4j:slf4j-nop:1.7.32")
 
     slim("com.google.code.gson:gson:2.8.9")
@@ -100,6 +101,12 @@ dependencies {
 
     slim("org.apache.commons:commons-lang3:3.12.0")
 
+    slim("net.dv8tion:JDA:5.0.0-alpha.2") {
+        exclude ("club.minnced", "opus-java")
+        exclude("org.slf4j", "slf4j-api")
+        exclude("org.jetbrains", "annotations")
+    }
+
 }
 
 project.gradle.startParameter.excludedTaskNames.also {
@@ -112,9 +119,10 @@ project.gradle.startParameter.excludedTaskNames.also {
 artifacts.archives(tasks.shadowJar)
 tasks.slimJar {
     relocate("org.bstats", "$base.bstats")
-    relocate("org.apache.commons", "$base.io")
+    relocate("org.apache.commons.lang3", "$base.lang3")
     relocate("org.yaml", "$base.yaml")
     relocate("com.google.gson", "$base.gson")
+    relocate("org.slf4j", "$base.slf4j")
 }
 tasks.shadowJar {
     minimize()
@@ -143,6 +151,7 @@ bukkit {
     version = project.version.toString()
     apiVersion = "1.13"
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD
+    softDepend = listOf("Vault")
     commands {
         register("essentialsk") {
             description = "This is a main essentialsk command!"
@@ -251,6 +260,17 @@ bukkit {
         register("announce") {
             description = "This is a announce command!"
             aliases = listOf("anunciar")
+        }
+        register("craft") {
+            description = "This is a announce command!"
+        }
+        register("trash") {
+            description = "This is a announce command!"
+            aliases = listOf("lixo")
+        }
+        register("tphere") {
+            description = "This is a announce command!"
+            aliases = listOf("tphere")
         }
     }
 }

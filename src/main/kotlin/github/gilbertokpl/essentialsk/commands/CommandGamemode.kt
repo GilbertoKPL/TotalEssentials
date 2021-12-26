@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 class CommandGamemode : ICommand {
     override val consoleCanUse: Boolean = true
     override val commandName = "gamemode"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.gamemode"
     override val minimumSize = 1
     override val maximumSize = 2

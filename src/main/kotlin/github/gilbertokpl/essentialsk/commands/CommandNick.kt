@@ -11,7 +11,6 @@ import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.util.concurrent.CompletableFuture
 
 class CommandNick : ICommand {
     override val consoleCanUse: Boolean = true

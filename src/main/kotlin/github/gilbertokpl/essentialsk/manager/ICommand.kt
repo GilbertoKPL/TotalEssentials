@@ -17,8 +17,8 @@ interface ICommand : CommandExecutor {
     val permission: String?
     val consoleCanUse: Boolean
     val commandUsage: List<String>
-    val minimumSize: Int
-    val maximumSize: Int
+    val minimumSize: Int?
+    val maximumSize: Int?
 
     fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean
 
@@ -48,7 +48,7 @@ interface ICommand : CommandExecutor {
             }
         }
         try {
-            if (args.size > maximumSize || args.size < minimumSize) {
+            if (maximumSize != null && args.size > maximumSize!! || minimumSize != null && args.size < minimumSize!!) {
                 errorMessage()
                 return true
             }

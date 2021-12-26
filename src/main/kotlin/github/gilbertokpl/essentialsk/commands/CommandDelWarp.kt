@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender
 class CommandDelWarp : ICommand {
     override val consoleCanUse: Boolean = true
     override val commandName = "delwarp"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.delwarp"
     override val minimumSize = 1
     override val maximumSize = 1

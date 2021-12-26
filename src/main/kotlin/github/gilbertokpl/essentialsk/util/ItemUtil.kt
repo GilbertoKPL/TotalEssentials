@@ -51,7 +51,7 @@ class ItemUtil {
         }
 
         //send kit to player
-        if (ItemUtil.getInstance().giveKit(
+        if (giveKit(
                 p,
                 kitCache.items,
                 MainConfig.getInstance().kitsEquipArmorInCatch,
@@ -69,13 +69,17 @@ class ItemUtil {
 
         val itemsInternal = ArrayList<ItemStack>()
 
-        val inventorySlotsUsed = inv.filterNotNull().size
+        var inventorySpace = 0
+
+        for (i in 0..36) {
+            if (inv.getItem(i) == null) {
+                inventorySpace += 1
+            }
+        }
 
         val armor = ArrayList<String>()
 
         val itemsArmorInternal = HashMap<String, ItemStack>()
-
-        var inventorySpace = (Integer.valueOf(36).minus(inventorySlotsUsed))
 
         //check if player has space in Armor contents
         if (armorAutoEquip) {
@@ -109,8 +113,37 @@ class ItemUtil {
             itemsInternal.add(i)
         }
 
-        // give armor parts
-        fun giveArmour() {
+        //drop itens if full
+        if (drop) {
+            for (i in itemsInternal) {
+                if (inventorySpace > 0) {
+                    p.inventory.addItem(i)
+                    inventorySpace -= 1
+                    continue
+                }
+                p.world.dropItem(p.location, i)
+            }
+        }
+        else {
+            //check if inventory is full and add item
+            if (inventorySpace >= itemsInternal.size) {
+                for (i in itemsInternal) {
+                    p.inventory.addItem(i)
+                }
+            }
+            else {
+                //send message if inventory is full
+                p.sendMessage(
+                    GeneralLang.getInstance().kitsCatchNoSpace.replace(
+                        "%slots%",
+                        (itemsInternal.size - inventorySpace).toString()
+                    )
+                )
+                return false
+            }
+        }
+
+        if (armorAutoEquip) {
             for (i in itemsArmorInternal) {
                 if (i.key == "HELMET") {
                     inv.helmet = i.value
@@ -130,38 +163,7 @@ class ItemUtil {
                 }
             }
         }
-
-        //drop itens if full
-        if (drop) {
-            for (i in itemsInternal) {
-                if (inventorySpace > 0) {
-                    p.inventory.addItem(i)
-                    inventorySpace -= 1
-                    continue
-                }
-                p.world.dropItem(p.location, i)
-            }
-            giveArmour()
-            return true
-        }
-
-        //check if inventory is full and add item
-        if (inventorySpace >= itemsInternal.size) {
-            for (i in itemsInternal) {
-                p.inventory.addItem(i)
-            }
-            giveArmour()
-            return true
-        }
-
-        //send message if inventory is full
-        p.sendMessage(
-            GeneralLang.getInstance().kitsCatchNoSpace.replace(
-                "%slots%",
-                (itemsInternal.size - inventorySpace).toString()
-            )
-        )
-        return false
+        return true
     }
 
     fun itemSerializer(items: List<ItemStack>): String {

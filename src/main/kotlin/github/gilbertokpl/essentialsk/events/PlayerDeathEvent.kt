@@ -4,13 +4,9 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
 import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.PlayerData
-import github.gilbertokpl.essentialsk.data.SpawnData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.bukkit.entity.Creeper
-import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -28,7 +24,7 @@ class PlayerDeathEvent : Listener {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
         }
-        if (MainConfig.getInstance().deathmessagesEnabled) {
+        if (MainConfig.getInstance().messagesDeathmessagesMessage) {
             try {
                 deathMessage(e)
             } catch (e: Exception) {
@@ -59,7 +55,7 @@ class PlayerDeathEvent : Listener {
 
     private fun deathMessage(e: PlayerDeathEvent) {
         e.deathMessage = null
-        val damageCause = e.entity.player!!.lastDamageCause ?:run {
+        val damageCause = e.entity.player!!.lastDamageCause ?: run {
             PluginUtil.getInstance().serverMessage(
                 GeneralLang.getInstance().deathmessagesNothingKillPlayer
                     .replace("%player%", e.entity.player!!.name)
@@ -77,7 +73,7 @@ class PlayerDeathEvent : Listener {
                 )
                 return
             }
-            val causeMessage = OtherConfig.getInstance().deathmessageListReplacer[ent.damager.name.lowercase()] ?:run {
+            val causeMessage = OtherConfig.getInstance().deathmessageListReplacer[ent.damager.name.lowercase()] ?: run {
                 ent.damager.name.lowercase()
             }
             PluginUtil.getInstance().serverMessage(
@@ -88,17 +84,18 @@ class PlayerDeathEvent : Listener {
             return
         }
 
-        val causeMessage = OtherConfig.getInstance().deathmessageListReplacer[damageCause.cause.name.lowercase()] ?:run {
-            PluginUtil.getInstance().consoleMessage(
-                GeneralLang.getInstance().deathmessagesCauseNotExist
-                    .replace("%cause%" , damageCause.cause.name.lowercase())
-            )
-            PluginUtil.getInstance().serverMessage(
-                GeneralLang.getInstance().deathmessagesNothingKillPlayer
-                    .replace("%player%", e.entity.player!!.name)
-            )
-            return
-        }
+        val causeMessage =
+            OtherConfig.getInstance().deathmessageListReplacer[damageCause.cause.name.lowercase()] ?: run {
+                PluginUtil.getInstance().consoleMessage(
+                    GeneralLang.getInstance().deathmessagesCauseNotExist
+                        .replace("%cause%", damageCause.cause.name.lowercase())
+                )
+                PluginUtil.getInstance().serverMessage(
+                    GeneralLang.getInstance().deathmessagesNothingKillPlayer
+                        .replace("%player%", e.entity.player!!.name)
+                )
+                return
+            }
         PluginUtil.getInstance().serverMessage(
             causeMessage.replace("%player%", e.entity.player!!.name)
         )

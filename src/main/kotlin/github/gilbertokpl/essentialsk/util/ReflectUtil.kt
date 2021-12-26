@@ -31,7 +31,9 @@ class ReflectUtil {
                 val commands = commandsField[commandMap] as HashMap<String, Command>
                 val toRemove = HashMap<String, Command>()
                 for (entry in commands.entries) {
-                    if (entry.value.name.lowercase() == cmd || entry.key.split(":").size > 1 && entry.key.lowercase().split(":")[1] == cmd) {
+                    if (entry.value.name.lowercase() == cmd || entry.key.split(":").size > 1 && entry.key.lowercase()
+                            .split(":")[1] == cmd
+                    ) {
                         toRemove[entry.key] = entry.value
                     }
                 }

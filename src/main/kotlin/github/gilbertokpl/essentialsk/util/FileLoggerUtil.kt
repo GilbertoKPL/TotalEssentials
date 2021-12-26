@@ -23,7 +23,7 @@ class FileLoggerUtil {
         if (logger == null) return
         CompletableFuture.runAsync({
             try {
-                var svName = MainConfig.getInstance().generalServerMame
+                var svName = MainConfig.getInstance().generalServerName
                 svName = if (svName == "") {
                     "Server - unamed, Time - $time"
                 } else {

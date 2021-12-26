@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 class CommandFly : ICommand {
     override val consoleCanUse: Boolean = true
     override val commandName = "fly"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.fly"
     override val minimumSize = 0
     override val maximumSize = 1

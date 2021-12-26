@@ -32,8 +32,6 @@ class EssentialsK : JavaPlugin() {
 
         ManifestUtil.getInstance().start()
 
-        PluginUtil.getInstance().disableLoggers()
-
         PluginUtil.getInstance().startMetrics()
 
         super.onLoad()
@@ -56,6 +54,8 @@ class EssentialsK : JavaPlugin() {
         PluginUtil.getInstance().startInventories()
 
         PluginUtil.getInstance().startEvents()
+
+        DiscordUtil.getInstance().startBot()
 
         super.onEnable()
     }

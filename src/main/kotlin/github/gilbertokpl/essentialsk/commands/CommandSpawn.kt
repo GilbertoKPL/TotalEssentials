@@ -14,7 +14,7 @@ import org.bukkit.entity.Player
 class CommandSpawn : ICommand {
     override val consoleCanUse: Boolean = true
     override val commandName = "spawn"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.spawn"
     override val minimumSize = 0
     override val maximumSize = 1

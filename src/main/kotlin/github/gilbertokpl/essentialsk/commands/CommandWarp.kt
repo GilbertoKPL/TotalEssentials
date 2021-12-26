@@ -13,7 +13,7 @@ import org.bukkit.entity.Player
 class CommandWarp : ICommand {
     override val consoleCanUse: Boolean = false
     override val commandName = "warp"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.warp"
     override val minimumSize = 0
     override val maximumSize = 1

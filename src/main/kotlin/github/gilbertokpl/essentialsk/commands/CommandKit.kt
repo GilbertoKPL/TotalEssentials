@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 class CommandKit : ICommand {
     override val consoleCanUse: Boolean = true
     override val commandName = "kit"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.kit"
     override val minimumSize = 0
     override val maximumSize = 1
@@ -40,7 +40,7 @@ class CommandKit : ICommand {
         val dataInstance = KitData(args[0])
 
         //check if not exist
-        if (dataInstance.checkCache()) {
+        if (!dataInstance.checkCache()) {
             s.sendMessage(GeneralLang.getInstance().kitsList.replace("%kits%", dataInstance.kitList().toString()))
             return false
         }

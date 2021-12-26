@@ -22,7 +22,12 @@ class Announcements {
             val online = PlayerUtil.getInstance().getIntOnlinePlayers(false)
 
             ReflectUtil.getInstance().getPlayers().forEach {
-                it.sendMessage(OtherConfig.getInstance().announcementsListAnnounce[locValues]!!.replace("%players_online%", online.toString()))
+                it.sendMessage(
+                    OtherConfig.getInstance().announcementsListAnnounce[locValues]!!.replace(
+                        "%players_online%",
+                        online.toString()
+                    )
+                )
             }
             if (locValues == maxValue) {
                 locValues = 1

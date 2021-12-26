@@ -12,10 +12,10 @@ import org.bukkit.entity.Player
 class CommandAnnounce : ICommand {
     override val consoleCanUse: Boolean = true
     override val commandName = "announce"
-    override val timeCoolDown : Long = MainConfig.getInstance().announceCooldown.toLong()
+    override val timeCoolDown: Long = MainConfig.getInstance().announceCooldown.toLong()
     override val permission: String = "essentialsk.commands.announce"
     override val minimumSize = 1
-    override val maximumSize = 1
+    override val maximumSize: Nothing? = null
     override val commandUsage = listOf("/announce <msg>", "/anunciar <msg>")
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val name = if (s !is Player) {

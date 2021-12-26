@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender
 class CommandDelHome : ICommand {
     override val consoleCanUse: Boolean = false
     override val commandName = "delhome"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.delhome"
     override val minimumSize = 1
     override val maximumSize = 1
@@ -51,7 +51,8 @@ class CommandDelHome : ICommand {
                 otherPlayerInstance.delHome(split[1])
 
                 s.sendMessage(
-                    GeneralLang.getInstance().homesHomeOtherRemoved.replace("%player%", pName).replace("%home%", split[1])
+                    GeneralLang.getInstance().homesHomeOtherRemoved.replace("%player%", pName)
+                        .replace("%home%", split[1])
                 )
             }
 

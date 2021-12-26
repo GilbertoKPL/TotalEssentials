@@ -13,7 +13,7 @@ public class MainConfig {
 
     public String generalSelectedLang = "en_US";
 
-    public String generalServerMame;
+    public String generalServerName;
 
     public String databaseType;
 
@@ -89,6 +89,8 @@ public class MainConfig {
 
     public Boolean spawnSendToSpawnOnLogin;
 
+    public Boolean spawnSendToSpawnOnDeath;
+
     public int spawnTimeToTeleport;
 
     public Boolean antibugsBlockBed;
@@ -149,10 +151,34 @@ public class MainConfig {
 
     public int announcementsTime;
 
-    public Boolean deathmessagesEnabled;
+    public Boolean messagesDeathmessagesMessage;
+
+    public Boolean messagesLoginMessage;
+
+    public Boolean messagesLeaveMessage;
 
     public Boolean addonsPlayerPreventLoseXp;
 
     public Boolean addonsDisableRain;
+
+    public String discordbotToken;
+
+    public Boolean discordbotConnectDiscordChat;
+
+    public String discordbotIdDiscordChat;
+
+    public List<String> discordbotCommandChat;
+
+    public int discordbotMaxMessageLenght;
+
+    public Boolean discordbotSendLoginMessage;
+
+    public Boolean discordbotSendLeaveMessage;
+
+    public Boolean tphereActivated;
+
+    public Boolean trashActivated;
+
+    public Boolean craftActivated;
 
 }

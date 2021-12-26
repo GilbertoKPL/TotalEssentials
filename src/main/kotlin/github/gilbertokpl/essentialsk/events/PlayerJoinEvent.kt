@@ -2,12 +2,14 @@ package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.data.SpawnData
-import github.gilbertokpl.essentialsk.util.FileLoggerUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
-import github.gilbertokpl.essentialsk.util.ReflectUtil
+import github.gilbertokpl.essentialsk.manager.EColor
+import github.gilbertokpl.essentialsk.util.*
+import net.dv8tion.jda.api.EmbedBuilder
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -15,6 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 class PlayerJoinEvent : Listener {
     @EventHandler
     fun event(e: PlayerJoinEvent) {
+        e.joinMessage = null
         if (MainConfig.getInstance().spawnSendToSpawnOnLogin) {
             try {
                 spawnLogin(e)
@@ -33,15 +36,6 @@ class PlayerJoinEvent : Listener {
             } catch (e: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
             }
-        }
-        try {
-            e.joinMessage = null
-            PluginUtil.getInstance().serverMessage(
-                GeneralLang.getInstance().messagesEnterMessage
-                    .replace("%player%", e.player.name)
-            )
-        } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
         }
     }
 

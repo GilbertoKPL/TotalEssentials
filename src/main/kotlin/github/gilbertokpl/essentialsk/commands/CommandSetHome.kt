@@ -13,7 +13,7 @@ import org.bukkit.entity.Player
 class CommandSetHome : ICommand {
     override val consoleCanUse: Boolean = false
     override val commandName = "sethome"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.sethome"
     override val minimumSize = 1
     override val maximumSize = 1
@@ -54,7 +54,8 @@ class CommandSetHome : ICommand {
                 otherPlayerInstance.setHome(split[1].lowercase(), (s as Player).location)
 
                 s.sendMessage(
-                    GeneralLang.getInstance().homesHomeOtherCreated.replace("%player%", pName).replace("%home%", split[1])
+                    GeneralLang.getInstance().homesHomeOtherCreated.replace("%player%", pName)
+                        .replace("%home%", split[1])
                 )
             }
 

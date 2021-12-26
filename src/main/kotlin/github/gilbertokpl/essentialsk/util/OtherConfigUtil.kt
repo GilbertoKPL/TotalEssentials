@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
+import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.loops.Announcements
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -10,13 +11,21 @@ class OtherConfigUtil {
 
     fun start() {
 
-        val vanish = ConfigUtil.getInstance().getStringList(ConfigUtil.getInstance().configYaml, "vanish.blocked-other-cmds", false)
+        if (Dao.getInstance().discordChat != null) {
+            Dao.getInstance().discordChat = null
+        }
 
-        val announce = ConfigUtil.getInstance().getStringList(ConfigUtil.getInstance().configYaml, "announcements.list-announce", true)
+        val vanish = ConfigUtil.getInstance()
+            .getStringList(ConfigUtil.getInstance().configYaml, "vanish.blocked-other-cmds", false)
 
-        val deathMessage = ConfigUtil.getInstance().getStringList(ConfigUtil.getInstance().langYaml, "deathmessages.cause-replacer", true)
+        val announce = ConfigUtil.getInstance()
+            .getStringList(ConfigUtil.getInstance().configYaml, "announcements.list-announce", true)
 
-        val deathMessageEntity = ConfigUtil.getInstance().getStringList(ConfigUtil.getInstance().langYaml, "deathmessages.entity-replacer", true)
+        val deathMessage = ConfigUtil.getInstance()
+            .getStringList(ConfigUtil.getInstance().langYaml, "deathmessages.cause-replacer", true)
+
+        val deathMessageEntity = ConfigUtil.getInstance()
+            .getStringList(ConfigUtil.getInstance().langYaml, "deathmessages.entity-replacer", true)
 
         try {
             OtherConfig.getInstance().deathmessageListReplacer.clear()
@@ -25,8 +34,8 @@ class OtherConfigUtil {
                 val to = d.split("-")
                 try {
                     OtherConfig.getInstance().deathmessageListReplacer[to[0].lowercase()] = to[1]
+                } catch (ignored: Exception) {
                 }
-                catch (ignored : Exception) {}
             }
         } catch (e: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
@@ -37,8 +46,8 @@ class OtherConfigUtil {
                 val to = d.split("-")
                 try {
                     OtherConfig.getInstance().deathmessageListReplacer[to[0].lowercase()] = to[1]
+                } catch (ignored: Exception) {
                 }
-                catch (ignored : Exception) {}
             }
         } catch (e: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))

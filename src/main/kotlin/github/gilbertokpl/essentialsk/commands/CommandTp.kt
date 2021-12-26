@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
 class CommandTp : ICommand {
     override val consoleCanUse: Boolean = false
     override val commandName = "tp"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.tp"
     override val minimumSize = 1
     override val maximumSize = 4

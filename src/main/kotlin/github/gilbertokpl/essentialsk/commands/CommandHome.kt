@@ -13,7 +13,7 @@ import org.bukkit.entity.Player
 class CommandHome : ICommand {
     override val consoleCanUse: Boolean = false
     override val commandName = "home"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.home"
     override val minimumSize = 0
     override val maximumSize = 1

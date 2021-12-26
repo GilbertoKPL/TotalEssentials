@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender
 class CommandEssentialsK : ICommand {
     override val consoleCanUse: Boolean = true
     override val commandName = "essentialsk"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.essentialsk"
     override val minimumSize = 1
     override val maximumSize = 1

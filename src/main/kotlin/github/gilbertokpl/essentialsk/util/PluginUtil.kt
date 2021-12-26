@@ -12,9 +12,6 @@ import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.core.LoggerContext
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import org.bukkit.command.*
@@ -184,6 +181,13 @@ class PluginUtil {
             ),
             MainConfig.getInstance().tpActivated
         )
+        //tphere
+        startCommandsHelper(
+            listOf(
+                CommandTphere()
+            ),
+            MainConfig.getInstance().tphereActivated
+        )
         //echest
         startCommandsHelper(
             listOf(
@@ -262,7 +266,27 @@ class PluginUtil {
             ),
             MainConfig.getInstance().announceActivated
         )
+        //craft
+        startCommandsHelper(
+            listOf(
+                CommandCraft(),
+            ),
+            MainConfig.getInstance().craftActivated
+        )
+        //trash
+        startCommandsHelper(
+            listOf(
+                CommandTrash(),
+            ),
+            MainConfig.getInstance().trashActivated
+        )
     }
+
+    fun randomColor() = java.awt.Color.getHSBColor(
+        (Math.random() * 255 + 1).toFloat(),
+        (Math.random() * 255 + 1).toFloat(),
+        (Math.random() * 255 + 1).toFloat()
+    )
 
     fun checkSpecialCaracteres(s: String?): Boolean {
         return s?.matches(Regex("[^A-Za-z0-9 ]")) ?: false
@@ -271,16 +295,16 @@ class PluginUtil {
     private fun startCommandsHelper(commands: List<CommandExecutor>, boolean: Boolean) {
         for (to in commands) {
             val cmdName = to.javaClass.name.replace(
-                    "github.gilbertokpl.essentialsk.commands.Command",
-                    ""
-                ).lowercase()
+                "github.gilbertokpl.essentialsk.commands.Command",
+                ""
+            ).lowercase()
             if (!boolean) {
                 ReflectUtil.getInstance().removeCommand(cmdName)
                 return
             }
             EssentialsK.instance.getCommand(
                 cmdName
-            )?.setExecutor(EssentialsK.instance)
+            )?.setExecutor(to)
 
         }
     }
@@ -350,26 +374,6 @@ class PluginUtil {
 
     fun startMetrics() {
         Metrics(EssentialsK.instance, 13441)
-    }
-
-    fun disableLoggers() {
-        try {
-            Class.forName("org.apache.logging.log4j.core.LoggerContext")
-        } catch (e: ClassNotFoundException) {
-            return
-        }
-        val ctx = LogManager.getContext(true) as LoggerContext
-        val config = ctx.configuration
-        val toRemove = ArrayList<String>()
-        toRemove.add("com.zaxxer.hikari.pool.PoolBase")
-        toRemove.add("com.zaxxer.hikari.pool.HikariPool")
-        toRemove.add("com.zaxxer.hikari.HikariDataSource")
-        toRemove.add("com.zaxxer.hikari.HikariConfig")
-        toRemove.add("com.zaxxer.hikari.util.DriverDataSource")
-        toRemove.add("Exposed")
-        for (remove in toRemove) {
-            config.getLoggerConfig(remove).level = Level.OFF
-        }
     }
 
     companion object : IInstance<PluginUtil> {

@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.data
 
 import github.gilbertokpl.essentialsk.manager.IInstance
+import net.dv8tion.jda.api.entities.TextChannel
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -8,6 +9,9 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 class Dao {
+
+    //discord
+    var discordChat: TextChannel? = null
 
     //spawn
     val spawnCache = HashMap<String, Location>(2)

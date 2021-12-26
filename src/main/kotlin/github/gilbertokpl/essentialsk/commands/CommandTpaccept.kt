@@ -13,7 +13,7 @@ import org.bukkit.entity.Player
 class CommandTpaccept : ICommand {
     override val consoleCanUse: Boolean = false
     override val commandName = "tpaccept"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.tpa"
     override val minimumSize = 0
     override val maximumSize = 0
@@ -28,11 +28,14 @@ class CommandTpaccept : ICommand {
         }
 
         //remove checker
-        val value = Dao.getInstance().tpAcceptHash[p]
+        val value = Dao.getInstance().tpAcceptHash[p] ?: run {
+            s.sendMessage(GeneralLang.getInstance().tpaNotAnyRequest)
+            return false
+        }
 
         Dao.getInstance().tpaHash.remove(s)
 
-        if (value!! == 1) {
+        if (value == 1) {
             Dao.getInstance().tpAcceptHash.remove(p)
         }
 

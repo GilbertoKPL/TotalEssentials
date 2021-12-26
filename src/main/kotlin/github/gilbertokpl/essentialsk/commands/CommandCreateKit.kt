@@ -11,7 +11,7 @@ class CommandCreateKit : ICommand {
     override val consoleCanUse = false
     override val permission = "essentialsk.commands.createkit"
     override val commandName = "createkit"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val minimumSize = 1
     override val maximumSize = 1
     override val commandUsage = listOf("/createkit <kitName>")

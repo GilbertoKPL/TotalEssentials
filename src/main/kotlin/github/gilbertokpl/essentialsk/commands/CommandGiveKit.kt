@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender
 class CommandGiveKit : ICommand {
     override val consoleCanUse: Boolean = true
     override val commandName = "givekit"
-    override val timeCoolDown : Long? = null
+    override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.givekit"
     override val minimumSize = 2
     override val maximumSize = 2

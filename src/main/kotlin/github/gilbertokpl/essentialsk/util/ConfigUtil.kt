@@ -16,11 +16,20 @@ import java.util.stream.Collectors
 
 
 class ConfigUtil {
-    lateinit var configYaml : YamlFile
+    lateinit var configYaml: YamlFile
 
-    lateinit var langYaml : YamlFile
+    lateinit var langYaml: YamlFile
 
-    private val lowercaseValues = listOf("nicks.blocked-nicks", "homes.block-worlds", "vanish.blocked-other-cmds", "back.disabled-worlds", "fly.disabled-worlds", "containers.block-shift", "containers.block-open")
+    private val lowercaseValues = listOf(
+        "nicks.blocked-nicks",
+        "homes.block-worlds",
+        "vanish.blocked-other-cmds",
+        "back.disabled-worlds",
+        "fly.disabled-worlds",
+        "containers.block-shift",
+        "containers.block-open",
+        "discordbot.command-chat"
+    )
 
     private var bol = false
 

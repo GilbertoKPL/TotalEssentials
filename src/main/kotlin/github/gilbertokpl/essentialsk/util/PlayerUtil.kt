@@ -2,12 +2,18 @@ package github.gilbertokpl.essentialsk.util
 
 import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
+import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.manager.IInstance
+import net.dv8tion.jda.api.EmbedBuilder
 import org.apache.commons.io.IOUtils
 import org.bukkit.GameMode
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerJoinEvent
 import java.net.URL
 
 class PlayerUtil {
@@ -58,6 +64,40 @@ class PlayerUtil {
         } else {
             p.name!!.lowercase()
         }
+    }
+
+    fun sendLoginEmbed(p: Player) {
+        if (DiscordUtil.getInstance().jda == null) {
+            PluginUtil.getInstance().consoleMessage(
+                EColor.YELLOW.color + GeneralLang.getInstance().discordchatNoToken + EColor.RESET.color
+            )
+            return
+        }
+        if (Dao.getInstance().discordChat == null) {
+            TaskUtil.getInstance().asyncExecutor {
+                val newChat =
+                    DiscordUtil.getInstance().jda!!.getTextChannelById(MainConfig.getInstance().discordbotIdDiscordChat)
+                        ?: run {
+                            PluginUtil.getInstance().consoleMessage(
+                                EColor.YELLOW.color + GeneralLang.getInstance().discordchatNoChatId + EColor.RESET.color
+                            )
+                            return@asyncExecutor
+                        }
+                Dao.getInstance().discordChat = newChat
+
+                Dao.getInstance().discordChat!!.sendMessageEmbeds(
+                    EmbedBuilder().setDescription(
+                        GeneralLang.getInstance().discordchatDiscordSendLoginMessage.replace("%player%", p.name)
+                    ).setColor(PluginUtil.getInstance().randomColor()).build()
+                ).complete()
+            }
+        }
+
+        Dao.getInstance().discordChat?.sendMessageEmbeds(
+            EmbedBuilder().setDescription(
+                GeneralLang.getInstance().discordchatDiscordSendLoginMessage.replace("%player%", p.name)
+            ).setColor(PluginUtil.getInstance().randomColor()).build()
+        )?.queue()
     }
 
     companion object : IInstance<PlayerUtil> {

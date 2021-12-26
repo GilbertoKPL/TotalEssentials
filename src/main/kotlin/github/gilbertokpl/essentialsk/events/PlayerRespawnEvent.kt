@@ -9,13 +9,12 @@ import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 
 class PlayerRespawnEvent : Listener {
     @EventHandler
     fun event(e: PlayerRespawnEvent) {
-        if (MainConfig.getInstance().spawnActivated) {
+        if (MainConfig.getInstance().spawnSendToSpawnOnDeath) {
             try {
                 spawnRespawn(e)
             } catch (e: Exception) {

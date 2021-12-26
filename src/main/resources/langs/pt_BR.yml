@@ -9,6 +9,7 @@ general:
   commands-usage: '&9[EssentialsK Help]'
   commands-usage-list: '&9> &e%command%'
   sending-info-to-db: '&aMandando informação para seu Banco de dados...'
+  vault-not-exist: '&cAdicione Vault para funcionar tudo do plugin!'
 time:
   seconds: 'segundos'
   second: 'segundo'
@@ -115,12 +116,16 @@ tpa:
   already-send: '&cVocê acabou de enviar um TPA aguarde para enviar novamente.'
   already-in-accept: '&cO player já tem o pedido ativo de outra pessoa aguarde.'
   not-any-request: '&cVocê não tem nenhum pedido para aceitar.'
+  not-any-request-to-deny: '&cVocê não tem nenhum pedido para cancelar.'
   request-accepted: '&eVocê acaba de aceitar o pedido de %player%.'
   request-other-accepted: '&eO %player% acaba de aceitar seu pedido de teleporte, teleportando em %time% segundos.'
   request-other-no-delay-accepted: '&eO %player% acaba de aceitar seu pedido de teleporte, teleportando.'
   request-deny: '&eVocê acaba de cancelar o pedido de %player%.'
   request-other-deny: '&eSeu pedido acaba de ser cancelado pelo(a) %player%.'
   same-name: '&cVocê não pode enviar tpa para você mesmo.'
+tphere:
+  teleported-success: '&eVocê teleportou com sucesso o(a) %player% para você.'
+  teleported-other-success: '&eVocê foi teleportado do além.'
 echest:
   send-success: '&eVocê acabou de abrir seu enderChest.'
   send-other-success: '&eVocê acabou de abrir o enderChest de %player%.'
@@ -258,3 +263,12 @@ deathmessages:
 messages:
   enter-message: '&e[+] %player%.'
   leave-message: '&e[-] %player%.'
+
+discordchat:
+  no-token: 'Token errado ou faltando, coloque certo para enviar ao discord, ou desative a opção de enviar ao chat do discord.'
+  no-chat-id: 'Chat do discord especificado não existe, coloque um certo ou desative!.'
+  message-not-send-to-server: '%author%, Sua mensagem não foi enviada ao servidor pois tinha mais que %lenght% caracteres'
+  message-to-discord-pattern: '%group% %player%: %message%'
+  discord-to-server-pattern: '&e[Disc] %player%: %message%'
+  discord-send-login-message: '%player% Entrou no servidor.'
+  discord-send-leave-message: '%player% Saiu do servidor.'

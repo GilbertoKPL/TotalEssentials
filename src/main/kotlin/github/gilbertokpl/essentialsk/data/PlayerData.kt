@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.data
 
 import github.gilbertokpl.essentialsk.EssentialsK
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.FakeNick
@@ -17,7 +18,6 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import java.util.concurrent.CompletableFuture
 
 class PlayerData(player: String) {
 
@@ -41,10 +41,8 @@ class PlayerData(player: String) {
     private val uuid = if (p != null) {
         PlayerUtil.getInstance().getPlayerUUID(p)
     } else {
-        CompletableFuture.supplyAsync({
-            @Suppress("DEPRECATION")
-            PlayerUtil.getInstance().getPlayerUUID(EssentialsK.instance.server.getOfflinePlayer(player))
-        }, TaskUtil.getInstance().getExecutor()).get()
+        @Suppress("DEPRECATION")
+        PlayerUtil.getInstance().getPlayerUUID(EssentialsK.instance.server.getOfflinePlayer(player))
     }
 
     fun getCache(): InternalPlayerData? {
@@ -353,6 +351,7 @@ class PlayerData(player: String) {
     private fun startNickCache(fakeNick: String): String {
         if (fakeNick != "") {
             p!!.setDisplayName(fakeNick)
+            p.setPlayerListName(fakeNick)
         }
         return fakeNick
     }
@@ -369,9 +368,11 @@ class PlayerData(player: String) {
                 }
             }
             p!!.setDisplayName(newNick)
+            p.setPlayerListName(newNick)
         }
         if (online && other) {
             p!!.setDisplayName(newNick)
+            p.setPlayerListName(newNick)
             getCache()?.let { it.fakeNickCache = newNick } ?: return true
         }
         transaction(SqlUtil.getInstance().sql) {
@@ -387,6 +388,7 @@ class PlayerData(player: String) {
         if (online) {
             getCache()?.let { it.fakeNickCache = "" } ?: return
             p!!.setDisplayName(p.name)
+            p.setPlayerListName(p.name)
         }
 
         //sql
@@ -403,6 +405,14 @@ class PlayerData(player: String) {
         }
 
         return gameMode
+    }
+
+    fun getGamemode() :  Int {
+        if (online) {
+            val cache = getCache() ?: return 0
+            return cache.gameModeCache
+        }
+        return 0
     }
 
     fun setGamemode(gm: GameMode, value: Int) {
@@ -581,7 +591,18 @@ class PlayerData(player: String) {
             startVanishCache(cache.vanishCache)
             startLightCache(cache.lightCache)
             startFlyCache(cache.flyCache)
-            return
+
+            if (!checkVanish()) {
+                if (MainConfig.getInstance().messagesLoginMessage) {
+                    PluginUtil.getInstance().serverMessage(
+                        GeneralLang.getInstance().messagesEnterMessage
+                            .replace("%player%", p.name)
+                    )
+                }
+                if (MainConfig.getInstance().discordbotSendLoginMessage) {
+                    PlayerUtil.getInstance().sendLoginEmbed(p)
+                }
+            }
         }
         //values
         var timeKits = ""
@@ -611,6 +632,7 @@ class PlayerData(player: String) {
                     fly = query.single()[PlayerDataSQL.Fly]
                 }
             }
+
             EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
                 Dao.getInstance().playerCache[uuid] = InternalPlayerData(
                     uuid,
@@ -624,6 +646,18 @@ class PlayerData(player: String) {
                     lightCache = startLightCache(light),
                     flyCache = startFlyCache(fly)
                 )
+
+                if (!checkVanish()) {
+                    if (MainConfig.getInstance().messagesLoginMessage) {
+                        PluginUtil.getInstance().serverMessage(
+                            GeneralLang.getInstance().messagesEnterMessage
+                                .replace("%player%", p.name)
+                        )
+                    }
+                    if (MainConfig.getInstance().discordbotSendLoginMessage) {
+                        PlayerUtil.getInstance().sendLoginEmbed(p)
+                    }
+                }
             })
         }
     }
