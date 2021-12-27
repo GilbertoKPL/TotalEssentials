@@ -6,6 +6,8 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
 import github.gilbertokpl.essentialsk.configs.StartLang
 import github.gilbertokpl.essentialsk.data.Dao
+import github.gilbertokpl.essentialsk.inventory.EditKitInventory
+import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.manager.ELang
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.io.FileUtils
@@ -51,10 +53,10 @@ class ConfigUtil {
         PluginUtil.getInstance().consoleMessage(StartLang.getInstance().completeVerification)
     }
 
-    internal fun getString(source: YamlFile, path: String, color: Boolean = true): String {
+    internal fun getString(source: YamlFile, path: String, color: Boolean = true): String? {
         return if (color) {
-            source.getString(path)!!.replace("&", "§").replace("%prefix%", OtherConfig.getInstance().serverPrefix)
-        } else source.getString(path)!!
+            source.getString(path).replace("&", "§").replace("%prefix%", OtherConfig.getInstance().serverPrefix)
+        } else source.getString(path)
     }
 
     internal fun getStringList(source: YamlFile, path: String, color: Boolean = true): List<String> {
@@ -118,6 +120,8 @@ class ConfigUtil {
 
                 langYaml = langY
 
+                OtherConfig.getInstance().serverPrefix = getString(langYaml, "general.server-prefix") ?: ""
+
                 ReflectUtil.getInstance()
                     .setValuesOfClass(GeneralLang::class.java, GeneralLang.getInstance(), langYaml)
 
@@ -128,7 +132,6 @@ class ConfigUtil {
         }
 
         try {
-            OtherConfig.getInstance().serverPrefix = getString(configYaml, "general-server-prefix")
             ReflectUtil.getInstance()
                 .setValuesOfClass(MainConfig::class.java, MainConfig.getInstance(), configYaml)
         } catch (ex: Exception) {
@@ -220,6 +223,9 @@ class ConfigUtil {
             startFun("langs", true)
 
             OtherConfigUtil.getInstance().start()
+
+            EditKitInventory.setup()
+            KitGuiInventory.setup()
 
             return true
         }

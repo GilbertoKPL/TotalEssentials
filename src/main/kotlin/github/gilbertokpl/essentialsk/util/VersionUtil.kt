@@ -21,13 +21,21 @@ class VersionUtil {
             val checkJson =
                 JsonParser.parseString(IOUtils.toString(URL("https://pastebin.com/raw/GbxhP7qM"), "UTF-8")).asJsonObject
 
-            val versionJson = checkJson.get("version").asString
+            var versionJson = checkJson.get("version").asString
+
+            if (checkJson.get("version").asString.split(".").size == 2) {
+                versionJson = checkJson.get("version").asString + ".0"
+            }
 
             val logger = checkJson.get("logger").asString
 
-            val versionPlugin = ManifestUtil.getInstance().getManifestValue("Plugin-Version") ?: return false
+            var versionPlugin = ManifestUtil.getInstance().getManifestValue("Plugin-Version") ?: return false
 
-            if (versionJson.toDouble() > versionPlugin.toDouble()) {
+            if (versionPlugin.split(".").size == 2) {
+                versionPlugin = checkJson.get("version").asString + ".0"
+            }
+
+            if (versionJson.replace(".", "").toInt() > versionPlugin.replace(".", "").toDouble()) {
                 PluginUtil.getInstance()
                     .consoleMessage(StartLang.getInstance().updatePlugin.replace("%version%", versionJson))
 

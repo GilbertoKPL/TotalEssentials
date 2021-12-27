@@ -11,7 +11,6 @@ import github.gilbertokpl.essentialsk.util.DiscordUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
-import net.dv8tion.jda.api.entities.TextChannel
 import net.milkbowl.vault.chat.Chat
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
@@ -20,7 +19,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 
 class PlayerPreCommandEvent : Listener {
 
-    private val chat = EssentialsK.instance.server.servicesManager.getRegistration(Chat::class.java)?.provider
+    private val chat = try { EssentialsK.instance.server.servicesManager.getRegistration(Chat::class.java)?.provider } catch (c : NoClassDefFoundError) { null }
 
     @EventHandler
     fun event(e: PlayerCommandPreprocessEvent) {

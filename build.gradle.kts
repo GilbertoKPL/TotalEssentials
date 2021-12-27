@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "github.gilbertokpl.essentialsk"
-version = "1.4"
+version = "1.5"
 
 val base = "$group.libs"
 val exposedVersion = "0.36.2"
@@ -124,6 +124,7 @@ artifacts.archives(tasks.shadowJar)
 tasks.slimJar {
     relocate("org.bstats", "$base.bstats")
     relocate("org.apache.commons.lang3", "$base.lang3")
+    relocate("org.apache.commons.io", "$base.io")
     relocate("org.yaml", "$base.yaml")
     relocate("com.google.gson", "$base.gson")
     relocate("org.slf4j", "$base.slf4j")
