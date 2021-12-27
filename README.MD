@@ -36,12 +36,15 @@
 | /back                              | Back to old location.                                                                           | essentialsk.commands.back        |
 | /spawn                             | Go to spawn lo location.                                                                        | essentialsk.commands.spawn       |
 | /setspawn                          | Set Location of spawn.                                                                          | essentialsk.commands.setspawn    |
+| /announce and /anunciar            | Announce to all player.                                                                         | essentialsk.commands.announce    |
+| /craft                             | Open craft to player.                                                                           | essentialsk.commands.craft       |
+| /trash and /lixo                   | Open trash to player.                                                                           | essentialsk.commands.trash       |
 
 ## Permission Color
 
 To use in chat, commands, signs etc.
 
-| Permission     | Color                |
+| Color          | Permission           |
 |----------------|----------------------|
 | Black          | essentialsk.color.&0 |
 | DarkBlue       | essentialsk.color.&1 |
@@ -59,6 +62,10 @@ To use in chat, commands, signs etc.
 | Magenta        | essentialsk.color.&d |
 | LightYellow    | essentialsk.color.&e |
 | White          | essentialsk.color.&f |
+| Scrambled      | essentialsk.color.&k |
+| Reset          | essentialsk.color.&r |
+| Trace          | essentialsk.color.&l |
+| Italic         | essentialsk.color.&n |
 
 ## Other permissions
 
@@ -88,6 +95,7 @@ To use in chat, commands, signs etc.
 | essentialsk.bypass.netherceiling               | Bypass the block nether ceiling                     |
 | essentialsk.bypass.shiftcontainer              | Bypass the block shift in container                 |
 | essentialsk.bypass.opencontainer               | Bypass the block open container                     |
+| essentialsk.bypass.waitcommand                 | Bypass wait time to use command again               |
 
 ## Resources ( Internal )
 

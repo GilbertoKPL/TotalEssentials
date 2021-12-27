@@ -28,7 +28,7 @@ class PermissionUtil {
                 newMessage = newMessage.replace(color, color.replace("&", "§"))
             }
         }
-        listOf("&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f").forEach {
+        listOf("&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f", "&k", "&r", "&l", "&n").forEach {
             colorHelper(it)
         }
         return newMessage

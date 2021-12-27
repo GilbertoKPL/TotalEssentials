@@ -210,7 +210,7 @@ class ConfigUtil {
         }
     }
 
-    fun reloadConfig(all: Boolean) {
+    fun reloadConfig(all: Boolean) : Boolean {
         if (all) {
             startFun("configs", false)
 
@@ -218,8 +218,9 @@ class ConfigUtil {
 
             OtherConfigUtil.getInstance().start()
 
-            return
+            return true
         }
+        return false
     }
 
     private fun configHelper(

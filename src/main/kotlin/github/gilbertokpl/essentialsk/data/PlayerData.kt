@@ -204,7 +204,7 @@ class PlayerData(player: String) {
         for (h in homesList.split("|")) {
             if (h == "") continue
             val split = h.split(",")
-            val locationHome = LocationUtil.getInstance().locationSerializer(split[1])
+            val locationHome = LocationUtil.getInstance().locationSerializer(split[1]) ?: continue
             val nameHome = split[0]
             cacheHomes[nameHome] = locationHome
         }
@@ -603,6 +603,7 @@ class PlayerData(player: String) {
                     PlayerUtil.getInstance().sendLoginEmbed(p)
                 }
             }
+            return
         }
         //values
         var timeKits = ""

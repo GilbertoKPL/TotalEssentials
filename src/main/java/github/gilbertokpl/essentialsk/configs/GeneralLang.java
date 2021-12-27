@@ -35,6 +35,16 @@ public class GeneralLang {
 
     public String generalVaultNotExist;
 
+    public String generalWorldNotExistSpawn;
+
+    public String generalWorldNotExistWarp;
+
+    public String generalConfigReload;
+
+    public List<String> generalHostConfig;
+
+    public String generalHostWait;
+
     public String kitsNotExist;
 
     public String kitsExist;

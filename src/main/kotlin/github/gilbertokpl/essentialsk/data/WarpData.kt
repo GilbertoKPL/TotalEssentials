@@ -1,10 +1,12 @@
 package github.gilbertokpl.essentialsk.data
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.tables.WarpsDataSQL
 import github.gilbertokpl.essentialsk.tables.WarpsDataSQL.warpLocation
 import github.gilbertokpl.essentialsk.tables.WarpsDataSQL.warpName
 import github.gilbertokpl.essentialsk.util.LocationUtil
+import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.Location
@@ -32,7 +34,14 @@ class WarpData(warpName: String) {
         }
 
         for (it in hashWarp) {
-            Dao.getInstance().warpsCache[it.key] = LocationUtil.getInstance().locationSerializer(it.value)
+            val loc = LocationUtil.getInstance().locationSerializer(it.value)
+            if (loc == null) {
+                PluginUtil.getInstance().consoleMessage(
+                    EColor.YELLOW.color + GeneralLang.getInstance().generalWorldNotExistWarp.replace("%warp%", it.key) + EColor.RESET.color
+                )
+                continue
+            }
+            Dao.getInstance().warpsCache[it.key] = loc
         }
     }
 

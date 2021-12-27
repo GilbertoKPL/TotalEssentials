@@ -101,6 +101,10 @@ dependencies {
 
     slim("org.apache.commons:commons-lang3:3.12.0")
 
+    slim("com.profesorfalken:jSensors:2.2.1") {
+        exclude("org.slf4j", "slf4j-simple")
+    }
+
     slim("net.dv8tion:JDA:5.0.0-alpha.2") {
         exclude ("club.minnced", "opus-java")
         exclude("org.slf4j", "slf4j-api")
@@ -150,12 +154,11 @@ bukkit {
     name = project.name
     version = project.version.toString()
     apiVersion = "1.13"
-    load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD
-    softDepend = listOf("Vault")
+    this.softDepend = listOf("Vault", "Multiverse-Core")
     commands {
         register("essentialsk") {
             description = "This is a main essentialsk command!"
-            aliases = listOf("system", "essentials", "s", "ks")
+            aliases = listOf("system", "essentials", "s", "ks", "e")
         }
         register("kit") {
             description = "This is a kit command!"

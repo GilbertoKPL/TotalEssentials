@@ -12,7 +12,10 @@ class DiscordChatEvent : ListenerAdapter() {
         if (MainConfig.getInstance().discordbotConnectDiscordChat) {
             if (e.author.isBot) return
             if (e.message.channel.id == MainConfig.getInstance().discordbotIdDiscordChat) {
-                val msg = e.message.contentRaw
+                var msg = e.message.contentRaw
+                e.message.emotes.forEach {
+                    msg = msg.replace(it.toString(), "")
+                }
                 if (msg.length > MainConfig.getInstance().discordbotMaxMessageLenght) {
                     e.channel.sendMessage(
                         GeneralLang.getInstance().discordchatMessageNotSendToServer

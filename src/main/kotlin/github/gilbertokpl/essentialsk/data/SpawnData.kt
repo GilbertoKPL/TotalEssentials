@@ -1,8 +1,10 @@
 package github.gilbertokpl.essentialsk.data
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.tables.SpawnDataSQL
 import github.gilbertokpl.essentialsk.util.LocationUtil
+import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.Location
@@ -29,7 +31,14 @@ class SpawnData(spawnName: String) {
         }
 
         for (it in hashSpawn) {
-            Dao.getInstance().spawnCache[it.key] = LocationUtil.getInstance().locationSerializer(it.value)
+            val loc = LocationUtil.getInstance().locationSerializer(it.value)
+            if (loc == null) {
+                PluginUtil.getInstance().consoleMessage(
+                    EColor.YELLOW.color + GeneralLang.getInstance().generalWorldNotExistSpawn + EColor.RESET.color
+                )
+                continue
+            }
+            Dao.getInstance().spawnCache[it.key] = loc
         }
     }
 

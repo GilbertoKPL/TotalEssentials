@@ -23,7 +23,7 @@ class ServerListPing : Listener {
     private fun motd(e: ServerListPingEvent) {
         val motd = MainConfig.getInstance().motdListMotd.random().replace(
             "%players_online%",
-            PlayerUtil.getInstance().getIntOnlinePlayers(MainConfig.getInstance().onlineCountRemoveVanish).toString()
+            PlayerUtil.getInstance().getIntOnlinePlayers(false).toString()
         ).replace("\\n", "\n")
         e.motd = motd
     }

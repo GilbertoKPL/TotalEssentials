@@ -52,7 +52,7 @@ interface ICommand : CommandExecutor {
                 errorMessage()
                 return true
             }
-            if (timeCoolDown != null && s is Player) {
+            if (timeCoolDown != null && s is Player && !s.hasPermission("essentialsk.bypass.waitcommand")) {
                 val playerData = PlayerData(s.name.lowercase())
                 val time = playerData.getCoolDown(commandName)
                 if (time != 0L && System.currentTimeMillis() < time) {
