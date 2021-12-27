@@ -4,6 +4,8 @@ import github.gilbertokpl.essentialsk.manager.IInstance
 
 class OtherConfig {
 
+    var serverPrefix = ""
+
     var vanishBlockedOtherCmds = HashMap<String, Int>(30)
 
     var announcementsListAnnounce = HashMap<Int, String>(30)

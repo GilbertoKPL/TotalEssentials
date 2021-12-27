@@ -21,7 +21,7 @@ class CommandEssentialsK : ICommand {
     override val permission: String = "essentialsk.commands.essentialsk"
     override val minimumSize = 1
     override val maximumSize = 1
-    override val commandUsage = listOf("/essentialsk reload")
+    override val commandUsage = listOf("/essentialsk reload", "/essentialsk host")
 
     private val osBean: OperatingSystemMXBean? =
         ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java) ?: null
@@ -67,13 +67,13 @@ class CommandEssentialsK : ICommand {
                     cpu += 1
                 }
 
-                val cpuName = "${cpu}X ${compCpu[0].name}"
+                val cpuName = try { "${cpu}X ${compCpu[0].name}" } catch (e: Exception) { "Unknow" }
 
                 for (i in components.disks) {
                     hdInfo.add("${i.name}, ${i.sensors.loads.size} %, ${i.sensors.temperatures.size} °C")
                 }
 
-                val gpu = components.gpus[0].name
+                val gpu = try { components.gpus[0].name } catch (e: Exception) { "Unknow" }
 
                 val file = Files.getFileStore(File("/").toPath())
 
