@@ -96,7 +96,7 @@ class CommandSetHome : ICommand {
         }
 
         //check if world is blocked
-        if (MainConfig.getInstance().homesBlockWorlds.contains((s as Player).world.name.lowercase())) {
+        if (MainConfig.getInstance().homesBlockWorlds.contains((s as Player).world.name.lowercase()) && !s.hasPermission("essentialsk.bypass.homeblockedworlds")) {
             s.sendMessage(GeneralLang.getInstance().homesHomeWorldBlocked)
             return false
         }

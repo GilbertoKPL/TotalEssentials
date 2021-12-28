@@ -351,7 +351,6 @@ class PlayerData(player: String) {
     private fun startNickCache(fakeNick: String): String {
         if (fakeNick != "") {
             p!!.setDisplayName(fakeNick)
-            p.setPlayerListName(fakeNick)
         }
         return fakeNick
     }
@@ -362,17 +361,15 @@ class PlayerData(player: String) {
             transaction(SqlUtil.getInstance().sql) {
                 exist = PlayerDataSQL.select { FakeNick eq newNick }.empty()
             }
-            if (!MainConfig.getInstance().nicksCanPlayerHaveSameNick) {
+            if (!MainConfig.getInstance().nicksCanPlayerHaveSameNick && !p!!.hasPermission("essentialsk.bypass.nickblockednicks")) {
                 if (!exist) {
                     return true
                 }
             }
             p!!.setDisplayName(newNick)
-            p.setPlayerListName(newNick)
         }
         if (online && other) {
             p!!.setDisplayName(newNick)
-            p.setPlayerListName(newNick)
             getCache()?.let { it.fakeNickCache = newNick } ?: return true
         }
         transaction(SqlUtil.getInstance().sql) {
@@ -388,7 +385,6 @@ class PlayerData(player: String) {
         if (online) {
             getCache()?.let { it.fakeNickCache = "" } ?: return
             p!!.setDisplayName(p.name)
-            p.setPlayerListName(p.name)
         }
 
         //sql

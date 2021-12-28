@@ -48,7 +48,7 @@ class PlayerDeathEvent : Listener {
     private fun setBackLocation(e: PlayerDeathEvent) {
         if (!e.entity.hasPermission("essentialsk.commands.back") || MainConfig.getInstance().backDisabledWorlds.contains(
                 e.entity.world.name.lowercase()
-            )
+            ) && !e.entity.hasPermission("essentialsk.bypass.backblockedworlds")
         ) return
         Dao.getInstance().backLocation[e.entity] = e.entity.location
     }

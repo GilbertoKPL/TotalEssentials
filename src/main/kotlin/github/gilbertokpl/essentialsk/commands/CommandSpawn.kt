@@ -48,7 +48,7 @@ class CommandSpawn : ICommand {
 
             p.teleport(data.getLocation())
             p.sendMessage(GeneralLang.getInstance().spawnSendOtherMessage)
-            s.sendMessage(GeneralLang.getInstance().spawnSendSucessOtherMessage.replace("%player%", p.name))
+            s.sendMessage(GeneralLang.getInstance().spawnSendSuccessOtherMessage.replace("%player%", p.name))
 
             return false
         }

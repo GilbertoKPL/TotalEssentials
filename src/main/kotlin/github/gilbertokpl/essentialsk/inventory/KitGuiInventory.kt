@@ -6,6 +6,7 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
 import github.gilbertokpl.essentialsk.data.KitData
 import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.util.HashUtil
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
 import org.bukkit.Material
@@ -19,11 +20,23 @@ object KitGuiInventory {
         var size = 1
         var length = 0
         var inv = EssentialsK.instance.server.createInventory(null, 36, "§eKits 1")
-        for (i in Dao.getInstance().kitsCache) {
+
+        val newHash = LinkedHashMap<String,Int>()
+
+        Dao.getInstance().kitsCache.forEach{
+            newHash[it.key] = it.value.weight
+        }
+
+
+        val cache = HashUtil.getInstance().hashMapReverse(HashUtil.getInstance().hashMapSortMap(newHash))
+
+
+        for (kit in cache) {
+            val i = Dao.getInstance().kitsCache[kit.key]!!
             var item = ItemStack(Material.CHEST)
-            val name = GeneralLang.getInstance().kitsInventoryItemsName.replace("%kitrealname%", i.value.fakeName)
-            for (to in i.value.items) {
-                item = ItemStack(to.type)
+            val name = GeneralLang.getInstance().kitsInventoryItemsName.replace("%kitrealname%", i.fakeName)
+            for (to in i.items) {
+                item = ItemStack(to)
                 break
             }
             val meta = item.itemMeta
@@ -33,13 +46,13 @@ object KitGuiInventory {
 
             val itemLore = ArrayList<String>()
             GeneralLang.getInstance().kitsInventoryItemsLore.forEach {
-                itemLore.add(it.replace("%realname%", i.key))
+                itemLore.add(it.replace("%realname%", kit.key))
             }
 
             meta?.lore = itemLore
             item.itemMeta = meta
             val cacheValue = (length + 1) + ((size - 1) * 27)
-            Dao.getInstance().kitClickGuiCache.put(cacheValue, i.key)
+            Dao.getInstance().kitClickGuiCache[cacheValue] = kit.key
 
             if (length < 26) {
                 inv.setItem(length, item)
@@ -135,7 +148,7 @@ object KitGuiInventory {
             }
             if (to1 == 44) {
                 if (p.hasPermission("essentialsk.commands.kit.$kit")) {
-                    if (timeAll <= System.currentTimeMillis() || timeAll == 0L) {
+                    if (timeAll <= System.currentTimeMillis() || timeAll == 0L || p.hasPermission("essentialsk.bypass.kitcatch")) {
                         inv.setItem(
                             to1,
                             ItemUtil.getInstance().item(Material.ARROW, GeneralLang.getInstance().kitsCatchIcon, true)

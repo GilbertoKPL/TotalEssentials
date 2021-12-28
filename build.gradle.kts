@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "github.gilbertokpl.essentialsk"
-version = "1.5"
+version = "1.5.1"
 
 val base = "$group.libs"
-val exposedVersion = "0.36.2"
+val exposedVersion = "0.37.1"
 val kotlin = "1.6.10"
 val buildVersion = "1.16.5"
 
@@ -89,7 +89,7 @@ dependencies {
 
     slim("com.googlecode.json-simple:json-simple:1.1.1")
 
-    slim("com.h2database:h2:1.4.199")
+    slim("com.h2database:h2:2.0.202")
 
     slim("com.zaxxer:HikariCP:4.0.3") {
         exclude("org.slf4j", "slf4j-api")
@@ -101,8 +101,8 @@ dependencies {
 
     slim("org.apache.commons:commons-lang3:3.12.0")
 
-    slim("com.profesorfalken:jSensors:2.2.1") {
-        exclude("org.slf4j", "slf4j-simple")
+    slim("com.github.oshi:oshi-core:5.8.6") {
+        exclude("org.slf4j", "slf4j-api")
     }
 
     slim("net.dv8tion:JDA:5.0.0-alpha.2") {
@@ -276,5 +276,175 @@ bukkit {
             description = "This is a announce command!"
             aliases = listOf("tphere")
         }
+    }
+    permissions {
+        register("essentialsk.commands.essentialsk") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.createkit") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.delkit") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.editkit") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.kit") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.givekit") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.nick") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.sethome") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.delhome") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.home") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.warp") {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.setwarp")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.delwarp")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.tp")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.tpa")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.ec")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.gamemode")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.vanish")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.feed")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.heal")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.light")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.back")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.spawn")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.setspawn")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.announce")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.craft")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.trash")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+
+
+        register("essentialsk.commands.sethome.")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.kit.")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.warp.")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.nick.other")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.ec.other")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.gamemode.other")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.heal.other")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.feed.other")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.vanish.other")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.light.other")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.home.other")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.delhome.other")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.sethome.other")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.commands.spawn.other")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.teleport")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.homelimit")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.kitcatch")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.vanish")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.bed")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.vehicles")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.nametag")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.netherceiling")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.shiftcontainer")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.opencontainer")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.waitcommand")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.backblockedworlds")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.homeblockedworlds")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+        register("essentialsk.bypass.nickblockednicks")  {
+            default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
+        }
+
     }
 }

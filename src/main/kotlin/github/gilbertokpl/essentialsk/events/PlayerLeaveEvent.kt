@@ -12,11 +12,12 @@ import github.gilbertokpl.essentialsk.util.TaskUtil
 import net.dv8tion.jda.api.EmbedBuilder
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
 
 class PlayerLeaveEvent : Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     fun event(e: PlayerQuitEvent) {
         e.quitMessage = null
         if (MainConfig.getInstance().backActivated) {

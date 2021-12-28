@@ -96,6 +96,9 @@ To use in chat, commands, signs etc.
 | essentialsk.bypass.shiftcontainer              | Bypass the block shift in container                 |
 | essentialsk.bypass.opencontainer               | Bypass the block open container                     |
 | essentialsk.bypass.waitcommand                 | Bypass wait time to use command again               |
+| essentialsk.bypass.backblockedworlds           | Bypass blocked worlds of back                       |
+| essentialsk.bypass.homeblockedworlds           | Bypass blocked worlds of home                       |
+| essentialsk.bypass.nickblockednicks            | Bypass blocked nicks of nick                        |
 
 ## Resources ( Internal )
 
@@ -113,7 +116,7 @@ To use in chat, commands, signs etc.
     - This system is based on the difference of the configuration file between versions, if it has a new path, it adds
       it if it doesn't have it, in addition to the comments of the configurations that are updated.
 * Version checker.
-    - For now it auto-updates only on linux systems, as windows have manage problems.
+    - For now, it auto-updates only on linux systems, as windows have manage problems.
 
 ## TODO List
 

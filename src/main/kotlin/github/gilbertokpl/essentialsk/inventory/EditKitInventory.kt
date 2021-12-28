@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack
 object EditKitInventory {
     fun setup() {
         for (inventory in 0..26) {
-            if (inventory == 11) {
+            if (inventory == 10) {
                 Dao.getInstance().editKitInventory[inventory] =
                     ItemUtil.getInstance().item(
                         Material.CHEST,
@@ -20,7 +20,7 @@ object EditKitInventory {
                     )
                 continue
             }
-            if (inventory == 13) {
+            if (inventory == 12) {
                 Dao.getInstance().editKitInventory[inventory] =
                     ItemUtil.getInstance().item(
                         Dao.getInstance().material["clock"]!!,
@@ -29,12 +29,21 @@ object EditKitInventory {
                     )
                 continue
             }
-            if (inventory == 15) {
+            if (inventory == 14) {
+                Dao.getInstance().editKitInventory[inventory] =
+                    ItemUtil.getInstance().item(
+                        Material.BOOK,
+                        GeneralLang.getInstance().kitsEditKitInventoryNameName,
+                        GeneralLang.getInstance().kitsEditKitInventoryNameLore
+                    )
+                continue
+            }
+            if (inventory == 16) {
                 Dao.getInstance().editKitInventory[inventory] =
                     ItemUtil.getInstance().item(
                         Dao.getInstance().material["feather"]!!,
-                        GeneralLang.getInstance().kitsEditKitInventoryNameName,
-                        GeneralLang.getInstance().kitsEditKitInventoryNameLore
+                        GeneralLang.getInstance().kitsEditKitInventoryWeightName,
+                        GeneralLang.getInstance().kitsEditKitInventoryWeightLore
                     )
                 continue
             }

@@ -43,7 +43,7 @@ class PlayerTeleportEvent : Listener {
     private fun setBackLocation(e: PlayerTeleportEvent) {
         if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.getInstance().backDisabledWorlds.contains(
                 e.player.world.name.lowercase()
-            )
+            ) && !e.player.hasPermission("essentialsk.bypass.backblockedworlds")
         ) return
         Dao.getInstance().backLocation[e.player] = e.player.location
     }

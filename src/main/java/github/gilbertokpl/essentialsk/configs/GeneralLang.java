@@ -41,7 +41,7 @@ public class GeneralLang {
 
     public String generalConfigReload;
 
-    public List<String> generalHostConfig;
+    public List<String> generalHostConfigInfo;
 
     public String generalHostWait;
 
@@ -69,9 +69,15 @@ public class GeneralLang {
 
     public List<String> kitsEditKitInventoryNameLore;
 
-    public String kitsEditKitInventoryTimeMessage;
-
     public String kitsEditKitInventoryNameMessage;
+
+    public String kitsEditKitInventoryWeightName;
+
+    public List<String> kitsEditKitInventoryWeightLore;
+
+    public String kitsEditKitInventoryWeightMessage;
+
+    public String kitsEditKitInventoryTimeMessage;
 
     public String kitsInventoryIconBackName;
 
@@ -291,7 +297,7 @@ public class GeneralLang {
 
     public String spawnSendOtherMessage;
 
-    public String spawnSendSucessOtherMessage;
+    public String spawnSendSuccessOtherMessage;
 
     public String spawnSendNotSet;
 

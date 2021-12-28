@@ -124,24 +124,31 @@ class ClickInventoryEvent : Listener {
             val p = e.whoClicked as Player
 
             //items
-            if (number == 11) {
+            if (number == 10) {
                 p.closeInventory()
                 editKitGuiItems(p, inventoryName[1], dataInstance.getCache().items)
                 Dao.getInstance().editKit[p] = inventoryName[1]
             }
 
             //time
-            if (number == 13) {
+            if (number == 12) {
                 p.closeInventory()
                 p.sendMessage(GeneralLang.getInstance().kitsEditKitInventoryTimeMessage)
                 Dao.getInstance().editKitChat[p] = "time-${inventoryName[1]}"
             }
 
             //name
-            if (number == 15) {
+            if (number == 14) {
                 p.closeInventory()
                 p.sendMessage(GeneralLang.getInstance().kitsEditKitInventoryNameMessage)
                 Dao.getInstance().editKitChat[p] = "name-${inventoryName[1]}"
+            }
+
+            //weight
+            if (number == 16) {
+                p.closeInventory()
+                p.sendMessage(GeneralLang.getInstance().kitsEditKitInventoryWeightMessage)
+                Dao.getInstance().editKitChat[p] = "weight-${inventoryName[1]}"
             }
 
         }

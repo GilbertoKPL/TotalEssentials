@@ -60,13 +60,23 @@ class PlayerAsyncChatEvent : Listener {
             if (split[0] == "name") {
                 e.isCancelled = true
                 //check message length
-                if (e.message.length > 16) {
+                if (e.message.replace("&[0-9,a-f]".toRegex(), "").length > 16) {
                     e.player.sendMessage(GeneralLang.getInstance().kitsNameLength)
                     return true
                 }
 
                 e.player.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
                 dataInstance.setFakeName(e.message.replace("&", "§"), e.player)
+            }
+
+            //weight
+            if (split[0] == "weight") {
+                e.isCancelled = true
+
+                val integer = try { e.message.toInt() } catch (e : Exception) { 0 }
+
+                e.player.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
+                dataInstance.setWeight(integer, e.player)
             }
 
             return true

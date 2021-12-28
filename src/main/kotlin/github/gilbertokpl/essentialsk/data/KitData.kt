@@ -12,6 +12,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class KitData(kitName: String) {
 
+    //data class
+    data class KitDataInternal(val name: String, var fakeName: String, var items: List<ItemStack>, var time: Long, var weight: Int)
+
     private val name = kitName
     private val nameLowerCase = kitName.lowercase()
 
@@ -26,7 +29,7 @@ class KitData(kitName: String) {
 
     fun createNewKitData(s: CommandSender? = null) {
         //cache
-        Dao.getInstance().kitsCache[nameLowerCase] = KitDataInternal(nameLowerCase, name, emptyList(), 0L)
+        Dao.getInstance().kitsCache[nameLowerCase] = KitDataInternal(nameLowerCase, name, emptyList(), 0L, 0)
         reloadGui()
 
         //sql
@@ -57,11 +60,13 @@ class KitData(kitName: String) {
                 val kitFakeName = values[KitsDataSQL.kitFakeName]
                 val kitTime = values[KitsDataSQL.kitTime]
                 val item = values[KitsDataSQL.kitItems]
+                val weight = values[KitsDataSQL.kitWeight]
                 Dao.getInstance().kitsCache[kit] = KitDataInternal(
                     kit,
                     kitFakeName,
                     ItemUtil.getInstance().itemSerializer(item),
-                    kitTime
+                    kitTime,
+                    weight
                 )
             }
         }
@@ -95,6 +100,20 @@ class KitData(kitName: String) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
             }
         }
+    }
+
+    fun setWeight(weight: Int, s: CommandSender? = null) {
+        //cache
+        getCache().weight = weight
+        reloadGui()
+
+        //sql
+        kitHelper(
+            KitsDataSQL.kitWeight,
+            weight,
+            GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", name),
+            s
+        )
     }
 
     fun setFakeName(fakeName: String, s: CommandSender? = null) {
@@ -176,7 +195,4 @@ class KitData(kitName: String) {
     private fun reloadGui() {
         KitGuiInventory.setup()
     }
-
-    //data class
-    data class KitDataInternal(val name: String, var fakeName: String, var items: List<ItemStack>, var time: Long)
 }

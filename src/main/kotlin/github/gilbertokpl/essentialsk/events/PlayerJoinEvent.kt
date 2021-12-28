@@ -11,11 +11,12 @@ import net.dv8tion.jda.api.EmbedBuilder
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
 class PlayerJoinEvent : Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     fun event(e: PlayerJoinEvent) {
         e.joinMessage = null
         if (MainConfig.getInstance().spawnSendToSpawnOnLogin) {
