@@ -7,21 +7,10 @@ class PermissionUtil {
 
     fun getNumberPermission(player: Player, permission: String, default: Int): Int {
         var newAmount = 0
-        for (perm in player.effectivePermissions) {
-            val permString = perm.permission
-            println(permString)
-            if (permString.startsWith(permission)) {
-                val amount = permString.split(".").toTypedArray()
-                newAmount = try {
-                    println(newAmount)
-                    if (newAmount <= amount.last().toInt()) {
-                        amount.last().toInt()
-                    }
-                    else {
-                        continue
-                    }
-                } catch (e: Exception) {
-                    continue
+        for (i in 0..200) {
+            if (player.hasPermission(permission + i)) {
+                if (newAmount <= i) {
+                    newAmount = i
                 }
             }
         }

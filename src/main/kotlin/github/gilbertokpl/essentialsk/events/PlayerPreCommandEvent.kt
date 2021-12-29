@@ -95,7 +95,7 @@ class PlayerPreCommandEvent : Listener {
             val patternMessage = GeneralLang.getInstance().discordchatMessageToDiscordPattern
                 .replace("%group%", chat.getPlayerPrefix(e.player))
                 .replace("%message%", msg)
-                .replace("%player%", e.player.name).replace("&[0-9,a-f]".toRegex(), "")
+                .replace("%player%", e.player.name).replace("&[0-9,a-z]".toRegex(), "")
                 .replace("@", "")
 
             if (Dao.getInstance().discordChat == null) {

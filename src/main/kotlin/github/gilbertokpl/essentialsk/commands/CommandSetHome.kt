@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.PlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
@@ -82,6 +83,11 @@ class CommandSetHome : ICommand {
         if (playerCache.homeCache.contains(nameHome)) {
             s.sendMessage(GeneralLang.getInstance().homesNameAlreadyExist)
             return false
+        }
+
+        //update limit
+        if (!s.hasPermission("essentialsk.commands.sethome." + playerCache.homeCache.size)) {
+            playerCache.homeLimitCache = PermissionUtil.getInstance().getNumberPermission(s as Player, "essentialsk.commands.sethome.", MainConfig.getInstance().homesDefaultLimitHomes )
         }
 
         //check limit of homes

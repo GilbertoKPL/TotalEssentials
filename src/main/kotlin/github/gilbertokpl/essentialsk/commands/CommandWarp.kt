@@ -57,9 +57,14 @@ class CommandWarp : ICommand {
             s.sendMessage(
                 GeneralLang.getInstance().warpsWarpList.replace(
                     "%list%",
-                    warpInstance.getWarpList(null).toString()
+                    warpInstance.getWarpList(s).toString()
                 )
             )
+            return false
+        }
+
+        if (!s.hasPermission("essentialsk.commands.warp.$warpName")) {
+            s.sendMessage(GeneralLang.getInstance().generalNotPerm)
             return false
         }
 

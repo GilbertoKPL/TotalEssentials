@@ -1,5 +1,6 @@
 package github.gilbertokpl.essentialsk.commands
 
+import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.Dao
@@ -71,7 +72,9 @@ class CommandHome : ICommand {
                     return@asyncExecutor
                 }
 
-                (s as Player).teleport(loc)
+                EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
+                    (s as Player).teleport(loc)
+                })
 
                 s.sendMessage(
                     GeneralLang.getInstance().homesTeleportedOther.replace("%home%", split[1].lowercase())
