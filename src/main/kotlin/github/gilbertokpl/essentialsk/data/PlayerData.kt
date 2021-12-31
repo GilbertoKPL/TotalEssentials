@@ -118,12 +118,11 @@ class PlayerData(player: String) {
 
                     val kitsCache = KitData(nameKit)
 
-                    if (!kitsCache.checkCache()) {
+                    if (kitsCache.checkCache()) {
                         val timeAll = KitData(nameKit).getCache(true)
 
-                        if (timeKit != 0L && timeAll != null && (timeAll.time + timeKit) > System.currentTimeMillis()) {
+                        if ((timeKit != 0L) && (timeAll != null) && ((timeAll.time + timeKit) > System.currentTimeMillis())) {
                             cacheKits[nameKit] = timeKit
-                            continue
                         }
                         continue
                     }
@@ -372,11 +371,8 @@ class PlayerData(player: String) {
             p!!.setDisplayName(newNick)
             getCache()?.let { it.fakeNickCache = newNick } ?: return true
         }
-        transaction(SqlUtil.getInstance().sql) {
-            PlayerDataSQL.update({ PlayerInfo eq uuid }) {
-                it[FakeNick] = newNick
-            }
-        }
+        //sql
+        SqlUtil.getInstance().helperUpdater(uuid, FakeNick, newNick)
         return false
     }
 
@@ -553,7 +549,7 @@ class PlayerData(player: String) {
             cache.flyCache = newValue
 
             //sql
-            SqlUtil.getInstance().helperUpdater(uuid, PlayerDataSQL.Vanish, newValue)
+            SqlUtil.getInstance().helperUpdater(uuid, PlayerDataSQL.Fly, newValue)
 
             return if (newValue) {
                 p!!.allowFlight = true

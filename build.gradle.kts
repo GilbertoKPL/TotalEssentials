@@ -105,7 +105,7 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    slim("net.dv8tion:JDA:5.0.0-alpha.2") {
+    slim("net.dv8tion:JDA:5.0.0-alpha.3") {
         exclude ("club.minnced", "opus-java")
         exclude("org.slf4j", "slf4j-api")
         exclude("org.jetbrains", "annotations")

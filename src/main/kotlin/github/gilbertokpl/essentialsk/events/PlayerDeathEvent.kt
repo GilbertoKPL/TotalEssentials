@@ -73,7 +73,7 @@ class PlayerDeathEvent : Listener {
                 )
                 return
             }
-            val causeMessage = OtherConfig.getInstance().deathmessageListReplacer[ent.damager.name.lowercase()] ?: run {
+            val causeMessage = OtherConfig.getInstance().deathmessageListReplacer[ent.damager.toString().lowercase()] ?: run {
                 ent.damager.name.lowercase()
             }
             PluginUtil.getInstance().serverMessage(
