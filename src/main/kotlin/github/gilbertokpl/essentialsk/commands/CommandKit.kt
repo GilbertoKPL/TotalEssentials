@@ -1,8 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.KitData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.bukkit.command.Command
@@ -21,13 +20,13 @@ class CommandKit : ICommand {
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         if (s !is Player) {
-            s.sendMessage(GeneralLang.getInstance().kitsList.replace("%kits%", KitData("").kitList().toString()))
+            s.sendMessage(GeneralLang.getInstance().kitsList.replace("%kits%", DataManager.getInstance().kitCacheV2.map{ it.key }.toString()))
             return false
         }
 
         //send gui
         if (args.isEmpty()) {
-            Dao.getInstance().kitGuiCache[1].also {
+            DataManager.getInstance().kitGuiCache[1].also {
                 it ?: run {
                     s.sendMessage(GeneralLang.getInstance().kitsNotExistKits)
                     return false
@@ -37,11 +36,11 @@ class CommandKit : ICommand {
             return false
         }
 
-        val dataInstance = KitData(args[0])
+        val dataInstance = DataManager.getInstance().kitCacheV2[args[0]]
 
         //check if not exist
-        if (!dataInstance.checkCache()) {
-            s.sendMessage(GeneralLang.getInstance().kitsList.replace("%kits%", dataInstance.kitList().toString()))
+        if (dataInstance == null) {
+            s.sendMessage(GeneralLang.getInstance().kitsList.replace("%kits%", DataManager.getInstance().kitCacheV2.map{ it.key }.toString()))
             return false
         }
 

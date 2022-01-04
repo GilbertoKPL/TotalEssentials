@@ -4,8 +4,7 @@ import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.manager.IInstance
 import net.dv8tion.jda.api.EmbedBuilder
@@ -13,7 +12,6 @@ import org.apache.commons.io.IOUtils
 import org.bukkit.GameMode
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerJoinEvent
 import java.net.URL
 
 class PlayerUtil {
@@ -21,7 +19,7 @@ class PlayerUtil {
     fun getIntOnlinePlayers(vanish: Boolean): Int {
         var amount = ReflectUtil.getInstance().getPlayers()
         if (!vanish) {
-            amount = amount.filter { !PlayerData(it.name).checkVanish() }
+            amount = amount.filter { DataManager.getInstance().playerCacheV2[it.name.lowercase()]!!.vanishCache }
         }
         return amount.size
     }
@@ -73,7 +71,7 @@ class PlayerUtil {
             )
             return
         }
-        if (Dao.getInstance().discordChat == null) {
+        if (DataManager.getInstance().discordChat == null) {
             TaskUtil.getInstance().asyncExecutor {
                 val newChat =
                     DiscordUtil.getInstance().jda!!.getTextChannelById(MainConfig.getInstance().discordbotIdDiscordChat)
@@ -83,9 +81,9 @@ class PlayerUtil {
                             )
                             return@asyncExecutor
                         }
-                Dao.getInstance().discordChat = newChat
+                DataManager.getInstance().discordChat = newChat
 
-                Dao.getInstance().discordChat!!.sendMessageEmbeds(
+                DataManager.getInstance().discordChat!!.sendMessageEmbeds(
                     EmbedBuilder().setDescription(
                         GeneralLang.getInstance().discordchatDiscordSendLoginMessage.replace("%player%", p.name)
                     ).setColor(PluginUtil.getInstance().randomColor()).build()
@@ -93,7 +91,7 @@ class PlayerUtil {
             }
         }
 
-        Dao.getInstance().discordChat?.sendMessageEmbeds(
+        DataManager.getInstance().discordChat?.sendMessageEmbeds(
             EmbedBuilder().setDescription(
                 GeneralLang.getInstance().discordchatDiscordSendLoginMessage.replace("%player%", p.name)
             ).setColor(PluginUtil.getInstance().randomColor()).build()

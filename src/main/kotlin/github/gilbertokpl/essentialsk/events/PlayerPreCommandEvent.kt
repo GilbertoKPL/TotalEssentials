@@ -4,8 +4,7 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
-import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.DiscordUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -68,7 +67,7 @@ class PlayerPreCommandEvent : Listener {
                 val to = it[split[0]]
                 if (split.size >= to!!) {
                     val p = EssentialsK.instance.server.getPlayer(split[to - 1]) ?: return
-                    if (PlayerData(p.name).checkVanish()) {
+                    if (DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!.vanishCache) {
                         e.isCancelled = true
                     }
                 }
@@ -98,7 +97,7 @@ class PlayerPreCommandEvent : Listener {
                 .replace("%player%", e.player.name).replace("&[0-9,a-z]".toRegex(), "")
                 .replace("@", "")
 
-            if (Dao.getInstance().discordChat == null) {
+            if (DataManager.getInstance().discordChat == null) {
                 TaskUtil.getInstance().asyncExecutor {
                     val newChat =
                         DiscordUtil.getInstance().jda!!.getTextChannelById(MainConfig.getInstance().discordbotIdDiscordChat)
@@ -108,12 +107,12 @@ class PlayerPreCommandEvent : Listener {
                                 )
                                 return@asyncExecutor
                             }
-                    Dao.getInstance().discordChat = newChat
-                    Dao.getInstance().discordChat!!.sendMessage(patternMessage).queue()
+                    DataManager.getInstance().discordChat = newChat
+                    DataManager.getInstance().discordChat!!.sendMessage(patternMessage).queue()
                 }
                 return
             }
-            Dao.getInstance().discordChat!!.sendMessage(patternMessage).queue()
+            DataManager.getInstance().discordChat!!.sendMessage(patternMessage).queue()
         }
     }
 }

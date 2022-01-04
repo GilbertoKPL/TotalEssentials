@@ -1,14 +1,13 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.ConfigUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import oshi.SystemInfo
+import oshi.hardware.CentralProcessor.TickType
 import java.io.File
 import java.net.InetAddress
 import java.nio.file.Files
@@ -38,31 +37,33 @@ class CommandEssentialsK : ICommand {
             s.sendMessage(GeneralLang.getInstance().generalHostWait)
             TaskUtil.getInstance().asyncExecutor {
 
-                val ip = InetAddress.getLocalHost().hostAddress
+                val siProcessor = si.hardware.processor
+
+                val siMemory = si.hardware.memory
+
+                val ip = try {InetAddress.getLocalHost().hostAddress } catch (e: Exception) { "Unknow" }
 
                 val os = System.getProperty("os.name") ?: "Unknow"
 
                 val osVersion = System.getProperty("os.version") ?: "Unknow"
 
-                val cpuName = si.hardware.processor.processorIdentifier.name
+                val cpuName = if (siProcessor.processorIdentifier.name == "") { "Unknow" } else {
+                    siProcessor.processorIdentifier.name
+                }
 
-                val cpuMinMHZ = (try {si.hardware.processor.currentFreq[0] / 1000000 } catch (e : Exception) { "Unknow" }).toString()
+                val cpuMinMHZ = (try {siProcessor.currentFreq[0] / 1000000 } catch (e : Exception) { "Unknow" }).toString()
 
-                val cpuMaxMHZ = (si.hardware.processor.maxFreq / 1000000).toString()
+                val cpuMaxMHZ = (siProcessor.maxFreq / 1000000).toString()
 
-                val cpuUsage = "${si.hardware.processor.systemCpuLoadTicks.size}"
+                val prevTicks = LongArray(TickType.values().size)
 
-                val cpuTemp = "${si.hardware.sensors.cpuTemperature} C"
+                val cpuUsage = (siProcessor.getSystemCpuLoadBetweenTicks(prevTicks) * 100).toInt()
 
-                val cpuFan = "${si.hardware.sensors.fanSpeeds.size} perc"
+                val cpuCores = "${siProcessor.physicalProcessorCount} / ${siProcessor.logicalProcessors.size}"
 
-                val cpuVoltage = "${si.hardware.sensors.cpuVoltage} V"
+                val memMax = siMemory.total / (1024 * 1024)
 
-                val cpuCores = "${si.hardware.processor.physicalProcessorCount} / ${si.hardware.processor.logicalProcessors.size}"
-
-                val memMax = si.hardware.memory.total / (1024 * 1024)
-
-                val memUsed = si.hardware.memory.available / (1024 * 1024)
+                val memUsed = (siMemory.available / (1024 * 1024) - memMax) * -1
 
                 val memServerMax = Runtime.getRuntime().maxMemory() / (1024 * 1024)
 
@@ -91,11 +92,7 @@ class CommandEssentialsK : ICommand {
                             .replace("%cores%", cpuCores)
                             .replace("%cores_server%", cpuServerCores.toString())
                             .replace(
-                                "%cpu_usage%", if (cpuUsage.toInt() > 0) {
-                                    cpuUsage.toInt().toString() + " perc"
-                                } else {
-                                    "Unknow"
-                                }
+                                "%cpu_usage%", cpuUsage.toString()
                             )
                             .replace("%used_mem%", memUsed.toString())
                             .replace("%used_server_mem%", memServerUsed.toString())
@@ -103,9 +100,6 @@ class CommandEssentialsK : ICommand {
                             .replace("%max_server_mem%", memServerMax.toString())
                             .replace("%gpu%", gpu)
                             .replace("%name_hd%", hdName)
-                            .replace("%cpu_temp%", cpuTemp)
-                            .replace("%cpu_fan%", cpuFan)
-                            .replace("%cpu_voltage%", cpuVoltage)
                             .replace("%used_hd%", usedHD.toString())
                             .replace("%max_hd%", totalHD.toString())
                     )

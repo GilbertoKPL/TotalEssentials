@@ -2,8 +2,7 @@ package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.KitData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
@@ -32,12 +31,12 @@ class PlayerAsyncChatEvent : Listener {
     }
 
     private fun editKitChatEvent(e: AsyncPlayerChatEvent): Boolean {
-        Dao.getInstance().editKitChat[e.player].also {
+        DataManager.getInstance().editKitChat[e.player].also {
             if (it == null) return false
-            Dao.getInstance().editKitChat.remove(e.player)
+            DataManager.getInstance().editKitChat.remove(e.player)
             val split = it.split("-")
 
-            val dataInstance = KitData(split[1])
+            val dataInstance = DataManager.getInstance().kitCacheV2[split[1]]!!
 
             //time
             if (split[0] == "time") {

@@ -2,8 +2,7 @@ package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.KitData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.entity.Player
@@ -25,11 +24,11 @@ class CloseInventoryEvent : Listener {
 
     private fun editKitInventoryCloseEvent(e: InventoryCloseEvent): Boolean {
         val p = e.player as Player
-        Dao.getInstance().editKit[p].also {
+        DataManager.getInstance().editKit[p].also {
             if (it == null) return false
-            Dao.getInstance().editKit.remove(p)
+            DataManager.getInstance().editKit.remove(p)
             p.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-            KitData(it).setItems(e.inventory.contents.filterNotNull().toList(), p)
+            DataManager.getInstance().kitCacheV2[it]?.setItems(e.inventory.contents.filterNotNull().toList(), p) ?: return true
             return true
         }
     }

@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.SpawnData
+import github.gilbertokpl.essentialsk.data.`object`.SpawnData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.entity.Player

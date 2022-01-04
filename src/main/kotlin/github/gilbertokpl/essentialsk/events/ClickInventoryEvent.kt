@@ -2,8 +2,7 @@ package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.KitData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGui
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGuiItems
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory.kitGui
@@ -64,7 +63,7 @@ class ClickInventoryEvent : Listener {
 
             val number = e.slot
             if (number == 36) {
-                p.openInventory(Dao.getInstance().kitGuiCache[inventoryName[2].toInt()]!!)
+                p.openInventory(DataManager.getInstance().kitGuiCache[inventoryName[2].toInt()]!!)
             }
             if (number == 40 && meta.displayName == GeneralLang.getInstance().kitsInventoryIconEditKitName && p.hasPermission(
                     "essentialsk.commands.editkit"
@@ -90,17 +89,17 @@ class ClickInventoryEvent : Listener {
             val number = e.slot
             if (number < 27) {
                 val kit =
-                    Dao.getInstance().kitClickGuiCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
+                    DataManager.getInstance().kitClickGuiCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
                 if (kit != null) {
                     kitGui(kit, inventoryName[1], p)
                 }
                 return true
             }
             if (number == 27 && inventoryName[1].toInt() > 1) {
-                p.openInventory(Dao.getInstance().kitGuiCache[inventoryName[1].toInt() - 1]!!)
+                p.openInventory(DataManager.getInstance().kitGuiCache[inventoryName[1].toInt() - 1]!!)
             }
             if (number == 35) {
-                val check = Dao.getInstance().kitGuiCache[inventoryName[1].toInt() + 1]
+                val check = DataManager.getInstance().kitGuiCache[inventoryName[1].toInt() + 1]
                 if (check != null) {
                     p.openInventory(check)
                 }
@@ -116,39 +115,36 @@ class ClickInventoryEvent : Listener {
         val inventoryName = e.view.title.split(" ")
         if (inventoryName[0].equals("§eEditKit", true)) {
             e.isCancelled = true
-            val dataInstance = KitData(inventoryName[1])
-            if (!dataInstance.checkCache()) {
-                return false
-            }
+            val dataInstance = DataManager.getInstance().kitCacheV2[inventoryName[1]] ?: return false
             val number = e.slot
             val p = e.whoClicked as Player
 
             //items
             if (number == 10) {
                 p.closeInventory()
-                editKitGuiItems(p, inventoryName[1], dataInstance.getCache().items)
-                Dao.getInstance().editKit[p] = inventoryName[1]
+                editKitGuiItems(p, inventoryName[1], dataInstance.items)
+                DataManager.getInstance().editKit[p] = inventoryName[1]
             }
 
             //time
             if (number == 12) {
                 p.closeInventory()
                 p.sendMessage(GeneralLang.getInstance().kitsEditKitInventoryTimeMessage)
-                Dao.getInstance().editKitChat[p] = "time-${inventoryName[1]}"
+                DataManager.getInstance().editKitChat[p] = "time-${inventoryName[1]}"
             }
 
             //name
             if (number == 14) {
                 p.closeInventory()
                 p.sendMessage(GeneralLang.getInstance().kitsEditKitInventoryNameMessage)
-                Dao.getInstance().editKitChat[p] = "name-${inventoryName[1]}"
+                DataManager.getInstance().editKitChat[p] = "name-${inventoryName[1]}"
             }
 
             //weight
             if (number == 16) {
                 p.closeInventory()
                 p.sendMessage(GeneralLang.getInstance().kitsEditKitInventoryWeightMessage)
-                Dao.getInstance().editKitChat[p] = "weight-${inventoryName[1]}"
+                DataManager.getInstance().editKitChat[p] = "weight-${inventoryName[1]}"
             }
 
         }

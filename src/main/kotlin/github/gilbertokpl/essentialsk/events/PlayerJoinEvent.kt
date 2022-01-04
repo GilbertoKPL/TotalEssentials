@@ -2,14 +2,11 @@ package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.PlayerData
-import github.gilbertokpl.essentialsk.data.SpawnData
-import github.gilbertokpl.essentialsk.manager.EColor
+import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.`object`.SpawnData
+import github.gilbertokpl.essentialsk.data.start.PlayerDataLoader
 import github.gilbertokpl.essentialsk.util.*
-import net.dv8tion.jda.api.EmbedBuilder
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -27,7 +24,7 @@ class PlayerJoinEvent : Listener {
             }
         }
         try {
-            PlayerData(e.player.name).loadCache()
+            PlayerDataLoader.getInstance().loadCache(e.player)
         } catch (e: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
         }
@@ -43,7 +40,7 @@ class PlayerJoinEvent : Listener {
     private fun vanishLoginEvent(e: PlayerJoinEvent) {
         if (e.player.hasPermission("essentialsk.commands.vanish") || e.player.hasPermission("essentialsk.bypass.vanish")) return
         ReflectUtil.getInstance().getPlayers().forEach {
-            if (PlayerData(it.name).checkVanish()) {
+            if (DataManager.getInstance().playerCacheV2[it.name.lowercase()]!!.vanishCache) {
                 @Suppress("DEPRECATION")
                 e.player.hidePlayer(it)
             }

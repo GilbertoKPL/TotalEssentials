@@ -2,10 +2,9 @@ package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PlayerUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -25,12 +24,12 @@ class PlayerChangeWorldEvent : Listener {
 
     //fly command
     private fun data(e: PlayerChangedWorldEvent) {
-        val p = PlayerData(e.player.name)
-        val gm = PlayerUtil.getInstance().getGamemodeNumber(p.getGamemode().toString())
+        val playerCache = DataManager.getInstance().playerCacheV2[e.player.name.lowercase()]!!
+        val gm = PlayerUtil.getInstance().getGamemodeNumber(playerCache.gameModeCache.toString())
         if (gm != e.player.gameMode) {
             e.player.gameMode = gm
         }
-        if (p.checkFly()) {
+        if (playerCache.flyCache) {
             if (!MainConfig.getInstance().flyDisabledWorlds.contains(e.player.world.name)) {
                 e.player.allowFlight = true
                 e.player.isFlying = true

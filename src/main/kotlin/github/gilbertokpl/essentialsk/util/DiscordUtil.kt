@@ -23,6 +23,8 @@ class DiscordUtil {
                 .build()
         } catch (e: javax.security.auth.login.LoginException) {
             null
+        } catch (e: Exception) {
+            null
         }
     }
 

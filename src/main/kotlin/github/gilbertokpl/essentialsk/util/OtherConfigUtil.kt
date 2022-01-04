@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
-import github.gilbertokpl.essentialsk.data.Dao
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.loops.Announcements
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -11,8 +11,8 @@ class OtherConfigUtil {
 
     fun start() {
 
-        if (Dao.getInstance().discordChat != null) {
-            Dao.getInstance().discordChat = null
+        if (DataManager.getInstance().discordChat != null) {
+            DataManager.getInstance().discordChat = null
         }
 
         val vanish = ConfigUtil.getInstance()

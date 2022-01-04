@@ -3,9 +3,8 @@ package github.gilbertokpl.essentialsk.util
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.commands.*
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.KitData
-import github.gilbertokpl.essentialsk.data.SpawnData
-import github.gilbertokpl.essentialsk.data.WarpData
+import github.gilbertokpl.essentialsk.data.start.KitDataLoader
+import github.gilbertokpl.essentialsk.data.start.LocationsLoader
 import github.gilbertokpl.essentialsk.events.*
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
@@ -95,17 +94,17 @@ class PluginUtil {
     private fun loadCache(): Boolean {
         return CompletableFuture.supplyAsync({
             try {
-                KitData("").loadKitCache()
+                KitDataLoader.getInstance().loadKitCache()
             } catch (ex: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
             }
             try {
-                WarpData("").loadWarpCache()
+                LocationsLoader.getInstance().loadWarpCache()
             } catch (ex: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
             }
             try {
-                SpawnData("").loadSpawnCache()
+                LocationsLoader.getInstance().loadSpawnCache()
             } catch (ex: Exception) {
                 FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
             }

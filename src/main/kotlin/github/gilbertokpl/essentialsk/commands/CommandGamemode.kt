@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import org.bukkit.command.Command
@@ -32,7 +32,7 @@ class CommandGamemode : ICommand {
                 return false
             }
 
-            PlayerData(s.name.lowercase()).setGamemode(playerGameMode, args[0].toInt())
+            DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!.setGamemode(playerGameMode, args[0].toInt())
             s.sendMessage(
                 GeneralLang.getInstance().gamemodeUseSuccess.replace(
                     "%gamemode%",
@@ -62,7 +62,7 @@ class CommandGamemode : ICommand {
                 return false
             }
 
-            PlayerData(p.name.lowercase()).setGamemode(playerGameMode, args[0].toInt())
+            DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!.setGamemode(playerGameMode, args[0].toInt())
             p.sendMessage(
                 GeneralLang.getInstance().gamemodeUseOtherSuccess.replace(
                     "%gamemode%",

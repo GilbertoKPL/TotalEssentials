@@ -101,7 +101,7 @@ dependencies {
 
     slim("org.apache.commons:commons-lang3:3.12.0")
 
-    slim("com.github.oshi:oshi-core:5.8.6") {
+    slim("com.github.oshi:oshi-core:6.0.0") {
         exclude("org.slf4j", "slf4j-api")
     }
 
@@ -130,7 +130,6 @@ tasks.slimJar {
     relocate("org.slf4j", "$base.slf4j")
 }
 tasks.shadowJar {
-    minimize()
     archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
     destinationDirectory.set(File("$projectDir/Minecraft/plugins"))
     manifest {

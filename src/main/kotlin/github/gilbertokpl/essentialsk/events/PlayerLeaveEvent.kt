@@ -2,8 +2,7 @@ package github.gilbertokpl.essentialsk.events
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.DiscordUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -28,8 +27,8 @@ class PlayerLeaveEvent : Listener {
             }
         }
         try {
-            val playerData = PlayerData(e.player.name)
-            if (!playerData.checkVanish()) {
+            val playerData = DataManager.getInstance().playerCacheV2[e.player.name.lowercase()]!!
+            if (!playerData.vanishCache) {
                 if (MainConfig.getInstance().messagesLeaveMessage) {
                     PluginUtil.getInstance().serverMessage(
                         GeneralLang.getInstance().messagesLeaveMessage
@@ -50,7 +49,7 @@ class PlayerLeaveEvent : Listener {
                 e.player.world.name.lowercase()
             )
         ) return
-        Dao.getInstance().backLocation[e.player] = e.player.location
+        DataManager.getInstance().backLocation[e.player] = e.player.location
     }
 
     private fun sendLeaveEmbed(e: PlayerQuitEvent) {
@@ -60,7 +59,7 @@ class PlayerLeaveEvent : Listener {
             )
             return
         }
-        if (Dao.getInstance().discordChat == null) {
+        if (DataManager.getInstance().discordChat == null) {
             TaskUtil.getInstance().asyncExecutor {
                 val newChat =
                     DiscordUtil.getInstance().jda!!.getTextChannelById(MainConfig.getInstance().discordbotIdDiscordChat)
@@ -70,9 +69,9 @@ class PlayerLeaveEvent : Listener {
                             )
                             return@asyncExecutor
                         }
-                Dao.getInstance().discordChat = newChat
+                DataManager.getInstance().discordChat = newChat
 
-                Dao.getInstance().discordChat!!.sendMessageEmbeds(
+                DataManager.getInstance().discordChat!!.sendMessageEmbeds(
                     EmbedBuilder().setDescription(
                         GeneralLang.getInstance().discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name)
                     ).setColor(PluginUtil.getInstance().randomColor()).build()
@@ -81,7 +80,7 @@ class PlayerLeaveEvent : Listener {
             return
         }
 
-        Dao.getInstance().discordChat!!.sendMessageEmbeds(
+        DataManager.getInstance().discordChat!!.sendMessageEmbeds(
             EmbedBuilder().setDescription(
                 GeneralLang.getInstance().discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name)
             ).setColor(PluginUtil.getInstance().randomColor()).build()

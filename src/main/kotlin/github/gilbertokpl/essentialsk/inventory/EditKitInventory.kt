@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.inventory
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.Dao
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -12,7 +12,7 @@ object EditKitInventory {
     fun setup() {
         for (inventory in 0..26) {
             if (inventory == 10) {
-                Dao.getInstance().editKitInventory[inventory] =
+                DataManager.getInstance().editKitInventory[inventory] =
                     ItemUtil.getInstance().item(
                         Material.CHEST,
                         GeneralLang.getInstance().kitsEditKitInventoryItemsName,
@@ -21,16 +21,16 @@ object EditKitInventory {
                 continue
             }
             if (inventory == 12) {
-                Dao.getInstance().editKitInventory[inventory] =
+                DataManager.getInstance().editKitInventory[inventory] =
                     ItemUtil.getInstance().item(
-                        Dao.getInstance().material["clock"]!!,
+                        DataManager.getInstance().material["clock"]!!,
                         GeneralLang.getInstance().kitsEditKitInventoryTimeName,
                         GeneralLang.getInstance().kitsEditKitInventoryTimeLore
                     )
                 continue
             }
             if (inventory == 14) {
-                Dao.getInstance().editKitInventory[inventory] =
+                DataManager.getInstance().editKitInventory[inventory] =
                     ItemUtil.getInstance().item(
                         Material.BOOK,
                         GeneralLang.getInstance().kitsEditKitInventoryNameName,
@@ -39,22 +39,22 @@ object EditKitInventory {
                 continue
             }
             if (inventory == 16) {
-                Dao.getInstance().editKitInventory[inventory] =
+                DataManager.getInstance().editKitInventory[inventory] =
                     ItemUtil.getInstance().item(
-                        Dao.getInstance().material["feather"]!!,
+                        DataManager.getInstance().material["feather"]!!,
                         GeneralLang.getInstance().kitsEditKitInventoryWeightName,
                         GeneralLang.getInstance().kitsEditKitInventoryWeightLore
                     )
                 continue
             }
-            Dao.getInstance().editKitInventory[inventory] =
-                ItemUtil.getInstance().item(Dao.getInstance().material["glass"]!!, "", true)
+            DataManager.getInstance().editKitInventory[inventory] =
+                ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "", true)
         }
     }
 
     fun editKitGui(p: Player, kit: String) {
         val inv = EssentialsK.instance.server.createInventory(null, 27, "§eEditKit $kit")
-        for (i in Dao.getInstance().editKitInventory) {
+        for (i in DataManager.getInstance().editKitInventory) {
             inv.setItem(i.key, i.value)
         }
         p.openInventory(inv)

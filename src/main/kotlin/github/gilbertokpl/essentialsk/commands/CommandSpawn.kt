@@ -3,8 +3,8 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.SpawnData
+import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.`object`.SpawnData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
@@ -53,7 +53,7 @@ class CommandSpawn : ICommand {
             return false
         }
 
-        if (Dao.getInstance().inTeleport.contains(s)) {
+        if (DataManager.getInstance().inTeleport.contains(s)) {
             s.sendMessage(GeneralLang.getInstance().spawnSendInTeleport)
             return false
         }
@@ -70,10 +70,10 @@ class CommandSpawn : ICommand {
 
         val exe = TaskUtil.getInstance().teleportExecutor(time)
 
-        Dao.getInstance().inTeleport.add((s as Player))
+        DataManager.getInstance().inTeleport.add((s as Player))
 
         exe {
-            Dao.getInstance().inTeleport.remove(s)
+            DataManager.getInstance().inTeleport.remove(s)
             s.teleport(data.getLocation())
             s.sendMessage(GeneralLang.getInstance().spawnSendMessage)
         }

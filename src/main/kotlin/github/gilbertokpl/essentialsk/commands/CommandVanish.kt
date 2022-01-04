@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.ICommand
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -40,7 +40,7 @@ class CommandVanish : ICommand {
                 return false
             }
 
-            if (PlayerData(p.name.lowercase()).switchVanish()) {
+            if (DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!.switchVanish()) {
                 p.sendMessage(GeneralLang.getInstance().vanishSendOtherActive)
                 s.sendMessage(GeneralLang.getInstance().vanishSendActivatedOther.replace("%player%", p.name))
             } else {
@@ -51,7 +51,7 @@ class CommandVanish : ICommand {
             return false
         }
 
-        if (PlayerData(s.name.lowercase()).switchVanish()) {
+        if (DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!.switchVanish()) {
             s.sendMessage(GeneralLang.getInstance().vanishSendActive)
         } else {
             s.sendMessage(GeneralLang.getInstance().vanishSendDisable)

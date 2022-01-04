@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.manager
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -53,7 +53,7 @@ interface ICommand : CommandExecutor {
                 return true
             }
             if (timeCoolDown != null && s is Player && !s.hasPermission("essentialsk.bypass.waitcommand")) {
-                val playerData = PlayerData(s.name.lowercase())
+                val playerData = DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!
                 val time = playerData.getCoolDown(commandName)
                 if (time != 0L && System.currentTimeMillis() < time) {
                     s.sendMessage(
@@ -68,7 +68,7 @@ interface ICommand : CommandExecutor {
                     errorMessage()
                     return true
                 }
-                PlayerData(s.name.lowercase()).setCoolDown(
+                playerData.setCoolDown(
                     commandName,
                     System.currentTimeMillis() + (timeCoolDown!! * 1000)
                 )

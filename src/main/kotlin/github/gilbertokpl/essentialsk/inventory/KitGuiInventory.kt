@@ -3,9 +3,7 @@ package github.gilbertokpl.essentialsk.inventory
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.KitData
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.util.HashUtil
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
@@ -15,15 +13,15 @@ import org.bukkit.inventory.ItemStack
 
 object KitGuiInventory {
     fun setup() {
-        Dao.getInstance().kitClickGuiCache.clear()
-        Dao.getInstance().kitGuiCache.clear()
+        DataManager.getInstance().kitClickGuiCache.clear()
+        DataManager.getInstance().kitGuiCache.clear()
         var size = 1
         var length = 0
         var inv = EssentialsK.instance.server.createInventory(null, 36, "§eKits 1")
 
         val newHash = LinkedHashMap<String,Int>()
 
-        Dao.getInstance().kitsCache.forEach{
+        DataManager.getInstance().kitCacheV2.forEach{
             newHash[it.key] = it.value.weight
         }
 
@@ -32,7 +30,7 @@ object KitGuiInventory {
 
 
         for (kit in cache) {
-            val i = Dao.getInstance().kitsCache[kit.key]!!
+            val i = DataManager.getInstance().kitCacheV2[kit.key]!!
             var item = ItemStack(Material.CHEST)
             val name = GeneralLang.getInstance().kitsInventoryItemsName.replace("%kitrealname%", i.fakeName)
             for (to in i.items) {
@@ -52,7 +50,7 @@ object KitGuiInventory {
             meta?.lore = itemLore
             item.itemMeta = meta
             val cacheValue = (length + 1) + ((size - 1) * 27)
-            Dao.getInstance().kitClickGuiCache[cacheValue] = kit.key
+            DataManager.getInstance().kitClickGuiCache[cacheValue] = kit.key
 
             if (length < 26) {
                 inv.setItem(length, item)
@@ -80,10 +78,10 @@ object KitGuiInventory {
                     }
                     inv.setItem(
                         to,
-                        ItemUtil.getInstance().item(Dao.getInstance().material["glass"]!!, "§eKIT", true)
+                        ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "§eKIT", true)
                     )
                 }
-                Dao.getInstance().kitGuiCache[size] = inv
+                DataManager.getInstance().kitGuiCache[size] = inv
                 length = 0
                 size += 1
                 inv = EssentialsK.instance.server.createInventory(null, 36, "§eKits $size")
@@ -96,15 +94,15 @@ object KitGuiInventory {
                     ItemUtil.getInstance().item(Material.HOPPER, GeneralLang.getInstance().kitsInventoryIconBackName)
                 )
             } else {
-                inv.setItem(27, ItemUtil.getInstance().item(Dao.getInstance().material["glass"]!!, "§eKIT", true))
+                inv.setItem(27, ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "§eKIT", true))
             }
             for (to in 28..35) {
                 inv.setItem(
                     to,
-                    ItemUtil.getInstance().item(Dao.getInstance().material["glass"]!!, "§eKIT", true)
+                    ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "§eKIT", true)
                 )
             }
-            Dao.getInstance().kitGuiCache[size] = inv
+            DataManager.getInstance().kitGuiCache[size] = inv
         }
     }
 
@@ -113,11 +111,11 @@ object KitGuiInventory {
         val inv = EssentialsK.instance.server.createInventory(null, 45, "§eKit $kit $guiNumber")
 
         //load caches
-        val kitCache = KitData(kit).getCache()
-        val playerCache = PlayerData(p.name)
+        val kitCache = DataManager.getInstance().kitCacheV2[kit] ?: return
+        val playerCache = DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!
 
         //get all time of kits
-        var timeAll = playerCache.getCache()?.let { it.kitsCache[kit] ?: 0L } ?: return
+        var timeAll = playerCache.kitsCache[kit] ?: 0L
 
         timeAll += kitCache.time
 
@@ -186,7 +184,7 @@ object KitGuiInventory {
             }
             inv.setItem(
                 to1,
-                ItemUtil.getInstance().item(Dao.getInstance().material["glass"]!!, "§eKIT", true)
+                ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "§eKIT", true)
             )
         }
         p.openInventory(inv)

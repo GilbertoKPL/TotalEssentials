@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.ICommand
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -36,7 +36,7 @@ class CommandLight : ICommand {
                 return false
             }
 
-            if (PlayerData(p.name).switchLight()) {
+            if (DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!.switchLight()) {
                 p.sendMessage(GeneralLang.getInstance().lightSendOtherActive)
                 s.sendMessage(GeneralLang.getInstance().lightSendActivatedOther)
             } else {
@@ -47,7 +47,7 @@ class CommandLight : ICommand {
             return false
         }
 
-        if (PlayerData(s.name).switchLight()) {
+        if (DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!.switchLight()) {
             s.sendMessage(GeneralLang.getInstance().lightSendActive)
         } else {
             s.sendMessage(GeneralLang.getInstance().lightSendDisable)

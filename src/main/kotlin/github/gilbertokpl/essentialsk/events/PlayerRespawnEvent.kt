@@ -3,8 +3,8 @@ package github.gilbertokpl.essentialsk.events
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.PlayerData
-import github.gilbertokpl.essentialsk.data.SpawnData
+import github.gilbertokpl.essentialsk.data.`object`.SpawnData
+import github.gilbertokpl.essentialsk.data.start.PlayerDataLoader
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
@@ -30,7 +30,7 @@ class PlayerRespawnEvent : Listener {
 
     private fun playerData(e: PlayerRespawnEvent) {
         EssentialsK.instance.server.scheduler.runTaskLater(EssentialsK.instance, Runnable {
-            PlayerData(e.player.name.lowercase()).death()
+            PlayerDataLoader.getInstance().death(e.player)
         }, 5L)
     }
 

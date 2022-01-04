@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
@@ -42,11 +42,11 @@ class CommandNick : ICommand {
                 s.sendMessage(GeneralLang.getInstance().nicksNameLength)
                 return false
             }
-            val playerCache = PlayerData(s.name)
+            val playerCache = DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!
 
             if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
                 //check if is empty
-                if (!playerCache.checkNick()) {
+                if (playerCache.fakeNickCache == "") {
                     s.sendMessage(GeneralLang.getInstance().nicksNickAlreadyOriginal)
                     return false
                 }
@@ -103,11 +103,11 @@ class CommandNick : ICommand {
             return false
         }
 
-        val playerCache = PlayerData(p.name)
+        val playerCache = DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!
 
         if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
             //check if is empty
-            if (!playerCache.checkNick()) {
+            if (playerCache.fakeNickCache == "") {
                 s.sendMessage(GeneralLang.getInstance().nicksNickAlreadyOriginalOther)
                 return false
             }

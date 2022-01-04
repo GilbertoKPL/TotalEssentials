@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.data.SpawnData
+import github.gilbertokpl.essentialsk.data.`object`.SpawnData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender

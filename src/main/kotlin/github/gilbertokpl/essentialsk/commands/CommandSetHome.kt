@@ -2,7 +2,8 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.`object`.OfflinePlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
@@ -32,7 +33,7 @@ class CommandSetHome : ICommand {
 
                 val pName = split[0].lowercase()
 
-                val otherPlayerInstance = PlayerData(pName)
+                val otherPlayerInstance = OfflinePlayerData(pName)
 
                 if (!otherPlayerInstance.checkSql()) {
                     s.sendMessage(GeneralLang.getInstance().generalPlayerNotExist)
@@ -75,9 +76,7 @@ class CommandSetHome : ICommand {
             return false
         }
 
-        val playerInstance = PlayerData(s.name)
-
-        val playerCache = playerInstance.getCache() ?: return false
+        val playerCache = DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!
 
         //check if already exist
         if (playerCache.homeCache.contains(nameHome)) {
@@ -107,7 +106,7 @@ class CommandSetHome : ICommand {
             return false
         }
 
-        playerInstance.setHome(nameHome, s.location)
+        playerCache.setHome(nameHome, s.location)
         s.sendMessage(GeneralLang.getInstance().homesHomeCreated.replace("%home%", nameHome))
 
         return false

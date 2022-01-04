@@ -2,8 +2,7 @@ package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.KitData
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.IInstance
 import github.gilbertokpl.essentialsk.manager.InternalBukkitObjectInputStream
 import github.gilbertokpl.essentialsk.manager.InternalBukkitObjectOutputStream
@@ -30,11 +29,11 @@ class ItemUtil {
         }
 
         //load caches
-        val kitCache = KitData(kit).getCache()
-        val playerCache = PlayerData(p.name)
+        val kitCache = DataManager.getInstance().kitCacheV2[kit] ?: return
+        val playerCache = DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!
 
         //get all time of kit
-        var timeAll = playerCache.getCache()?.let { it.kitsCache[kit] ?: 0L } ?: return
+        var timeAll = playerCache.kitsCache[kit] ?: 0L
         timeAll += kitCache.time
 
         // if time is remaining

@@ -1,7 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.KitData
+import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.sql.KitDataSQLUtil
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.bukkit.command.Command
@@ -29,17 +30,17 @@ class CommandCreateKit : ICommand {
             return false
         }
 
-        val dataInstance = KitData(args[0])
+        val dataInstance = DataManager.getInstance().kitCacheV2[args[0].lowercase()]
 
         //check if exist
-        if (dataInstance.checkCache()) {
+        if (dataInstance != null) {
             s.sendMessage(GeneralLang.getInstance().kitsExist)
             return false
         }
 
         //create cache and sql
         s.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-        dataInstance.createNewKitData(s)
+        KitDataSQLUtil.getInstance().createNewKitData(s, args[0].lowercase())
         return false
     }
 }

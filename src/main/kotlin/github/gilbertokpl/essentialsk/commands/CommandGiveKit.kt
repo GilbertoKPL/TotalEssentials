@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.KitData
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.bukkit.command.Command
@@ -24,10 +24,10 @@ class CommandGiveKit : ICommand {
             return false
         }
 
-        val dataInstance = KitData(args[1])
+        val dataInstance = DataManager.getInstance().kitCacheV2[args[1]]
 
         //check if not exist
-        if (!dataInstance.checkCache()) {
+        if (dataInstance == null) {
             s.sendMessage(GeneralLang.getInstance().kitsNotExist)
             return false
         }
@@ -39,8 +39,8 @@ class CommandGiveKit : ICommand {
         }
 
         //give kit
-        ItemUtil.getInstance().giveKit(p, dataInstance.getCache().items, true, drop = true)
-        p.sendMessage(GeneralLang.getInstance().kitsGiveKitMessage.replace("%kit%", dataInstance.getCache().fakeName))
+        ItemUtil.getInstance().giveKit(p, dataInstance.items, true, drop = true)
+        p.sendMessage(GeneralLang.getInstance().kitsGiveKitMessage.replace("%kit%", dataInstance.fakeName))
         return false
     }
 }

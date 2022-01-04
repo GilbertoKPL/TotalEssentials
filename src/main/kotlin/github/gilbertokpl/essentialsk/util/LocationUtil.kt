@@ -22,10 +22,7 @@ class LocationUtil {
         } catch (e: Exception) {
             return null
         }
-        val loc = Location(w, x, y, z)
-            loc.pitch = try { parts[3].toFloat() } catch (e: Exception) { 0F }
-            loc.yaw = try { parts[4].toFloat() } catch (e: Exception) { 0F }
-        return Location(w, x, y, z)
+        return Location(w, x, y, z, try { parts[5].toFloat() } catch (e: Exception) { 0F }, try { parts[4].toFloat() } catch (e: Exception) { 0F })
     }
 
     companion object : IInstance<LocationUtil> {

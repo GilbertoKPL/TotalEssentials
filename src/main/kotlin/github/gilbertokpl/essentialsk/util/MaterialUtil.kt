@@ -1,17 +1,17 @@
 package github.gilbertokpl.essentialsk.util
 
-import github.gilbertokpl.essentialsk.data.Dao
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.bukkit.Material
 
 class MaterialUtil {
 
     fun startMaterials() {
-        Dao.getInstance().material["glass"] =
+        DataManager.getInstance().material["glass"] =
             materialHelper(listOf("STAINED_GLASS_PANE", "THIN_GLASS", "YELLOW_STAINED_GLASS"))
-        Dao.getInstance().material["clock"] = materialHelper(listOf("CLOCK", "WATCH"))
-        Dao.getInstance().material["feather"] = materialHelper(listOf("FEATHER"))
-        Dao.getInstance().material["soil"] =
+        DataManager.getInstance().material["clock"] = materialHelper(listOf("CLOCK", "WATCH"))
+        DataManager.getInstance().material["feather"] = materialHelper(listOf("FEATHER"))
+        DataManager.getInstance().material["soil"] =
             materialHelper(listOf("SOIL", "SOUL_SOIL"))
     }
 

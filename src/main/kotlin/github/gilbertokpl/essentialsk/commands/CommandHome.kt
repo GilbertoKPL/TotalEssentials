@@ -3,8 +3,8 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.Dao
-import github.gilbertokpl.essentialsk.data.PlayerData
+import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.`object`.OfflinePlayerData
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
@@ -26,9 +26,7 @@ class CommandHome : ICommand {
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
-        val playerInstance = PlayerData(s.name)
-
-        val playerCache = playerInstance.getCache() ?: return false
+        val playerCache = DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!
 
         if (args.isEmpty()) {
             s.sendMessage(
@@ -47,7 +45,7 @@ class CommandHome : ICommand {
 
                 val pName = split[0].lowercase()
 
-                val otherPlayerInstance = PlayerData(pName)
+                val otherPlayerInstance = OfflinePlayerData(pName)
 
                 if (!otherPlayerInstance.checkSql()) {
                     s.sendMessage(GeneralLang.getInstance().generalPlayerNotExist)
@@ -85,7 +83,7 @@ class CommandHome : ICommand {
             return false
         }
 
-        if (Dao.getInstance().inTeleport.contains(s)) {
+        if (DataManager.getInstance().inTeleport.contains(s)) {
             s.sendMessage(GeneralLang.getInstance().homesInTeleport)
             return false
         }
@@ -108,10 +106,10 @@ class CommandHome : ICommand {
 
         val exe = TaskUtil.getInstance().teleportExecutor(time)
 
-        Dao.getInstance().inTeleport.add((s as Player))
+        DataManager.getInstance().inTeleport.add((s as Player))
 
         exe {
-            Dao.getInstance().inTeleport.remove(s)
+            DataManager.getInstance().inTeleport.remove(s)
             s.teleport(playerCache.homeCache[nameHome]!!)
             s.sendMessage(GeneralLang.getInstance().homesTeleported.replace("%home%", nameHome))
         }

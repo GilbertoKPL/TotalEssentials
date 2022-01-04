@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.Dao
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
@@ -40,13 +40,13 @@ class CommandTpa : ICommand {
         }
 
         //check if player already send
-        if (Dao.getInstance().tpaHash.contains(s) || Dao.getInstance().tpaHash.containsValue(p)) {
+        if (DataManager.getInstance().tpaHash.contains(s) || DataManager.getInstance().tpaHash.containsValue(p)) {
             s.sendMessage(GeneralLang.getInstance().tpaAlreadySend)
             return false
         }
 
         //check if player has telepot request
-        if (Dao.getInstance().tpaHash.contains(p)) {
+        if (DataManager.getInstance().tpaHash.contains(p)) {
             s.sendMessage(GeneralLang.getInstance().tpaAlreadyInAccept)
             return false
         }
@@ -64,19 +64,19 @@ class CommandTpa : ICommand {
 
 
     private fun coolDown(pSender: Player, pReceived: Player, time: Int) {
-        Dao.getInstance().tpaHash[pSender] = pReceived
-        Dao.getInstance().tpaHash[pReceived] = pSender
-        Dao.getInstance().tpAcceptHash[pSender] = 1
+        DataManager.getInstance().tpaHash[pSender] = pReceived
+        DataManager.getInstance().tpaHash[pReceived] = pSender
+        DataManager.getInstance().tpAcceptHash[pSender] = 1
 
         CompletableFuture.runAsync({
             TimeUnit.SECONDS.sleep(time.toLong())
             try {
-                val value = Dao.getInstance().tpAcceptHash[pSender]
+                val value = DataManager.getInstance().tpAcceptHash[pSender]
                 if (value != null && value == 1) {
-                    Dao.getInstance().tpAcceptHash.remove(pSender)
+                    DataManager.getInstance().tpAcceptHash.remove(pSender)
                     EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
-                        Dao.getInstance().tpaHash.remove(pSender)
-                        Dao.getInstance().tpaHash.remove(pReceived)
+                        DataManager.getInstance().tpaHash.remove(pSender)
+                        DataManager.getInstance().tpaHash.remove(pReceived)
                     })
                 }
             } catch (ex: Exception) {

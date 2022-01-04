@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.Dao
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.ICommand
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -20,23 +20,23 @@ class CommandTpdeny : ICommand {
     )
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        val p = Dao.getInstance().tpaHash[s as Player] ?: run {
+        val p = DataManager.getInstance().tpaHash[s as Player] ?: run {
             s.sendMessage(GeneralLang.getInstance().tpaNotAnyRequestToDeny)
             return false
         }
 
         //remove checker
 
-        val value = Dao.getInstance().tpAcceptHash[p] ?: run {
+        val value = DataManager.getInstance().tpAcceptHash[p] ?: run {
             s.sendMessage(GeneralLang.getInstance().tpaNotAnyRequestToDeny)
             return false
         }
 
-        Dao.getInstance().tpaHash.remove(s)
-        Dao.getInstance().tpaHash.remove(p)
+        DataManager.getInstance().tpaHash.remove(s)
+        DataManager.getInstance().tpaHash.remove(p)
 
         if (value == 1) {
-            Dao.getInstance().tpAcceptHash.remove(p)
+            DataManager.getInstance().tpAcceptHash.remove(p)
         }
 
         s.sendMessage(GeneralLang.getInstance().tpaRequestDeny.replace("%player%", p.name))
