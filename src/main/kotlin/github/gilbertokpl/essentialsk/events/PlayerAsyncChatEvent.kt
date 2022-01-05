@@ -72,7 +72,11 @@ class PlayerAsyncChatEvent : Listener {
             if (split[0] == "weight") {
                 e.isCancelled = true
 
-                val integer = try { e.message.toInt() } catch (e : Exception) { 0 }
+                val integer = try {
+                    e.message.toInt()
+                } catch (e: Exception) {
+                    0
+                }
 
                 e.player.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
                 dataInstance.setWeight(integer, e.player)

@@ -19,9 +19,9 @@ object KitGuiInventory {
         var length = 0
         var inv = EssentialsK.instance.server.createInventory(null, 36, "§eKits 1")
 
-        val newHash = LinkedHashMap<String,Int>()
+        val newHash = LinkedHashMap<String, Int>()
 
-        DataManager.getInstance().kitCacheV2.forEach{
+        DataManager.getInstance().kitCacheV2.forEach {
             newHash[it.key] = it.value.weight
         }
 
@@ -94,7 +94,10 @@ object KitGuiInventory {
                     ItemUtil.getInstance().item(Material.HOPPER, GeneralLang.getInstance().kitsInventoryIconBackName)
                 )
             } else {
-                inv.setItem(27, ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "§eKIT", true))
+                inv.setItem(
+                    27,
+                    ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "§eKIT", true)
+                )
             }
             for (to in 28..35) {
                 inv.setItem(

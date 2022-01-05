@@ -11,7 +11,6 @@ import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.PlayerInfo
 import github.gilbertokpl.essentialsk.util.*
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
-import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -22,7 +21,7 @@ import org.jetbrains.exposed.sql.update
 
 class PlayerDataLoader {
 
-    private fun createEmptyCache(p: Player, playerID : String, limitHome: Int): PlayerDataV2 {
+    private fun createEmptyCache(p: Player, playerID: String, limitHome: Int): PlayerDataV2 {
         return PlayerDataV2(
             playerID,
             p,
@@ -150,7 +149,7 @@ class PlayerDataLoader {
     }
 
     //back
-    private fun startBackCache(loc: String) : Location? {
+    private fun startBackCache(loc: String): Location? {
         return LocationUtil.getInstance().locationSerializer(loc)
     }
 
@@ -188,10 +187,10 @@ class PlayerDataLoader {
             cache.homeLimitCache = limitHome
             cache.player = p
             startNickCache(p, cache.fakeNickCache)
-            startGamemodeCache(p,cache.gameModeCache)
-            startVanishCache(p,cache.vanishCache)
-            startLightCache(p,cache.lightCache)
-            startFlyCache(p,cache.flyCache)
+            startGamemodeCache(p, cache.gameModeCache)
+            startVanishCache(p, cache.vanishCache)
+            startLightCache(p, cache.lightCache)
+            startFlyCache(p, cache.flyCache)
 
             if (!cache.vanishCache) {
                 if (MainConfig.getInstance().messagesLoginMessage) {
@@ -267,6 +266,7 @@ class PlayerDataLoader {
             })
         }
     }
+
     companion object : IInstance<PlayerDataLoader> {
         private val instance = createInstance()
         override fun createInstance(): PlayerDataLoader = PlayerDataLoader()

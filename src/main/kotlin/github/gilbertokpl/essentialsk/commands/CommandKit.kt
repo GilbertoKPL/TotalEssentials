@@ -20,7 +20,12 @@ class CommandKit : ICommand {
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         if (s !is Player) {
-            s.sendMessage(GeneralLang.getInstance().kitsList.replace("%kits%", DataManager.getInstance().kitCacheV2.map{ it.key }.toString()))
+            s.sendMessage(
+                GeneralLang.getInstance().kitsList.replace(
+                    "%kits%",
+                    DataManager.getInstance().kitCacheV2.map { it.key }.toString()
+                )
+            )
             return false
         }
 
@@ -40,7 +45,12 @@ class CommandKit : ICommand {
 
         //check if not exist
         if (dataInstance == null) {
-            s.sendMessage(GeneralLang.getInstance().kitsList.replace("%kits%", DataManager.getInstance().kitCacheV2.map{ it.key }.toString()))
+            s.sendMessage(
+                GeneralLang.getInstance().kitsList.replace(
+                    "%kits%",
+                    DataManager.getInstance().kitCacheV2.map { it.key }.toString()
+                )
+            )
             return false
         }
 

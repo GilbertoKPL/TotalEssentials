@@ -51,7 +51,10 @@ class LocationsLoader {
             val loc = LocationUtil.getInstance().locationSerializer(it.value)
             if (loc == null) {
                 PluginUtil.getInstance().consoleMessage(
-                    EColor.YELLOW.color + GeneralLang.getInstance().generalWorldNotExistWarp.replace("%warp%", it.key) + EColor.RESET.color
+                    EColor.YELLOW.color + GeneralLang.getInstance().generalWorldNotExistWarp.replace(
+                        "%warp%",
+                        it.key
+                    ) + EColor.RESET.color
                 )
                 continue
             }

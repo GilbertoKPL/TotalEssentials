@@ -46,7 +46,7 @@ class KitDataSQLUtil {
         }
     }
 
-    fun createNewKitData(s: CommandSender? = null, name : String) {
+    fun createNewKitData(s: CommandSender? = null, name: String) {
         //cache
         DataManager.getInstance().kitCacheV2[name.lowercase()] =
             KitDataV2(name.lowercase(), name, emptyList(), 0L, 0)
@@ -73,7 +73,7 @@ class KitDataSQLUtil {
         }
     }
 
-    fun <T> kitHelper(col: Column<T>, value: T, message: String, name : String, s: CommandSender? = null) {
+    fun <T> kitHelper(col: Column<T>, value: T, message: String, name: String, s: CommandSender? = null) {
         TaskUtil.getInstance().asyncExecutor {
             try {
                 transaction(SqlUtil.getInstance().sql) {

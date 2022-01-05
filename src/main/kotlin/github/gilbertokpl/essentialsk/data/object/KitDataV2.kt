@@ -4,11 +4,17 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.sql.KitDataSQLUtil
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.tables.KitsDataSQL
-import github.gilbertokpl.essentialsk.util.*
+import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.inventory.ItemStack
 
-data class KitDataV2(val name: String, var fakeName: String, var items: List<ItemStack>, var time: Long, var weight: Int) {
+data class KitDataV2(
+    val name: String,
+    var fakeName: String,
+    var items: List<ItemStack>,
+    var time: Long,
+    var weight: Int
+) {
 
     fun setWeight(w: Int, s: CommandSender? = null) {
         //cache

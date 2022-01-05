@@ -31,7 +31,27 @@ class PermissionUtil {
                 newMessage.replace(color, "")
             }
         }
-        listOf("&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f", "&k", "&r", "&l", "&n").forEach {
+        listOf(
+            "&1",
+            "&2",
+            "&3",
+            "&4",
+            "&5",
+            "&6",
+            "&7",
+            "&8",
+            "&9",
+            "&a",
+            "&b",
+            "&c",
+            "&d",
+            "&e",
+            "&f",
+            "&k",
+            "&r",
+            "&l",
+            "&n"
+        ).forEach {
             colorHelper(it)
         }
         return newMessage

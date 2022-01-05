@@ -122,15 +122,13 @@ class ItemUtil {
                 }
                 p.world.dropItem(p.location, i)
             }
-        }
-        else {
+        } else {
             //check if inventory is full and add item
             if (inventorySpace >= itemsInternal.size) {
                 for (i in itemsInternal) {
                     p.inventory.addItem(i)
                 }
-            }
-            else {
+            } else {
                 //send message if inventory is full
                 p.sendMessage(
                     GeneralLang.getInstance().kitsCatchNoSpace.replace(

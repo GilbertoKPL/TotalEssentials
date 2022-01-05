@@ -4,17 +4,10 @@ import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.*
 import github.gilbertokpl.libchecker.app.builder.ApplicationBuilder
 import org.bukkit.plugin.java.JavaPlugin
-import oshi.SystemInfo
-import oshi.software.os.OSProcess
 import java.io.File
 import java.time.Duration
 import java.time.Instant
-import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.function.BinaryOperator
-import java.util.function.Function
-import java.util.function.Predicate
-import java.util.stream.Collectors
 
 
 class EssentialsK : JavaPlugin() {

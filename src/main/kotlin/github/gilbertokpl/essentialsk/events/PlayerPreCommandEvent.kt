@@ -18,7 +18,11 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 
 class PlayerPreCommandEvent : Listener {
 
-    private val chat = try { EssentialsK.instance.server.servicesManager.getRegistration(Chat::class.java)?.provider } catch (c : NoClassDefFoundError) { null }
+    private val chat = try {
+        EssentialsK.instance.server.servicesManager.getRegistration(Chat::class.java)?.provider
+    } catch (c: NoClassDefFoundError) {
+        null
+    }
 
     @EventHandler
     fun event(e: PlayerCommandPreprocessEvent) {

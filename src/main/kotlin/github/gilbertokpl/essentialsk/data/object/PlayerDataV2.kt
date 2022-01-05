@@ -4,7 +4,9 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.sql.PlayerDataSQLUtil
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.FakeNick
-import github.gilbertokpl.essentialsk.util.*
+import github.gilbertokpl.essentialsk.util.ReflectUtil
+import github.gilbertokpl.essentialsk.util.SqlUtil
+import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player

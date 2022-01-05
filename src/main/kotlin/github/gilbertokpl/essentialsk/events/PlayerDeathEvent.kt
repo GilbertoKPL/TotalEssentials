@@ -73,9 +73,10 @@ class PlayerDeathEvent : Listener {
                 )
                 return
             }
-            val causeMessage = OtherConfig.getInstance().deathmessageListReplacer[ent.damager.toString().lowercase()] ?: run {
-                ent.damager.toString().lowercase()
-            }
+            val causeMessage =
+                OtherConfig.getInstance().deathmessageListReplacer[ent.damager.toString().lowercase()] ?: run {
+                    ent.damager.toString().lowercase()
+                }
             PluginUtil.getInstance().serverMessage(
                 GeneralLang.getInstance().deathmessagesEntityKillPlayer
                     .replace("%player%", e.entity.player!!.name)

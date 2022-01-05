@@ -63,7 +63,9 @@ class ConfigUtil {
             return source.getStringList(path).stream().map { to -> to.lowercase() }.collect(Collectors.toList())
         }
         return if (color) {
-            source.getStringList(path).stream().map { to -> to.replace("&", "§").replace("%prefix%", OtherConfig.getInstance().serverPrefix) }.collect(Collectors.toList())
+            source.getStringList(path).stream()
+                .map { to -> to.replace("&", "§").replace("%prefix%", OtherConfig.getInstance().serverPrefix) }
+                .collect(Collectors.toList())
         } else source.getStringList(path)
     }
 
@@ -215,7 +217,7 @@ class ConfigUtil {
         }
     }
 
-    fun reloadConfig(all: Boolean) : Boolean {
+    fun reloadConfig(all: Boolean): Boolean {
         if (all) {
             startFun("configs", false)
 

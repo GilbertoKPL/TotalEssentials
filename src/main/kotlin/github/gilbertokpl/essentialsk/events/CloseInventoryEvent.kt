@@ -28,7 +28,8 @@ class CloseInventoryEvent : Listener {
             if (it == null) return false
             DataManager.getInstance().editKit.remove(p)
             p.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-            DataManager.getInstance().kitCacheV2[it]?.setItems(e.inventory.contents.filterNotNull().toList(), p) ?: return true
+            DataManager.getInstance().kitCacheV2[it]?.setItems(e.inventory.contents.filterNotNull().toList(), p)
+                ?: return true
             return true
         }
     }

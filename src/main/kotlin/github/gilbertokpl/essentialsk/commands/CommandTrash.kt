@@ -20,7 +20,8 @@ class CommandTrash : ICommand {
     )
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        val inv = EssentialsK.instance.server.createInventory((s as Player), 36, GeneralLang.getInstance().trashMenuName)
+        val inv =
+            EssentialsK.instance.server.createInventory((s as Player), 36, GeneralLang.getInstance().trashMenuName)
         s.openInventory(inv)
         return false
     }

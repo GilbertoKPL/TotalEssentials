@@ -20,7 +20,7 @@ class CommandBack : ICommand {
 
         val playerCache = DataManager.getInstance().playerCacheV2[s.name.lowercase()] ?: return false
 
-        val loc = playerCache.backLocation ?:run {
+        val loc = playerCache.backLocation ?: run {
             s.sendMessage(GeneralLang.getInstance().backSendNotToBack)
             return false
         }

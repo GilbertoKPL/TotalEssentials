@@ -50,8 +50,7 @@ class OfflinePlayerData(player: String) {
     fun getHomeLocation(home: String): Location? {
         return if (online) {
             data!!.getHomeLocation(home)
-        }
-        else {
+        } else {
             PlayerDataSQLUtil.getInstance().getHomeLocationSQL(home, playerID)
         }
     }
@@ -59,8 +58,7 @@ class OfflinePlayerData(player: String) {
     fun getHomeList(): List<String> {
         return if (online) {
             data!!.getHomeList()
-        }
-        else {
+        } else {
             PlayerDataSQLUtil.getInstance().getHomeListSQL(playerID)
         }
     }
@@ -68,8 +66,7 @@ class OfflinePlayerData(player: String) {
     fun delHome(name: String) {
         if (online) {
             data!!.delHome(name)
-        }
-        else {
+        } else {
             PlayerDataSQLUtil.getInstance().delHomeSQL(name, playerID)
         }
     }
@@ -77,8 +74,7 @@ class OfflinePlayerData(player: String) {
     fun setHome(name: String, loc: Location) {
         if (online) {
             data!!.setHome(name, loc)
-        }
-        else {
+        } else {
             PlayerDataSQLUtil.getInstance().setHomeSQL(name, loc, playerID)
         }
     }

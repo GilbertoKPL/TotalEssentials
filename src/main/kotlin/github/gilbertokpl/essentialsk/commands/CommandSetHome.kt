@@ -86,7 +86,11 @@ class CommandSetHome : ICommand {
 
         //update limit
         if (!s.hasPermission("essentialsk.commands.sethome." + playerCache.homeLimitCache)) {
-            playerCache.homeLimitCache = PermissionUtil.getInstance().getNumberPermission(s as Player, "essentialsk.commands.sethome.", MainConfig.getInstance().homesDefaultLimitHomes)
+            playerCache.homeLimitCache = PermissionUtil.getInstance().getNumberPermission(
+                s as Player,
+                "essentialsk.commands.sethome.",
+                MainConfig.getInstance().homesDefaultLimitHomes
+            )
         }
 
         //check limit of homes
@@ -101,7 +105,10 @@ class CommandSetHome : ICommand {
         }
 
         //check if world is blocked
-        if (MainConfig.getInstance().homesBlockWorlds.contains((s as Player).world.name.lowercase()) && !s.hasPermission("essentialsk.bypass.homeblockedworlds")) {
+        if (MainConfig.getInstance().homesBlockWorlds.contains((s as Player).world.name.lowercase()) && !s.hasPermission(
+                "essentialsk.bypass.homeblockedworlds"
+            )
+        ) {
             s.sendMessage(GeneralLang.getInstance().homesHomeWorldBlocked)
             return false
         }

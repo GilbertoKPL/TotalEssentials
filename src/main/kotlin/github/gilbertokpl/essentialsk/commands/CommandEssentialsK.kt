@@ -41,17 +41,27 @@ class CommandEssentialsK : ICommand {
 
                 val siMemory = si.hardware.memory
 
-                val ip = try {InetAddress.getLocalHost().hostAddress } catch (e: Exception) { "Unknow" }
+                val ip = try {
+                    InetAddress.getLocalHost().hostAddress
+                } catch (e: Exception) {
+                    "Unknow"
+                }
 
                 val os = System.getProperty("os.name") ?: "Unknow"
 
                 val osVersion = System.getProperty("os.version") ?: "Unknow"
 
-                val cpuName = if (siProcessor.processorIdentifier.name == "") { "Unknow" } else {
+                val cpuName = if (siProcessor.processorIdentifier.name == "") {
+                    "Unknow"
+                } else {
                     siProcessor.processorIdentifier.name
                 }
 
-                val cpuMinMHZ = (try {siProcessor.currentFreq[0] / 1000000 } catch (e : Exception) { "Unknow" }).toString()
+                val cpuMinMHZ = (try {
+                    siProcessor.currentFreq[0] / 1000000
+                } catch (e: Exception) {
+                    "Unknow"
+                }).toString()
 
                 val cpuMaxMHZ = (siProcessor.maxFreq / 1000000).toString()
 
@@ -67,11 +77,20 @@ class CommandEssentialsK : ICommand {
 
                 val memServerMax = Runtime.getRuntime().maxMemory() / (1024 * 1024)
 
-                val memServerUsed = ((Runtime.getRuntime().freeMemory() - Runtime.getRuntime().totalMemory()) * -1) / (1024 * 1024)
+                val memServerUsed =
+                    ((Runtime.getRuntime().freeMemory() - Runtime.getRuntime().totalMemory()) * -1) / (1024 * 1024)
 
-                val hdName = try { si.hardware.diskStores[0].name } catch (e: Exception) { "Unknow" }
+                val hdName = try {
+                    si.hardware.diskStores[0].name
+                } catch (e: Exception) {
+                    "Unknow"
+                }
 
-                val gpu = try { si.hardware.graphicsCards[0].name } catch (e: Exception) { "Unknow" }
+                val gpu = try {
+                    si.hardware.graphicsCards[0].name
+                } catch (e: Exception) {
+                    "Unknow"
+                }
 
                 val file = Files.getFileStore(File("/").toPath())
 

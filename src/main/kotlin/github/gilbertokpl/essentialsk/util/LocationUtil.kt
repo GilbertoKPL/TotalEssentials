@@ -2,9 +2,7 @@ package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.manager.IInstance
-import org.bukkit.Bukkit.getServer
 import org.bukkit.Location
-import java.io.File
 
 
 class LocationUtil {
