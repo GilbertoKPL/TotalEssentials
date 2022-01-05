@@ -3,6 +3,7 @@ package github.gilbertokpl.essentialsk.events
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.start.PlayerDataLoader
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.DiscordUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -27,7 +28,7 @@ class PlayerLeaveEvent : Listener {
             }
         }
         try {
-            val playerData = DataManager.getInstance().playerCacheV2[e.player.name.lowercase()]!!
+            val playerData = DataManager.getInstance().playerCacheV2[e.player.name.lowercase()] ?: return
             if (!playerData.vanishCache) {
                 if (MainConfig.getInstance().messagesLeaveMessage) {
                     PluginUtil.getInstance().serverMessage(
@@ -42,6 +43,11 @@ class PlayerLeaveEvent : Listener {
         } catch (e: Exception) {
             FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
         }
+        try {
+            PlayerDataLoader.getInstance().saveCache(e.player)
+        } catch (e: Exception) {
+            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+        }
     }
 
     private fun setBackLocation(e: PlayerQuitEvent) {
@@ -49,7 +55,7 @@ class PlayerLeaveEvent : Listener {
                 e.player.world.name.lowercase()
             )
         ) return
-        DataManager.getInstance().backLocation[e.player] = e.player.location
+        DataManager.getInstance().playerCacheV2[e.player.name.lowercase()]?.setBack(e.player.location) ?: return
     }
 
     private fun sendLeaveEmbed(e: PlayerQuitEvent) {

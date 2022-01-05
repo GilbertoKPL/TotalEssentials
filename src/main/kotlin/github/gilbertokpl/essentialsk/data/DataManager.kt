@@ -25,9 +25,6 @@ class DataManager {
     //spawn
     val spawnCache = HashMap<String, Location>(2)
 
-    //back Command
-    val backLocation = HashMap<Player, Location>(40)
-
     //warps
     val warpsCache = HashMap<String, Location>(40)
 

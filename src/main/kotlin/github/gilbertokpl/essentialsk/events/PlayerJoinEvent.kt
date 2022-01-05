@@ -39,8 +39,8 @@ class PlayerJoinEvent : Listener {
 
     private fun vanishLoginEvent(e: PlayerJoinEvent) {
         if (e.player.hasPermission("essentialsk.commands.vanish") || e.player.hasPermission("essentialsk.bypass.vanish")) return
-        ReflectUtil.getInstance().getPlayers().forEach {
-            if (DataManager.getInstance().playerCacheV2[it.name.lowercase()]!!.vanishCache) {
+        for (it in ReflectUtil.getInstance().getPlayers()) {
+            if (DataManager.getInstance().playerCacheV2[it.name.lowercase()]?.vanishCache ?: continue) {
                 @Suppress("DEPRECATION")
                 e.player.hidePlayer(it)
             }

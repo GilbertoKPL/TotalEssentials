@@ -354,4 +354,7 @@ public class GeneralLang {
     public String tphereTeleportedSuccess;
 
     public String tphereTeleportedOtherSuccess;
+
+    public String trashMenuName;
+
 }

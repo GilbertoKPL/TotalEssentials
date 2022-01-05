@@ -19,7 +19,7 @@ class PlayerUtil {
     fun getIntOnlinePlayers(vanish: Boolean): Int {
         var amount = ReflectUtil.getInstance().getPlayers()
         if (!vanish) {
-            amount = amount.filter { DataManager.getInstance().playerCacheV2[it.name.lowercase()]!!.vanishCache }
+            amount = amount.filter { DataManager.getInstance().playerCacheV2[it.name.lowercase()]?.vanishCache ?: false  }
         }
         return amount.size
     }

@@ -50,7 +50,7 @@ class PlayerDeathEvent : Listener {
                 e.entity.world.name.lowercase()
             ) && !e.entity.hasPermission("essentialsk.bypass.backblockedworlds")
         ) return
-        DataManager.getInstance().backLocation[e.entity] = e.entity.location
+        DataManager.getInstance().playerCacheV2[e.entity.name.lowercase()]?.setBack(e.entity.location) ?: return
     }
 
     private fun deathMessage(e: PlayerDeathEvent) {
@@ -74,7 +74,7 @@ class PlayerDeathEvent : Listener {
                 return
             }
             val causeMessage = OtherConfig.getInstance().deathmessageListReplacer[ent.damager.toString().lowercase()] ?: run {
-                ent.damager.name.lowercase()
+                ent.damager.toString().lowercase()
             }
             PluginUtil.getInstance().serverMessage(
                 GeneralLang.getInstance().deathmessagesEntityKillPlayer

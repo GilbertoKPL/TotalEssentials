@@ -42,7 +42,7 @@ class CommandNick : ICommand {
                 s.sendMessage(GeneralLang.getInstance().nicksNameLength)
                 return false
             }
-            val playerCache = DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!
+            val playerCache = DataManager.getInstance().playerCacheV2[s.name.lowercase()] ?: return false
 
             if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
                 //check if is empty
@@ -103,7 +103,7 @@ class CommandNick : ICommand {
             return false
         }
 
-        val playerCache = DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!
+        val playerCache = DataManager.getInstance().playerCacheV2[p.name.lowercase()] ?: return false
 
         if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
             //check if is empty

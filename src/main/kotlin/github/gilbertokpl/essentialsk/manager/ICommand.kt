@@ -53,7 +53,7 @@ interface ICommand : CommandExecutor {
                 return true
             }
             if (timeCoolDown != null && s is Player && !s.hasPermission("essentialsk.bypass.waitcommand")) {
-                val playerData = DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!
+                val playerData = DataManager.getInstance().playerCacheV2[s.name.lowercase()] ?: return false
                 val time = playerData.getCoolDown(commandName)
                 if (time != 0L && System.currentTimeMillis() < time) {
                     s.sendMessage(

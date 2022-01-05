@@ -25,8 +25,10 @@ class PermissionUtil {
         if (!message.contains("&")) return message
         var newMessage = message
         fun colorHelper(color: String) {
-            if (p.hasPermission("essentialsk.color.$color")) {
-                newMessage = newMessage.replace(color, color.replace("&", "§"))
+            newMessage = if (p.hasPermission("essentialsk.color.$color")) {
+                newMessage.replace(color, color.replace("&", "§"))
+            } else {
+                newMessage.replace(color, "")
             }
         }
         listOf("&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f", "&k", "&r", "&l", "&n").forEach {

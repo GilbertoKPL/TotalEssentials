@@ -45,7 +45,7 @@ class PlayerTeleportEvent : Listener {
                 e.player.world.name.lowercase()
             ) && !e.player.hasPermission("essentialsk.bypass.backblockedworlds")
         ) return
-        DataManager.getInstance().backLocation[e.player] = e.player.location
+        DataManager.getInstance().playerCacheV2[e.player.name.lowercase()]?.setBack(e.player.location) ?: return
     }
 
     private fun blockPassEdgeEnderPearl(e: PlayerTeleportEvent) {

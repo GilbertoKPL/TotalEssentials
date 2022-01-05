@@ -32,7 +32,7 @@ class CommandGamemode : ICommand {
                 return false
             }
 
-            DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!.setGamemode(playerGameMode, args[0].toInt())
+            (DataManager.getInstance().playerCacheV2[s.name.lowercase()]?: return false).setGamemode(playerGameMode, args[0].toInt())
             s.sendMessage(
                 GeneralLang.getInstance().gamemodeUseSuccess.replace(
                     "%gamemode%",
@@ -62,7 +62,7 @@ class CommandGamemode : ICommand {
                 return false
             }
 
-            DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!.setGamemode(playerGameMode, args[0].toInt())
+            (DataManager.getInstance().playerCacheV2[p.name.lowercase()]?:return false).setGamemode(playerGameMode, args[0].toInt())
             p.sendMessage(
                 GeneralLang.getInstance().gamemodeUseOtherSuccess.replace(
                     "%gamemode%",

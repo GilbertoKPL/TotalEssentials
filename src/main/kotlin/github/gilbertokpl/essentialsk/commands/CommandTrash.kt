@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.manager.ICommand
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -19,7 +20,7 @@ class CommandTrash : ICommand {
     )
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        val inv = EssentialsK.instance.server.createInventory((s as Player), 36)
+        val inv = EssentialsK.instance.server.createInventory((s as Player), 36, GeneralLang.getInstance().trashMenuName)
         s.openInventory(inv)
         return false
     }

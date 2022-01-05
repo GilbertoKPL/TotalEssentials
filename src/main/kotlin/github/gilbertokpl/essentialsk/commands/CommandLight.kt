@@ -36,7 +36,7 @@ class CommandLight : ICommand {
                 return false
             }
 
-            if (DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!.switchLight()) {
+            if (DataManager.getInstance().playerCacheV2[p.name.lowercase()]?.switchLight() ?: return false) {
                 p.sendMessage(GeneralLang.getInstance().lightSendOtherActive)
                 s.sendMessage(GeneralLang.getInstance().lightSendActivatedOther)
             } else {
@@ -47,7 +47,7 @@ class CommandLight : ICommand {
             return false
         }
 
-        if (DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!.switchLight()) {
+        if (DataManager.getInstance().playerCacheV2[s.name.lowercase()]?.switchLight() ?: return false) {
             s.sendMessage(GeneralLang.getInstance().lightSendActive)
         } else {
             s.sendMessage(GeneralLang.getInstance().lightSendDisable)

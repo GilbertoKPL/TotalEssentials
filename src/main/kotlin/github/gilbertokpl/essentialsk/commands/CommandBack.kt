@@ -17,21 +17,22 @@ class CommandBack : ICommand {
     override val maximumSize = 0
     override val commandUsage = listOf("/back")
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!DataManager.getInstance().backLocation.containsKey(s)) {
+
+        val playerCache = DataManager.getInstance().playerCacheV2[s.name.lowercase()] ?: return false
+
+        val loc = playerCache.backLocation ?:run {
             s.sendMessage(GeneralLang.getInstance().backSendNotToBack)
             return false
         }
 
-        val loc = DataManager.getInstance().backLocation[s]!!
-
         if (MainConfig.getInstance().backDisabledWorlds.contains(loc.world!!.name.lowercase())) {
             s.sendMessage(GeneralLang.getInstance().backSendNotToBack)
-            DataManager.getInstance().backLocation.remove(s)
+            playerCache.clearBack()
             return false
         }
 
         (s as Player).teleport(loc)
-        DataManager.getInstance().backLocation.remove(s)
+        playerCache.clearBack()
         s.sendMessage(GeneralLang.getInstance().backSendSuccess)
         return false
     }

@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 data class PlayerDataV2(
     val playerID: String,
-    val player: Player,
+    var player: Player,
     val coolDownCommand: HashMap<String, Long>,
     var kitsCache: HashMap<String, Long>,
     var homeCache: HashMap<String, Location>,
@@ -24,7 +24,8 @@ data class PlayerDataV2(
     var gameModeCache: Int,
     var vanishCache: Boolean,
     var lightCache: Boolean,
-    var flyCache: Boolean
+    var flyCache: Boolean,
+    var backLocation: Location?
 ) {
     //coolDown
 
@@ -119,8 +120,6 @@ data class PlayerDataV2(
             player.isFlying = true
         }
 
-        //sql
-        SqlUtil.getInstance().helperUpdater(playerID, PlayerDataSQL.GameMode, value)
     }
 
 
@@ -131,9 +130,6 @@ data class PlayerDataV2(
         val newValue = vanishCache.not()
 
         vanishCache = newValue
-
-        //sql
-        SqlUtil.getInstance().helperUpdater(playerID, PlayerDataSQL.Vanish, newValue)
 
         return if (newValue) {
             player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
@@ -162,9 +158,6 @@ data class PlayerDataV2(
 
         lightCache = newValue
 
-        //sql
-        SqlUtil.getInstance().helperUpdater(playerID, PlayerDataSQL.Light, newValue)
-
         return if (newValue) {
             player.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 1))
             true
@@ -181,9 +174,6 @@ data class PlayerDataV2(
 
         flyCache = newValue
 
-        //sql
-        SqlUtil.getInstance().helperUpdater(playerID, PlayerDataSQL.Fly, newValue)
-
         return if (newValue) {
             player.allowFlight = true
             player.isFlying = true
@@ -196,5 +186,15 @@ data class PlayerDataV2(
             }
             false
         }
+    }
+
+    //back
+
+    fun setBack(loc: Location) {
+        backLocation = loc
+    }
+
+    fun clearBack() {
+        backLocation = null
     }
 }

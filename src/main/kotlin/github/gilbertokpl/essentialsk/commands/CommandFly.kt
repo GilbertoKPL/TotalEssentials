@@ -41,7 +41,7 @@ class CommandFly : ICommand {
                 return false
             }
 
-            if (DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!.switchFly()) {
+            if (DataManager.getInstance().playerCacheV2[p.name.lowercase()]?.switchFly() ?: return false) {
                 p.sendMessage(GeneralLang.getInstance().flySendOtherActive)
                 s.sendMessage(GeneralLang.getInstance().flySendActivatedOther.replace("%player", p.name))
             } else {
@@ -57,7 +57,7 @@ class CommandFly : ICommand {
             return false
         }
 
-        if (DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!.switchFly()) {
+        if (DataManager.getInstance().playerCacheV2[s.name.lowercase()]?.switchFly() ?: return false) {
             s.sendMessage(GeneralLang.getInstance().flySendActive)
         } else {
             s.sendMessage(GeneralLang.getInstance().flySendDisable)

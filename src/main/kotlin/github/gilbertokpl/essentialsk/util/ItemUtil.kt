@@ -30,7 +30,7 @@ class ItemUtil {
 
         //load caches
         val kitCache = DataManager.getInstance().kitCacheV2[kit] ?: return
-        val playerCache = DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!
+        val playerCache = DataManager.getInstance().playerCacheV2[p.name.lowercase()] ?: return
 
         //get all time of kit
         var timeAll = playerCache.kitsCache[kit] ?: 0L

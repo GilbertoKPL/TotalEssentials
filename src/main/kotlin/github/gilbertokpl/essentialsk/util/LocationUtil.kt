@@ -13,16 +13,30 @@ class LocationUtil {
     }
 
     fun locationSerializer(s: String): Location? {
-        val parts = s.split(";").toTypedArray()
-        val x = parts[0].toDouble()
-        val y = parts[1].toDouble()
-        val z = parts[2].toDouble()
-        val w = try {
-            EssentialsK.instance.server.getWorld(parts[3])
+        return try {
+            val parts = s.split(";").toTypedArray()
+            val x = parts[0].toDouble()
+            val y = parts[1].toDouble()
+            val z = parts[2].toDouble()
+            val w = try {
+                EssentialsK.instance.server.getWorld(parts[3])
+            } catch (e: Exception) {
+                null
+            }
+            Location(
+                w, x, y, z, try {
+                    parts[5].toFloat()
+                } catch (e: Exception) {
+                    0F
+                }, try {
+                    parts[4].toFloat()
+                } catch (e: Exception) {
+                    0F
+                }
+            )
         } catch (e: Exception) {
-            return null
+            null
         }
-        return Location(w, x, y, z, try { parts[5].toFloat() } catch (e: Exception) { 0F }, try { parts[4].toFloat() } catch (e: Exception) { 0F })
     }
 
     companion object : IInstance<LocationUtil> {

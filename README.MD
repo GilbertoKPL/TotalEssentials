@@ -120,8 +120,8 @@ To use in chat, commands, signs etc.
 
 ## TODO List
 
-- [ ] Add Weight to kits, to organize the GUI.
-- [ ] Add Support to H2 2.0.
+- [x] Add Weight to kits, to organize the GUI.
+- [x] Add Support to H2 2.0.
 - [ ] Add suport of version Checker for a Windows.
 - [ ] Add suport UUID to offline server.
 

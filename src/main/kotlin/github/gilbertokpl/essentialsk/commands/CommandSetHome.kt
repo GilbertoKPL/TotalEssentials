@@ -76,7 +76,7 @@ class CommandSetHome : ICommand {
             return false
         }
 
-        val playerCache = DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!
+        val playerCache = DataManager.getInstance().playerCacheV2[s.name.lowercase()] ?: return false
 
         //check if already exist
         if (playerCache.homeCache.contains(nameHome)) {
@@ -85,8 +85,8 @@ class CommandSetHome : ICommand {
         }
 
         //update limit
-        if (!s.hasPermission("essentialsk.commands.sethome." + playerCache.homeCache.size)) {
-            playerCache.homeLimitCache = PermissionUtil.getInstance().getNumberPermission(s as Player, "essentialsk.commands.sethome.", MainConfig.getInstance().homesDefaultLimitHomes )
+        if (!s.hasPermission("essentialsk.commands.sethome." + playerCache.homeLimitCache)) {
+            playerCache.homeLimitCache = PermissionUtil.getInstance().getNumberPermission(s as Player, "essentialsk.commands.sethome.", MainConfig.getInstance().homesDefaultLimitHomes)
         }
 
         //check limit of homes

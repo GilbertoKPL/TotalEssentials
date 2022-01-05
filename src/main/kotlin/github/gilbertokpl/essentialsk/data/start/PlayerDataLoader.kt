@@ -7,15 +7,18 @@ import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.`object`.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.IInstance
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
+import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.PlayerInfo
 import github.gilbertokpl.essentialsk.util.*
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
+import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 class PlayerDataLoader {
 
@@ -31,12 +34,12 @@ class PlayerDataLoader {
             0,
             vanishCache = false,
             lightCache = false,
-            flyCache = false
+            flyCache = false,
+            backLocation = p.location
         )
     }
 
     //death
-
     fun death(p: Player) {
         val cache = DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!
         startGamemodeCache(p, cache.gameModeCache)
@@ -46,8 +49,7 @@ class PlayerDataLoader {
     }
 
 
-    //Kits
-
+    //kits
     private fun startKitCache(timeKits: String): HashMap<String, Long> {
         val cacheKits = HashMap<String, Long>(40)
         for (kits in timeKits.split("|")) {
@@ -76,8 +78,7 @@ class PlayerDataLoader {
     }
 
 
-    //Home
-
+    //home
     private fun startHomeCache(homesList: String): HashMap<String, Location> {
         val cacheHomes = HashMap<String, Location>(40)
 
@@ -92,8 +93,7 @@ class PlayerDataLoader {
         return cacheHomes
     }
 
-
-
+    //nick
     private fun startNickCache(p: Player, fakeNick: String): String {
         if (fakeNick != "") {
             p.setDisplayName(fakeNick)
@@ -101,7 +101,7 @@ class PlayerDataLoader {
         return fakeNick
     }
 
-
+    //gamemode
     private fun startGamemodeCache(p: Player, gameMode: Int): Int {
         val gameModeName = PlayerUtil.getInstance().getGamemodeNumber(gameMode.toString())
 
@@ -114,7 +114,6 @@ class PlayerDataLoader {
 
 
     //vanish
-
     private fun startVanishCache(p: Player, active: Boolean): Boolean {
         if (active) {
             p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
@@ -133,7 +132,6 @@ class PlayerDataLoader {
 
 
     //light
-
     private fun startLightCache(p: Player, active: Boolean): Boolean {
         if (active) {
             p.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 1))
@@ -142,8 +140,7 @@ class PlayerDataLoader {
     }
 
 
-    //Fly
-
+    //fly
     private fun startFlyCache(p: Player, active: Boolean): Boolean {
         if (active) {
             p.allowFlight = true
@@ -152,7 +149,30 @@ class PlayerDataLoader {
         return active
     }
 
+    //back
+    private fun startBackCache(loc: String) : Location? {
+        return LocationUtil.getInstance().locationSerializer(loc)
+    }
+
+
     //load
+
+    fun saveCache(p: Player) {
+        TaskUtil.getInstance().asyncExecutor {
+            transaction(SqlUtil.getInstance().sql) {
+                val playerID = PlayerUtil.getInstance().getPlayerUUID(p)
+                val cache = DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!
+                PlayerDataSQL.update({ PlayerInfo eq playerID }) {
+                    it[GameMode] = cache.gameModeCache
+                    it[Vanish] = cache.vanishCache
+                    it[Light] = cache.lightCache
+                    it[Fly] = cache.flyCache
+                    it[Back] =
+                        cache.backLocation?.let { it1 -> LocationUtil.getInstance().locationSerializer(it1) } ?: ""
+                }
+            }
+        }
+    }
 
     fun loadCache(p: Player) {
         val playerID = PlayerUtil.getInstance().getPlayerUUID(p)
@@ -162,9 +182,11 @@ class PlayerDataLoader {
             "essentialsk.commands.sethome.",
             MainConfig.getInstance().homesDefaultLimitHomes
         )
+
         if (DataManager.getInstance().playerCacheV2.containsKey(playerID)) {
             val cache = DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!
             cache.homeLimitCache = limitHome
+            cache.player = p
             startNickCache(p, cache.fakeNickCache)
             startGamemodeCache(p,cache.gameModeCache)
             startVanishCache(p,cache.vanishCache)
@@ -192,6 +214,7 @@ class PlayerDataLoader {
         var vanish = false
         var light = false
         var fly = false
+        var loc = ""
 
         TaskUtil.getInstance().asyncExecutor {
             transaction(SqlUtil.getInstance().sql) {
@@ -210,6 +233,7 @@ class PlayerDataLoader {
                     vanish = query.single()[PlayerDataSQL.Vanish]
                     light = query.single()[PlayerDataSQL.Light]
                     fly = query.single()[PlayerDataSQL.Fly]
+                    loc = query.single()[PlayerDataSQL.Back]
                 }
             }
 
@@ -225,7 +249,8 @@ class PlayerDataLoader {
                     gameModeCache = startGamemodeCache(p, gameMode),
                     vanishCache = startVanishCache(p, vanish),
                     lightCache = startLightCache(p, light),
-                    flyCache = startFlyCache(p, fly)
+                    flyCache = startFlyCache(p, fly),
+                    backLocation = startBackCache(loc)
                 )
 
                 if (!vanish) {

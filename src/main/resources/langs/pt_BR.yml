@@ -208,6 +208,8 @@ online:
   send-online: '%prefix%&eExiste %amount% players online.'
 announce:
   send-announce: '%prefix%&e[Anuncio] &9%name%&e: %message%'
+trash:
+  menu-name: '&cLixeira'
 deathmessages:
   # Player mata outro player.
   player-kill-player: '%prefix%&cO %player% morreu para o(a) %killer%.'
