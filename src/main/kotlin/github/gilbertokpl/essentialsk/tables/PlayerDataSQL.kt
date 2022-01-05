@@ -12,5 +12,6 @@ object PlayerDataSQL : Table() {
     val Light = bool("Light").default(false)
     val Fly = bool("Fly").default(false)
     val Back = text("Back").default("")
+    val Speed = integer("Speed").default(1)
     override val primaryKey = PrimaryKey(PlayerInfo)
 }

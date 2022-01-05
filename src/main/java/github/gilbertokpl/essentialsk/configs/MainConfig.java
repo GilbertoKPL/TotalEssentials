@@ -181,4 +181,6 @@ public class MainConfig {
 
     public Boolean craftActivated;
 
+    public Boolean speedActivated;
+
 }

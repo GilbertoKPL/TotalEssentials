@@ -109,6 +109,8 @@ public class GeneralLang {
 
     public String kitsCatchNoSpace;
 
+    public String kitsGiveKitMessageOther;
+
     public String kitsGiveKitMessage;
 
     public String timeSeconds;
@@ -356,5 +358,19 @@ public class GeneralLang {
     public String tphereTeleportedOtherSuccess;
 
     public String trashMenuName;
+
+    public String speedSendSuccess;
+
+    public String speedSendRemove;
+
+    public String speedSendOtherSuccess;
+
+    public String speedSendOtherRemove;
+
+    public String speedSendSuccessOther;
+
+    public String speedSendRemoveOther;
+
+    public String speedSendIncorrectValue;
 
 }

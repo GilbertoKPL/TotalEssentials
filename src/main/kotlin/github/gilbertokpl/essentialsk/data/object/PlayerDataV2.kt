@@ -27,7 +27,8 @@ data class PlayerDataV2(
     var vanishCache: Boolean,
     var lightCache: Boolean,
     var flyCache: Boolean,
-    var backLocation: Location?
+    var backLocation: Location?,
+    var speedCache: Int,
 ) {
     //coolDown
 
@@ -198,5 +199,19 @@ data class PlayerDataV2(
 
     fun clearBack() {
         backLocation = null
+    }
+
+    //speed
+
+    fun setSpeed(vel: Int) {
+        player.walkSpeed = (vel * 0.1).toFloat()
+        player.flySpeed = (vel * 0.1).toFloat()
+        speedCache = vel
+    }
+
+    fun clearSpeed() {
+        player.walkSpeed = 0.2F
+        player.flySpeed = 0.1F
+        speedCache = 1
     }
 }

@@ -5,6 +5,7 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.`object`.PlayerDataV2
+import github.gilbertokpl.essentialsk.data.`object`.SpawnData
 import github.gilbertokpl.essentialsk.manager.IInstance
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.PlayerInfo
@@ -34,7 +35,8 @@ class PlayerDataLoader {
             vanishCache = false,
             lightCache = false,
             flyCache = false,
-            backLocation = p.location
+            backLocation = p.location,
+            speedCache = 1
         )
     }
 
@@ -153,6 +155,16 @@ class PlayerDataLoader {
         return LocationUtil.getInstance().locationSerializer(loc)
     }
 
+    //speed
+    private fun startSpeedCache(p: Player, speed: Int): Int {
+        if (speed == 1) {
+            return speed
+        }
+        p.walkSpeed = (speed * 0.1).toFloat()
+        p.flySpeed = (speed * 0.1).toFloat()
+        return speed
+    }
+
 
     //load
 
@@ -182,15 +194,19 @@ class PlayerDataLoader {
             MainConfig.getInstance().homesDefaultLimitHomes
         )
 
-        if (DataManager.getInstance().playerCacheV2.containsKey(playerID)) {
+        if (DataManager.getInstance().playerCacheV2.containsKey(p.name.lowercase())) {
             val cache = DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!
             cache.homeLimitCache = limitHome
             cache.player = p
-            startNickCache(p, cache.fakeNickCache)
-            startGamemodeCache(p, cache.gameModeCache)
-            startVanishCache(p, cache.vanishCache)
-            startLightCache(p, cache.lightCache)
-            startFlyCache(p, cache.flyCache)
+
+            EssentialsK.instance.server.scheduler.runTaskLater(EssentialsK.instance, Runnable {
+                startNickCache(p, cache.fakeNickCache)
+                startGamemodeCache(p, cache.gameModeCache)
+                startVanishCache(p, cache.vanishCache)
+                startLightCache(p, cache.lightCache)
+                startFlyCache(p, cache.flyCache)
+                startSpeedCache(p, cache.speedCache)
+            }, 5L)
 
             if (!cache.vanishCache) {
                 if (MainConfig.getInstance().messagesLoginMessage) {
@@ -214,10 +230,11 @@ class PlayerDataLoader {
         var light = false
         var fly = false
         var loc = ""
+        var speed = 1
 
         TaskUtil.getInstance().asyncExecutor {
             transaction(SqlUtil.getInstance().sql) {
-                PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also { query ->
+                PlayerDataSQL.select { PlayerInfo eq playerID }.also { query ->
                     if (query.empty()) {
                         PlayerDataSQL.insert {
                             it[PlayerInfo] = playerID
@@ -233,14 +250,15 @@ class PlayerDataLoader {
                     light = query.single()[PlayerDataSQL.Light]
                     fly = query.single()[PlayerDataSQL.Fly]
                     loc = query.single()[PlayerDataSQL.Back]
+                    speed = query.single()[PlayerDataSQL.Speed]
                 }
             }
 
             EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
-                DataManager.getInstance().playerCacheV2[playerID] = PlayerDataV2(
-                    playerID,
-                    p,
-                    HashMap(5),
+                DataManager.getInstance().playerCacheV2[p.name.lowercase()] = PlayerDataV2(
+                    playerID = playerID,
+                    player = p,
+                    coolDownCommand = HashMap(5),
                     kitsCache = startKitCache(timeKits),
                     homeCache = startHomeCache(homesList),
                     homeLimitCache = limitHome,
@@ -249,7 +267,8 @@ class PlayerDataLoader {
                     vanishCache = startVanishCache(p, vanish),
                     lightCache = startLightCache(p, light),
                     flyCache = startFlyCache(p, fly),
-                    backLocation = startBackCache(loc)
+                    backLocation = startBackCache(loc),
+                    speedCache = startSpeedCache(p, speed)
                 )
 
                 if (!vanish) {
@@ -262,6 +281,11 @@ class PlayerDataLoader {
                     if (MainConfig.getInstance().discordbotSendLoginMessage) {
                         PlayerUtil.getInstance().sendLoginEmbed(p)
                     }
+                }
+
+                val spawn = SpawnData("spawn")
+                if (!spawn.checkCache()) {
+                    p.teleport(SpawnData("spawn").getLocation())
                 }
             })
         }

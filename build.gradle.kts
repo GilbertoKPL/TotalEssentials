@@ -4,7 +4,7 @@ group = "github.gilbertokpl.essentialsk"
 version = "1.5.1"
 
 val base = "$group.libs"
-val exposedVersion = "0.37.2"
+val exposedVersion = "0.37.3"
 val kotlin = "1.6.10"
 val buildVersion = "1.16.5"
 
@@ -61,18 +61,6 @@ dependencies {
 
     slim("org.jetbrains:annotations:23.0.0")
 
-    slim("org.jetbrains.exposed:exposed-core:$exposedVersion") {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
-        exclude("org.slf4j", "slf4j-api")
-    }
-
-    slim("org.jetbrains.exposed:exposed-dao:$exposedVersion") {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
-        exclude("org.slf4j", "slf4j-api")
-    }
-
     slim("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
@@ -89,7 +77,7 @@ dependencies {
 
     slim("com.googlecode.json-simple:json-simple:1.1.1")
 
-    slim("com.h2database:h2:2.0.204")
+    slim("com.h2database:h2:2.0.206")
 
     slim("com.zaxxer:HikariCP:4.0.3") {
         exclude("org.slf4j", "slf4j-api")
@@ -265,15 +253,18 @@ bukkit {
             aliases = listOf("anunciar")
         }
         register("craft") {
-            description = "This is a announce command!"
+            description = "This is a craft command!"
         }
         register("trash") {
-            description = "This is a announce command!"
+            description = "This is a trash command!"
             aliases = listOf("lixo")
         }
         register("tphere") {
-            description = "This is a announce command!"
+            description = "This is a tphere command!"
             aliases = listOf("tphere")
+        }
+        register("speed") {
+            description = "This is a speed command!"
         }
     }
     permissions {

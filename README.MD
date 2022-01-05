@@ -39,6 +39,7 @@
 | /announce and /anunciar            | Announce to all player.                                                                         | essentialsk.commands.announce    |
 | /craft                             | Open craft to player.                                                                           | essentialsk.commands.craft       |
 | /trash and /lixo                   | Open trash to player.                                                                           | essentialsk.commands.trash       |
+| /speed                             | set speed of player.                                                                            | essentialsk.commands.speed       |
 
 ## Permission Color
 
@@ -85,6 +86,7 @@ To use in chat, commands, signs etc.
 | essentialsk.commands.delhome.other             | Allow the player delhome for other players          |
 | essentialsk.commands.sethome.other             | Allow the player sethome for other players          |
 | essentialsk.commands.spawn.other               | Allow the player telepot to spawn for other players |
+| essentialsk.commands.speed.other               | Allow the player set player of other player         |
 | essentialsk.bypass.teleport                    | Bypass time to teleport                             |
 | essentialsk.bypass.homelimit                   | Bypass home limit                                   |
 | essentialsk.bypass.kitcatch                    | Bypass kit time limit                               |
@@ -107,6 +109,7 @@ To use in chat, commands, signs etc.
 
 * Own Lib using new features such as:
     - MariaDB latest version;
+    - H2 V2 latest version;
     - HikariCP;
     - Kotlin;
     - ExposedSQL.
@@ -120,8 +123,6 @@ To use in chat, commands, signs etc.
 
 ## TODO List
 
-- [x] Add Weight to kits, to organize the GUI.
-- [x] Add Support to H2 2.0.
 - [ ] Add suport of version Checker for a Windows.
 - [ ] Add suport UUID to offline server.
 
