@@ -1,1 +1,1 @@
-rootProject.name = "EssentialsK"
+rootProject.name = "GenesysCardinal"
