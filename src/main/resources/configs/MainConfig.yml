@@ -10,11 +10,11 @@ database:
   type: H2
   # If you have selected MYSQL add ip, port, username, database and password;
   # Se você selecionou MYSQL coloque essas informações paar conexão.
-  sql-ip: '!localhost'
+  sql-ip: 'localhost'
   sql-port: '3306'
-  sql-username: '!u0_cardinal'
-  sql-database: '!s0_cardinalk'
-  sql-password: '!cardinal123'
+  sql-username: "u0_essentialsk"
+  sql-database: "s0_essentialsk"
+  sql-password: "essentialsk123"
 #-------------------------------------------------------------------------------------------------------------|
 #________________________________________________Discord Connection;__________________________________________|
 #_______________________________________________Conexão com o Discord.________________________________________|
@@ -91,8 +91,6 @@ homes:
   time-to-teleport: 5
   # List of blocked worlds to use sethome, use world name example: world;
   # Lista de mundos bloqueados de usar sethome, use o nome do mundo exemplo: world.
-  home:
-
   block-worlds:
     - essentialsk
 #-------------------------------------------------------------------------------------------------------------|
@@ -153,10 +151,10 @@ craft:
   # Se estiver ativado (true), O comando será ativado.
   activated: true
 #-------------------------------------------------------------------------------------------------------------|
-#__________________________________________Config Command Speed;______________________________________________|
-#________________________________________Config dos comandos Speed.___________________________________________|
+#__________________________________________Config Command Anvil;______________________________________________|
+#________________________________________Config dos comandos Bigorna.___________________________________________|
 #-------------------------------------------------------------------------------------------------------------|
-speed:
+anvil:
   # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
@@ -230,7 +228,7 @@ back:
   # Disabled Worlds, use world name example: world;
   # Lista de mundos bloqueados de salvarem no back, use o nome do mundo exemplo: world.
   disabled-worlds:
-    - cardinal
+    - essentialk
 #-------------------------------------------------------------------------------------------------------------|
 #_____________________________________________Config Command Spawn;___________________________________________|
 #___________________________________________Config dos comandos Spawn.________________________________________|
@@ -259,7 +257,7 @@ fly:
   # Disabled Worlds, use world name example: world.
   # Lista de mundos bloqueados de usar o fly, use o nome do mundo exemplo: world.
   disabled-worlds:
-    - cardinal
+    - essentialk
 #-------------------------------------------------------------------------------------------------------------|
 #_____________________________________________Config Command Online;__________________________________________|
 #___________________________________________Config dos comandos Online._______________________________________|
@@ -312,7 +310,7 @@ announcements:
   # Add List to send;
   # Variables -> %players_online%.
   list-announce:
-    - '&1Your server has using Cardinal plugin!'
+    - '&1Your server has using EssentialsK plugin!'
     - '&2Thanks for using my plugin!'
     - '&3No servidor tem %players_online% players online!'
 #-------------------------------------------------------------------------------------------------------------|
@@ -336,15 +334,15 @@ messages:
 antibugs:
   # In this feature the player is blocked from climbing on the bed;
   # Neste recurso, o jogador é impedido de subir na cama;
-  # Permission Bypass -> cardinal.bypass.bed.
+  # Permission Bypass -> essentialsk.bypass.bed.
   block-bed: true
   # In this feature the player is blocked from climbing on the vehicles;
   # Neste recurso, o jogador é impedido de subir nos veículos;
-  # Permission Bypass -> cardinal.bypass.vehicles.
+  # Permission Bypass -> essentialsk.bypass.vehicles.
   block-climbing-on-vehicles: true
   # In this feature, the player is prevented from using NameTag on mobs;
   # Neste recurso, o jogador é impedido de usar NameTag em mobs;
-  # Permission Bypass -> cardinal.bypass.nametag.
+  # Permission Bypass -> essentialsk.bypass.nametag.
   block-nametag: false
   # In this feature, mobs are prohibited from picking up items from the ground;
   # Neste recurso, os mobs são proibidos de pegar itens do chão.
@@ -354,18 +352,18 @@ antibugs:
   block-going-edge-enderpearl: true
   # In this feature, blocks player from going to nether ceiling;
   # Neste recurso, bloqueia o jogador de ir para o teto do Nether;
-  # Permission Bypass -> cardinal.bypass.netherceiling.
+  # Permission Bypass -> essentialsk.bypass.netherceiling.
   block-player-go-to-nether-ceiling: true
   # In this feature, blocks players teleport in portals;
   # Neste recurso, os blocos de jogadores se teletransportam em portais;
-  # Permission Bypass -> cardinal.bypass.teleportportal.
+  # Permission Bypass -> essentialsk.bypass.teleportportal.
   block-player-teleport-portal: true
   # In this feature, blocks all entitys create portals;
   # Neste recurso, bloqueia todas as entidades criar portais.
   block-create-portal: false
   # In this feature, block players use that commands;
   # Neste recurso, bloquear os player de utilizarem esses comandos;
-  # Permission Bypass -> cardinal.bypass.blockedcmd.
+  # Permission Bypass -> essentialsk.bypass.blockedcmd.
   block-cmds:
     - "/pl"
     - "/plugins"
@@ -376,7 +374,7 @@ antibugs:
 containers:
   # Cancel the use of shift on list containers;
   # Cancelar o uso de shift nos contêineres da lista;
-  # Permission Bypass -> cardinal.bypass.shiftcontainer.
+  # Permission Bypass -> essentialsk.bypass.shiftcontainer.
   block-shift-enable: false
   # List to block shift;
   # Lista para bloquear shift.
@@ -384,7 +382,7 @@ containers:
     - 'ANVIL'
   # Cancel open the containers from the list;
   # Cancelar abrir os contêineres da lista;
-  # Permission Bypass -> cardinal.bypass.opencontainer.
+  # Permission Bypass -> essentialsk.bypass.opencontainer.
   block-open-enable: false
   # List to block from opening;
   # Lista para bloquear de abrir.
@@ -412,15 +410,15 @@ addons:
   block-propagation-fire: true
   # In this feature, can be put & in name of item, has a permission for that;
   # Neste recurso, pode ser colocado & no nome do item, tem permissão para isso;
-  # Permission -> cardinal.color.&0 (Example).
+  # Permission -> essentialsk.color.&0 (Example).
   color-in-anvil: true
   # In this feature, can be put & in sign, has a permission for that;
   # Neste recurso, pode ser colocado & no sinal, tem uma permissão para isso;
-  # Permission -> cardinal.color.&0 (Example).
+  # Permission -> essentialsk.color.&0 (Example).
   color-in-sign: true
   # In this feature, can be put & in chat, has a permission for that.
   # Neste recurso, pode ser colocado & no bate-papo, tem permissão para isso.
-  # Permission -> cardinal.color.&0 (Example).
+  # Permission -> essentialsk.color.&0 (Example).
   color-in-chat: true
   # In this feature, prevent player lose XP on death.
   # Neste recurso, evita que o jogador perca XP na morte.

@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = "github.genesyspl.cardinal"
-version = "1.0.1"
+group = "github.gilbertokpl.essentialsk"
+version = "1.5.1"
 
 val base = "$group.libs"
-val exposedVersion = "0.37.3"
+val exposedVersion = "0.37.2"
 val kotlin = "1.6.10"
 val buildVersion = "1.16.5"
 
@@ -28,9 +28,9 @@ allprojects {
 
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/GenesysPL/Cardinal")
+            url = uri("https://maven.pkg.github.com/GilbertoKpl/EssentialsK")
             credentials {
-                username = "GenesysPL"
+                username = "GilbertoKPL"
                 password = project.findProperty("TOKEN").toString()
             }
         }
@@ -61,6 +61,18 @@ dependencies {
 
     slim("org.jetbrains:annotations:23.0.0")
 
+    slim("org.jetbrains.exposed:exposed-core:$exposedVersion") {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+        exclude("org.slf4j", "slf4j-api")
+    }
+
+    slim("org.jetbrains.exposed:exposed-dao:$exposedVersion") {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+        exclude("org.slf4j", "slf4j-api")
+    }
+
     slim("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
@@ -77,7 +89,7 @@ dependencies {
 
     slim("com.googlecode.json-simple:json-simple:1.1.1")
 
-    slim("com.h2database:h2:2.0.206")
+    slim("com.h2database:h2:2.0.204")
 
     slim("com.zaxxer:HikariCP:4.0.3") {
         exclude("org.slf4j", "slf4j-api")
@@ -124,8 +136,8 @@ tasks.shadowJar {
         attributes(
             "Plugin-Version" to project.version.toString(),
             "Plugin-Creator" to "Gilberto",
-            "Plugin-Name" to "Cardinal",
-            "Plugin-Github" to "https://github.com/GenesysPL/Cardinal"
+            "Plugin-Name" to "EssentialsK",
+            "Plugin-Github" to "https://github.com/GilbertoKPL/EssentialsK"
         )
     }
 }
@@ -137,16 +149,16 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     jvmTarget = "1.8"
 }
 bukkit {
-    main = "$group.Cardinal"
+    main = "$group.EssentialsK"
     author = "Gilberto"
     name = project.name
     version = project.version.toString()
     apiVersion = "1.13"
     this.softDepend = listOf("Vault", "Multiverse-Core")
     commands {
-        register("cardinal") {
+        register("essentialsk") {
             description = "This is a main essentialsk command!"
-            aliases = listOf("system", "essentials", "s", "ks", "e", "c")
+            aliases = listOf("system", "essentials", "s", "ks", "e")
         }
         register("kit") {
             description = "This is a kit command!"
@@ -253,112 +265,109 @@ bukkit {
             aliases = listOf("anunciar")
         }
         register("craft") {
-            description = "This is a craft command!"
+            description = "This is a announce command!"
         }
         register("trash") {
-            description = "This is a trash command!"
+            description = "This is a announce command!"
             aliases = listOf("lixo")
         }
         register("tphere") {
-            description = "This is a tphere command!"
+            description = "This is a announce command!"
             aliases = listOf("tphere")
-        }
-        register("speed") {
-            description = "This is a speed command!"
         }
     }
     permissions {
-        register("cardinal.*") {
+        register("essentialsk.*") {
             description = "all permission"
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
 
 
-        register("cardinal.commands.sethome.*")  {
+        register("essentialsk.commands.sethome.*")  {
             description = "max sethomes"
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.kit.*")  {
+        register("essentialsk.commands.kit.*")  {
             description = "permission kit"
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.warp.*")  {
+        register("essentialsk.commands.warp.*")  {
             description = "warp permission"
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.nick.other")  {
+        register("essentialsk.commands.nick.other")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.ec.other")  {
+        register("essentialsk.commands.ec.other")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.gamemode.other")  {
+        register("essentialsk.commands.gamemode.other")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.heal.other")  {
+        register("essentialsk.commands.heal.other")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.feed.other")  {
+        register("essentialsk.commands.feed.other")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.vanish.other")  {
+        register("essentialsk.commands.vanish.other")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.light.other")  {
+        register("essentialsk.commands.light.other")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.home.other")  {
+        register("essentialsk.commands.home.other")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.delhome.other")  {
+        register("essentialsk.commands.delhome.other")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.sethome.other")  {
+        register("essentialsk.commands.sethome.other")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.commands.spawn.other")  {
+        register("essentialsk.commands.spawn.other")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.teleport")  {
+        register("essentialsk.bypass.teleport")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.homelimit")  {
+        register("essentialsk.bypass.homelimit")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.kitcatch")  {
+        register("essentialsk.bypass.kitcatch")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.vanish")  {
+        register("essentialsk.bypass.vanish")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.bed")  {
+        register("essentialsk.bypass.bed")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.vehicles")  {
+        register("essentialsk.bypass.vehicles")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.nametag")  {
+        register("essentialsk.bypass.nametag")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.netherceiling")  {
+        register("essentialsk.bypass.netherceiling")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.shiftcontainer")  {
+        register("essentialsk.bypass.shiftcontainer")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.opencontainer")  {
+        register("essentialsk.bypass.opencontainer")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.waitcommand")  {
+        register("essentialsk.bypass.waitcommand")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.backblockedworlds")  {
+        register("essentialsk.bypass.backblockedworlds")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.homeblockedworlds")  {
+        register("essentialsk.bypass.homeblockedworlds")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-        register("cardinal.bypass.nickblockednicks")  {
+        register("essentialsk.bypass.nickblockednicks")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
 
