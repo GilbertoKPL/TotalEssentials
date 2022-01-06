@@ -57,59 +57,61 @@ dependencies {
         exclude("org.bukkit", "bukkit")
     }
 
-    slim("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
 
-    slim("org.jetbrains:annotations:23.0.0")
+    compileOnly("org.jetbrains:annotations:23.0.0")
 
-    slim("org.jetbrains.exposed:exposed-core:$exposedVersion") {
+    compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion") {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
         exclude("org.slf4j", "slf4j-api")
     }
 
-    slim("org.jetbrains.exposed:exposed-dao:$exposedVersion") {
+    compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion") {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
         exclude("org.slf4j", "slf4j-api")
     }
 
-    slim("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
         exclude("org.slf4j", "slf4j-api")
     }
 
-    slim("org.bstats:bstats-bukkit:2.2.1")
+    compileOnly("org.bstats:bstats-bukkit:2.2.1")
 
-    slim("org.mariadb.jdbc:mariadb-java-client:2.7.4")
+    compileOnly("org.mariadb.jdbc:mariadb-java-client:2.7.4")
 
-    slim("org.slf4j:slf4j-nop:1.7.32")
+    compileOnly("org.slf4j:slf4j-nop:1.7.32")
 
-    slim("com.google.code.gson:gson:2.8.9")
+    compileOnly("com.google.code.gson:gson:2.8.9")
 
-    slim("com.googlecode.json-simple:json-simple:1.1.1")
+    compileOnly("com.googlecode.json-simple:json-simple:1.1.1")
 
-    slim("com.h2database:h2:2.0.204")
+    compileOnly("com.h2database:h2:2.0.204")
 
-    slim("com.zaxxer:HikariCP:4.0.3") {
+    compileOnly("com.zaxxer:HikariCP:4.0.3") {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    slim("commons-io:commons-io:2.11.0")
+    compileOnly("commons-io:commons-io:2.11.0")
 
-    slim("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2")
+    compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2")
 
-    slim("org.apache.commons:commons-lang3:3.12.0")
+    compileOnly("org.apache.commons:commons-lang3:3.12.0")
 
-    slim("com.github.oshi:oshi-core:6.0.0") {
+    compileOnly("com.github.oshi:oshi-core:6.0.0") {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    slim("net.dv8tion:JDA:5.0.0-alpha.3") {
+    compileOnly("net.dv8tion:JDA:5.0.0-alpha.3") {
         exclude ("club.minnced", "opus-java")
         exclude("org.slf4j", "slf4j-api")
         exclude("org.jetbrains", "annotations")
     }
+
+    slim("com.github.GilbertoKPL:PluginLibs:1.1")
 
 }
 
@@ -120,18 +122,15 @@ project.gradle.startParameter.excludedTaskNames.also {
     it.add("testClasses")
 }
 
-artifacts.archives(tasks.shadowJar)
-tasks.slimJar {
+tasks.shadowJar {
+    archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
+    destinationDirectory.set(File("$projectDir/Minecraft/plugins"))
     relocate("org.bstats", "$base.bstats")
     relocate("org.apache.commons.lang3", "$base.lang3")
     relocate("org.apache.commons.io", "$base.io")
     relocate("org.yaml", "$base.yaml")
     relocate("com.google.gson", "$base.gson")
     relocate("org.slf4j", "$base.slf4j")
-}
-tasks.shadowJar {
-    archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
-    destinationDirectory.set(File("$projectDir/Minecraft/plugins"))
     manifest {
         attributes(
             "Plugin-Version" to project.version.toString(),
