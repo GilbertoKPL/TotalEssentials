@@ -8,11 +8,7 @@ class PermissionUtil {
     fun getNumberPermission(player: Player, permission: String, default: Int): Int {
         var newAmount = 0
         player.effectivePermissions.filter { it.permission.contains(permission) }.forEach {
-            val int = try {
-                it.permission.split(".").last().toInt()
-            } catch (e: Exception) {
-                0
-            }
+            val int = try { it.permission.split(".").last().toInt() } catch (e: Exception) { 0 }
             if (newAmount <= int) {
                 newAmount = int
             }

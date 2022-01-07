@@ -91,6 +91,8 @@ homes:
   time-to-teleport: 5
   # List of blocked worlds to use sethome, use world name example: world;
   # Lista de mundos bloqueados de usar sethome, use o nome do mundo exemplo: world.
+  home:
+
   block-worlds:
     - essentialsk
 #-------------------------------------------------------------------------------------------------------------|
@@ -151,10 +153,10 @@ craft:
   # Se estiver ativado (true), O comando será ativado.
   activated: true
 #-------------------------------------------------------------------------------------------------------------|
-#__________________________________________Config Command Anvil;______________________________________________|
-#________________________________________Config dos comandos Bigorna.___________________________________________|
+#__________________________________________Config Command Speed;______________________________________________|
+#________________________________________Config dos comandos Speed.___________________________________________|
 #-------------------------------------------------------------------------------------------------------------|
-anvil:
+speed:
   # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true

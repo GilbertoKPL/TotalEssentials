@@ -40,6 +40,7 @@ class CommandGiveKit : ICommand {
 
         //give kit
         ItemUtil.getInstance().giveKit(p, dataInstance.items, true, drop = true)
+        s.sendMessage(GeneralLang.getInstance().kitsGiveKitMessageOther.replace("%kit%", dataInstance.fakeName).replace("%player%", p.name))
         p.sendMessage(GeneralLang.getInstance().kitsGiveKitMessage.replace("%kit%", dataInstance.fakeName))
         return false
     }

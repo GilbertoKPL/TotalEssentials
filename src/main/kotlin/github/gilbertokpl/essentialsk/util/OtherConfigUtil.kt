@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.util
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.tables.loops.Announcements
+import github.gilbertokpl.essentialsk.loops.Announcements
 import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
 

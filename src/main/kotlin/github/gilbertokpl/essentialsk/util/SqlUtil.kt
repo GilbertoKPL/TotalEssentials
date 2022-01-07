@@ -36,7 +36,7 @@ class SqlUtil {
             val type = MainConfig.getInstance().databaseType
             when (type.lowercase()) {
                 "h2" -> {
-                    sql = Database.connect("jdbc:h2:./${PluginUtil.getInstance().mainPath}/sql/H2SQL", "org.h2.Driver")
+                    sql = Database.connect("jdbc:h2:./${PluginUtil.getInstance().mainPath}/sql/H2SQLV2", "org.h2.Driver")
                 }
                 "mysql" -> {
                     val config = HikariConfig().apply {
@@ -51,7 +51,7 @@ class SqlUtil {
                     sql = Database.connect(dataSource)
                 }
                 else -> {
-                    sql = Database.connect("jdbc:h2:./${PluginUtil.getInstance().mainPath}/sql/H2SQL", "org.h2.Driver")
+                    sql = Database.connect("jdbc:h2:./${PluginUtil.getInstance().mainPath}/sql/H2SQLV2", "org.h2.Driver")
                     PluginUtil.getInstance().consoleMessage(StartLang.getInstance().databaseValid)
                 }
             }

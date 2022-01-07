@@ -42,7 +42,8 @@ time:
   day: 'dia'
   day-short: 'd'
 kits:
-  give-kit-message: '%prefix%&eAlguém do além deu o kit %kit% &epara você.'
+  give-kit-message: '%prefix%&eAlguém do além deu o kit `%kit%&e` para você.'
+  give-kit-message-other: '%prefix%&eVocê deu o %kit% &epara o(a) %player%.'
   not-exist: '%prefix%&cEsse kit não existe.'
   exist: '%prefix%&cEsse kit já existe.'
   not-exist-kits: '%prefix%&eCrie seu kit com /criarkit (nome do kit).'
@@ -183,8 +184,8 @@ light:
   send-disable: '%prefix%&eA Luz foi desativado com sucesso.'
   send-other-active: '%prefix%&eAlguém ativou sua Luz.'
   send-other-disable: '%prefix%&eAlguém desativou sua Luz.'
-  send-activated-other: '%prefix%&eA Luz do(a) foi ativado.'
-  send-disabled-other: '%prefix%&eA Luz do(a) foi desativado.'
+  send-activated-other: '%prefix%&eA Luz do(a) %player% foi ativado.'
+  send-disabled-other: '%prefix%&eA Luz do(a) %player% foi desativado.'
 back:
   send-not-to-back: '%prefix%&cVocê não tem nenhuma localização salva para voltar.'
   send-success: '%prefix%&eVocê voltou a sua ultima localização.'
@@ -210,6 +211,14 @@ announce:
   send-announce: '%prefix%&e[Anuncio] &9%name%&e: %message%'
 trash:
   menu-name: '&cLixeira'
+speed:
+  send-success: '%prefix%&eSua velocidade foi setado para %value%.'
+  send-remove: '%prefix%&eSua velocidade voltou para o padrão.'
+  send-other-success: '%prefix%&eAlguém setou sua velocidade para %value%.'
+  send-other-remove: '%prefix%&eAlguém setou sua velocidade para padrão.'
+  send-success-other: '%prefix%&eA Velocidade do(a) %player% foi foi setado para %value%.'
+  send-remove-other: '%prefix%&eA Velocidade do(a) %player% voltou para o padrão.'
+  send-incorrect-value: '%prefix%&eA Velocidade pode ser setado de 0 a 10.'
 deathmessages:
   # Player mata outro player.
   player-kill-player: '%prefix%&cO %player% morreu para o(a) %killer%.'

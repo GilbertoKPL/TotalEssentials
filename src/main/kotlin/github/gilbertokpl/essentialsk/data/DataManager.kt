@@ -30,6 +30,7 @@ class DataManager {
 
     //tpa
     val tpaHash = HashMap<Player, Player>()
+
     val tpAcceptHash = HashMap<Player, Int>()
 
     //in teleport

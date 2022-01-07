@@ -13,12 +13,16 @@ import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
+import org.bukkit.Bukkit.getServer
 import org.bukkit.command.*
 import org.bukkit.event.Event
 import org.bukkit.event.Listener
+import org.bukkit.permissions.Permission
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.RegisteredListener
+import java.awt.Color
+import java.awt.Color.blue
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Field
@@ -279,16 +283,13 @@ class PluginUtil {
             ),
             MainConfig.getInstance().trashActivated
         )
-    }
-
-    fun randomColor() = java.awt.Color.getHSBColor(
-        (Math.random() * 255 + 1).toFloat(),
-        (Math.random() * 255 + 1).toFloat(),
-        (Math.random() * 255 + 1).toFloat()
-    )
-
-    fun checkSpecialCaracteres(s: String?): Boolean {
-        return s?.matches(Regex("[^A-Za-z0-9 ]")) ?: false
+        //speed
+        startCommandsHelper(
+            listOf(
+                CommandSpeed(),
+            ),
+            MainConfig.getInstance().speedActivated
+        )
     }
 
     private fun startCommandsHelper(commands: List<CommandExecutor>, boolean: Boolean) {
@@ -306,6 +307,16 @@ class PluginUtil {
             )?.setExecutor(to)
 
         }
+    }
+
+    fun randomColor(): Color = Color.getHSBColor(
+        (Math.random() * 255 + 1).toFloat(),
+        (Math.random() * 255 + 1).toFloat(),
+        (Math.random() * 255 + 1).toFloat()
+    )
+
+    fun checkSpecialCaracteres(s: String?): Boolean {
+        return s?.matches(Regex("[^A-Za-z0-9 ]")) ?: false
     }
 
     fun unloadPlugin(plugin: Plugin) {
