@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "github.gilbertokpl.essentialsk"
 version = "1.5.1"
 
-val base = "$group.libs"
+val base = "github.gilbertokpl.libs"
 val exposedVersion = "0.37.2"
 val kotlin = "1.6.10"
 val buildVersion = "1.16.5"
@@ -111,7 +111,7 @@ dependencies {
         exclude("org.jetbrains", "annotations")
     }
 
-    slim("com.github.GilbertoKPL:PluginLibs:1.1")
+    slim("com.github.GilbertoKPL:PluginLibs:1.3")
 
 }
 

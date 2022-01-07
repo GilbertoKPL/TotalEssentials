@@ -112,6 +112,7 @@ class ClickInventoryEvent : Listener {
     //editkit event
     private fun editKitInventoryClickEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
+        e.view.title ?: return false // not delete
         val inventoryName = e.view.title.split(" ")
         if (inventoryName[0].equals("§eEditKit", true)) {
             e.isCancelled = true

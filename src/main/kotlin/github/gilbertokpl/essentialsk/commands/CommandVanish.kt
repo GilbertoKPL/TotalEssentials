@@ -51,7 +51,7 @@ class CommandVanish : ICommand {
             return false
         }
 
-        if (DataManager.getInstance().playerCacheV2[s.name.lowercase()]!!.switchVanish()) {
+        if (DataManager.getInstance().playerCacheV2[s.name.lowercase()]?.switchVanish() ?: return false) {
             s.sendMessage(GeneralLang.getInstance().vanishSendActive)
         } else {
             s.sendMessage(GeneralLang.getInstance().vanishSendDisable)
