@@ -54,6 +54,6 @@ class PlayerJoin : Listener {
             e.player.sendMessage(GeneralLang.getInstance().spawnSendNotSet)
             return
         }
-        e.player.teleport(SpawnData("spawn").getLocation())
+        e.player.teleport(loc.getLocation())
     }
 }

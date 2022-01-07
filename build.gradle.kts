@@ -57,61 +57,25 @@ dependencies {
         exclude("org.bukkit", "bukkit")
     }
 
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
-
-    compileOnly("org.jetbrains:annotations:23.0.0")
-
-    compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion") {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
-        exclude("org.slf4j", "slf4j-api")
-    }
-
-    compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion") {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
-        exclude("org.slf4j", "slf4j-api")
-    }
-
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
-        exclude("org.slf4j", "slf4j-api")
-    }
-
-    compileOnly("org.bstats:bstats-bukkit:2.2.1")
-
-    compileOnly("org.mariadb.jdbc:mariadb-java-client:2.7.4")
-
-    compileOnly("org.slf4j:slf4j-nop:1.7.32")
-
-    compileOnly("com.google.code.gson:gson:2.8.9")
-
-    compileOnly("com.googlecode.json-simple:json-simple:1.1.1")
-
-    compileOnly("com.h2database:h2:2.0.204")
-
-    compileOnly("com.zaxxer:HikariCP:4.0.3") {
-        exclude("org.slf4j", "slf4j-api")
-    }
-
-    compileOnly("commons-io:commons-io:2.11.0")
-
-    compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2")
-
-    compileOnly("org.apache.commons:commons-lang3:3.12.0")
-
-    compileOnly("com.github.oshi:oshi-core:6.0.0") {
-        exclude("org.slf4j", "slf4j-api")
-    }
-
-    compileOnly("net.dv8tion:JDA:5.0.0-alpha.3") {
-        exclude ("club.minnced", "opus-java")
-        exclude("org.slf4j", "slf4j-api")
-        exclude("org.jetbrains", "annotations")
-    }
-
+    //libs
     slim("com.github.GilbertoKPL:PluginLibs:1.3")
+
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
+    compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    compileOnly("org.bstats:bstats-bukkit:2.2.1")
+    compileOnly("org.mariadb.jdbc:mariadb-java-client:2.7.4")
+    compileOnly("org.slf4j:slf4j-nop:1.7.32")
+    compileOnly("com.google.code.gson:gson:2.8.9")
+    compileOnly("com.googlecode.json-simple:json-simple:1.1.1")
+    compileOnly("com.h2database:h2:2.0.206")
+    compileOnly("com.zaxxer:HikariCP:4.0.3")
+    compileOnly("commons-io:commons-io:2.11.0")
+    compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2")
+    compileOnly("org.apache.commons:commons-lang3:3.12.0")
+    compileOnly("com.github.oshi:oshi-core:6.0.0")
+    compileOnly("net.dv8tion:JDA:5.0.0-alpha.3")
 
 }
 

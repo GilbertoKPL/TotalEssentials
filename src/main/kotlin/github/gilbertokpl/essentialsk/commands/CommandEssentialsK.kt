@@ -1,5 +1,6 @@
 package github.gilbertokpl.essentialsk.commands
 
+import com.sun.management.OperatingSystemMXBean
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.ConfigUtil
@@ -7,10 +8,13 @@ import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import oshi.SystemInfo
+import oshi.hardware.CentralProcessor
 import oshi.hardware.CentralProcessor.TickType
 import java.io.File
+import java.lang.management.ManagementFactory
 import java.net.InetAddress
 import java.nio.file.Files
+import java.text.DecimalFormat
 
 
 class CommandEssentialsK : ICommand {
@@ -22,7 +26,11 @@ class CommandEssentialsK : ICommand {
     override val maximumSize = 1
     override val commandUsage = listOf("/essentialsk reload", "/essentialsk host")
 
+    var oldTicks = LongArray(TickType.values().size)
+
     private var si = SystemInfo()
+
+    private val format = DecimalFormat("0.00")
 
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args[0] == "reload") {
@@ -37,6 +45,10 @@ class CommandEssentialsK : ICommand {
             s.sendMessage(GeneralLang.getInstance().generalHostWait)
             TaskUtil.getInstance().asyncExecutor {
 
+                val osBean: OperatingSystemMXBean = ManagementFactory.newPlatformMXBeanProxy(
+                    ManagementFactory.getPlatformMBeanServer(), ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME, OperatingSystemMXBean::class.java
+                )
+
                 val siProcessor = si.hardware.processor
 
                 val siMemory = si.hardware.memory
@@ -47,12 +59,12 @@ class CommandEssentialsK : ICommand {
                     "Unknow"
                 }
 
-                val os = System.getProperty("os.name") ?: "Unknow"
+                val os = System.getProperty("os.name") ?: "Unknown"
 
-                val osVersion = System.getProperty("os.version") ?: "Unknow"
+                val osVersion = System.getProperty("os.version") ?: "Unknown"
 
                 val cpuName = if (siProcessor.processorIdentifier.name == "") {
-                    "Unknow"
+                    "Unknown"
                 } else {
                     siProcessor.processorIdentifier.name
                 }
@@ -60,14 +72,12 @@ class CommandEssentialsK : ICommand {
                 val cpuMinMHZ = (try {
                     siProcessor.currentFreq[0] / 1000000
                 } catch (e: Exception) {
-                    "Unknow"
+                    "Unknown"
                 }).toString()
 
                 val cpuMaxMHZ = (siProcessor.maxFreq / 1000000).toString()
 
-                val prevTicks = LongArray(TickType.values().size)
-
-                val cpuUsage = (siProcessor.getSystemCpuLoadBetweenTicks(prevTicks) * 100).toInt()
+                val cpuUsage = format.format(floatArrayPercent(cpuData(siProcessor))[0])
 
                 val cpuCores = "${siProcessor.physicalProcessorCount} / ${siProcessor.logicalProcessors.size}"
 
@@ -127,5 +137,17 @@ class CommandEssentialsK : ICommand {
             return false
         }
         return true
+    }
+
+    private fun floatArrayPercent(d: Double): FloatArray {
+        val f = FloatArray(1)
+        f[0] = (100.0 * d).toFloat()
+        return f
+    }
+
+    private fun cpuData(proc: CentralProcessor): Double {
+        val d = proc.getSystemCpuLoadBetweenTicks(oldTicks)
+        oldTicks = proc.systemCpuLoadTicks
+        return d
     }
 }

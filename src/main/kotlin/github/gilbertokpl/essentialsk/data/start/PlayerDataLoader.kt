@@ -254,7 +254,7 @@ class PlayerDataLoader {
                 }
             }
 
-            EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
+            EssentialsK.instance.server.scheduler.runTaskLater(EssentialsK.instance, Runnable {
                 DataManager.getInstance().playerCacheV2[p.name.lowercase()] = PlayerDataV2(
                     playerID = playerID,
                     player = p,
@@ -287,7 +287,7 @@ class PlayerDataLoader {
                 if (!spawn.checkCache()) {
                     p.teleport(SpawnData("spawn").getLocation())
                 }
-            })
+            }, 5L)
         }
     }
 
