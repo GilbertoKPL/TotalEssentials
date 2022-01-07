@@ -76,5 +76,5 @@ class SqlUtil {
             return instance
         }
     }
-
 }
+

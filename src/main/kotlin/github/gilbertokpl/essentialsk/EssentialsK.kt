@@ -9,7 +9,6 @@ import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.CompletableFuture
 
-
 class EssentialsK : JavaPlugin() {
 
     override fun onLoad() {

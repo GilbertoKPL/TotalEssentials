@@ -1,6 +1,5 @@
 package github.gilbertokpl.essentialsk.commands
 
-import com.sun.management.OperatingSystemMXBean
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.manager.ICommand
 import github.gilbertokpl.essentialsk.util.ConfigUtil
@@ -11,7 +10,6 @@ import oshi.SystemInfo
 import oshi.hardware.CentralProcessor
 import oshi.hardware.CentralProcessor.TickType
 import java.io.File
-import java.lang.management.ManagementFactory
 import java.net.InetAddress
 import java.nio.file.Files
 import java.text.DecimalFormat
@@ -32,6 +30,12 @@ class CommandEssentialsK : ICommand {
 
     private val format = DecimalFormat("0.00")
 
+    private val percentagemValue = 100
+
+    private val kbConversor = 1024 * 1024
+
+    private val mhzConversor = 1000000
+
     override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args[0] == "reload") {
             if (ConfigUtil.getInstance().reloadConfig(true)) {
@@ -44,10 +48,6 @@ class CommandEssentialsK : ICommand {
         if (args[0] == "host") {
             s.sendMessage(GeneralLang.getInstance().generalHostWait)
             TaskUtil.getInstance().asyncExecutor {
-
-                val osBean: OperatingSystemMXBean = ManagementFactory.newPlatformMXBeanProxy(
-                    ManagementFactory.getPlatformMBeanServer(), ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME, OperatingSystemMXBean::class.java
-                )
 
                 val siProcessor = si.hardware.processor
 
@@ -70,25 +70,25 @@ class CommandEssentialsK : ICommand {
                 }
 
                 val cpuMinMHZ = (try {
-                    siProcessor.currentFreq[0] / 1000000
+                    siProcessor.currentFreq[0] / mhzConversor
                 } catch (e: Exception) {
                     "Unknown"
                 }).toString()
 
-                val cpuMaxMHZ = (siProcessor.maxFreq / 1000000).toString()
+                val cpuMaxMHZ = (siProcessor.maxFreq / mhzConversor).toString()
 
                 val cpuUsage = format.format(floatArrayPercent(cpuData(siProcessor))[0])
 
                 val cpuCores = "${siProcessor.physicalProcessorCount} / ${siProcessor.logicalProcessors.size}"
 
-                val memMax = siMemory.total / (1024 * 1024)
+                val memMax = siMemory.total / kbConversor
 
-                val memUsed = (siMemory.available / (1024 * 1024) - memMax) * -1
+                val memUsed = (siMemory.available / kbConversor - memMax) * -1
 
-                val memServerMax = Runtime.getRuntime().maxMemory() / (1024 * 1024)
+                val memServerMax = Runtime.getRuntime().maxMemory() / kbConversor
 
                 val memServerUsed =
-                    ((Runtime.getRuntime().freeMemory() - Runtime.getRuntime().totalMemory()) * -1) / (1024 * 1024)
+                    ((Runtime.getRuntime().freeMemory() - Runtime.getRuntime().totalMemory()) * -1) / kbConversor
 
                 val hdName = try {
                     si.hardware.diskStores[0].name
@@ -104,9 +104,9 @@ class CommandEssentialsK : ICommand {
 
                 val file = Files.getFileStore(File("/").toPath())
 
-                val totalHD = file.totalSpace / (1024 * 1024)
+                val totalHD = file.totalSpace / kbConversor
 
-                val usedHD = totalHD - (file.usableSpace / (1024 * 1024))
+                val usedHD = totalHD - (file.usableSpace / kbConversor)
 
                 val cpuServerCores = Runtime.getRuntime().availableProcessors()
 
@@ -141,7 +141,7 @@ class CommandEssentialsK : ICommand {
 
     private fun floatArrayPercent(d: Double): FloatArray {
         val f = FloatArray(1)
-        f[0] = (100.0 * d).toFloat()
+        f[0] = (percentagemValue * d).toFloat()
         return f
     }
 

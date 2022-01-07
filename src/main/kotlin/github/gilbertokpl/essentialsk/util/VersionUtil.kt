@@ -11,7 +11,6 @@ import java.net.URL
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-
 class VersionUtil {
     fun check(): Boolean {
         try {

@@ -113,7 +113,6 @@ class OtherConfigUtil {
         }
     }
 
-
     companion object : IInstance<OtherConfigUtil> {
         private val instance = createInstance()
         override fun createInstance(): OtherConfigUtil = OtherConfigUtil()

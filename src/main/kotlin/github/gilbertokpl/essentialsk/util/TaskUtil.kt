@@ -5,7 +5,6 @@ import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
 import java.util.concurrent.*
 
-
 class TaskUtil {
 
     internal val asyncExecutor = asyncFuture()

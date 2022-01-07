@@ -53,5 +53,4 @@ class SpawnData(spawnName: String) {
             s?.sendMessage(GeneralLang.getInstance().spawnSendSetMessage)
         }
     }
-
 }

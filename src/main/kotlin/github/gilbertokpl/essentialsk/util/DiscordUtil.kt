@@ -28,7 +28,6 @@ class DiscordUtil {
         }
     }
 
-
     companion object : IInstance<DiscordUtil> {
         private val instance = createInstance()
         override fun createInstance(): DiscordUtil = DiscordUtil()
