@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -9,7 +9,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 
-class PlayerInteractEvent : Listener {
+class PlayerInteract : Listener {
     @EventHandler
     fun event(e: PlayerInteractEvent) {
         if (MainConfig.getInstance().addonsInfinityAnvil) {

@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
@@ -13,7 +13,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
-class PlayerJoinEvent : Listener {
+class PlayerJoin : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun event(e: PlayerJoinEvent) {
         e.joinMessage = null

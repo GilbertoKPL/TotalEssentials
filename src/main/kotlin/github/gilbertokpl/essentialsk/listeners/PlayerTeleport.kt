@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.inventory.ItemStack
 
 
-class PlayerTeleportEvent : Listener {
+class PlayerTeleport : Listener {
     @EventHandler
     fun event(e: PlayerTeleportEvent) {
         if (MainConfig.getInstance().backActivated) {

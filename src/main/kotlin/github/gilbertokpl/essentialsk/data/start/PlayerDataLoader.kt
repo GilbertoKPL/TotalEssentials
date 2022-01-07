@@ -186,7 +186,6 @@ class PlayerDataLoader {
     }
 
     fun loadCache(p: Player) {
-        val playerID = PlayerUtil.getInstance().getPlayerUUID(p)
 
         val limitHome: Int = PermissionUtil.getInstance().getNumberPermission(
             p,
@@ -221,6 +220,7 @@ class PlayerDataLoader {
             }
             return
         }
+        val playerID = PlayerUtil.getInstance().getPlayerUUID(p)
         //values
         var timeKits = ""
         var homesList = ""
@@ -239,7 +239,7 @@ class PlayerDataLoader {
                         PlayerDataSQL.insert {
                             it[PlayerInfo] = playerID
                         }
-                        DataManager.getInstance().playerCacheV2[playerID] = createEmptyCache(p, playerID, limitHome)
+                        DataManager.getInstance().playerCacheV2[p.name.lowercase()] = createEmptyCache(p, playerID, limitHome)
                         return@transaction
                     }
                     timeKits = query.single()[PlayerDataSQL.KitsTime]

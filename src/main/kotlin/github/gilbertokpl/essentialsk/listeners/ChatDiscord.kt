@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import java.util.concurrent.TimeUnit
 
-class DiscordChatEvent : ListenerAdapter() {
+class ChatDiscord : ListenerAdapter() {
     override fun onMessageReceived(e: MessageReceivedEvent) {
         if (MainConfig.getInstance().discordbotConnectDiscordChat) {
             if (e.author.isBot) return

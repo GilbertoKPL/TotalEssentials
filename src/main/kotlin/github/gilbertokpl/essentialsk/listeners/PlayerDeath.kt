@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
@@ -14,7 +14,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 
-class PlayerDeathEvent : Listener {
+class PlayerDeath : Listener {
     @EventHandler
     fun event(e: PlayerDeathEvent) {
         if (MainConfig.getInstance().backActivated) {

@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
@@ -8,7 +8,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityChangeBlockEvent
 
-class EntityChangeBlockEvent : Listener {
+class EntityChangeBlock : Listener {
     @EventHandler
     fun event(e: EntityChangeBlockEvent) {
         if (MainConfig.getInstance().addonsBlockPlayerBreakPlantationFall) {

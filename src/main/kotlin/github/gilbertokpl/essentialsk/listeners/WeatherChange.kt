@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.weather.WeatherChangeEvent
 
-class WeatherChangeEvent : Listener {
+class WeatherChange : Listener {
     @EventHandler
     fun event(e: WeatherChangeEvent) {
         if (MainConfig.getInstance().addonsDisableRain) {

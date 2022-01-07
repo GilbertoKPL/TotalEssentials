@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.events.DiscordChatEvent
+import github.gilbertokpl.essentialsk.listeners.ChatDiscord
 import github.gilbertokpl.essentialsk.manager.IInstance
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
@@ -19,7 +19,7 @@ class DiscordUtil {
                 .disableCache(CacheFlag.ACTIVITY)
                 .setLargeThreshold(50)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
-                .addEventListeners(DiscordChatEvent())
+                .addEventListeners(ChatDiscord())
                 .build()
         } catch (e: javax.security.auth.login.LoginException) {
             null

@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "github.gilbertokpl.essentialsk"
-version = "1.5.1"
+version = "1.5.2"
 
 val base = "github.gilbertokpl.libs"
-val exposedVersion = "0.37.2"
+val exposedVersion = "0.37.3"
 val kotlin = "1.6.10"
 val buildVersion = "1.16.5"
 
@@ -264,15 +264,17 @@ bukkit {
             aliases = listOf("anunciar")
         }
         register("craft") {
-            description = "This is a announce command!"
+            description = "This is a craft command!"
         }
         register("trash") {
-            description = "This is a announce command!"
+            description = "This is a trash command!"
             aliases = listOf("lixo")
         }
         register("tphere") {
-            description = "This is a announce command!"
-            aliases = listOf("tphere")
+            description = "This is a tphere command!"
+        }
+        register("speed") {
+            description = "This is a speed command!"
         }
     }
     permissions {

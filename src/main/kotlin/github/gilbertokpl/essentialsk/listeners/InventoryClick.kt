@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
@@ -18,7 +18,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 
 
-class ClickInventoryEvent : Listener {
+class InventoryClick : Listener {
     @EventHandler
     fun event(e: InventoryClickEvent) {
         if (e.slot == 45) {

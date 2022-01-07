@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
@@ -10,7 +10,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryCloseEvent
 
-class CloseInventoryEvent : Listener {
+class InventoryClose : Listener {
     @EventHandler
     fun event(e: InventoryCloseEvent) {
         if (MainConfig.getInstance().kitsActivated) {

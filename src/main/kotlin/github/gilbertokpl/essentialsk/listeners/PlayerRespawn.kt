@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
@@ -11,7 +11,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerRespawnEvent
 
-class PlayerRespawnEvent : Listener {
+class PlayerRespawn : Listener {
     @EventHandler
     fun event(e: PlayerRespawnEvent) {
         if (MainConfig.getInstance().spawnSendToSpawnOnDeath) {

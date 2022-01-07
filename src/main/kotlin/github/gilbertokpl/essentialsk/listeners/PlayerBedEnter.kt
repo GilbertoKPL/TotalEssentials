@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
@@ -8,7 +8,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerBedEnterEvent
 
-class PlayerBedEnterEvent : Listener {
+class PlayerBedEnter : Listener {
     @EventHandler
     fun event(e: PlayerBedEnterEvent) {
         if (MainConfig.getInstance().antibugsBlockBed) {

@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
@@ -9,7 +9,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.vehicle.VehicleEnterEvent
 
-class PlayerVehicleEnterEvent : Listener {
+class EntityVehicleEnter : Listener {
     @EventHandler
     fun event(e: VehicleEnterEvent) {
         if (MainConfig.getInstance().antibugsBlockClimbingOnVehicles) {

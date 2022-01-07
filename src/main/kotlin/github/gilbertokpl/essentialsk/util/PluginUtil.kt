@@ -5,7 +5,7 @@ import github.gilbertokpl.essentialsk.commands.*
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.start.KitDataLoader
 import github.gilbertokpl.essentialsk.data.start.LocationsLoader
-import github.gilbertokpl.essentialsk.events.*
+import github.gilbertokpl.essentialsk.listeners.*
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.manager.EColor
@@ -13,16 +13,13 @@ import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
-import org.bukkit.Bukkit.getServer
 import org.bukkit.command.*
 import org.bukkit.event.Event
 import org.bukkit.event.Listener
-import org.bukkit.permissions.Permission
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.RegisteredListener
 import java.awt.Color
-import java.awt.Color.blue
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Field
@@ -59,32 +56,32 @@ class PluginUtil {
     fun startEvents() {
         startEventsHelper(
             listOf(
-                ClickInventoryEvent(),
-                CloseInventoryEvent(),
-                PlayerAsyncChatEvent(),
-                PlayerJoinEvent(),
-                PlayerLeaveEvent(),
-                PlayerPreCommandEvent(),
-                PlayerDeathEvent(),
-                PlayerTeleportEvent(),
-                PlayerBedEnterEvent(),
-                PlayerVehicleEnterEvent(),
-                PlayerInteractEntityEvent(),
-                CreatureSpawnEvent(),
-                OpenInventoryEvent(),
-                PortalCreateEvent(),
-                PlayerPortalEvent(),
-                EntityDamageEvent(),
-                PlayerInteractEvent(),
-                EntityDamageByEntityEvent(),
-                EntityChangeBlockEvent(),
-                BlockBurnEvent(),
-                BlockIgniteEvent(),
-                SignChangeEvent(),
-                PlayerChangeWorldEvent(),
+                InventoryClick(),
+                InventoryClose(),
+                ChatEventAsync(),
+                PlayerJoin(),
+                PlayerLeave(),
+                PlayerPreCommand(),
+                PlayerDeath(),
+                PlayerTeleport(),
+                PlayerBedEnter(),
+                EntityVehicleEnter(),
+                PlayerInteractEntity(),
+                CreatureSpawn(),
+                InventoryOpen(),
+                EntityPortalCreate(),
+                PlayerPortal(),
+                EntityDamage(),
+                PlayerInteract(),
+                EntityDamageEntity(),
+                EntityChangeBlock(),
+                BurnEvent(),
+                IgniteEvent(),
+                EntitySignChange(),
+                PlayerChangeWorld(),
                 ServerListPing(),
-                PlayerRespawnEvent(),
-                WeatherChangeEvent()
+                PlayerRespawn(),
+                WeatherChange()
             )
         )
     }

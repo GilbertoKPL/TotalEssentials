@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
@@ -11,7 +11,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
 
 
-class EntityDamageEvent : Listener {
+class EntityDamage : Listener {
     @EventHandler
     fun event(e: EntityDamageEvent) {
         if (MainConfig.getInstance().addonsBlockPlayerGoToVoid) {

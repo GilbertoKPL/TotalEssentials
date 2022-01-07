@@ -1,15 +1,15 @@
-package github.gilbertokpl.essentialsk.events
+package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.BlockIgniteEvent
+import org.bukkit.event.block.BlockBurnEvent
 
-class BlockIgniteEvent : Listener {
+class BurnEvent : Listener {
     @EventHandler
-    fun event(e: BlockIgniteEvent) {
+    fun event(e: BlockBurnEvent) {
         if (MainConfig.getInstance().addonsBlockPropagationFire) {
             try {
                 blockPropagationFire(e)
@@ -19,9 +19,7 @@ class BlockIgniteEvent : Listener {
         }
     }
 
-    private fun blockPropagationFire(e: BlockIgniteEvent) {
-        if (e.cause == BlockIgniteEvent.IgniteCause.LAVA || e.cause == BlockIgniteEvent.IgniteCause.SPREAD) {
-            e.isCancelled = true
-        }
+    private fun blockPropagationFire(e: BlockBurnEvent) {
+        e.isCancelled = true
     }
 }
