@@ -15,366 +15,218 @@ database:
   sql-username: "u0_essentialsk"
   sql-database: "s0_essentialsk"
   sql-password: "essentialsk123"
-#-------------------------------------------------------------------------------------------------------------|
-#________________________________________________Discord Connection;__________________________________________|
-#_______________________________________________Conexão com o Discord.________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Conexão com o Discord.
 discordbot:
-  # Bot Token;
   # Token do Bot.
   token: "123456"
-  # If enabled (true), discord will connect with discord's chat.;
   # Se estiver ativado (true), O discord conectará com o chat do discord.
   connect-discord-chat: false
-  # If connect is activated you will have to enter the id of the chat connected here;
   # Caso o connect esteja ativado terá que colocar o id do chat conectado aqui.
   id-discord-chat: "123456"
-  # Command that will detect to send to discord;
   # Comando que ira detectar para enviar ao discord.
   command-chat:
     - "/g"
     - "/global"
-  # Maximum size of the message that or disagreement to send to the server.
   # Tamanho máximo da mensagem que o discord conseguirá enviar ao server.
   max-message-lenght: 50
-  # Send message to discord (embed) that the player is logged in;
-  # Mandar mensagem ao discord (embed) que o player logou.
+  # Mandar mensagem ao discord (embed) que o ‘player’ logou.
   send-login-message: false
-  # Send message to discord (embed) that the player has exited;
-  # Mandar mensagem ao discord (embed) que o player saiu.
+  # Mandar mensagem ao discord (embed) que o ‘player‘ saiu.
   send-leave-message: false
-#-------------------------------------------------------------------------------------------------------------|
-#_______________________________________________Config Command Kits;__________________________________________|
-#_____________________________________________Config dos comandos Kits._______________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Kits.
 kits:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Enable short name of time, example seconds to s;
   # Se estiver ativado (true), será enviado o tempo em pequena escala, exemplo segundos para s.
   use-short-time: false
-  # Drop items when he gets the kit;
   # Se estiver ativado (true) dropar items caso o invetário esteja cheio.
   drop-items-in-catch: false
-  # Equip armour when he gets the kit;
   # Se estiver ativado (true), será Equipado a armadura caso tenha no kit.
   equip-armor-in-catch: true
-#-------------------------------------------------------------------------------------------------------------|
-#_________________________________________Config Command Nicks;_______________________________________________|
-#_______________________________________Config dos comandos Nicks.____________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Nicks.
 nicks:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # If enabled players can have same nick;
   # Se estiver ativado (true) players poderão usar o mesmo nick.
   can-player-have-same-nick: false
-  # List of blocked nicks;
   # Lista de nicks bloqueados.
   blocked-nicks:
     - essentialsk
-#-------------------------------------------------------------------------------------------------------------|
-#________________________________________Config Command Homes;________________________________________________|
-#______________________________________Config dos comandos Homes._____________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Homes.
 homes:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Default value if player not have permission;
   # Quantidade de homes maximas caso não tenha a permissão.
   default-limit-homes: 3
-  # Time in seconds to teleport to determined location, has a permission to bypass;
   # Tempo para teleportar, tem permissão para burlar isso.
   time-to-teleport: 5
-  # List of blocked worlds to use sethome, use world name example: world;
   # Lista de mundos bloqueados de usar sethome, use o nome do mundo exemplo: world.
-  home:
-
   block-worlds:
     - essentialsk
-#-------------------------------------------------------------------------------------------------------------|
-#_________________________________________Config Command Warps;_______________________________________________|
-#_______________________________________Config dos comandos Warps.____________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Warps.
 warps:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Time in seconds to teleport to determined location, has a permission to bypass;
   # Tempo para teleportar, tem permissão para burlar isso.
   time-to-teleport: 5
-#-------------------------------------------------------------------------------------------------------------|
-#___________________________________________Config Command TP;________________________________________________|
-#_________________________________________Config dos comandos TP._____________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos TP.
 tp:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-#-------------------------------------------------------------------------------------------------------------|
-#___________________________________________Config Command TPhere;____________________________________________|
-#_________________________________________Config dos comandos TPhere._________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos TPhere.
 tphere:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-#-------------------------------------------------------------------------------------------------------------|
-#___________________________________________Config Command TPA;_______________________________________________|
-#_________________________________________Config dos comandos TPA.____________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos TPA.
 tpa:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Time in seconds to accept order;
   # Tempo para aceitar o pedido.
   time-to-accept: 10
-  # Time in seconds to teleport to determined location, has a permission to bypass;
   # Tempo para teleportar, tem permissão para burlar isso.
   time-to-teleport: 5
-#-------------------------------------------------------------------------------------------------------------|
-#__________________________________________Config Command Trash;______________________________________________|
-#________________________________________Config dos comandos Lixo.___________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Lixo.
 trash:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-#-------------------------------------------------------------------------------------------------------------|
-#__________________________________________Config Command Craft;______________________________________________|
-#________________________________________Config dos comandos Craft.___________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Craft.
 craft:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-#-------------------------------------------------------------------------------------------------------------|
-#__________________________________________Config Command Speed;______________________________________________|
-#________________________________________Config dos comandos Speed.___________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Speed.
 speed:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-#-------------------------------------------------------------------------------------------------------------|
-#_________________________________________Config Command Echest;______________________________________________|
-#_______________________________________Config dos comandos Echest.___________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Echest.
 echest:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-#-------------------------------------------------------------------------------------------------------------|
-#_________________________________________Config Command Gamemode;____________________________________________|
-#_______________________________________Config dos comandos Gamemode._________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Gamemode.
 gamemode:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-#-------------------------------------------------------------------------------------------------------------|
-#__________________________________________Config Command Vanish;_____________________________________________|
-#________________________________________Config dos comandos Vanish.__________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Vanish.
 vanish:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Blocked Commands if another player executes on behalf of to vanish person blocks;
   # Comandos Bloqueados se um outro player executar em nome da pessoa de vanish bloquear.
   blocked-other-cmds:
     - "/tell <player>"
     - "/money <arg> <player>"
-#-------------------------------------------------------------------------------------------------------------|
-#____________________________________________Config Command Feed;_____________________________________________|
-#__________________________________________Config dos comandos Feed.__________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Feed.
 feed:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Only run if it's eaten below, for low versions it may bug if it's true;
   # Só vai executar se sua fome não estiver cheia, em versões antias pode bugar no true.
   need-eat-below: false
-#-------------------------------------------------------------------------------------------------------------|
-#_____________________________________________Config Command Heal;____________________________________________|
-#___________________________________________Config dos comandos Heal._________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Heal.
 heal:
-  # Enabled.
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Only run if it's health below, for low versions it may bug if it's true;
   # Só vai executar se sua vida não estiver cheia, em versões antias pode bugar no true.
   need-heal-below: false
-#-------------------------------------------------------------------------------------------------------------|
-#____________________________________________Config Command Light;____________________________________________|
-#__________________________________________Config dos comandos Light._________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Light.
 light:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-#-------------------------------------------------------------------------------------------------------------|
-#_____________________________________________Config Command Back;____________________________________________|
-#___________________________________________Config dos comandos Back._________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Back.
 back:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Disabled Worlds, use world name example: world;
   # Lista de mundos bloqueados de salvarem no back, use o nome do mundo exemplo: world.
   disabled-worlds:
     - essentialk
-#-------------------------------------------------------------------------------------------------------------|
-#_____________________________________________Config Command Spawn;___________________________________________|
-#___________________________________________Config dos comandos Spawn.________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Spawn.
 spawn:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # If enabled player is sent to spawn on login;
   # Se estiver ativado o player será mandado para o spawn no login.
   send-to-spawn-on-login: true
-  # If enabled player is sent to spawn on death;
   # Se estiver ativado o player será mandado para o spawn quando ele morre.
   send-to-spawn-on-death: true
-  # Time in seconds to teleport to determined location, has a permission to bypass;
   # Tempo para teleportar, tem permissão para burlar isso.
   time-to-teleport: 5
-#-------------------------------------------------------------------------------------------------------------|
-#______________________________________________Config Command Fly;____________________________________________|
-#____________________________________________Config dos comandos Fly._________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Fly.
 fly:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Disabled Worlds, use world name example: world.
   # Lista de mundos bloqueados de usar o fly, use o nome do mundo exemplo: world.
   disabled-worlds:
     - essentialk
-#-------------------------------------------------------------------------------------------------------------|
-#_____________________________________________Config Command Online;__________________________________________|
-#___________________________________________Config dos comandos Online._______________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos Online.
 online:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # count vanish players;
   # Se estiver ativado (true), O comando online contará também os players de vanish.
   count-remove-vanish: false
-#-------------------------------------------------------------------------------------------------------------|
-#_____________________________________________Config Command announce;________________________________________|
-#___________________________________________Config dos comandos anunciar._____________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config dos comandos anunciar.
 announce:
-  # Enabled;
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Time in seconds to execute the command again;
   # Tempo em segundos para executar o comando novamente.
   cooldown: 300
-#-------------------------------------------------------------------------------------------------------------|
-#__________________________________________________Config MOTD;_______________________________________________|
-#_________________________________________________Config da MOTD._____________________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config da MOTD.
 motd:
-  # Enabled;
   # Se estiver ativado (true), O Motd será ativado.
   enabled: true
-  # Add List to see in motd use (/n > 1.5.2) to skip lines.
-  # Lista de motds aletórias, caso queira estático utilize só 1 linha.
-  # Variables -> %players_online%.
+  # Adicionar lista para ver no motd use (/ n> 1.5.2) para pular linhas;
+  # Lista de motds aletórias, caso queira estático utilize só 1 linha;
+  # Variaveis -> %players_online%.
   list-motd:
     - '&1Minecraft Server \n&1its open with %players_online% online!'
     - '&2Minecraft Server \n&2its open with %players_online% online!'
     - '&3Minecraft Server \n&3its open with %players_online% online!'
     - '&4Minecraft Server \n&4its open with %players_online% online!'
-#-------------------------------------------------------------------------------------------------------------|
-#_______________________________________Config of automatic messages;_________________________________________|
-#______________________________________Config das mensagens automáticas.______________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Config das mensagens automáticas.
 announcements:
-  # Enabled;
   # Se estiver ativado (true), as mensagens automáticas serão ativadas.
   enabled: true
-  # Time to send in minutes;
   # Tempo entre as mensagens em minutos para enviar.
   time: 5
-  # Add List to send;
-  # Variables -> %players_online%.
+  # Lista de anuncios para ser enviado;
+  # Variaveis -> %players_online%.
   list-announce:
     - '&1Your server has using EssentialsK plugin!'
     - '&2Thanks for using my plugin!'
     - '&3No servidor tem %players_online% players online!'
-#-------------------------------------------------------------------------------------------------------------|
-#______________________In this location, there are messages that can be activated;____________________________|
-#_______________________Neste local, existe as mensagens que podem ser ativadas.______________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Neste local, existem as mensagens que podem ser ativadas.
 messages:
-  # Enabled;
-  # Se estiver ativado (true), as mensagens do login será ativadas.
+  # Se estiver ativado (true), as mensagens do login será ativada.
   login-message: true
-  # Enabled;
-  # Se estiver ativado (true), as mensagens do leave será ativadas.
+  # Se estiver ativado (true), as mensagens do leave será ativada.
   leave-message: true
-  # Enabled;
   # Se estiver ativado (true), as mensagens do deathmessages serão ativadas.
   deathmessages-message: true
-#-------------------------------------------------------------------------------------------------------------|
-#                      In this location, anti-bug features that can be turned on or off;                      |
-#               Neste local, contém os recursos antibugs que podem ser ativados ou desativados.               |
-#-------------------------------------------------------------------------------------------------------------|
+# Neste local, contém os recursos antibugs que podem ser ativados ou desativados.
 antibugs:
-  # In this feature the player is blocked from climbing on the bed;
   # Neste recurso, o jogador é impedido de subir na cama;
   # Permission Bypass -> essentialsk.bypass.bed.
   block-bed: true
-  # In this feature the player is blocked from climbing on the vehicles;
   # Neste recurso, o jogador é impedido de subir nos veículos;
   # Permission Bypass -> essentialsk.bypass.vehicles.
   block-climbing-on-vehicles: true
-  # In this feature, the player is prevented from using NameTag on mobs;
   # Neste recurso, o jogador é impedido de usar NameTag em mobs;
   # Permission Bypass -> essentialsk.bypass.nametag.
   block-nametag: false
-  # In this feature, mobs are prohibited from picking up items from the ground;
   # Neste recurso, os mobs são proibidos de pegar itens do chão.
   block-mob-catch: false
-  # In this feature, blocks the player from going over the edge with Ender Pearls.
   # Neste recurso, bloqueia o jogador de ir além da borda com Ender Pearls.
   block-going-edge-enderpearl: true
-  # In this feature, blocks player from going to nether ceiling;
   # Neste recurso, bloqueia o jogador de ir para o teto do Nether;
   # Permission Bypass -> essentialsk.bypass.netherceiling.
   block-player-go-to-nether-ceiling: true
-  # In this feature, blocks players teleport in portals;
   # Neste recurso, os blocos de jogadores se teletransportam em portais;
   # Permission Bypass -> essentialsk.bypass.teleportportal.
   block-player-teleport-portal: true
-  # In this feature, blocks all entitys create portals;
   # Neste recurso, bloqueia todas as entidades criar portais.
   block-create-portal: false
-  # In this feature, block players use that commands;
   # Neste recurso, bloquear os player de utilizarem esses comandos;
   # Permission Bypass -> essentialsk.bypass.blockedcmd.
   block-cmds:
     - "/pl"
     - "/plugins"
-#-------------------------------------------------------------------------------------------------------------|
-#___________In this location, contains containers options, List of values in (unavailable for now).___________|
-#_________Neste local, contém as opções do container, Lista de valores em (indisponível por enquanto).________|
-#-------------------------------------------------------------------------------------------------------------|
+# Neste local, contém as opções do container, lista de valores em (indisponível por enquanto).
 containers:
-  # Cancel the use of shift on list containers;
   # Cancelar o uso de shift nos contêineres da lista;
   # Permission Bypass -> essentialsk.bypass.shiftcontainer.
   block-shift-enable: false
@@ -382,49 +234,34 @@ containers:
   # Lista para bloquear shift.
   block-shift:
     - 'ANVIL'
-  # Cancel open the containers from the list;
   # Cancelar abrir os contêineres da lista;
   # Permission Bypass -> essentialsk.bypass.opencontainer.
   block-open-enable: false
-  # List to block from opening;
   # Lista para bloquear de abrir.
   block-open:
     - 'ANVIL'
-#-------------------------------------------------------------------------------------------------------------|
-#_________________________________In this location, has addons for minecraft;_________________________________|
-#__________________________________Neste local, possui addons para minecraft._________________________________|
-#-------------------------------------------------------------------------------------------------------------|
+# Neste local, possui addons para minecraft.
 addons:
-  # In this feature, anvil is infinity;
   # Neste recurso, a bigorna é infinita.
   infinity-anvil: true
-  # In this feature, player is teleported to spawn if player fall into the void;
   # Neste recurso, o jogador é teletransportado para o spawn se o jogador cair no void.
   block-player-go-to-void: true
-  # In this feature, items droped can not explode.
   # Neste recurso, os itens dropados não podem explodir.
   block-explode-items: true
-  # In this feature, the player cannot break the crop when he falls;
   # Neste recurso, o jogador não pode quebrar a plantação quando cair.
   block-player-break-plantation-fall: true
-  # In this feature, fire can not propagate;
   # Neste recurso, o fogo não pode se propagar.
   block-propagation-fire: true
-  # In this feature, can be put & in name of item, has a permission for that;
-  # Neste recurso, pode ser colocado & no nome do item, tem permissão para isso;
+  # Neste recurso, pode ser colocado & no nome do ‘item’, tem permissão para isso;
   # Permission -> essentialsk.color.&0 (Example).
   color-in-anvil: true
-  # In this feature, can be put & in sign, has a permission for that;
   # Neste recurso, pode ser colocado & no sinal, tem uma permissão para isso;
   # Permission -> essentialsk.color.&0 (Example).
   color-in-sign: true
-  # In this feature, can be put & in chat, has a permission for that.
   # Neste recurso, pode ser colocado & no bate-papo, tem permissão para isso.
   # Permission -> essentialsk.color.&0 (Example).
   color-in-chat: true
-  # In this feature, prevent player lose XP on death.
   # Neste recurso, evita que o jogador perca XP na morte.
   player-prevent-lose-xp: true
-  # In this feature, prevent start rain.
   # Neste recurso, evita que começe a chover.
   disable-rain: true

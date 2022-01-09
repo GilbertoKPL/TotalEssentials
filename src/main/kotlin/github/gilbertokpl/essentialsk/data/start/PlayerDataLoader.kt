@@ -207,7 +207,7 @@ class PlayerDataLoader {
                 startSpeedCache(p, cache.speedCache)
             }, 5L)
 
-            if (!cache.vanishCache) {
+            if (!cache.vanishCache && !p.hasPermission("*")) {
                 if (MainConfig.getInstance().messagesLoginMessage) {
                     PluginUtil.getInstance().serverMessage(
                         GeneralLang.getInstance().messagesEnterMessage
@@ -271,7 +271,7 @@ class PlayerDataLoader {
                     speedCache = startSpeedCache(p, speed)
                 )
 
-                if (!vanish) {
+                if (!vanish && !p.hasPermission("*")) {
                     if (MainConfig.getInstance().messagesLoginMessage) {
                         PluginUtil.getInstance().serverMessage(
                             GeneralLang.getInstance().messagesEnterMessage

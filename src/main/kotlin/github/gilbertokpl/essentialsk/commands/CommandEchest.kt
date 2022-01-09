@@ -27,15 +27,18 @@ class CommandEchest : ICommand {
             return false
         }
 
-        val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-            s.sendMessage(GeneralLang.getInstance().generalPlayerNotOnline)
+        //admin
+        if (s.hasPermission("essentialsk.commands.ec.other")) {
+            val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
+                s.sendMessage(GeneralLang.getInstance().generalPlayerNotOnline)
+                return false
+            }
+
+            s.sendMessage(GeneralLang.getInstance().echestSendOtherSuccess.replace("%player%", p.name))
+            val inv = p.enderChest
+            (s as Player).openInventory(inv)
             return false
         }
-
-        s.sendMessage(GeneralLang.getInstance().echestSendOtherSuccess.replace("%player%", p.name))
-        val inv = p.enderChest
-        (s as Player).openInventory(inv)
-
-        return false
+        return true
     }
 }

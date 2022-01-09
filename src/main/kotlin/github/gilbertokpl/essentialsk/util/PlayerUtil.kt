@@ -20,7 +20,7 @@ class PlayerUtil {
         var amount = ReflectUtil.getInstance().getPlayers()
         if (!vanish) {
             amount =
-                amount.filter { DataManager.getInstance().playerCacheV2[it.name.lowercase()]?.vanishCache ?: false }
+                amount.filter { !DataManager.getInstance().playerCacheV2[it.name.lowercase()]?.vanishCache!! }
         }
         return amount.size
     }

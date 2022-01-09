@@ -29,7 +29,7 @@ class PlayerLeave : Listener {
         }
         try {
             val playerData = DataManager.getInstance().playerCacheV2[e.player.name.lowercase()] ?: return
-            if (!playerData.vanishCache) {
+            if (!playerData.vanishCache && !e.player.hasPermission("*")) {
                 if (MainConfig.getInstance().messagesLeaveMessage) {
                     PluginUtil.getInstance().serverMessage(
                         GeneralLang.getInstance().messagesLeaveMessage

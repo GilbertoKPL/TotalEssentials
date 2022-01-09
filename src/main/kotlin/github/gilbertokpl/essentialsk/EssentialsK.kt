@@ -3,6 +3,7 @@ package github.gilbertokpl.essentialsk
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.*
 import github.gilbertokpl.libchecker.app.builder.ApplicationBuilder
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.time.Duration
@@ -56,6 +57,10 @@ class EssentialsK : JavaPlugin() {
 
         PluginUtil.getInstance().startEvents()
 
+        if (Bukkit.getBukkitVersion().contains("1.5.2") || Bukkit.getVersion().contains("1.5.2")) {
+            lowVersion = true
+        }
+
         CompletableFuture.runAsync {
             DiscordUtil.getInstance().startBot()
         }
@@ -72,5 +77,6 @@ class EssentialsK : JavaPlugin() {
 
     companion object {
         lateinit var instance: EssentialsK
+        var lowVersion = false
     }
 }

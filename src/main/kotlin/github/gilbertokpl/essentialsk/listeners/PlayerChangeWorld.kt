@@ -24,7 +24,7 @@ class PlayerChangeWorld : Listener {
 
     //fly command
     private fun data(e: PlayerChangedWorldEvent) {
-        val playerCache = DataManager.getInstance().playerCacheV2[e.player.name.lowercase()]!!
+        val playerCache = DataManager.getInstance().playerCacheV2[e.player.name.lowercase()] ?: return
         val gm = PlayerUtil.getInstance().getGamemodeNumber(playerCache.gameModeCache.toString())
         if (gm != e.player.gameMode) {
             e.player.gameMode = gm
