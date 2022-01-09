@@ -27,6 +27,9 @@ class CommandEchest : ICommand {
             return false
         }
 
+        if(!s.hasPermission("essentialsk.commands.ec.other"))
+            return false
+        
         val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
             s.sendMessage(GeneralLang.getInstance().generalPlayerNotOnline)
             return false
