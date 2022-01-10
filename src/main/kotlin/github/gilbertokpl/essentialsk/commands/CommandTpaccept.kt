@@ -4,13 +4,13 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandTpaccept : ICommand {
+class CommandTpaccept : CommandCreator {
     override val consoleCanUse: Boolean = false
     override val commandName = "tpaccept"
     override val timeCoolDown: Long? = null
@@ -21,51 +21,51 @@ class CommandTpaccept : ICommand {
         "/tpaccept"
     )
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        val p = DataManager.getInstance().tpaHash[s as Player] ?: run {
-            s.sendMessage(GeneralLang.getInstance().tpaNotAnyRequest)
+    override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+        val p = DataManager.tpaHash[s as Player] ?: run {
+            s.sendMessage(GeneralLang.tpaNotAnyRequest)
             return false
         }
 
         //remove checker
-        val value = DataManager.getInstance().tpAcceptHash[p] ?: run {
-            s.sendMessage(GeneralLang.getInstance().tpaNotAnyRequest)
+        val value = DataManager.tpAcceptHash[p] ?: run {
+            s.sendMessage(GeneralLang.tpaNotAnyRequest)
             return false
         }
 
-        DataManager.getInstance().tpaHash.remove(s)
+        DataManager.tpaHash.remove(s)
 
         if (value == 1) {
-            DataManager.getInstance().tpAcceptHash.remove(p)
+            DataManager.tpAcceptHash.remove(p)
         }
 
         //check if player is online
         if (EssentialsK.instance.server.getPlayer(p.name) == null) {
-            s.sendMessage(GeneralLang.getInstance().generalPlayerNotOnline)
+            s.sendMessage(GeneralLang.generalPlayerNotOnline)
             return false
         }
 
-        s.sendMessage(GeneralLang.getInstance().tpaRequestAccepted.replace("%player%", p.name))
+        s.sendMessage(GeneralLang.tpaRequestAccepted.replace("%player%", p.name))
 
         if (p.hasPermission("essentialsk.bypass.teleport")) {
-            DataManager.getInstance().tpaHash.remove(p)
-            p.sendMessage(GeneralLang.getInstance().tpaRequestOtherNoDelayAccepted.replace("%player%", s.name))
+            DataManager.tpaHash.remove(p)
+            p.sendMessage(GeneralLang.tpaRequestOtherNoDelayAccepted.replace("%player%", s.name))
             p.teleport(s.location)
             return false
         }
 
-        val time = MainConfig.getInstance().tpaTimeToTeleport
+        val time = MainConfig.tpaTimeToTeleport
 
         p.sendMessage(
-            GeneralLang.getInstance().tpaRequestOtherAccepted.replace("%player%", s.name)
+            GeneralLang.tpaRequestOtherAccepted.replace("%player%", s.name)
                 .replace("%time%", time.toString())
         )
 
-        val exe = TaskUtil.getInstance().teleportExecutor(time)
+        val exe = TaskUtil.teleportExecutor(time)
 
         exe {
             p.teleport(s.location)
-            DataManager.getInstance().tpaHash.remove(p)
+            DataManager.tpaHash.remove(p)
         }
 
         return false

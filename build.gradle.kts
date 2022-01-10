@@ -13,7 +13,6 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1"
-    id("io.github.slimjar") version "1.3.0"
 }
 
 detekt {
@@ -58,7 +57,7 @@ dependencies {
     }
 
     //libs
-    slim("com.github.GilbertoKPL:PluginLibs:1.3")
+    compileOnly("com.github.GilbertoKPL:PluginLibs:1.3")
 
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
     compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion")
@@ -76,7 +75,6 @@ dependencies {
     compileOnly("org.apache.commons:commons-lang3:3.12.0")
     compileOnly("com.github.oshi:oshi-core:6.0.0")
     compileOnly("net.dv8tion:JDA:5.0.0-alpha.3")
-
 }
 
 project.gradle.startParameter.excludedTaskNames.also {

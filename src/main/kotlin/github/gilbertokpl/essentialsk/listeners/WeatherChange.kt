@@ -10,11 +10,11 @@ import org.bukkit.event.weather.WeatherChangeEvent
 class WeatherChange : Listener {
     @EventHandler
     fun event(e: WeatherChangeEvent) {
-        if (MainConfig.getInstance().addonsDisableRain) {
+        if (MainConfig.addonsDisableRain) {
             try {
                 disableRain(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }

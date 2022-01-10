@@ -11,17 +11,17 @@ import org.bukkit.event.entity.EntityChangeBlockEvent
 class EntityChangeBlock : Listener {
     @EventHandler
     fun event(e: EntityChangeBlockEvent) {
-        if (MainConfig.getInstance().addonsBlockPlayerBreakPlantationFall) {
+        if (MainConfig.addonsBlockPlayerBreakPlantationFall) {
             try {
                 blockPlayerBreakPlantation(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
 
     private fun blockPlayerBreakPlantation(e: EntityChangeBlockEvent) {
-        if (e.block.type == DataManager.getInstance().material["soil"]) {
+        if (e.block.type == DataManager.material["soil"]) {
             e.isCancelled = true
         }
     }

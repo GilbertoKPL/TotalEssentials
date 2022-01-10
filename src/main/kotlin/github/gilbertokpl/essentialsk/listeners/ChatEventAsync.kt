@@ -14,40 +14,40 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 class ChatEventAsync : Listener {
     @EventHandler
     fun event(e: AsyncPlayerChatEvent) {
-        if (MainConfig.getInstance().kitsActivated) {
+        if (MainConfig.kitsActivated) {
             try {
                 if (editKitChatEvent(e)) return
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
-        if (MainConfig.getInstance().addonsColorInChat) {
+        if (MainConfig.addonsColorInChat) {
             try {
                 colorChat(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
 
     private fun editKitChatEvent(e: AsyncPlayerChatEvent): Boolean {
-        DataManager.getInstance().editKitChat[e.player].also {
+        DataManager.editKitChat[e.player].also {
             if (it == null) return false
-            DataManager.getInstance().editKitChat.remove(e.player)
+            DataManager.editKitChat.remove(e.player)
             val split = it.split("-")
 
-            val dataInstance = DataManager.getInstance().kitCacheV2[split[1]]!!
+            val dataInstance = DataManager.kitCacheV2[split[1]]!!
 
             //time
             if (split[0] == "time") {
                 e.isCancelled = true
-                val time = TimeUtil.getInstance().convertStringToMillis(e.message)
-                e.player.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
+                val time = TimeUtil.convertStringToMillis(e.message)
+                e.player.sendMessage(GeneralLang.generalSendingInfoToDb)
                 e.player.sendMessage(
-                    GeneralLang.getInstance().kitsEditKitTime.replace(
+                    GeneralLang.kitsEditKitTime.replace(
                         "%time%",
-                        TimeUtil.getInstance()
-                            .convertMillisToString(time, MainConfig.getInstance().kitsUseShortTime)
+                        TimeUtil
+                            .convertMillisToString(time, MainConfig.kitsUseShortTime)
                     )
                 )
                 dataInstance.setTime(time, e.player)
@@ -60,11 +60,11 @@ class ChatEventAsync : Listener {
                 e.isCancelled = true
                 //check message length
                 if (e.message.replace("&[0-9,a-f]".toRegex(), "").length > 16) {
-                    e.player.sendMessage(GeneralLang.getInstance().kitsNameLength)
+                    e.player.sendMessage(GeneralLang.kitsNameLength)
                     return true
                 }
 
-                e.player.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
+                e.player.sendMessage(GeneralLang.generalSendingInfoToDb)
                 dataInstance.setFakeName(e.message.replace("&", "§"), e.player)
             }
 
@@ -78,7 +78,7 @@ class ChatEventAsync : Listener {
                     0
                 }
 
-                e.player.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
+                e.player.sendMessage(GeneralLang.generalSendingInfoToDb)
                 dataInstance.setWeight(integer, e.player)
             }
 
@@ -87,6 +87,6 @@ class ChatEventAsync : Listener {
     }
 
     private fun colorChat(e: AsyncPlayerChatEvent) {
-        e.message = PermissionUtil.getInstance().colorPermission(e.player, e.message)
+        e.message = PermissionUtil.colorPermission(e.player, e.message)
     }
 }

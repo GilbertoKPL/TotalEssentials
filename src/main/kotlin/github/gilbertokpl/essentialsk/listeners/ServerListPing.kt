@@ -11,19 +11,19 @@ import org.bukkit.event.server.ServerListPingEvent
 class ServerListPing : Listener {
     @EventHandler
     fun event(e: ServerListPingEvent) {
-        if (MainConfig.getInstance().motdEnabled) {
+        if (MainConfig.motdEnabled) {
             try {
                 motd(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
 
     private fun motd(e: ServerListPingEvent) {
-        val motd = MainConfig.getInstance().motdListMotd.random().replace(
+        val motd = MainConfig.motdListMotd.random().replace(
             "%players_online%",
-            PlayerUtil.getInstance().getIntOnlinePlayers(false).toString()
+            PlayerUtil.getIntOnlinePlayers(false).toString()
         ).replace("\\n", "\n")
         e.motd = motd
     }

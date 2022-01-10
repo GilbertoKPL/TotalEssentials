@@ -2,9 +2,9 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.`object`.OfflinePlayerData
-import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.data.objects.OfflinePlayerData
+import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
@@ -12,7 +12,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandSetHome : ICommand {
+class CommandSetHome : CommandCreator {
     override val consoleCanUse: Boolean = false
     override val commandName = "sethome"
     override val timeCoolDown: Long? = null
@@ -22,13 +22,13 @@ class CommandSetHome : ICommand {
     override val commandUsage =
         listOf("/sethome <homeName>", "essentialsk.commands.sethome.other_/sethome <playername>:<homeName>")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         val nameHome = args[0].lowercase()
 
         //admin
         if (args[0].contains(":") && s.hasPermission("essentialsk.commands.sethome.other")) {
-            TaskUtil.getInstance().asyncExecutor {
+            TaskUtil.asyncExecutor {
                 val split = args[0].split(":")
 
                 val pName = split[0].lowercase()
@@ -36,27 +36,27 @@ class CommandSetHome : ICommand {
                 val otherPlayerInstance = OfflinePlayerData(pName)
 
                 if (!otherPlayerInstance.checkSql()) {
-                    s.sendMessage(GeneralLang.getInstance().generalPlayerNotExist)
+                    s.sendMessage(GeneralLang.generalPlayerNotExist)
                     return@asyncExecutor
                 }
 
                 if (split.size < 2) {
                     s.sendMessage(
-                        GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
+                        GeneralLang.homesHomeOtherList.replace("%player%", pName)
                             .replace("%list%", otherPlayerInstance.getHomeList().toString())
                     )
                     return@asyncExecutor
                 }
 
                 if (otherPlayerInstance.getHomeList().contains(split[1])) {
-                    s.sendMessage(GeneralLang.getInstance().homesNameAlreadyExist)
+                    s.sendMessage(GeneralLang.homesNameAlreadyExist)
                     return@asyncExecutor
                 }
 
                 otherPlayerInstance.setHome(split[1].lowercase(), (s as Player).location)
 
                 s.sendMessage(
-                    GeneralLang.getInstance().homesHomeOtherCreated.replace("%player%", pName)
+                    GeneralLang.homesHomeOtherCreated.replace("%player%", pName)
                         .replace("%home%", split[1])
                 )
             }
@@ -65,38 +65,39 @@ class CommandSetHome : ICommand {
         }
 
         //check if home name do not contain . or - to not bug
-        if (PluginUtil.getInstance().checkSpecialCaracteres(nameHome)) {
-            s.sendMessage(GeneralLang.getInstance().generalSpecialCaracteresDisabled)
+        if (PluginUtil.checkSpecialCaracteres(nameHome)) {
+            s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
             return false
         }
 
         //check length of home name
         if (nameHome.length > 16) {
-            s.sendMessage(GeneralLang.getInstance().homesNameLength)
+            s.sendMessage(GeneralLang.homesNameLength)
             return false
         }
 
-        val playerCache = DataManager.getInstance().playerCacheV2[s.name.lowercase()] ?: return false
+        val playerCache = PlayerDataV2[s as Player] ?: return false
 
         //check if already exist
         if (playerCache.homeCache.contains(nameHome)) {
-            s.sendMessage(GeneralLang.getInstance().homesNameAlreadyExist)
+            s.sendMessage(GeneralLang.homesNameAlreadyExist)
             return false
         }
 
         //update limit
         if (!s.hasPermission("essentialsk.commands.sethome." + playerCache.homeLimitCache)) {
-            playerCache.homeLimitCache = PermissionUtil.getInstance().getNumberPermission(
-                s as Player,
+            playerCache.homeLimitCache = PermissionUtil.getNumberPermission(
+                s,
                 "essentialsk.commands.sethome.",
-                MainConfig.getInstance().homesDefaultLimitHomes
+                MainConfig.homesDefaultLimitHomes
             )
         }
 
         //check limit of homes
-        if (playerCache.homeCache.size >= playerCache.homeLimitCache && !s.hasPermission("essentialsk.bypass.homelimit")) {
+        if (playerCache.homeCache.size >= playerCache.homeLimitCache &&
+            !s.hasPermission("essentialsk.bypass.homelimit")) {
             s.sendMessage(
-                GeneralLang.getInstance().homesHomeLimitCreated.replace(
+                GeneralLang.homesHomeLimitCreated.replace(
                     "%limit%",
                     playerCache.homeLimitCache.toString()
                 )
@@ -105,16 +106,16 @@ class CommandSetHome : ICommand {
         }
 
         //check if world is blocked
-        if (MainConfig.getInstance().homesBlockWorlds.contains((s as Player).world.name.lowercase()) && !s.hasPermission(
+        if (MainConfig.homesBlockWorlds.contains(s.world.name.lowercase()) && !s.hasPermission(
                 "essentialsk.bypass.homeblockedworlds"
             )
         ) {
-            s.sendMessage(GeneralLang.getInstance().homesHomeWorldBlocked)
+            s.sendMessage(GeneralLang.homesHomeWorldBlocked)
             return false
         }
 
         playerCache.setHome(nameHome, s.location)
-        s.sendMessage(GeneralLang.getInstance().homesHomeCreated.replace("%home%", nameHome))
+        s.sendMessage(GeneralLang.homesHomeCreated.replace("%home%", nameHome))
 
         return false
     }

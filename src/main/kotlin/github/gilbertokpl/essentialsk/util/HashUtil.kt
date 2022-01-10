@@ -1,8 +1,6 @@
 package github.gilbertokpl.essentialsk.util
 
-import github.gilbertokpl.essentialsk.manager.IInstance
-
-class HashUtil {
+object HashUtil {
 
     fun hashMapSortMap(passedMap: HashMap<String, Int>): LinkedHashMap<String, Int> {
         val mapKeys: ArrayList<String> = ArrayList(passedMap.keys)
@@ -38,13 +36,5 @@ class HashUtil {
             reversedMap[key] = value
         }
         return reversedMap
-    }
-
-    companion object : IInstance<HashUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): HashUtil = HashUtil()
-        override fun getInstance(): HashUtil {
-            return instance
-        }
     }
 }

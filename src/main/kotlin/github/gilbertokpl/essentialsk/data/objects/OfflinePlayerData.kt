@@ -1,7 +1,6 @@
-package github.gilbertokpl.essentialsk.data.`object`
+package github.gilbertokpl.essentialsk.data.objects
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.sql.PlayerDataSQLUtil
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -18,14 +17,14 @@ class OfflinePlayerData(player: String) {
     private val online = p != null
 
     private val playerID = if (p != null) {
-        PlayerUtil.getInstance().getPlayerUUID(p)
+        PlayerUtil.getPlayerUUID(p)
     } else {
         @Suppress("DEPRECATION")
-        PlayerUtil.getInstance().getPlayerUUID(EssentialsK.instance.server.getOfflinePlayer(player))
+        PlayerUtil.getPlayerUUID(EssentialsK.instance.server.getOfflinePlayer(player))
     }
 
     val data = if (online) {
-        DataManager.getInstance().playerCacheV2[p!!.name.lowercase()]
+        PlayerDataV2[p!!]
     } else {
         null
     }
@@ -36,12 +35,12 @@ class OfflinePlayerData(player: String) {
         } else {
             try {
                 var check = false
-                transaction(SqlUtil.getInstance().sql) {
+                transaction(SqlUtil.sql) {
                     check = PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.empty()
                 }
                 return !check
             } catch (ex: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }
             return false
         }
@@ -51,7 +50,7 @@ class OfflinePlayerData(player: String) {
         return if (online) {
             data!!.getHomeLocation(home)
         } else {
-            PlayerDataSQLUtil.getInstance().getHomeLocationSQL(home, playerID)
+            PlayerDataSQLUtil.getHomeLocationSQL(home, playerID)
         }
     }
 
@@ -59,7 +58,7 @@ class OfflinePlayerData(player: String) {
         return if (online) {
             data!!.getHomeList()
         } else {
-            PlayerDataSQLUtil.getInstance().getHomeListSQL(playerID)
+            PlayerDataSQLUtil.getHomeListSQL(playerID)
         }
     }
 
@@ -67,7 +66,7 @@ class OfflinePlayerData(player: String) {
         if (online) {
             data!!.delHome(name)
         } else {
-            PlayerDataSQLUtil.getInstance().delHomeSQL(name, playerID)
+            PlayerDataSQLUtil.delHomeSQL(name, playerID)
         }
     }
 
@@ -75,7 +74,7 @@ class OfflinePlayerData(player: String) {
         if (online) {
             data!!.setHome(name, loc)
         } else {
-            PlayerDataSQLUtil.getInstance().setHomeSQL(name, loc, playerID)
+            PlayerDataSQLUtil.setHomeSQL(name, loc, playerID)
         }
     }
 }

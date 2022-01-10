@@ -7,7 +7,7 @@ enum class EType {
     STRING {
         override fun getValueConfig(yml: YamlFile, value: String): String? {
             if (yml.get(value) == null) return null
-            return ConfigUtil.getInstance().getString(yml, value)
+            return ConfigUtil.getString(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {
@@ -18,7 +18,7 @@ enum class EType {
     STRING_LIST {
         override fun getValueConfig(yml: YamlFile, value: String): List<String>? {
             if (yml.get(value) == null) return null
-            return ConfigUtil.getInstance().getStringList(yml, value)
+            return ConfigUtil.getStringList(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {
@@ -29,7 +29,7 @@ enum class EType {
     BOOLEAN {
         override fun getValueConfig(yml: YamlFile, value: String): Boolean? {
             if (yml.get(value) == null) return null
-            return ConfigUtil.getInstance().getBoolean(yml, value)
+            return ConfigUtil.getBoolean(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {
@@ -40,7 +40,7 @@ enum class EType {
     INTEGER {
         override fun getValueConfig(yml: YamlFile, value: String): Int? {
             if (yml.get(value) == null) return null
-            return ConfigUtil.getInstance().getInt(yml, value)
+            return ConfigUtil.getInt(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {

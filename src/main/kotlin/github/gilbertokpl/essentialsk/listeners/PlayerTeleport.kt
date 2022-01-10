@@ -2,8 +2,8 @@ package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.`object`.SpawnData
+import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.data.objects.SpawnData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Material
@@ -13,39 +13,38 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.inventory.ItemStack
 
-
 class PlayerTeleport : Listener {
     @EventHandler
     fun event(e: PlayerTeleportEvent) {
-        if (MainConfig.getInstance().backActivated) {
+        if (MainConfig.backActivated) {
             try {
                 setBackLocation(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
-        if (MainConfig.getInstance().antibugsBlockGoingEdgeEnderpearl) {
+        if (MainConfig.antibugsBlockGoingEdgeEnderpearl) {
             try {
                 blockPassEdgeEnderPearl(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
-        if (MainConfig.getInstance().antibugsBlockPlayerGoToNetherCeiling) {
+        if (MainConfig.antibugsBlockPlayerGoToNetherCeiling) {
             try {
                 blockPassNetherCeiling(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
 
     private fun setBackLocation(e: PlayerTeleportEvent) {
-        if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.getInstance().backDisabledWorlds.contains(
+        if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.backDisabledWorlds.contains(
                 e.player.world.name.lowercase()
             ) && !e.player.hasPermission("essentialsk.bypass.backblockedworlds")
         ) return
-        DataManager.getInstance().playerCacheV2[e.player.name.lowercase()]?.setBack(e.player.location) ?: return
+        PlayerDataV2[e.player]?.setBack(e.player.location) ?: return
     }
 
     private fun blockPassEdgeEnderPearl(e: PlayerTeleportEvent) {
@@ -59,7 +58,7 @@ class PlayerTeleport : Listener {
             val to = e.to!!
             if (center.x + wB < to.x || center.x - wB > to.x || center.z + wB < to.z || center.z - wB > to.z) {
                 p.inventory.addItem(ItemStack(Material.ENDER_PEARL, 1))
-                e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
+                e.player.sendMessage(GeneralLang.generalNotPermAction)
                 e.isCancelled = true
             }
         }
@@ -72,11 +71,11 @@ class PlayerTeleport : Listener {
         ) {
             val loc = SpawnData("spawn")
             if (loc.checkCache()) {
-                e.player.sendMessage(GeneralLang.getInstance().spawnSendNotSet)
+                e.player.sendMessage(GeneralLang.spawnSendNotSet)
                 return
             }
             e.player.teleport(loc.getLocation())
-            e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
+            e.player.sendMessage(GeneralLang.generalNotPermAction)
         }
     }
 }

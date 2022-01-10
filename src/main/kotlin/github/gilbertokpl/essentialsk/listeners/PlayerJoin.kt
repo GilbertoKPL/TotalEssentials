@@ -2,9 +2,8 @@ package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.`object`.SpawnData
-import github.gilbertokpl.essentialsk.data.start.PlayerDataLoader
+import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.data.objects.SpawnData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.ReflectUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -17,31 +16,32 @@ class PlayerJoin : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun event(e: PlayerJoinEvent) {
         e.joinMessage = null
-        if (MainConfig.getInstance().spawnSendToSpawnOnLogin) {
+        if (MainConfig.spawnSendToSpawnOnLogin) {
             try {
                 spawnLogin(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
         try {
-            PlayerDataLoader.getInstance().loadCache(e.player)
+            PlayerDataV2.loadCache(e)
         } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
-        if (MainConfig.getInstance().vanishActivated) {
+        if (MainConfig.vanishActivated) {
             try {
                 vanishLoginEvent(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
 
     private fun vanishLoginEvent(e: PlayerJoinEvent) {
-        if (e.player.hasPermission("essentialsk.commands.vanish") || e.player.hasPermission("essentialsk.bypass.vanish")) return
-        for (it in ReflectUtil.getInstance().getPlayers()) {
-            if (DataManager.getInstance().playerCacheV2[it.name.lowercase()]?.vanishCache ?: continue) {
+        if (e.player.hasPermission("essentialsk.commands.vanish") ||
+            e.player.hasPermission("essentialsk.bypass.vanish")) return
+        for (it in ReflectUtil.getPlayers()) {
+            if (PlayerDataV2[it]?.vanishCache ?: continue) {
                 @Suppress("DEPRECATION")
                 e.player.hidePlayer(it)
             }
@@ -51,7 +51,7 @@ class PlayerJoin : Listener {
     private fun spawnLogin(e: PlayerJoinEvent) {
         val loc = SpawnData("spawn")
         if (loc.checkCache()) {
-            e.player.sendMessage(GeneralLang.getInstance().spawnSendNotSet)
+            e.player.sendMessage(GeneralLang.spawnSendNotSet)
             return
         }
         e.player.teleport(loc.getLocation())

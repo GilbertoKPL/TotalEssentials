@@ -8,7 +8,6 @@ import github.gilbertokpl.essentialsk.configs.StartLang
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.manager.ELang
-import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.simpleyaml.configuration.file.YamlFile
@@ -17,8 +16,7 @@ import java.nio.file.*
 import java.util.*
 import java.util.stream.Collectors
 
-
-class ConfigUtil {
+object ConfigUtil {
     lateinit var configYaml: YamlFile
 
     lateinit var langYaml: YamlFile
@@ -37,24 +35,24 @@ class ConfigUtil {
     private var bol = false
 
     fun start() {
-        PluginUtil.getInstance().consoleMessage(StartLang.getInstance().startVerification.replace("%to%", "config"))
+        PluginUtil.consoleMessage(StartLang.startVerification.replace("%to%", "config"))
 
         startFun("configs", false)
 
-        PluginUtil.getInstance().consoleMessage(StartLang.getInstance().completeVerification)
+        PluginUtil.consoleMessage(StartLang.completeVerification)
 
-        PluginUtil.getInstance().consoleMessage(StartLang.getInstance().startVerification.replace("%to%", "lang"))
+        PluginUtil.consoleMessage(StartLang.startVerification.replace("%to%", "lang"))
 
         startFun("langs", true)
 
-        OtherConfigUtil.getInstance().start()
+        OtherConfigUtil.start()
 
-        PluginUtil.getInstance().consoleMessage(StartLang.getInstance().completeVerification)
+        PluginUtil.consoleMessage(StartLang.completeVerification)
     }
 
     internal fun getString(source: YamlFile, path: String, color: Boolean = true): String? {
         return if (color) {
-            source.getString(path).replace("&", "§").replace("%prefix%", OtherConfig.getInstance().serverPrefix)
+            source.getString(path).replace("&", "§").replace("%prefix%", OtherConfig.serverPrefix)
         } else source.getString(path)
     }
 
@@ -64,7 +62,7 @@ class ConfigUtil {
         }
         return if (color) {
             source.getStringList(path).stream()
-                .map { to -> to.replace("&", "§").replace("%prefix%", OtherConfig.getInstance().serverPrefix) }
+                .map { to -> to.replace("&", "§").replace("%prefix%", OtherConfig.serverPrefix) }
                 .collect(Collectors.toList())
         } else source.getStringList(path)
     }
@@ -74,9 +72,9 @@ class ConfigUtil {
     internal fun getBoolean(source: YamlFile, path: String): Boolean = source.getBoolean(path)
 
     private fun internalReloadConfig() {
-        ReflectUtil.getInstance().setValuesFromClass(
+        ReflectUtil.setValuesFromClass(
             MainConfig::class.java,
-            MainConfig.getInstance(),
+            MainConfig(),
             configYaml
         )
     }
@@ -112,7 +110,7 @@ class ConfigUtil {
                     } catch (e: Exception) {
                         ELang.valueOf("OTHER").locale
                     }
-                    MainConfig.getInstance().generalSelectedLang = enum
+                    MainConfig.generalSelectedLang = enum
                     internalReloadConfig()
                 }
 
@@ -121,39 +119,39 @@ class ConfigUtil {
 
                 langYaml = langY
 
-                OtherConfig.getInstance().serverPrefix = getString(langYaml, "general.server-prefix") ?: ""
+                OtherConfig.serverPrefix = getString(langYaml, "general.server-prefix") ?: ""
 
-                ReflectUtil.getInstance()
-                    .setValuesOfClass(GeneralLang::class.java, GeneralLang.getInstance(), langYaml)
+                ReflectUtil
+                    .setValuesOfClass(GeneralLang::class.java, GeneralLang(), langYaml)
 
             } catch (ex: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }
             return
         }
 
         try {
-            ReflectUtil.getInstance()
-                .setValuesOfClass(MainConfig::class.java, MainConfig.getInstance(), configYaml)
+            ReflectUtil
+                .setValuesOfClass(MainConfig::class.java, MainConfig(), configYaml)
         } catch (ex: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
         }
     }
 
     private fun langHelper(): File {
         var langSelected =
-            File(PluginUtil.getInstance().langPath, "${MainConfig.getInstance().generalSelectedLang}.yml")
+            File(PluginUtil.langPath, "${MainConfig.generalSelectedLang}.yml")
 
         if (langSelected.exists()) {
-            PluginUtil.getInstance().consoleMessage(
-                StartLang.getInstance().langSelectedMessage.replace(
+            PluginUtil.consoleMessage(
+                StartLang.langSelectedMessage.replace(
                     "%lang%",
-                    "${MainConfig.getInstance().generalSelectedLang}.yml"
+                    "${MainConfig.generalSelectedLang}.yml"
                 )
             )
         } else {
-            langSelected = File(PluginUtil.getInstance().langPath, "pt_BR.yml")
-            PluginUtil.getInstance().consoleMessage(StartLang.getInstance().langError)
+            langSelected = File(PluginUtil.langPath, "pt_BR.yml")
+            PluginUtil.consoleMessage(StartLang.langError)
         }
         return langSelected
     }
@@ -164,11 +162,11 @@ class ConfigUtil {
         val message: String
         if (lang) {
             location = "/langs/$source.yml"
-            dir = PluginUtil.getInstance().langPath
+            dir = PluginUtil.langPath
             message = "lang"
         } else {
             location = "/configs/$source.yml"
-            dir = PluginUtil.getInstance().mainPath
+            dir = PluginUtil.mainPath
             message = "config"
         }
         try {
@@ -201,8 +199,8 @@ class ConfigUtil {
             }
             File(dir).mkdirs()
             Files.copy(resource!!, configFile.toPath())
-            PluginUtil.getInstance().consoleMessage(
-                StartLang.getInstance().createMessage.replace("%to%", message).replace("%file%", configFile.name)
+            PluginUtil.consoleMessage(
+                StartLang.createMessage.replace("%to%", message).replace("%file%", configFile.name)
             )
             if (!lang) {
                 val finalConfigYaml = YamlFile(configFile)
@@ -212,7 +210,7 @@ class ConfigUtil {
 
             return true
         } catch (ex: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             return false
         }
     }
@@ -223,7 +221,7 @@ class ConfigUtil {
 
             startFun("langs", true)
 
-            OtherConfigUtil.getInstance().start()
+            OtherConfigUtil.start()
 
             EditKitInventory.setup()
             KitGuiInventory.setup()
@@ -274,13 +272,13 @@ class ConfigUtil {
         }
 
 
-        for (createConfig in HashUtil.getInstance().hashMapSortMap(toPut)) {
+        for (createConfig in HashUtil.hashMapSortMap(toPut)) {
             checkerYaml.set(createConfig.key, toCheckYaml.get(createConfig.key))
             if (toCheckYaml.getComment(createConfig.key) != null) {
                 checkerYaml.setComment(createConfig.key, toCheckYaml.getComment(createConfig.key))
             }
-            PluginUtil.getInstance().consoleMessage(
-                StartLang.getInstance().addMessage.replace("%path%", createConfig.key)
+            PluginUtil.consoleMessage(
+                StartLang.addMessage.replace("%path%", createConfig.key)
                     .replace("%file%", configFile.name)
             )
         }
@@ -292,13 +290,13 @@ class ConfigUtil {
             }
         }
 
-        for (deleteConfig in HashUtil.getInstance().hashMapReverse(HashUtil.getInstance().hashMapSortMap(toRemove))) {
+        for (deleteConfig in HashUtil.hashMapReverse(HashUtil.hashMapSortMap(toRemove))) {
             checkerYaml.set(deleteConfig.key, null)
             if (checkerYaml.getComment(deleteConfig.key) != null) {
                 checkerYaml.setComment(deleteConfig.key, null)
             }
-            PluginUtil.getInstance().consoleMessage(
-                StartLang.getInstance().removeMessage.replace("%path%", deleteConfig.key)
+            PluginUtil.consoleMessage(
+                StartLang.removeMessage.replace("%path%", deleteConfig.key)
                     .replace("%file%", configFile.name)
             )
         }
@@ -319,11 +317,5 @@ class ConfigUtil {
         checkerYaml.save(configFile)
     }
 
-    companion object : IInstance<ConfigUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): ConfigUtil = ConfigUtil()
-        override fun getInstance(): ConfigUtil {
-            return instance
-        }
-    }
+
 }

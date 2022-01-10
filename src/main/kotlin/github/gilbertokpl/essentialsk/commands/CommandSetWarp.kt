@@ -2,15 +2,15 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.`object`.WarpData
-import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.data.objects.WarpData
+import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandSetWarp : ICommand {
+class CommandSetWarp : CommandCreator {
     override val consoleCanUse: Boolean = true
     override val commandName = "setwarp"
     override val timeCoolDown: Long? = null
@@ -20,16 +20,16 @@ class CommandSetWarp : ICommand {
     override val commandUsage =
         listOf("/setwarp <warpName>", "/setwarp <warpName> <worldName> <x> <y> <z>")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of warp name
         if (args[0].length > 16) {
-            s.sendMessage(GeneralLang.getInstance().warpsNameLength)
+            s.sendMessage(GeneralLang.warpsNameLength)
             return false
         }
 
         //check if warp name do not contain special
-        if (PluginUtil.getInstance().checkSpecialCaracteres(args[0])) {
-            s.sendMessage(GeneralLang.getInstance().generalSpecialCaracteresDisabled)
+        if (PluginUtil.checkSpecialCaracteres(args[0])) {
+            s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
             return false
         }
 
@@ -39,7 +39,7 @@ class CommandSetWarp : ICommand {
 
         //check if exist
         if (!warpInstance.checkCache()) {
-            s.sendMessage(GeneralLang.getInstance().warpsNameAlreadyExist)
+            s.sendMessage(GeneralLang.warpsNameAlreadyExist)
             return false
         }
 
@@ -58,7 +58,7 @@ class CommandSetWarp : ICommand {
                 return true
             }
 
-            s.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
+            s.sendMessage(GeneralLang.generalSendingInfoToDb)
             warpInstance.setWarp(loc, s)
 
 
@@ -66,7 +66,7 @@ class CommandSetWarp : ICommand {
         }
 
         if (args.size == 1 && s is Player) {
-            s.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
+            s.sendMessage(GeneralLang.generalSendingInfoToDb)
             warpInstance.setWarp(s.location, s)
             return false
         }

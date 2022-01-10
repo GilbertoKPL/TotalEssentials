@@ -1,0 +1,10 @@
+{
+  "com.github.GilbertoKPL:PluginLibs:1.3": {
+    "repository": {
+      "url": "https://jitpack.io"
+    },
+    "dependencyURL": "https://jitpack.io/com/github/GilbertoKPL/PluginLibs/1.3/PluginLibs-1.3.jar",
+    "checksumURL": "https://jitpack.io/com/github/GilbertoKPL/PluginLibs/1.3/PluginLibs-1.3.jar.sha1",
+    "isAggregator": false
+  }
+}

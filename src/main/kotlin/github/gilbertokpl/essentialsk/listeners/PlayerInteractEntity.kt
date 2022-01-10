@@ -12,11 +12,11 @@ import org.bukkit.event.player.PlayerInteractEntityEvent
 class PlayerInteractEntity : Listener {
     @EventHandler
     fun event(e: PlayerInteractEntityEvent) {
-        if (MainConfig.getInstance().antibugsBlockNametag) {
+        if (MainConfig.antibugsBlockNametag) {
             try {
                 blockNameTag(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
@@ -26,7 +26,7 @@ class PlayerInteractEntity : Listener {
         if (e.player.itemInHand.type == Material.NAME_TAG &&
             !e.player.hasPermission("essentialsk.bypass.nametag")
         ) {
-            e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
+            e.player.sendMessage(GeneralLang.generalNotPermAction)
             e.isCancelled = true
         }
     }

@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
-import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -17,25 +17,25 @@ import org.bukkit.event.entity.PlayerDeathEvent
 class PlayerDeath : Listener {
     @EventHandler
     fun event(e: PlayerDeathEvent) {
-        if (MainConfig.getInstance().backActivated) {
+        if (MainConfig.backActivated) {
             try {
                 setBackLocation(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
-        if (MainConfig.getInstance().messagesDeathmessagesMessage) {
+        if (MainConfig.messagesDeathmessagesMessage) {
             try {
                 deathMessage(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
-        if (MainConfig.getInstance().addonsPlayerPreventLoseXp) {
+        if (MainConfig.addonsPlayerPreventLoseXp) {
             try {
                 loseXP(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
@@ -46,19 +46,22 @@ class PlayerDeath : Listener {
     }
 
     private fun setBackLocation(e: PlayerDeathEvent) {
-        if (!e.entity.hasPermission("essentialsk.commands.back") || MainConfig.getInstance().backDisabledWorlds.contains(
+        if (!e.entity.hasPermission("essentialsk.commands.back") || MainConfig.backDisabledWorlds.contains(
                 e.entity.world.name.lowercase()
             ) && !e.entity.hasPermission("essentialsk.bypass.backblockedworlds")
         ) return
-        DataManager.getInstance().playerCacheV2[e.entity.name.lowercase()]?.setBack(e.entity.location) ?: return
+        PlayerDataV2[e.entity]?.setBack(e.entity.location) ?: return
     }
 
     private fun deathMessage(e: PlayerDeathEvent) {
         e.deathMessage = null
+
+        val pName = e.entity.player!!.name
+
         val damageCause = e.entity.player!!.lastDamageCause ?: run {
-            PluginUtil.getInstance().serverMessage(
-                GeneralLang.getInstance().deathmessagesNothingKillPlayer
-                    .replace("%player%", e.entity.player!!.name)
+            PluginUtil.serverMessage(
+                GeneralLang.deathmessagesNothingKillPlayer
+                    .replace("%player%", pName)
             )
             return
         }
@@ -66,39 +69,39 @@ class PlayerDeath : Listener {
         if (damageCause.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
             val ent = damageCause as EntityDamageByEntityEvent
             if (ent.damager is Player) {
-                PluginUtil.getInstance().serverMessage(
-                    GeneralLang.getInstance().deathmessagesPlayerKillPlayer
-                        .replace("%player%", e.entity.player!!.name)
+                PluginUtil.serverMessage(
+                    GeneralLang.deathmessagesPlayerKillPlayer
+                        .replace("%player%", pName)
                         .replace("%killer%", ent.damager.name)
                 )
                 return
             }
             val causeMessage =
-                OtherConfig.getInstance().deathmessageListReplacer[ent.damager.toString().lowercase()] ?: run {
+                OtherConfig.deathmessageListReplacer[ent.damager.toString().lowercase()] ?: run {
                     ent.damager.toString().lowercase()
                 }
-            PluginUtil.getInstance().serverMessage(
-                GeneralLang.getInstance().deathmessagesEntityKillPlayer
-                    .replace("%player%", e.entity.player!!.name)
+            PluginUtil.serverMessage(
+                GeneralLang.deathmessagesEntityKillPlayer
+                    .replace("%player%", pName)
                     .replace("%entity%", causeMessage)
             )
             return
         }
 
         val causeMessage =
-            OtherConfig.getInstance().deathmessageListReplacer[damageCause.cause.name.lowercase()] ?: run {
-                PluginUtil.getInstance().consoleMessage(
-                    GeneralLang.getInstance().deathmessagesCauseNotExist
+            OtherConfig.deathmessageListReplacer[damageCause.cause.name.lowercase()] ?: run {
+                PluginUtil.consoleMessage(
+                    GeneralLang.deathmessagesCauseNotExist
                         .replace("%cause%", damageCause.cause.name.lowercase())
                 )
-                PluginUtil.getInstance().serverMessage(
-                    GeneralLang.getInstance().deathmessagesNothingKillPlayer
-                        .replace("%player%", e.entity.player!!.name)
+                PluginUtil.serverMessage(
+                    GeneralLang.deathmessagesNothingKillPlayer
+                        .replace("%player%", pName)
                 )
                 return
             }
-        PluginUtil.getInstance().serverMessage(
-            causeMessage.replace("%player%", e.entity.player!!.name)
+        PluginUtil.serverMessage(
+            causeMessage.replace("%player%", pName)
         )
     }
 }

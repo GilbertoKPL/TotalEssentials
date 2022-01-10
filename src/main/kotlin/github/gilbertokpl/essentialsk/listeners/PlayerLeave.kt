@@ -3,6 +3,7 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.data.start.PlayerDataLoader
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.DiscordUtil
@@ -20,76 +21,76 @@ class PlayerLeave : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun event(e: PlayerQuitEvent) {
         e.quitMessage = null
-        if (MainConfig.getInstance().backActivated) {
+        if (MainConfig.backActivated) {
             try {
                 setBackLocation(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
         try {
-            val playerData = DataManager.getInstance().playerCacheV2[e.player.name.lowercase()] ?: return
+            val playerData = PlayerDataV2[e.player] ?: return
             if (!playerData.vanishCache && !e.player.hasPermission("*")) {
-                if (MainConfig.getInstance().messagesLeaveMessage) {
-                    PluginUtil.getInstance().serverMessage(
-                        GeneralLang.getInstance().messagesLeaveMessage
+                if (MainConfig.messagesLeaveMessage) {
+                    PluginUtil.serverMessage(
+                        GeneralLang.messagesLeaveMessage
                             .replace("%player%", e.player.name)
                     )
                 }
-                if (MainConfig.getInstance().discordbotSendLeaveMessage) {
+                if (MainConfig.discordbotSendLeaveMessage) {
                     sendLeaveEmbed(e)
                 }
             }
         } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
         try {
-            PlayerDataLoader.getInstance().saveCache(e.player)
+            PlayerDataLoader.saveCache(e.player)
         } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
     }
 
     private fun setBackLocation(e: PlayerQuitEvent) {
-        if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.getInstance().backDisabledWorlds.contains(
+        if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.backDisabledWorlds.contains(
                 e.player.world.name.lowercase()
             )
         ) return
-        DataManager.getInstance().playerCacheV2[e.player.name.lowercase()]?.setBack(e.player.location) ?: return
+        PlayerDataV2[e.player]?.setBack(e.player.location) ?: return
     }
 
     private fun sendLeaveEmbed(e: PlayerQuitEvent) {
-        if (DiscordUtil.getInstance().jda == null) {
-            PluginUtil.getInstance().consoleMessage(
-                EColor.YELLOW.color + GeneralLang.getInstance().discordchatNoToken + EColor.RESET.color
+        if (DiscordUtil.jda == null) {
+            PluginUtil.consoleMessage(
+                EColor.YELLOW.color + GeneralLang.discordchatNoToken + EColor.RESET.color
             )
             return
         }
-        if (DataManager.getInstance().discordChat == null) {
-            TaskUtil.getInstance().asyncExecutor {
+        if (DataManager.discordChat == null) {
+            TaskUtil.asyncExecutor {
                 val newChat =
-                    DiscordUtil.getInstance().jda!!.getTextChannelById(MainConfig.getInstance().discordbotIdDiscordChat)
+                    DiscordUtil.jda!!.getTextChannelById(MainConfig.discordbotIdDiscordChat)
                         ?: run {
-                            PluginUtil.getInstance().consoleMessage(
-                                EColor.YELLOW.color + GeneralLang.getInstance().discordchatNoChatId + EColor.RESET.color
+                            PluginUtil.consoleMessage(
+                                EColor.YELLOW.color + GeneralLang.discordchatNoChatId + EColor.RESET.color
                             )
                             return@asyncExecutor
                         }
-                DataManager.getInstance().discordChat = newChat
+                DataManager.discordChat = newChat
 
-                DataManager.getInstance().discordChat!!.sendMessageEmbeds(
+                DataManager.discordChat!!.sendMessageEmbeds(
                     EmbedBuilder().setDescription(
-                        GeneralLang.getInstance().discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name)
-                    ).setColor(PluginUtil.getInstance().randomColor()).build()
+                        GeneralLang.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name)
+                    ).setColor(PluginUtil.randomColor()).build()
                 ).complete()
             }
             return
         }
 
-        DataManager.getInstance().discordChat!!.sendMessageEmbeds(
+        DataManager.discordChat!!.sendMessageEmbeds(
             EmbedBuilder().setDescription(
-                GeneralLang.getInstance().discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name)
-            ).setColor(PluginUtil.getInstance().randomColor()).build()
+                GeneralLang.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name)
+            ).setColor(PluginUtil.randomColor()).build()
         ).queue()
     }
 }

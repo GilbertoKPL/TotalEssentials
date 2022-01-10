@@ -12,49 +12,49 @@ object EditKitInventory {
     fun setup() {
         for (inventory in 0..26) {
             if (inventory == 10) {
-                DataManager.getInstance().editKitInventory[inventory] =
-                    ItemUtil.getInstance().item(
+                DataManager.editKitInventory[inventory] =
+                    ItemUtil.item(
                         Material.CHEST,
-                        GeneralLang.getInstance().kitsEditKitInventoryItemsName,
-                        GeneralLang.getInstance().kitsEditKitInventoryItemsLore
+                        GeneralLang.kitsEditKitInventoryItemsName,
+                        GeneralLang.kitsEditKitInventoryItemsLore
                     )
                 continue
             }
             if (inventory == 12) {
-                DataManager.getInstance().editKitInventory[inventory] =
-                    ItemUtil.getInstance().item(
-                        DataManager.getInstance().material["clock"]!!,
-                        GeneralLang.getInstance().kitsEditKitInventoryTimeName,
-                        GeneralLang.getInstance().kitsEditKitInventoryTimeLore
+                DataManager.editKitInventory[inventory] =
+                    ItemUtil.item(
+                        DataManager.material["clock"]!!,
+                        GeneralLang.kitsEditKitInventoryTimeName,
+                        GeneralLang.kitsEditKitInventoryTimeLore
                     )
                 continue
             }
             if (inventory == 14) {
-                DataManager.getInstance().editKitInventory[inventory] =
-                    ItemUtil.getInstance().item(
+                DataManager.editKitInventory[inventory] =
+                    ItemUtil.item(
                         Material.BOOK,
-                        GeneralLang.getInstance().kitsEditKitInventoryNameName,
-                        GeneralLang.getInstance().kitsEditKitInventoryNameLore
+                        GeneralLang.kitsEditKitInventoryNameName,
+                        GeneralLang.kitsEditKitInventoryNameLore
                     )
                 continue
             }
             if (inventory == 16) {
-                DataManager.getInstance().editKitInventory[inventory] =
-                    ItemUtil.getInstance().item(
-                        DataManager.getInstance().material["feather"]!!,
-                        GeneralLang.getInstance().kitsEditKitInventoryWeightName,
-                        GeneralLang.getInstance().kitsEditKitInventoryWeightLore
+                DataManager.editKitInventory[inventory] =
+                    ItemUtil.item(
+                        DataManager.material["feather"]!!,
+                        GeneralLang.kitsEditKitInventoryWeightName,
+                        GeneralLang.kitsEditKitInventoryWeightLore
                     )
                 continue
             }
-            DataManager.getInstance().editKitInventory[inventory] =
-                ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "", true)
+            DataManager.editKitInventory[inventory] =
+                ItemUtil.item(DataManager.material["glass"]!!, "", true)
         }
     }
 
     fun editKitGui(p: Player, kit: String) {
         val inv = EssentialsK.instance.server.createInventory(null, 27, "§eEditKit $kit")
-        for (i in DataManager.getInstance().editKitInventory) {
+        for (i in DataManager.editKitInventory) {
             inv.setItem(i.key, i.value)
         }
         p.openInventory(inv)

@@ -9,25 +9,25 @@ import java.util.concurrent.TimeUnit
 
 class ChatDiscord : ListenerAdapter() {
     override fun onMessageReceived(e: MessageReceivedEvent) {
-        if (MainConfig.getInstance().discordbotConnectDiscordChat) {
+        if (MainConfig.discordbotConnectDiscordChat) {
             if (e.author.isBot) return
-            if (e.message.channel.id == MainConfig.getInstance().discordbotIdDiscordChat) {
+            if (e.message.channel.id == MainConfig.discordbotIdDiscordChat) {
                 var msg = e.message.contentRaw
                 e.message.emotes.forEach {
                     msg = msg.replace(it.toString(), "")
                 }
-                if (msg.length > MainConfig.getInstance().discordbotMaxMessageLenght) {
+                if (msg.length > MainConfig.discordbotMaxMessageLenght) {
                     e.channel.sendMessage(
-                        GeneralLang.getInstance().discordchatMessageNotSendToServer
-                            .replace("%lenght%", MainConfig.getInstance().discordbotMaxMessageLenght.toString())
+                        GeneralLang.discordchatMessageNotSendToServer
+                            .replace("%lenght%", MainConfig.discordbotMaxMessageLenght.toString())
                             .replace("%author%", e.member?.asMention!!)
                     ).queue {
                         it.delete().queueAfter(10, TimeUnit.SECONDS)
                     }
                     return
                 }
-                PluginUtil.getInstance().serverMessage(
-                    GeneralLang.getInstance().discordchatDiscordToServerPattern
+                PluginUtil.serverMessage(
+                    GeneralLang.discordchatDiscordToServerPattern
                         .replace("%player%", e.author.name)
                         .replace("%message%", msg)
                 )

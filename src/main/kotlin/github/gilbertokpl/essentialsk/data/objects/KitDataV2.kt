@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.data.`object`
+package github.gilbertokpl.essentialsk.data.objects
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.sql.KitDataSQLUtil
@@ -22,10 +22,10 @@ data class KitDataV2(
         reloadGui()
 
         //sql
-        KitDataSQLUtil.getInstance().kitHelper(
+        KitDataSQLUtil.kitHelper(
             KitsDataSQL.kitWeight,
             weight,
-            GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", name),
+            GeneralLang.kitsEditKitSuccess.replace("%kit%", name),
             name,
             s
         )
@@ -37,10 +37,10 @@ data class KitDataV2(
         reloadGui()
 
         //sql
-        KitDataSQLUtil.getInstance().kitHelper(
+        KitDataSQLUtil.kitHelper(
             KitsDataSQL.kitFakeName,
             fakeName,
-            GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", name),
+            GeneralLang.kitsEditKitSuccess.replace("%kit%", name),
             name,
             s
         )
@@ -51,13 +51,13 @@ data class KitDataV2(
         items = i
         reloadGui()
 
-        val toSave = ItemUtil.getInstance().itemSerializer(i)
+        val toSave = ItemUtil.itemSerializer(i)
 
         //sql
-        KitDataSQLUtil.getInstance().kitHelper(
+        KitDataSQLUtil.kitHelper(
             KitsDataSQL.kitItems,
             toSave,
-            GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", name),
+            GeneralLang.kitsEditKitSuccess.replace("%kit%", name),
             name,
             s
         )
@@ -69,10 +69,10 @@ data class KitDataV2(
         reloadGui()
 
         //sql
-        KitDataSQLUtil.getInstance().kitHelper(
+        KitDataSQLUtil.kitHelper(
             KitsDataSQL.kitTime,
             t,
-            GeneralLang.getInstance().kitsEditKitSuccess.replace("%kit%", name),
+            GeneralLang.kitsEditKitSuccess.replace("%kit%", name),
             name,
             s
         )

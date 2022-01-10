@@ -1,10 +1,15 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.manager.IInstance
 import java.util.concurrent.TimeUnit
 
-class TimeUtil {
+object TimeUtil {
+
+    private const val MILLIS_TO_SECOUNDS = 1_000
+
+    private const val SECOUNDS_TO_MINUTES = 60
+
+    private const val HOURS_TO_DAYS = 24
 
     fun convertStringToMillis(timeString: String): Long {
         val messageSplit = timeString.split(" ")
@@ -53,29 +58,29 @@ class TimeUtil {
             }
         }
 
-        var seconds = time / 1000
-        var minutes = seconds / 60
-        var hours = minutes / 60
-        val days = hours / 24
-        seconds %= 60
-        minutes %= 60
-        hours %= 24
+        var seconds = time / MILLIS_TO_SECOUNDS
+        var minutes = seconds / SECOUNDS_TO_MINUTES
+        var hours = minutes / SECOUNDS_TO_MINUTES
+        val days = hours / HOURS_TO_DAYS
+        seconds %= SECOUNDS_TO_MINUTES
+        minutes %= SECOUNDS_TO_MINUTES
+        hours %= HOURS_TO_DAYS
         val uniDays = if (days < 2) {
-            GeneralLang.getInstance().timeDay
-        } else GeneralLang.getInstance().timeDays
-        helper(days, "$days ${GeneralLang.getInstance().timeDayShort}", "$days $uniDays")
+            GeneralLang.timeDay
+        } else GeneralLang.timeDays
+        helper(days, "$days ${GeneralLang.timeDayShort}", "$days $uniDays")
         val uniHours = if (hours < 2) {
-            GeneralLang.getInstance().timeHour
-        } else GeneralLang.getInstance().timeHours
-        helper(hours, "$hours ${GeneralLang.getInstance().timeHourShort}", "${hours % 24} $uniHours")
+            GeneralLang.timeHour
+        } else GeneralLang.timeHours
+        helper(hours, "$hours ${GeneralLang.timeHourShort}", "${hours % 24} $uniHours")
         val uniMinutes = if (minutes < 2) {
-            GeneralLang.getInstance().timeMinute
-        } else GeneralLang.getInstance().timeMinutes
-        helper(minutes, "$minutes ${GeneralLang.getInstance().timeMinuteShort}", "${minutes % 60} $uniMinutes")
+            GeneralLang.timeMinute
+        } else GeneralLang.timeMinutes
+        helper(minutes, "$minutes ${GeneralLang.timeMinuteShort}", "${minutes % 60} $uniMinutes")
         val uniSeconds = if (seconds < 2) {
-            GeneralLang.getInstance().timeSecond
-        } else GeneralLang.getInstance().timeSeconds
-        helper(seconds, "$seconds ${GeneralLang.getInstance().timeSecondShort}", "${seconds % 60} $uniSeconds")
+            GeneralLang.timeSecond
+        } else GeneralLang.timeSeconds
+        helper(seconds, "$seconds ${GeneralLang.timeSecondShort}", "${seconds % 60} $uniSeconds")
         var toReturn = ""
         var quaint = 0
         for (values in toSend) {
@@ -95,13 +100,5 @@ class TimeUtil {
             }
         }
         return toReturn
-    }
-
-    companion object : IInstance<TimeUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): TimeUtil = TimeUtil()
-        override fun getInstance(): TimeUtil {
-            return instance
-        }
     }
 }

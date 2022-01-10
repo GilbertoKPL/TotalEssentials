@@ -4,68 +4,67 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.loops.Announcements
-import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
 
-class OtherConfigUtil {
+object OtherConfigUtil {
 
     fun start() {
 
-        if (DataManager.getInstance().discordChat != null) {
-            DataManager.getInstance().discordChat = null
+        if (DataManager.discordChat != null) {
+            DataManager.discordChat = null
         }
 
-        val vanish = ConfigUtil.getInstance()
-            .getStringList(ConfigUtil.getInstance().configYaml, "vanish.blocked-other-cmds", false)
+        val vanish = ConfigUtil
+            .getStringList(ConfigUtil.configYaml, "vanish.blocked-other-cmds", false)
 
-        val announce = ConfigUtil.getInstance()
-            .getStringList(ConfigUtil.getInstance().configYaml, "announcements.list-announce", true)
+        val announce = ConfigUtil
+            .getStringList(ConfigUtil.configYaml, "announcements.list-announce", true)
 
-        val deathMessage = ConfigUtil.getInstance()
-            .getStringList(ConfigUtil.getInstance().langYaml, "deathmessages.cause-replacer", true)
+        val deathMessage = ConfigUtil
+            .getStringList(ConfigUtil.langYaml, "deathmessages.cause-replacer", true)
 
-        val deathMessageEntity = ConfigUtil.getInstance()
-            .getStringList(ConfigUtil.getInstance().langYaml, "deathmessages.entity-replacer", true)
+        val deathMessageEntity = ConfigUtil
+            .getStringList(ConfigUtil.langYaml, "deathmessages.entity-replacer", true)
 
         try {
-            OtherConfig.getInstance().deathmessageListReplacer.clear()
+            OtherConfig.deathmessageListReplacer.clear()
 
             for (d in deathMessageEntity) {
                 val to = d.split("-")
                 try {
-                    OtherConfig.getInstance().deathmessageListReplacer[to[0].lowercase()] = to[1]
+                    OtherConfig.deathmessageListReplacer[to[0].lowercase()] = to[1]
                 } catch (ignored: Exception) {
                 }
             }
         } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
 
         try {
             for (d in deathMessage) {
                 val to = d.split("-")
                 try {
-                    OtherConfig.getInstance().deathmessageListReplacer[to[0].lowercase()] = to[1]
+                    OtherConfig.deathmessageListReplacer[to[0].lowercase()] = to[1]
                 } catch (ignored: Exception) {
                 }
             }
         } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
 
         try {
-            OtherConfig.getInstance().vanishBlockedOtherCmds.clear()
+            OtherConfig.vanishBlockedOtherCmds.clear()
 
             for (v in vanish) {
                 val split = v.split(" ")
                 if (split.isEmpty()) {
-                    OtherConfig.getInstance().vanishBlockedOtherCmds[v] = 0
+                    OtherConfig.vanishBlockedOtherCmds[v] = 0
                     continue
                 }
                 var bol = false
                 for (i in 0..split.size) {
                     if (split[i] == "<player>") {
-                        OtherConfig.getInstance().vanishBlockedOtherCmds[split[0]] = i
+                        OtherConfig.vanishBlockedOtherCmds[split[0]] = i
                         bol = true
                         break
                     }
@@ -75,7 +74,7 @@ class OtherConfigUtil {
                 }
             }
         } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
 
         try {
@@ -90,11 +89,11 @@ class OtherConfigUtil {
                 to += 1
             }
 
-            if (hash.size != OtherConfig.getInstance().announcementsListAnnounce.size) {
+            if (hash.size != OtherConfig.announcementsListAnnounce.size) {
                 dif = true
             } else {
                 for (i in hash) {
-                    if (OtherConfig.getInstance().announcementsListAnnounce[i.key] != i.value) {
+                    if (OtherConfig.announcementsListAnnounce[i.key] != i.value) {
                         dif = true
                         break
                     }
@@ -102,22 +101,14 @@ class OtherConfigUtil {
             }
 
             if (dif) {
-                OtherConfig.getInstance().announcementsListAnnounce = hash
-                if (MainConfig.getInstance().announcementsEnabled) {
-                    TaskUtil.getInstance().restartAnnounceExecutor()
-                    Announcements.getInstance().start(announce.size, MainConfig.getInstance().announcementsTime)
+                OtherConfig.announcementsListAnnounce = hash
+                if (MainConfig.announcementsEnabled) {
+                    TaskUtil.restartAnnounceExecutor()
+                    Announcements.start(announce.size, MainConfig.announcementsTime)
                 }
             }
         } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
-        }
-    }
-
-    companion object : IInstance<OtherConfigUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): OtherConfigUtil = OtherConfigUtil()
-        override fun getInstance(): OtherConfigUtil {
-            return instance
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
     }
 }

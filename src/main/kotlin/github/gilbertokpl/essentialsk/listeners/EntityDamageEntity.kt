@@ -11,11 +11,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 class EntityDamageEntity : Listener {
     @EventHandler
     fun event(e: EntityDamageByEntityEvent) {
-        if (MainConfig.getInstance().addonsBlockExplodeItems) {
+        if (MainConfig.addonsBlockExplodeItems) {
             try {
                 blockItemsExplode(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }

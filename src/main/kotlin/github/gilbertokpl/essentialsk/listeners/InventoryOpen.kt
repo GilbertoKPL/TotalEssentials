@@ -11,11 +11,11 @@ import org.bukkit.event.inventory.InventoryOpenEvent
 class InventoryOpen : Listener {
     @EventHandler
     fun event(e: InventoryOpenEvent) {
-        if (MainConfig.getInstance().containersBlockOpenEnable) {
+        if (MainConfig.containersBlockOpenEnable) {
             try {
                 blockOpenInventory(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
@@ -23,10 +23,10 @@ class InventoryOpen : Listener {
     //block open
     private fun blockOpenInventory(e: InventoryOpenEvent) {
         if (!e.player.hasPermission("essentialsk.bypass.opencontainer") &&
-            MainConfig.getInstance().containersBlockOpen.contains(e.inventory.type.name.lowercase())
+            MainConfig.containersBlockOpen.contains(e.inventory.type.name.lowercase())
         ) {
             e.isCancelled = true
-            e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
+            e.player.sendMessage(GeneralLang.generalNotPermAction)
         }
     }
 }

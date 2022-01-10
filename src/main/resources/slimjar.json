@@ -1,0 +1,17 @@
+{
+  "mirrors": [],
+  "repositories": [
+    {
+      "url": "https://jitpack.io"
+    }
+  ],
+  "dependencies": [
+    {
+      "groupId": "com.github.GilbertoKPL",
+      "artifactId": "PluginLibs",
+      "version": "1.3",
+      "transitive": []
+    }
+  ],
+  "relocations": []
+}

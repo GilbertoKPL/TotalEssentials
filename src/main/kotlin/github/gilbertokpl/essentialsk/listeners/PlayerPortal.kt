@@ -11,18 +11,18 @@ import org.bukkit.event.player.PlayerPortalEvent
 class PlayerPortal : Listener {
     @EventHandler
     fun event(e: PlayerPortalEvent) {
-        if (MainConfig.getInstance().antibugsBlockPlayerTeleportPortal) {
+        if (MainConfig.antibugsBlockPlayerTeleportPortal) {
             try {
                 blockPlayerTeleport(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
 
     private fun blockPlayerTeleport(e: PlayerPortalEvent) {
         if (!e.player.hasPermission("essentialsk.bypass.teleportportal")) {
-            e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
+            e.player.sendMessage(GeneralLang.generalNotPermAction)
             e.isCancelled = true
         }
     }

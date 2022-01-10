@@ -2,7 +2,6 @@ package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.manager.EColor
-import github.gilbertokpl.essentialsk.manager.IInstance
 import org.json.simple.JSONObject
 import java.io.File
 import java.io.IOException
@@ -14,8 +13,7 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.CompletableFuture
 import javax.net.ssl.HttpsURLConnection
 
-
-class FileLoggerUtil {
+object FileLoggerUtil {
 
     var logger: String? = null
 
@@ -23,7 +21,7 @@ class FileLoggerUtil {
         if (logger == null) return
         CompletableFuture.runAsync({
             try {
-                var svName = MainConfig.getInstance().generalServerName
+                var svName = MainConfig.generalServerName
                 svName = if (svName == "") {
                     "Server - unamed, Time - $time"
                 } else {
@@ -51,19 +49,24 @@ class FileLoggerUtil {
             } catch (e: IOException) {
                 logger = null
             }
-        }, TaskUtil.getInstance().getExecutor())
+        }, TaskUtil.getExecutor())
     }
 
     private fun printError(fileName: String) {
-        PluginUtil.getInstance()
-            .consoleMessage("${EColor.RED.color}Error in plugin, saved in $fileName, please sent to plugin owner${EColor.RESET.color}")
+        PluginUtil.consoleMessage(
+            EColor.RED.color +
+                    "Error in plugin" +
+                    ", saved in $fileName" +
+                    ", please sent to plugin owner" +
+                    EColor.RESET.color
+        )
     }
 
     fun logError(exception: String) {
         val dtf = DateTimeFormatter.ofPattern("HH-mm-ss_dd-MM-yyyy")
         val fileName = "/log/${dtf.format(LocalDateTime.now())}.txt"
-        val file = File(PluginUtil.getInstance().mainPath, fileName)
-        File(PluginUtil.getInstance().mainPath, "/log").mkdirs()
+        val file = File(PluginUtil.mainPath, fileName)
+        File(PluginUtil.mainPath, "/log").mkdirs()
 
         printError(fileName)
 
@@ -72,13 +75,5 @@ class FileLoggerUtil {
         file.appendText(
             text = exception
         )
-    }
-
-    companion object : IInstance<FileLoggerUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): FileLoggerUtil = FileLoggerUtil()
-        override fun getInstance(): FileLoggerUtil {
-            return instance
-        }
     }
 }

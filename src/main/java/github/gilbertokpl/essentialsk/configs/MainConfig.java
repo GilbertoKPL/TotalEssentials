@@ -3,184 +3,177 @@ package github.gilbertokpl.essentialsk.configs;
 import java.util.List;
 
 public class MainConfig {
-    private static final MainConfig instance = createInstance();
-    public static MainConfig createInstance() {
-        return new MainConfig();
-    }
-    public static MainConfig getInstance() {
-        return instance;
-    }
 
-    public String generalSelectedLang = "en_US";
+    public static String generalSelectedLang = "en_US";
 
-    public String generalServerName;
+    public static String generalServerName;
 
-    public String databaseType;
+    public static String databaseType;
 
-    public String databaseSqlIp;
+    public static String databaseSqlIp;
 
-    public String databaseSqlPort;
+    public static String databaseSqlPort;
 
-    public String databaseSqlUsername;
+    public static String databaseSqlUsername;
 
-    public String databaseSqlDatabase;
+    public static String databaseSqlDatabase;
 
-    public String databaseSqlPassword;
+    public static String databaseSqlPassword;
 
-    public Boolean kitsActivated;
+    public static Boolean kitsActivated;
 
-    public Boolean kitsUseShortTime;
+    public static Boolean kitsUseShortTime;
 
-    public Boolean kitsDropItemsInCatch;
+    public static Boolean kitsDropItemsInCatch;
 
-    public Boolean kitsEquipArmorInCatch;
+    public static Boolean kitsEquipArmorInCatch;
 
-    public Boolean nicksActivated;
+    public static Boolean nicksActivated;
 
-    public Boolean nicksCanPlayerHaveSameNick;
+    public static Boolean nicksCanPlayerHaveSameNick;
 
-    public List<String> nicksBlockedNicks;
+    public static List<String> nicksBlockedNicks;
 
-    public Boolean homesActivated;
+    public static Boolean homesActivated;
 
-    public int homesDefaultLimitHomes;
+    public static int homesDefaultLimitHomes;
 
-    public int homesTimeToTeleport;
+    public static int homesTimeToTeleport;
 
-    public List<String> homesBlockWorlds;
+    public static List<String> homesBlockWorlds;
 
-    public Boolean warpsActivated;
+    public static Boolean warpsActivated;
 
-    public int warpsTimeToTeleport;
+    public static int warpsTimeToTeleport;
 
-    public Boolean tpActivated;
+    public static Boolean tpActivated;
 
-    public Boolean tpaActivated;
+    public static Boolean tpaActivated;
 
-    public int tpaTimeToAccept;
+    public static int tpaTimeToAccept;
 
-    public int tpaTimeToTeleport;
+    public static int tpaTimeToTeleport;
 
-    public Boolean echestActivated;
+    public static Boolean echestActivated;
 
-    public Boolean gamemodeActivated;
+    public static Boolean gamemodeActivated;
 
-    public Boolean vanishActivated;
+    public static Boolean vanishActivated;
 
-    public Boolean feedActivated;
+    public static Boolean feedActivated;
 
-    public Boolean feedNeedEatBelow;
+    public static Boolean feedNeedEatBelow;
 
-    public Boolean healActivated;
+    public static Boolean healActivated;
 
-    public Boolean healNeedHealBelow;
+    public static Boolean healNeedHealBelow;
 
-    public Boolean lightActivated;
+    public static Boolean lightActivated;
 
-    public Boolean backActivated;
+    public static Boolean backActivated;
 
-    public List<String> backDisabledWorlds;
+    public static List<String> backDisabledWorlds;
 
-    public Boolean flyActivated;
+    public static Boolean flyActivated;
 
-    public List<String> flyDisabledWorlds;
+    public static List<String> flyDisabledWorlds;
 
-    public Boolean spawnActivated;
+    public static Boolean spawnActivated;
 
-    public Boolean spawnSendToSpawnOnLogin;
+    public static Boolean spawnSendToSpawnOnLogin;
 
-    public Boolean spawnSendToSpawnOnDeath;
+    public static Boolean spawnSendToSpawnOnDeath;
 
-    public int spawnTimeToTeleport;
+    public static int spawnTimeToTeleport;
 
-    public Boolean antibugsBlockBed;
+    public static Boolean antibugsBlockBed;
 
-    public Boolean antibugsBlockClimbingOnVehicles;
+    public static Boolean antibugsBlockClimbingOnVehicles;
 
-    public Boolean antibugsBlockNametag;
+    public static Boolean antibugsBlockNametag;
 
-    public Boolean antibugsBlockPlayerGoToNetherCeiling;
+    public static Boolean antibugsBlockPlayerGoToNetherCeiling;
 
-    public Boolean antibugsBlockPlayerTeleportPortal;
+    public static Boolean antibugsBlockPlayerTeleportPortal;
 
-    public Boolean antibugsBlockCreatePortal;
+    public static Boolean antibugsBlockCreatePortal;
 
-    public Boolean antibugsBlockMobCatch;
+    public static Boolean antibugsBlockMobCatch;
 
-    public Boolean antibugsBlockGoingEdgeEnderpearl;
+    public static Boolean antibugsBlockGoingEdgeEnderpearl;
 
-    public List<String> antibugsBlockCmds;
+    public static List<String> antibugsBlockCmds;
 
-    public Boolean containersBlockShiftEnable;
+    public static Boolean containersBlockShiftEnable;
 
-    public List<String> containersBlockShift;
+    public static List<String> containersBlockShift;
 
-    public Boolean containersBlockOpenEnable;
+    public static Boolean containersBlockOpenEnable;
 
-    public List<String> containersBlockOpen;
+    public static List<String> containersBlockOpen;
 
-    public Boolean addonsInfinityAnvil;
+    public static Boolean addonsInfinityAnvil;
 
-    public Boolean addonsBlockPlayerGoToVoid;
+    public static Boolean addonsBlockPlayerGoToVoid;
 
-    public Boolean addonsBlockExplodeItems;
+    public static Boolean addonsBlockExplodeItems;
 
-    public Boolean addonsBlockPlayerBreakPlantationFall;
+    public static Boolean addonsBlockPlayerBreakPlantationFall;
 
-    public Boolean addonsBlockPropagationFire;
+    public static Boolean addonsBlockPropagationFire;
 
-    public Boolean addonsColorInAnvil;
+    public static Boolean addonsColorInAnvil;
 
-    public Boolean addonsColorInSign;
+    public static Boolean addonsColorInSign;
 
-    public Boolean addonsColorInChat;
+    public static Boolean addonsColorInChat;
 
-    public Boolean onlineActivated;
+    public static Boolean onlineActivated;
 
-    public Boolean onlineCountRemoveVanish;
+    public static Boolean onlineCountRemoveVanish;
 
-    public Boolean announceActivated;
+    public static Boolean announceActivated;
 
-    public int announceCooldown;
+    public static int announceCooldown;
 
-    public Boolean motdEnabled;
+    public static Boolean motdEnabled;
 
-    public List<String> motdListMotd;
+    public static List<String> motdListMotd;
 
-    public Boolean announcementsEnabled;
+    public static Boolean announcementsEnabled;
 
-    public int announcementsTime;
+    public static int announcementsTime;
 
-    public Boolean messagesDeathmessagesMessage;
+    public static Boolean messagesDeathmessagesMessage;
 
-    public Boolean messagesLoginMessage;
+    public static Boolean messagesLoginMessage;
 
-    public Boolean messagesLeaveMessage;
+    public static Boolean messagesLeaveMessage;
 
-    public Boolean addonsPlayerPreventLoseXp;
+    public static Boolean addonsPlayerPreventLoseXp;
 
-    public Boolean addonsDisableRain;
+    public static Boolean addonsDisableRain;
 
-    public String discordbotToken;
+    public static String discordbotToken;
 
-    public Boolean discordbotConnectDiscordChat;
+    public static Boolean discordbotConnectDiscordChat;
 
-    public String discordbotIdDiscordChat;
+    public static String discordbotIdDiscordChat;
 
-    public List<String> discordbotCommandChat;
+    public static List<String> discordbotCommandChat;
 
-    public int discordbotMaxMessageLenght;
+    public static int discordbotMaxMessageLenght;
 
-    public Boolean discordbotSendLoginMessage;
+    public static Boolean discordbotSendLoginMessage;
 
-    public Boolean discordbotSendLeaveMessage;
+    public static Boolean discordbotSendLeaveMessage;
 
-    public Boolean tphereActivated;
+    public static Boolean tphereActivated;
 
-    public Boolean trashActivated;
+    public static Boolean trashActivated;
 
-    public Boolean craftActivated;
+    public static Boolean craftActivated;
 
-    public Boolean speedActivated;
+    public static Boolean speedActivated;
 
 }

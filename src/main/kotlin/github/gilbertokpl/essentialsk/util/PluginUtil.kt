@@ -5,11 +5,10 @@ import github.gilbertokpl.essentialsk.commands.*
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.start.KitDataLoader
 import github.gilbertokpl.essentialsk.data.start.LocationsLoader
-import github.gilbertokpl.essentialsk.listeners.*
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
+import github.gilbertokpl.essentialsk.listeners.*
 import github.gilbertokpl.essentialsk.manager.EColor
-import github.gilbertokpl.essentialsk.manager.IInstance
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
@@ -28,8 +27,9 @@ import java.net.URLClassLoader
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
+object PluginUtil {
 
-class PluginUtil {
+    private const val METRICS_ID = 13_441
 
     val mainPath: String = EssentialsK.instance.dataFolder.path
 
@@ -48,7 +48,7 @@ class PluginUtil {
     }
 
     fun serverMessage(message: String) {
-        ReflectUtil.getInstance().getPlayers().forEach {
+        ReflectUtil.getPlayers().forEach {
             it.sendMessage(message)
         }
     }
@@ -95,30 +95,28 @@ class PluginUtil {
     private fun loadCache(): Boolean {
         return CompletableFuture.supplyAsync({
             try {
-                KitDataLoader.getInstance().loadKitCache()
+                KitDataLoader.loadKitCache()
             } catch (ex: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }
             try {
-                LocationsLoader.getInstance().loadWarpCache()
+                LocationsLoader.loadWarpCache()
             } catch (ex: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }
             try {
-                LocationsLoader.getInstance().loadSpawnCache()
+                LocationsLoader.loadSpawnCache()
             } catch (ex: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }
             return@supplyAsync true
-        }, TaskUtil.getInstance().getExecutor()).get()
+        }, TaskUtil.getExecutor()).get()
     }
 
     fun startInventories() {
-        if (loadCache()) {
-            if (MainConfig.getInstance().kitsActivated) {
-                EditKitInventory.setup()
-                KitGuiInventory.setup()
-            }
+        if (loadCache() && MainConfig.kitsActivated) {
+            EditKitInventory.setup()
+            KitGuiInventory.setup()
         }
     }
 
@@ -138,14 +136,14 @@ class PluginUtil {
                 CommandKit(),
                 CommandGiveKit()
             ),
-            MainConfig.getInstance().kitsActivated
+            MainConfig.kitsActivated
         )
         //nick
         startCommandsHelper(
             listOf(
                 CommandNick()
             ),
-            MainConfig.getInstance().nicksActivated
+            MainConfig.nicksActivated
         )
         //homes
         startCommandsHelper(
@@ -154,7 +152,7 @@ class PluginUtil {
                 CommandHome(),
                 CommandDelHome()
             ),
-            MainConfig.getInstance().homesActivated
+            MainConfig.homesActivated
         )
         //warps
         startCommandsHelper(
@@ -163,7 +161,7 @@ class PluginUtil {
                 CommandSetWarp(),
                 CommandWarp()
             ),
-            MainConfig.getInstance().warpsActivated
+            MainConfig.warpsActivated
         )
         //tpa
         startCommandsHelper(
@@ -172,70 +170,70 @@ class PluginUtil {
                 CommandTpaccept(),
                 CommandTpdeny()
             ),
-            MainConfig.getInstance().tpaActivated
+            MainConfig.tpaActivated
         )
         //tp
         startCommandsHelper(
             listOf(
                 CommandTp()
             ),
-            MainConfig.getInstance().tpActivated
+            MainConfig.tpActivated
         )
         //tphere
         startCommandsHelper(
             listOf(
                 CommandTphere()
             ),
-            MainConfig.getInstance().tphereActivated
+            MainConfig.tphereActivated
         )
         //echest
         startCommandsHelper(
             listOf(
                 CommandEchest()
             ),
-            MainConfig.getInstance().echestActivated
+            MainConfig.echestActivated
         )
         //gamemode
         startCommandsHelper(
             listOf(
                 CommandGamemode()
             ),
-            MainConfig.getInstance().gamemodeActivated
+            MainConfig.gamemodeActivated
         )
         //vanish
         startCommandsHelper(
             listOf(
                 CommandVanish()
             ),
-            MainConfig.getInstance().vanishActivated
+            MainConfig.vanishActivated
         )
         //feed
         startCommandsHelper(
             listOf(
                 CommandFeed()
             ),
-            MainConfig.getInstance().feedActivated
+            MainConfig.feedActivated
         )
         //heal
         startCommandsHelper(
             listOf(
                 CommandHeal()
             ),
-            MainConfig.getInstance().healActivated
+            MainConfig.healActivated
         )
         //light
         startCommandsHelper(
             listOf(
                 CommandLight()
             ),
-            MainConfig.getInstance().lightActivated
+            MainConfig.lightActivated
         )
         //back
         startCommandsHelper(
             listOf(
                 CommandBack()
             ),
-            MainConfig.getInstance().backActivated
+            MainConfig.backActivated
         )
         //spawn
         startCommandsHelper(
@@ -243,49 +241,49 @@ class PluginUtil {
                 CommandSpawn(),
                 CommandSetSpawn()
             ),
-            MainConfig.getInstance().spawnActivated
+            MainConfig.spawnActivated
         )
         //fly
         startCommandsHelper(
             listOf(
                 CommandFly(),
             ),
-            MainConfig.getInstance().flyActivated
+            MainConfig.flyActivated
         )
         //online
         startCommandsHelper(
             listOf(
                 CommandOnline(),
             ),
-            MainConfig.getInstance().onlineActivated
+            MainConfig.onlineActivated
         )
         //announce
         startCommandsHelper(
             listOf(
                 CommandAnnounce(),
             ),
-            MainConfig.getInstance().announceActivated
+            MainConfig.announceActivated
         )
         //craft
         startCommandsHelper(
             listOf(
                 CommandCraft(),
             ),
-            MainConfig.getInstance().craftActivated
+            MainConfig.craftActivated
         )
         //trash
         startCommandsHelper(
             listOf(
                 CommandTrash(),
             ),
-            MainConfig.getInstance().trashActivated
+            MainConfig.trashActivated
         )
         //speed
         startCommandsHelper(
             listOf(
                 CommandSpeed(),
             ),
-            MainConfig.getInstance().speedActivated
+            MainConfig.speedActivated
         )
     }
 
@@ -296,7 +294,7 @@ class PluginUtil {
                 ""
             ).lowercase()
             if (!boolean) {
-                ReflectUtil.getInstance().removeCommand(cmdName)
+                ReflectUtil.removeCommand(cmdName)
                 return
             }
             EssentialsK.instance.getCommand(
@@ -351,23 +349,25 @@ class PluginUtil {
             @Suppress("UNCHECKED_CAST")
             commands = knownCommandsField.get(commandMap) as MutableMap<String?, Command>?
         } catch (e: NoSuchFieldException) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         } catch (ea: IllegalAccessException) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ea))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ea))
         }
         pluginManager.disablePlugin(plugin)
         if (plugins != null && plugins.contains(plugin)) plugins.remove(plugin)
         if (names != null && names.containsKey(name)) names.remove(name)
-        if (listeners != null && reloadListeners) for (set in listeners.values) set.removeIf { value: RegisteredListener -> value.plugin === plugin }
+        if (listeners != null && reloadListeners) {
+            for (set in listeners.values) {
+                set.removeIf { value: RegisteredListener -> value.plugin === plugin }
+            }
+        }
         if (commandMap != null) {
             val it: MutableIterator<Map.Entry<String?, Command>> = commands!!.entries.iterator()
             while (it.hasNext()) {
                 val (_, value) = it.next()
-                if (value is PluginCommand) {
-                    if (value.plugin === plugin) {
-                        (commandMap as CommandMap?)?.let { it1 -> value.unregister(it1) }
-                        it.remove()
-                    }
+                if (value is PluginCommand && value.plugin === plugin) {
+                    (commandMap as CommandMap?)?.let { it1 -> value.unregister(it1) }
+                    it.remove()
                 }
             }
         }
@@ -380,14 +380,6 @@ class PluginUtil {
     }
 
     fun startMetrics() {
-        Metrics(EssentialsK.instance, 13441)
-    }
-
-    companion object : IInstance<PluginUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): PluginUtil = PluginUtil()
-        override fun getInstance(): PluginUtil {
-            return instance
-        }
+        Metrics(EssentialsK.instance, METRICS_ID)
     }
 }

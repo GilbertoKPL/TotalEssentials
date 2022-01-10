@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.ConfigUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
@@ -14,8 +14,7 @@ import java.net.InetAddress
 import java.nio.file.Files
 import java.text.DecimalFormat
 
-
-class CommandEssentialsK : ICommand {
+class CommandEssentialsK : CommandCreator {
     override val consoleCanUse: Boolean = true
     override val commandName = "essentialsk"
     override val timeCoolDown: Long? = null
@@ -30,24 +29,18 @@ class CommandEssentialsK : ICommand {
 
     private val format = DecimalFormat("0.00")
 
-    private val percentagemValue = 100
-
-    private val kbConversor = 1024 * 1024
-
-    private val mhzConversor = 1000000
-
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args[0] == "reload") {
-            if (ConfigUtil.getInstance().reloadConfig(true)) {
+            if (ConfigUtil.reloadConfig(true)) {
                 s.sendMessage(
-                    GeneralLang.getInstance().generalConfigReload
+                    GeneralLang.generalConfigReload
                 )
             }
             return false
         }
         if (args[0] == "host") {
-            s.sendMessage(GeneralLang.getInstance().generalHostWait)
-            TaskUtil.getInstance().asyncExecutor {
+            s.sendMessage(GeneralLang.generalHostWait)
+            TaskUtil.asyncExecutor {
 
                 val siProcessor = si.hardware.processor
 
@@ -70,25 +63,25 @@ class CommandEssentialsK : ICommand {
                 }
 
                 val cpuMinMHZ = (try {
-                    siProcessor.currentFreq[0] / mhzConversor
+                    siProcessor.currentFreq[0] / MHZ_CONVERSOR
                 } catch (e: Exception) {
                     "Unknown"
                 }).toString()
 
-                val cpuMaxMHZ = (siProcessor.maxFreq / mhzConversor).toString()
+                val cpuMaxMHZ = (siProcessor.maxFreq / MHZ_CONVERSOR).toString()
 
                 val cpuUsage = format.format(floatArrayPercent(cpuData(siProcessor))[0])
 
                 val cpuCores = "${siProcessor.physicalProcessorCount} / ${siProcessor.logicalProcessors.size}"
 
-                val memMax = siMemory.total / kbConversor
+                val memMax = siMemory.total / KB_CONVERSOR
 
-                val memUsed = (siMemory.available / kbConversor - memMax) * -1
+                val memUsed = (siMemory.available / KB_CONVERSOR - memMax) * -1
 
-                val memServerMax = Runtime.getRuntime().maxMemory() / kbConversor
+                val memServerMax = Runtime.getRuntime().maxMemory() / KB_CONVERSOR
 
                 val memServerUsed =
-                    ((Runtime.getRuntime().freeMemory() - Runtime.getRuntime().totalMemory()) * -1) / kbConversor
+                    ((Runtime.getRuntime().freeMemory() - Runtime.getRuntime().totalMemory()) * -1) / KB_CONVERSOR
 
                 val hdName = try {
                     si.hardware.diskStores[0].name
@@ -104,13 +97,13 @@ class CommandEssentialsK : ICommand {
 
                 val file = Files.getFileStore(File("/").toPath())
 
-                val totalHD = file.totalSpace / kbConversor
+                val totalHD = file.totalSpace / KB_CONVERSOR
 
-                val usedHD = totalHD - (file.usableSpace / kbConversor)
+                val usedHD = totalHD - (file.usableSpace / KB_CONVERSOR)
 
                 val cpuServerCores = Runtime.getRuntime().availableProcessors()
 
-                GeneralLang.getInstance().generalHostConfigInfo.forEach {
+                GeneralLang.generalHostConfigInfo.forEach {
                     s.sendMessage(
                         it.replace("%ip%", ip.toString())
                             .replace("%os%", os)
@@ -141,7 +134,7 @@ class CommandEssentialsK : ICommand {
 
     private fun floatArrayPercent(d: Double): FloatArray {
         val f = FloatArray(1)
-        f[0] = (percentagemValue * d).toFloat()
+        f[0] = (PERCENTAGE_VALUE * d).toFloat()
         return f
     }
 
@@ -149,5 +142,13 @@ class CommandEssentialsK : ICommand {
         val d = proc.getSystemCpuLoadBetweenTicks(oldTicks)
         oldTicks = proc.systemCpuLoadTicks
         return d
+    }
+
+    companion object {
+        private const val PERCENTAGE_VALUE = 100
+
+        private const val KB_CONVERSOR = 1024 * 1024
+
+        private const val MHZ_CONVERSOR = 1_000_000
     }
 }

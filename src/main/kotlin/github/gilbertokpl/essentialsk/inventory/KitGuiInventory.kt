@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.util.HashUtil
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
@@ -13,29 +14,29 @@ import org.bukkit.inventory.ItemStack
 
 object KitGuiInventory {
     fun setup() {
-        DataManager.getInstance().kitClickGuiCache.clear()
-        DataManager.getInstance().kitGuiCache.clear()
+        DataManager.kitClickGuiCache.clear()
+        DataManager.kitGuiCache.clear()
         var size = 1
         var length = 0
         var inv = EssentialsK.instance.server.createInventory(null, 36, "§eKits 1")
 
         val newHash = LinkedHashMap<String, Int>()
 
-        DataManager.getInstance().kitCacheV2.forEach {
+        DataManager.kitCacheV2.forEach {
             newHash[it.key] = it.value.weight
         }
 
 
-        val cache = HashUtil.getInstance().hashMapReverse(HashUtil.getInstance().hashMapSortMap(newHash))
+        val cache = HashUtil.hashMapReverse(HashUtil.hashMapSortMap(newHash))
 
 
         for (kit in cache) {
-            val i = DataManager.getInstance().kitCacheV2[kit.key]!!
-            var item = ItemStack(Material.CHEST)
-            val name = GeneralLang.getInstance().kitsInventoryItemsName.replace("%kitrealname%", i.fakeName)
-            for (to in i.items) {
-                item = ItemStack(to)
-                break
+            val i = DataManager.kitCacheV2[kit.key]!!
+            val name = GeneralLang.kitsInventoryItemsName.replace("%kitrealname%", i.fakeName)
+            val item = try {
+                ItemStack(i.items[0])
+            } catch (e: Exception) {
+                ItemStack(Material.CHEST)
             }
             val meta = item.itemMeta
             item.amount = 1
@@ -43,14 +44,14 @@ object KitGuiInventory {
 
 
             val itemLore = ArrayList<String>()
-            GeneralLang.getInstance().kitsInventoryItemsLore.forEach {
+            GeneralLang.kitsInventoryItemsLore.forEach {
                 itemLore.add(it.replace("%realname%", kit.key))
             }
 
             meta?.lore = itemLore
             item.itemMeta = meta
             val cacheValue = (length + 1) + ((size - 1) * 27)
-            DataManager.getInstance().kitClickGuiCache[cacheValue] = kit.key
+            DataManager.kitClickGuiCache[cacheValue] = kit.key
 
             if (length < 26) {
                 inv.setItem(length, item)
@@ -58,30 +59,28 @@ object KitGuiInventory {
             } else {
                 inv.setItem(length, item)
                 for (to in 27..35) {
-                    if (to == 27) {
-                        if (size > 1) {
+                    if (to == 27 && size > 1) {
                             inv.setItem(
                                 to,
-                                ItemUtil.getInstance()
-                                    .item(Material.HOPPER, GeneralLang.getInstance().kitsInventoryIconBackName, true)
+                                ItemUtil
+                                    .item(Material.HOPPER, GeneralLang.kitsInventoryIconBackName, true)
                             )
                             continue
-                        }
                     }
                     if (to == 35) {
                         inv.setItem(
                             to,
-                            ItemUtil.getInstance()
-                                .item(Material.ARROW, GeneralLang.getInstance().kitsInventoryIconNextName, true)
+                            ItemUtil
+                                .item(Material.ARROW, GeneralLang.kitsInventoryIconNextName, true)
                         )
                         continue
                     }
                     inv.setItem(
                         to,
-                        ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "§eKIT", true)
+                        ItemUtil.item(DataManager.material["glass"]!!, "§eKIT", true)
                     )
                 }
-                DataManager.getInstance().kitGuiCache[size] = inv
+                DataManager.kitGuiCache[size] = inv
                 length = 0
                 size += 1
                 inv = EssentialsK.instance.server.createInventory(null, 36, "§eKits $size")
@@ -91,21 +90,21 @@ object KitGuiInventory {
             if (size != 1) {
                 inv.setItem(
                     27,
-                    ItemUtil.getInstance().item(Material.HOPPER, GeneralLang.getInstance().kitsInventoryIconBackName)
+                    ItemUtil.item(Material.HOPPER, GeneralLang.kitsInventoryIconBackName)
                 )
             } else {
                 inv.setItem(
                     27,
-                    ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "§eKIT", true)
+                    ItemUtil.item(DataManager.material["glass"]!!, "§eKIT", true)
                 )
             }
             for (to in 28..35) {
                 inv.setItem(
                     to,
-                    ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "§eKIT", true)
+                    ItemUtil.item(DataManager.material["glass"]!!, "§eKIT", true)
                 )
             }
-            DataManager.getInstance().kitGuiCache[size] = inv
+            DataManager.kitGuiCache[size] = inv
         }
     }
 
@@ -114,8 +113,8 @@ object KitGuiInventory {
         val inv = EssentialsK.instance.server.createInventory(null, 45, "§eKit $kit $guiNumber")
 
         //load caches
-        val kitCache = DataManager.getInstance().kitCacheV2[kit] ?: return
-        val playerCache = DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!
+        val kitCache = DataManager.kitCacheV2[kit] ?: return
+        val playerCache = PlayerDataV2[p]!!
 
         //get all time of kits
         var timeAll = playerCache.kitsCache[kit] ?: 0L
@@ -132,54 +131,54 @@ object KitGuiInventory {
             if (to1 == 36) {
                 inv.setItem(
                     to1,
-                    ItemUtil.getInstance()
-                        .item(Material.HOPPER, GeneralLang.getInstance().kitsInventoryIconBackName, true)
+                    ItemUtil
+                        .item(Material.HOPPER, GeneralLang.kitsInventoryIconBackName, true)
                 )
                 continue
             }
-            if (to1 == 40) {
-                if (p.hasPermission("essentialsk.commands.editkit")) {
+            if (to1 == 40 && p.hasPermission("essentialsk.commands.editkit")) {
                     inv.setItem(
                         to1,
-                        ItemUtil.getInstance()
-                            .item(Material.CHEST, GeneralLang.getInstance().kitsInventoryIconEditKitName, true)
+                        ItemUtil
+                            .item(Material.CHEST, GeneralLang.kitsInventoryIconEditKitName, true)
                     )
                     continue
-                }
             }
             if (to1 == 44) {
                 if (p.hasPermission("essentialsk.commands.kit.$kit")) {
-                    if (timeAll <= System.currentTimeMillis() || timeAll == 0L || p.hasPermission("essentialsk.bypass.kitcatch")) {
+                    if (timeAll <= System.currentTimeMillis() ||
+                        timeAll == 0L ||
+                        p.hasPermission("essentialsk.bypass.kitcatch")) {
                         inv.setItem(
                             to1,
-                            ItemUtil.getInstance().item(Material.ARROW, GeneralLang.getInstance().kitsCatchIcon, true)
+                            ItemUtil.item(Material.ARROW, GeneralLang.kitsCatchIcon, true)
                         )
                         continue
                     }
                     val array = ArrayList<String>()
                     val remainingTime = timeAll - System.currentTimeMillis()
-                    for (i in GeneralLang.getInstance().kitsCatchIconLoreTime) {
+                    for (i in GeneralLang.kitsCatchIconLoreTime) {
                         array.add(
                             i.replace(
                                 "%time%",
-                                TimeUtil.getInstance()
-                                    .convertMillisToString(remainingTime, MainConfig.getInstance().kitsUseShortTime)
+                                TimeUtil
+                                    .convertMillisToString(remainingTime, MainConfig.kitsUseShortTime)
                             )
                         )
                     }
                     inv.setItem(
                         to1,
-                        ItemUtil.getInstance()
-                            .item(Material.ARROW, GeneralLang.getInstance().kitsCatchIconNotCatch, array, true)
+                        ItemUtil
+                            .item(Material.ARROW, GeneralLang.kitsCatchIconNotCatch, array, true)
                     )
                     continue
                 }
                 inv.setItem(
                     to1,
-                    ItemUtil.getInstance().item(
+                    ItemUtil.item(
                         Material.ARROW,
-                        GeneralLang.getInstance().kitsCatchIconNotCatch,
-                        GeneralLang.getInstance().kitsCatchIconLoreNotPerm,
+                        GeneralLang.kitsCatchIconNotCatch,
+                        GeneralLang.kitsCatchIconLoreNotPerm,
                         true
                     )
                 )
@@ -187,7 +186,7 @@ object KitGuiInventory {
             }
             inv.setItem(
                 to1,
-                ItemUtil.getInstance().item(DataManager.getInstance().material["glass"]!!, "§eKIT", true)
+                ItemUtil.item(DataManager.material["glass"]!!, "§eKIT", true)
             )
         }
         p.openInventory(inv)

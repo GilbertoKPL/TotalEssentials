@@ -1,12 +1,12 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.`object`.WarpData
-import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.data.objects.WarpData
+import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
-class CommandDelWarp : ICommand {
+class CommandDelWarp : CommandCreator {
     override val consoleCanUse: Boolean = true
     override val commandName = "delwarp"
     override val timeCoolDown: Long? = null
@@ -16,10 +16,10 @@ class CommandDelWarp : ICommand {
     override val commandUsage =
         listOf("/delwarp <warpName>")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of warp name
         if (args[0].length > 16) {
-            s.sendMessage(GeneralLang.getInstance().warpsNameLength)
+            s.sendMessage(GeneralLang.warpsNameLength)
             return false
         }
 
@@ -28,11 +28,11 @@ class CommandDelWarp : ICommand {
 
         //check if exist
         if (warpInstance.checkCache()) {
-            s.sendMessage(GeneralLang.getInstance().warpsNameDontExist)
+            s.sendMessage(GeneralLang.warpsNameDontExist)
             return false
         }
 
-        s.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
+        s.sendMessage(GeneralLang.generalSendingInfoToDb)
         warpInstance.delWarp(s)
 
         return false

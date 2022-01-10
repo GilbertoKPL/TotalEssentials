@@ -1,8 +1,7 @@
 package github.gilbertokpl.essentialsk.configs
 
-import github.gilbertokpl.essentialsk.manager.IInstance
 
-class OtherConfig {
+object OtherConfig {
 
     var serverPrefix = ""
 
@@ -12,11 +11,4 @@ class OtherConfig {
 
     var deathmessageListReplacer = HashMap<String, String>(60)
 
-    companion object : IInstance<OtherConfig> {
-        private val instance = createInstance()
-        override fun createInstance(): OtherConfig = OtherConfig()
-        override fun getInstance(): OtherConfig {
-            return instance
-        }
-    }
 }

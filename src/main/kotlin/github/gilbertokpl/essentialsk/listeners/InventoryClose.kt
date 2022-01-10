@@ -13,22 +13,22 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 class InventoryClose : Listener {
     @EventHandler
     fun event(e: InventoryCloseEvent) {
-        if (MainConfig.getInstance().kitsActivated) {
+        if (MainConfig.kitsActivated) {
             try {
                 if (editKitInventoryCloseEvent(e)) return
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
 
     private fun editKitInventoryCloseEvent(e: InventoryCloseEvent): Boolean {
         val p = e.player as Player
-        DataManager.getInstance().editKit[p].also {
+        DataManager.editKit[p].also {
             if (it == null) return false
-            DataManager.getInstance().editKit.remove(p)
-            p.sendMessage(GeneralLang.getInstance().generalSendingInfoToDb)
-            DataManager.getInstance().kitCacheV2[it]?.setItems(e.inventory.contents.filterNotNull().toList(), p)
+            DataManager.editKit.remove(p)
+            p.sendMessage(GeneralLang.generalSendingInfoToDb)
+            DataManager.kitCacheV2[it]?.setItems(e.inventory.contents.filterNotNull().toList(), p)
                 ?: return true
             return true
         }

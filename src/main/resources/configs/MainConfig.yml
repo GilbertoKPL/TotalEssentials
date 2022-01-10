@@ -1,20 +1,18 @@
 general:
   # Selected Lang to run your plugin, it is necessary to have it in your lang folder, You can add more languages by contributing to the plugin....
   selected-lang: pt_BR
-  # this line its necessary to log errors.
   # Nome do seu servidor.
   server-name: unamed
 database:
-  # Select Database type, available: H2 or MYSQL;
   # Selecione seu tipo de conexão, Disponiveis H2 (Local) e Mysql (Nuvem).
   type: H2
   # If you have selected MYSQL add ip, port, username, database and password;
   # Se você selecionou MYSQL coloque essas informações paar conexão.
   sql-ip: 'localhost'
   sql-port: '3306'
-  sql-username: "u0_essentialsk"
-  sql-database: "s0_essentialsk"
-  sql-password: "essentialsk123"
+  sql-username: "!u0_essentialsk"
+  sql-database: "!s0_essentialsk"
+  sql-password: "!essentialsk123"
 # Conexão com o Discord.
 discordbot:
   # Token do Bot.
@@ -173,10 +171,10 @@ motd:
   # Lista de motds aletórias, caso queira estático utilize só 1 linha;
   # Variaveis -> %players_online%.
   list-motd:
-    - '&1Minecraft Server \n&1its open with %players_online% online!'
-    - '&2Minecraft Server \n&2its open with %players_online% online!'
-    - '&3Minecraft Server \n&3its open with %players_online% online!'
-    - '&4Minecraft Server \n&4its open with %players_online% online!'
+    - '&1Minecraft Server \n&1its aberto com players %players_online% online!'
+    - '&2Minecraft Server \n&2its aberto com players %players_online% online!'
+    - '&3Minecraft Server \n&3its aberto com players %players_online% online!'
+    - '&4Minecraft Server \n&4its aberto com players %players_online% online!'
 # Config das mensagens automáticas.
 announcements:
   # Se estiver ativado (true), as mensagens automáticas serão ativadas.
@@ -186,8 +184,8 @@ announcements:
   # Lista de anuncios para ser enviado;
   # Variaveis -> %players_online%.
   list-announce:
-    - '&1Your server has using EssentialsK plugin!'
-    - '&2Thanks for using my plugin!'
+    - '&eSeu servidor está usando EssentiasK, obrigado por utilizar.'
+    - '&9Obrigado por utilizar meu plugin!'
     - '&3No servidor tem %players_online% players online!'
 # Neste local, existem as mensagens que podem ser ativadas.
 messages:
@@ -200,42 +198,42 @@ messages:
 # Neste local, contém os recursos antibugs que podem ser ativados ou desativados.
 antibugs:
   # Neste recurso, o jogador é impedido de subir na cama;
-  # Permission Bypass -> essentialsk.bypass.bed.
+  # Permissão Bypass -> essentialsk.bypass.bed.
   block-bed: true
   # Neste recurso, o jogador é impedido de subir nos veículos;
-  # Permission Bypass -> essentialsk.bypass.vehicles.
+  # Permissão Bypass -> essentialsk.bypass.vehicles.
   block-climbing-on-vehicles: true
   # Neste recurso, o jogador é impedido de usar NameTag em mobs;
-  # Permission Bypass -> essentialsk.bypass.nametag.
+  # Permissão Bypass -> essentialsk.bypass.nametag.
   block-nametag: false
   # Neste recurso, os mobs são proibidos de pegar itens do chão.
   block-mob-catch: false
   # Neste recurso, bloqueia o jogador de ir além da borda com Ender Pearls.
   block-going-edge-enderpearl: true
   # Neste recurso, bloqueia o jogador de ir para o teto do Nether;
-  # Permission Bypass -> essentialsk.bypass.netherceiling.
+  # Permissão Bypass -> essentialsk.bypass.netherceiling.
   block-player-go-to-nether-ceiling: true
   # Neste recurso, os blocos de jogadores se teletransportam em portais;
-  # Permission Bypass -> essentialsk.bypass.teleportportal.
+  # Permissão Bypass -> essentialsk.bypass.teleportportal.
   block-player-teleport-portal: true
   # Neste recurso, bloqueia todas as entidades criar portais.
   block-create-portal: false
   # Neste recurso, bloquear os player de utilizarem esses comandos;
-  # Permission Bypass -> essentialsk.bypass.blockedcmd.
+  # Permissão Bypass -> essentialsk.bypass.blockedcmd.
   block-cmds:
     - "/pl"
     - "/plugins"
 # Neste local, contém as opções do container, lista de valores em (indisponível por enquanto).
 containers:
   # Cancelar o uso de shift nos contêineres da lista;
-  # Permission Bypass -> essentialsk.bypass.shiftcontainer.
+  # Permissão Bypass -> essentialsk.bypass.shiftcontainer.
   block-shift-enable: false
   # List to block shift;
   # Lista para bloquear shift.
   block-shift:
     - 'ANVIL'
   # Cancelar abrir os contêineres da lista;
-  # Permission Bypass -> essentialsk.bypass.opencontainer.
+  # Permissão Bypass -> essentialsk.bypass.opencontainer.
   block-open-enable: false
   # Lista para bloquear de abrir.
   block-open:
@@ -253,13 +251,13 @@ addons:
   # Neste recurso, o fogo não pode se propagar.
   block-propagation-fire: true
   # Neste recurso, pode ser colocado & no nome do ‘item’, tem permissão para isso;
-  # Permission -> essentialsk.color.&0 (Example).
+  # Permissão -> essentialsk.color.&0 (Exemplo).
   color-in-anvil: true
   # Neste recurso, pode ser colocado & no sinal, tem uma permissão para isso;
-  # Permission -> essentialsk.color.&0 (Example).
+  # Permissão -> essentialsk.color.&0 (Exemplo).
   color-in-sign: true
   # Neste recurso, pode ser colocado & no bate-papo, tem permissão para isso.
-  # Permission -> essentialsk.color.&0 (Example).
+  # Permissão -> essentialsk.color.&0 (Exemplo).
   color-in-chat: true
   # Neste recurso, evita que o jogador perca XP na morte.
   player-prevent-lose-xp: true

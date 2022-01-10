@@ -11,18 +11,18 @@ import org.bukkit.event.player.PlayerBedEnterEvent
 class PlayerBedEnter : Listener {
     @EventHandler
     fun event(e: PlayerBedEnterEvent) {
-        if (MainConfig.getInstance().antibugsBlockBed) {
+        if (MainConfig.antibugsBlockBed) {
             try {
                 blockEnterInBed(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
 
     private fun blockEnterInBed(e: PlayerBedEnterEvent) {
         if (!e.player.hasPermission("essentialsk.bypass.bed")) {
-            e.player.sendMessage(GeneralLang.getInstance().generalNotPermAction)
+            e.player.sendMessage(GeneralLang.generalNotPermAction)
             e.isCancelled = true
         }
     }

@@ -12,11 +12,11 @@ import org.bukkit.event.player.PlayerInteractEvent
 class PlayerInteract : Listener {
     @EventHandler
     fun event(e: PlayerInteractEvent) {
-        if (MainConfig.getInstance().addonsInfinityAnvil) {
+        if (MainConfig.addonsInfinityAnvil) {
             try {
                 infinityAnvil(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }

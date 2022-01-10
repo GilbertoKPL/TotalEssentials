@@ -32,37 +32,37 @@ class EssentialsK : JavaPlugin() {
                     "${EColor.YELLOW.color}Loaded libraries in ${timeTakenMillis / 1000} seconds${EColor.RESET.color}"
         )
 
-        ManifestUtil.getInstance().start()
+        ManifestUtil.start()
 
-        PluginUtil.getInstance().startMetrics()
+        PluginUtil.startMetrics()
 
         super.onLoad()
     }
 
     override fun onEnable() {
 
-        if (VersionUtil.getInstance().check()) return
+        if (VersionUtil.check()) return
 
-        ConfigUtil.getInstance().start()
+        ConfigUtil.start()
 
-        SqlUtil.getInstance().startSql()
+        SqlUtil.startSql()
 
-        SqlUtil.getInstance().startTables()
+        SqlUtil.startTables()
 
-        PluginUtil.getInstance().startCommands()
+        PluginUtil.startCommands()
 
-        MaterialUtil.getInstance().startMaterials()
+        MaterialUtil.startMaterials()
 
-        PluginUtil.getInstance().startInventories()
+        PluginUtil.startInventories()
 
-        PluginUtil.getInstance().startEvents()
+        PluginUtil.startEvents()
 
         if (Bukkit.getBukkitVersion().contains("1.5.2") || Bukkit.getVersion().contains("1.5.2")) {
             lowVersion = true
         }
 
         CompletableFuture.runAsync {
-            DiscordUtil.getInstance().startBot()
+            DiscordUtil.startBot()
         }
 
         super.onEnable()
@@ -70,7 +70,7 @@ class EssentialsK : JavaPlugin() {
 
     override fun onDisable() {
 
-        TaskUtil.getInstance().disable()
+        TaskUtil.disable()
 
         super.onDisable()
     }

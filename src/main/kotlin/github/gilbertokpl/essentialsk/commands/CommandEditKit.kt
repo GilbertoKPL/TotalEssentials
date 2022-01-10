@@ -3,12 +3,12 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGui
-import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandEditKit : ICommand {
+class CommandEditKit : CommandCreator {
 
     override val consoleCanUse: Boolean = false
     override val commandName = "editkit"
@@ -18,18 +18,18 @@ class CommandEditKit : ICommand {
     override val maximumSize = 1
     override val commandUsage = listOf("/editkit <kitName>")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of kit name
         if (args[0].length > 16) {
-            s.sendMessage(GeneralLang.getInstance().kitsNameLength)
+            s.sendMessage(GeneralLang.kitsNameLength)
             return false
         }
 
-        val dataInstance = DataManager.getInstance().kitCacheV2[args[0].lowercase()]
+        val dataInstance = DataManager.kitCacheV2[args[0].lowercase()]
 
         //check if not exist
         if (dataInstance == null) {
-            s.sendMessage(GeneralLang.getInstance().kitsNotExist)
+            s.sendMessage(GeneralLang.kitsNotExist)
             return false
         }
 

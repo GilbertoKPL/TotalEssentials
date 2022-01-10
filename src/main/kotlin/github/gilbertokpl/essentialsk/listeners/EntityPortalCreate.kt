@@ -12,11 +12,11 @@ import org.bukkit.event.world.PortalCreateEvent
 class EntityPortalCreate : Listener {
     @EventHandler
     fun event(e: PortalCreateEvent) {
-        if (MainConfig.getInstance().antibugsBlockCreatePortal) {
+        if (MainConfig.antibugsBlockCreatePortal) {
             try {
                 blockCreationPortal(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
@@ -25,7 +25,7 @@ class EntityPortalCreate : Listener {
         e.isCancelled = true
         try {
             if (e.entity is Player) {
-                (e.entity as Player).sendMessage(GeneralLang.getInstance().generalNotPermAction)
+                (e.entity as Player).sendMessage(GeneralLang.generalNotPermAction)
             }
         } catch (ignored: NoSuchMethodError) {
         }

@@ -17,37 +17,36 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 
-
 class InventoryClick : Listener {
     @EventHandler
     fun event(e: InventoryClickEvent) {
         if (e.slot == 45) {
             return
         }
-        if (MainConfig.getInstance().kitsActivated) {
+        if (MainConfig.kitsActivated) {
             try {
                 if (editKitInventoryClickEvent(e)) return
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
             try {
                 if (kitGuiEvent(e)) return
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
-        if (MainConfig.getInstance().containersBlockShiftEnable) {
+        if (MainConfig.containersBlockShiftEnable) {
             try {
                 blockShiftInInventory(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
-        if (MainConfig.getInstance().addonsColorInAnvil) {
+        if (MainConfig.addonsColorInAnvil) {
             try {
                 anvilColor(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
@@ -63,21 +62,21 @@ class InventoryClick : Listener {
 
             val number = e.slot
             if (number == 36) {
-                p.openInventory(DataManager.getInstance().kitGuiCache[inventoryName[2].toInt()]!!)
+                p.openInventory(DataManager.kitGuiCache[inventoryName[2].toInt()]!!)
             }
-            if (number == 40 && meta.displayName == GeneralLang.getInstance().kitsInventoryIconEditKitName && p.hasPermission(
+            if (number == 40 && meta.displayName == GeneralLang.kitsInventoryIconEditKitName && p.hasPermission(
                     "essentialsk.commands.editkit"
                 )
             ) {
                 editKitGui(p, inventoryName[1])
             }
             if (number == 44) {
-                if (meta.displayName == GeneralLang.getInstance().kitsCatchIcon) {
-                    ItemUtil.getInstance().pickupKit(p, inventoryName[1])
+                if (meta.displayName == GeneralLang.kitsCatchIcon) {
+                    ItemUtil.pickupKit(p, inventoryName[1])
                     p.closeInventory()
                     return true
                 }
-                if (meta.displayName == GeneralLang.getInstance().kitsCatchIconNotCatch) {
+                if (meta.displayName == GeneralLang.kitsCatchIconNotCatch) {
                     kitGui(inventoryName[1], inventoryName[2], p)
                 }
             }
@@ -89,17 +88,17 @@ class InventoryClick : Listener {
             val number = e.slot
             if (number < 27) {
                 val kit =
-                    DataManager.getInstance().kitClickGuiCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
+                    DataManager.kitClickGuiCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
                 if (kit != null) {
                     kitGui(kit, inventoryName[1], p)
                 }
                 return true
             }
             if (number == 27 && inventoryName[1].toInt() > 1) {
-                p.openInventory(DataManager.getInstance().kitGuiCache[inventoryName[1].toInt() - 1]!!)
+                p.openInventory(DataManager.kitGuiCache[inventoryName[1].toInt() - 1]!!)
             }
             if (number == 35) {
-                val check = DataManager.getInstance().kitGuiCache[inventoryName[1].toInt() + 1]
+                val check = DataManager.kitGuiCache[inventoryName[1].toInt() + 1]
                 if (check != null) {
                     p.openInventory(check)
                 }
@@ -112,10 +111,11 @@ class InventoryClick : Listener {
     //editkit event
     private fun editKitInventoryClickEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
+        e.view.title
         val inventoryName = e.view.title.split(" ")
         if (inventoryName[0].equals("§eEditKit", true)) {
             e.isCancelled = true
-            val dataInstance = DataManager.getInstance().kitCacheV2[inventoryName[1]] ?: return false
+            val dataInstance = DataManager.kitCacheV2[inventoryName[1]] ?: return false
             val number = e.slot
             val p = e.whoClicked as Player
 
@@ -123,28 +123,28 @@ class InventoryClick : Listener {
             if (number == 10) {
                 p.closeInventory()
                 editKitGuiItems(p, inventoryName[1], dataInstance.items)
-                DataManager.getInstance().editKit[p] = inventoryName[1]
+                DataManager.editKit[p] = inventoryName[1]
             }
 
             //time
             if (number == 12) {
                 p.closeInventory()
-                p.sendMessage(GeneralLang.getInstance().kitsEditKitInventoryTimeMessage)
-                DataManager.getInstance().editKitChat[p] = "time-${inventoryName[1]}"
+                p.sendMessage(GeneralLang.kitsEditKitInventoryTimeMessage)
+                DataManager.editKitChat[p] = "time-${inventoryName[1]}"
             }
 
             //name
             if (number == 14) {
                 p.closeInventory()
-                p.sendMessage(GeneralLang.getInstance().kitsEditKitInventoryNameMessage)
-                DataManager.getInstance().editKitChat[p] = "name-${inventoryName[1]}"
+                p.sendMessage(GeneralLang.kitsEditKitInventoryNameMessage)
+                DataManager.editKitChat[p] = "name-${inventoryName[1]}"
             }
 
             //weight
             if (number == 16) {
                 p.closeInventory()
-                p.sendMessage(GeneralLang.getInstance().kitsEditKitInventoryWeightMessage)
-                DataManager.getInstance().editKitChat[p] = "weight-${inventoryName[1]}"
+                p.sendMessage(GeneralLang.kitsEditKitInventoryWeightMessage)
+                DataManager.editKitChat[p] = "weight-${inventoryName[1]}"
             }
 
         }
@@ -156,10 +156,10 @@ class InventoryClick : Listener {
     private fun blockShiftInInventory(e: InventoryClickEvent) {
         if ((e.currentItem ?: return).type == Material.AIR) return
         if (e.click.isShiftClick &&
-            MainConfig.getInstance().containersBlockShift.contains(e.inventory.type.name.lowercase()) &&
+            MainConfig.containersBlockShift.contains(e.inventory.type.name.lowercase()) &&
             !e.whoClicked.hasPermission("essentialsk.bypass.shiftcontainer")
         ) {
-            e.whoClicked.sendMessage(GeneralLang.getInstance().generalNotPermAction)
+            e.whoClicked.sendMessage(GeneralLang.generalNotPermAction)
             e.isCancelled = true
             return
         }
@@ -186,7 +186,7 @@ class InventoryClick : Listener {
                     return
                 }
             }
-            meta.setDisplayName(PermissionUtil.getInstance().colorPermission(e.whoClicked as Player, name))
+            meta.setDisplayName(PermissionUtil.colorPermission(e.whoClicked as Player, name))
             item.itemMeta = meta
             e.currentItem = item
         }

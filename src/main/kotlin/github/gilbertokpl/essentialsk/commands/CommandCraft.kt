@@ -1,13 +1,11 @@
 package github.gilbertokpl.essentialsk.commands
 
-
-import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-
-class CommandCraft : ICommand {
+class CommandCraft : CommandCreator {
     override val consoleCanUse: Boolean = false
     override val commandName = "craft"
     override val timeCoolDown: Long? = null
@@ -18,7 +16,7 @@ class CommandCraft : ICommand {
         "/craft"
     )
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         (s as Player).openWorkbench(s.location, true)
         return false
     }

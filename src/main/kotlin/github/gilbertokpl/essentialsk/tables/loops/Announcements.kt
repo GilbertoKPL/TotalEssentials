@@ -1,13 +1,12 @@
 package github.gilbertokpl.essentialsk.tables.loops
 
 import github.gilbertokpl.essentialsk.configs.OtherConfig
-import github.gilbertokpl.essentialsk.manager.IInstance
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import github.gilbertokpl.essentialsk.util.ReflectUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import java.util.concurrent.TimeUnit
 
-class Announcements {
+object Announcements {
 
     private var maxValue = 0
 
@@ -17,13 +16,13 @@ class Announcements {
         maxValue = values
         locValues = 1
 
-        TaskUtil.getInstance().getAnnounceExecutor().scheduleWithFixedDelay({
+        TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
 
-            val online = PlayerUtil.getInstance().getIntOnlinePlayers(false)
+            val online = PlayerUtil.getIntOnlinePlayers(false)
 
-            ReflectUtil.getInstance().getPlayers().forEach {
+            ReflectUtil.getPlayers().forEach {
                 it.sendMessage(
-                    OtherConfig.getInstance().announcementsListAnnounce[locValues]!!.replace(
+                    OtherConfig.announcementsListAnnounce[locValues]!!.replace(
                         "%players_online%",
                         online.toString()
                     )
@@ -35,13 +34,5 @@ class Announcements {
                 locValues += 1
             }
         }, time.toLong(), time.toLong(), TimeUnit.MINUTES)
-    }
-
-    companion object : IInstance<Announcements> {
-        private val instance = createInstance()
-        override fun createInstance(): Announcements = Announcements()
-        override fun getInstance(): Announcements {
-            return instance
-        }
     }
 }

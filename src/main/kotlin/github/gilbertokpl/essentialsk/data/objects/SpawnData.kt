@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.data.`object`
+package github.gilbertokpl.essentialsk.data.objects
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.DataManager
@@ -18,7 +18,7 @@ class SpawnData(spawnName: String) {
     private val name = spawnName.lowercase()
 
     fun checkCache(): Boolean {
-        DataManager.getInstance().spawnCache[name].also {
+        DataManager.spawnCache[name].also {
             if (it == null) {
                 return true
             }
@@ -27,18 +27,18 @@ class SpawnData(spawnName: String) {
     }
 
     fun getLocation(): Location {
-        return DataManager.getInstance().spawnCache[name]!!
+        return DataManager.spawnCache[name]!!
     }
 
     fun setSpawn(location: Location, s: CommandSender? = null) {
         //cache
-        DataManager.getInstance().spawnCache[name] = location
+        DataManager.spawnCache[name] = location
 
-        val loc = LocationUtil.getInstance().locationSerializer(location)
+        val loc = LocationUtil.locationSerializer(location)
 
         //sql
-        TaskUtil.getInstance().asyncExecutor {
-            transaction(SqlUtil.getInstance().sql) {
+        TaskUtil.asyncExecutor {
+            transaction(SqlUtil.sql) {
                 if (SpawnDataSQL.select { SpawnDataSQL.spawnName eq name }.empty()) {
                     SpawnDataSQL.insert {
                         it[spawnName] = name
@@ -50,7 +50,7 @@ class SpawnData(spawnName: String) {
                     it[spawnLocation] = loc
                 }
             }
-            s?.sendMessage(GeneralLang.getInstance().spawnSendSetMessage)
+            s?.sendMessage(GeneralLang.spawnSendSetMessage)
         }
     }
 }

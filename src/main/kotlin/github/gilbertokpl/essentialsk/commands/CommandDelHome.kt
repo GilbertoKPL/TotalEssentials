@@ -1,14 +1,15 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.`object`.OfflinePlayerData
-import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.data.objects.OfflinePlayerData
+import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
-class CommandDelHome : ICommand {
+class CommandDelHome : CommandCreator {
     override val consoleCanUse: Boolean = false
     override val commandName = "delhome"
     override val timeCoolDown: Long? = null
@@ -18,11 +19,11 @@ class CommandDelHome : ICommand {
     override val commandUsage =
         listOf("/delhome <homeName>", "essentialsk.commands.delhome.other_/delhome <playername>:<homeName>")
 
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         //admin
         if (args[0].contains(":") && s.hasPermission("essentialsk.commands.delhome.other")) {
-            TaskUtil.getInstance().asyncExecutor {
+            TaskUtil.asyncExecutor {
                 val split = args[0].split(":")
 
                 val pName = split[0].lowercase()
@@ -30,27 +31,27 @@ class CommandDelHome : ICommand {
                 val otherPlayerInstance = OfflinePlayerData(pName)
 
                 if (!otherPlayerInstance.checkSql()) {
-                    s.sendMessage(GeneralLang.getInstance().generalPlayerNotExist)
+                    s.sendMessage(GeneralLang.generalPlayerNotExist)
                     return@asyncExecutor
                 }
 
                 if (split.size < 2) {
                     s.sendMessage(
-                        GeneralLang.getInstance().homesHomeOtherList.replace("%player%", pName)
+                        GeneralLang.homesHomeOtherList.replace("%player%", pName)
                             .replace("%list%", otherPlayerInstance.getHomeList().toString())
                     )
                     return@asyncExecutor
                 }
 
                 if (!otherPlayerInstance.getHomeList().contains(split[1])) {
-                    s.sendMessage(GeneralLang.getInstance().homesNameDontExist)
+                    s.sendMessage(GeneralLang.homesNameDontExist)
                     return@asyncExecutor
                 }
 
                 otherPlayerInstance.delHome(split[1])
 
                 s.sendMessage(
-                    GeneralLang.getInstance().homesHomeOtherRemoved.replace("%player%", pName)
+                    GeneralLang.homesHomeOtherRemoved.replace("%player%", pName)
                         .replace("%home%", split[1])
                 )
             }
@@ -58,19 +59,21 @@ class CommandDelHome : ICommand {
             return false
         }
 
+        val p = s as Player
+
         val nameHome = args[0].lowercase()
 
-        val playerInstance = DataManager.getInstance().playerCacheV2[s.name.lowercase()] ?: return false
+        val playerInstance = PlayerDataV2[p] ?: return false
 
         //check if home don't exist
         if (!playerInstance.homeCache.contains(nameHome)) {
-            s.sendMessage(GeneralLang.getInstance().homesNameDontExist)
+            p.sendMessage(GeneralLang.homesNameDontExist)
             return false
         }
 
         playerInstance.delHome(nameHome)
 
-        s.sendMessage(GeneralLang.getInstance().homesHomeRemoved.replace("%home%", nameHome))
+        p.sendMessage(GeneralLang.homesHomeRemoved.replace("%home%", nameHome))
         return false
     }
 }

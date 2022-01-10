@@ -2,13 +2,13 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.manager.ICommand
+import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandLight : ICommand {
+class CommandLight : CommandCreator {
     override val consoleCanUse: Boolean = true
     override val commandName = "light"
     override val timeCoolDown: Long? = null
@@ -16,7 +16,7 @@ class CommandLight : ICommand {
     override val minimumSize = 0
     override val maximumSize = 1
     override val commandUsage = listOf("P_/light", "essentialsk.commands.light.other_/light <playerName>")
-    override fun kCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         if (args.isEmpty() && s !is Player) {
             return true
@@ -26,31 +26,31 @@ class CommandLight : ICommand {
 
             //check perms
             if (s is Player && !s.hasPermission("essentialsk.commands.light.other")) {
-                s.sendMessage(GeneralLang.getInstance().generalNotPerm)
+                s.sendMessage(GeneralLang.generalNotPerm)
                 return false
             }
 
             //check if player exist
             val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-                s.sendMessage(GeneralLang.getInstance().generalPlayerNotOnline)
+                s.sendMessage(GeneralLang.generalPlayerNotOnline)
                 return false
             }
 
-            if (DataManager.getInstance().playerCacheV2[p.name.lowercase()]?.switchLight() ?: return false) {
-                p.sendMessage(GeneralLang.getInstance().lightSendOtherActive)
-                s.sendMessage(GeneralLang.getInstance().lightSendActivatedOther)
+            if (PlayerDataV2[p]?.switchLight() ?: return false) {
+                p.sendMessage(GeneralLang.lightSendOtherActive)
+                s.sendMessage(GeneralLang.lightSendActivatedOther)
             } else {
-                p.sendMessage(GeneralLang.getInstance().lightSendOtherDisable)
-                s.sendMessage(GeneralLang.getInstance().lightSendDisabledOther)
+                p.sendMessage(GeneralLang.lightSendOtherDisable)
+                s.sendMessage(GeneralLang.lightSendDisabledOther)
             }
 
             return false
         }
 
-        if (DataManager.getInstance().playerCacheV2[s.name.lowercase()]?.switchLight() ?: return false) {
-            s.sendMessage(GeneralLang.getInstance().lightSendActive)
+        if (PlayerDataV2[s as Player]?.switchLight() ?: return false) {
+            s.sendMessage(GeneralLang.lightSendActive)
         } else {
-            s.sendMessage(GeneralLang.getInstance().lightSendDisable)
+            s.sendMessage(GeneralLang.lightSendDisable)
         }
 
         return false

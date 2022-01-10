@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.util
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.manager.IInstance
+import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.InternalBukkitObjectInputStream
 import github.gilbertokpl.essentialsk.manager.InternalBukkitObjectOutputStream
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -18,19 +18,19 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-class ItemUtil {
+object ItemUtil {
 
     fun pickupKit(p: Player, kit: String) {
 
         // check if player don't have permission
         if (!p.hasPermission("essentialsk.commands.kit.$kit")) {
-            p.sendMessage(GeneralLang.getInstance().generalNotPerm)
+            p.sendMessage(GeneralLang.generalNotPerm)
             return
         }
 
         //load caches
-        val kitCache = DataManager.getInstance().kitCacheV2[kit] ?: return
-        val playerCache = DataManager.getInstance().playerCacheV2[p.name.lowercase()] ?: return
+        val kitCache = DataManager.kitCacheV2[kit] ?: return
+        val playerCache = PlayerDataV2[p] ?: return
 
         //get all time of kit
         var timeAll = playerCache.kitsCache[kit] ?: 0L
@@ -40,10 +40,10 @@ class ItemUtil {
         if (timeAll >= System.currentTimeMillis() && !p.hasPermission("essentialsk.bypass.kitcatch")) {
             val remainingTime = timeAll - System.currentTimeMillis()
             p.sendMessage(
-                GeneralLang.getInstance().kitsCatchMessage.replace(
+                GeneralLang.kitsCatchMessage.replace(
                     "%time%",
-                    TimeUtil.getInstance()
-                        .convertMillisToString(remainingTime, MainConfig.getInstance().kitsUseShortTime)
+                    TimeUtil
+                        .convertMillisToString(remainingTime, MainConfig.kitsUseShortTime)
                 )
             )
             return
@@ -53,12 +53,12 @@ class ItemUtil {
         if (giveKit(
                 p,
                 kitCache.items,
-                MainConfig.getInstance().kitsEquipArmorInCatch,
-                MainConfig.getInstance().kitsDropItemsInCatch
+                MainConfig.kitsEquipArmorInCatch,
+                MainConfig.kitsDropItemsInCatch
             )
         ) {
             playerCache.setKitTime(kit, System.currentTimeMillis())
-            p.sendMessage(GeneralLang.getInstance().kitsCatchSuccess.replace("%kit%", kitCache.fakeName))
+            p.sendMessage(GeneralLang.kitsCatchSuccess.replace("%kit%", kitCache.fakeName))
         }
     }
 
@@ -99,12 +99,14 @@ class ItemUtil {
                 var bolArmor = false
                 val split = i.type.name.split("_")
                 split.forEach {
-                    if (it.contains("HELMET") || it.contains("CHESTPLATE") || it.contains("LEGGINGS") || it.contains("BOOTS")) {
-                        if (armor.contains(it)) {
-                            armor.remove(it)
-                            itemsArmorInternal[it] = i
-                            bolArmor = true
-                        }
+                    if ((it.contains("HELMET") ||
+                                it.contains("CHESTPLATE") ||
+                                it.contains("LEGGINGS") ||
+                                it.contains("BOOTS")) && armor.contains(it)
+                    ) {
+                        armor.remove(it)
+                        itemsArmorInternal[it] = i
+                        bolArmor = true
                     }
                 }
                 if (bolArmor) continue
@@ -131,7 +133,7 @@ class ItemUtil {
             } else {
                 //send message if inventory is full
                 p.sendMessage(
-                    GeneralLang.getInstance().kitsCatchNoSpace.replace(
+                    GeneralLang.kitsCatchNoSpace.replace(
                         "%slots%",
                         (itemsInternal.size - inventorySpace).toString()
                     )
@@ -180,7 +182,7 @@ class ItemUtil {
             dataOutput.close()
             toReturn = Base64Coder.encodeLines(outputStream.toByteArray())
         } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
         return toReturn
     }
@@ -202,7 +204,7 @@ class ItemUtil {
             dataInput.close()
             toReturn = items.filterNotNull().toList()
         } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
         return toReturn
     }
@@ -262,13 +264,5 @@ class ItemUtil {
 
     fun item(material: Material): ItemStack {
         return ItemStack(material)
-    }
-
-    companion object : IInstance<ItemUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): ItemUtil = ItemUtil()
-        override fun getInstance(): ItemUtil {
-            return instance
-        }
     }
 }

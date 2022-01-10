@@ -1,20 +1,18 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.EssentialsK.Companion.lowVersion
-import github.gilbertokpl.essentialsk.manager.IInstance
 import org.bukkit.entity.Player
 
-class PermissionUtil {
+object PermissionUtil {
+    private const val MAX_HOME_VALUE = 1000
 
     fun getNumberPermission(player: Player, permission: String, default: Int): Int {
         var newAmount = 0
         //lower versions
         if (lowVersion) {
-            for (i in 0..1000) {
-                if (player.hasPermission(permission + i)) {
-                    if (newAmount <= i) {
-                        newAmount = i
-                    }
+            for (i in 0..MAX_HOME_VALUE) {
+                if (player.hasPermission(permission + i) && newAmount <= i) {
+                    newAmount = i
                 }
             }
             return if (newAmount == 0) {
@@ -25,7 +23,11 @@ class PermissionUtil {
         }
 
         player.effectivePermissions.filter { it.permission.contains(permission) }.forEach {
-            val int = try { it.permission.split(".").last().toInt() } catch (e: Exception) { 0 }
+            val int = try {
+                it.permission.split(".").last().toInt()
+            } catch (e: Exception) {
+                0
+            }
             if (newAmount <= int) {
                 newAmount = int
             }
@@ -71,13 +73,5 @@ class PermissionUtil {
             colorHelper(it)
         }
         return newMessage
-    }
-
-    companion object : IInstance<PermissionUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): PermissionUtil = PermissionUtil()
-        override fun getInstance(): PermissionUtil {
-            return instance
-        }
     }
 }

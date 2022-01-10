@@ -1,13 +1,16 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.manager.IInstance
 import org.bukkit.Location
 
-
-class LocationUtil {
+object LocationUtil {
     fun locationSerializer(loc: Location): String {
-        return loc.x.toString() + ";" + loc.y.toString() + ";" + loc.z.toString() + ";" + loc.world?.name + ";" + loc.pitch + ";" + loc.yaw
+        return loc.x.toString() + ";" +
+                loc.y.toString() + ";" +
+                loc.z.toString() + ";" +
+                loc.world?.name + ";" +
+                loc.pitch + ";" +
+                loc.yaw
     }
 
     fun locationSerializer(s: String): Location? {
@@ -34,14 +37,6 @@ class LocationUtil {
             )
         } catch (e: Exception) {
             null
-        }
-    }
-
-    companion object : IInstance<LocationUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): LocationUtil = LocationUtil()
-        override fun getInstance(): LocationUtil {
-            return instance
         }
     }
 }

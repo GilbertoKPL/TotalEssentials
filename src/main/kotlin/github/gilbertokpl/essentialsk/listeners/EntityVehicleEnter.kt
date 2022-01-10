@@ -12,11 +12,11 @@ import org.bukkit.event.vehicle.VehicleEnterEvent
 class EntityVehicleEnter : Listener {
     @EventHandler
     fun event(e: VehicleEnterEvent) {
-        if (MainConfig.getInstance().antibugsBlockClimbingOnVehicles) {
+        if (MainConfig.antibugsBlockClimbingOnVehicles) {
             try {
                 blockEnterInVehicles(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
@@ -25,7 +25,7 @@ class EntityVehicleEnter : Listener {
         if (e.entered is Player &&
             !e.entered.hasPermission("essentialsk.bypass.vehicles")
         ) {
-            e.entered.sendMessage(GeneralLang.getInstance().generalNotPermAction)
+            e.entered.sendMessage(GeneralLang.generalNotPermAction)
             e.isCancelled = true
         }
     }

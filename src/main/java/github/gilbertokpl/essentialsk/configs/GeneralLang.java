@@ -3,374 +3,365 @@ package github.gilbertokpl.essentialsk.configs;
 import java.util.List;
 
 public class GeneralLang {
-    private static final GeneralLang instance = createInstance();
 
-    public static GeneralLang createInstance() {
-        return new GeneralLang();
-    }
+    public static String generalOnlyPlayerCommand;
 
-    public static GeneralLang getInstance() {
-        return instance;
-    }
+    public static String generalNotPerm;
 
-    public String generalOnlyPlayerCommand;
+    public static String generalNotPermAction;
 
-    public String generalNotPerm;
+    public static String generalPlayerNotOnline;
 
-    public String generalNotPermAction;
+    public static String generalCommandsUsage;
 
-    public String generalPlayerNotOnline;
+    public static String generalCommandsUsageList;
 
-    public String generalCommandsUsage;
+    public static String generalSpecialCaracteresDisabled;
 
-    public String generalCommandsUsageList;
+    public static String generalPlayerNotExist;
 
-    public String generalSpecialCaracteresDisabled;
+    public static String generalSendingInfoToDb;
 
-    public String generalPlayerNotExist;
+    public static String generalCooldownMoreTime;
 
-    public String generalSendingInfoToDb;
+    public static String generalVaultNotExist;
 
-    public String generalCooldownMoreTime;
+    public static String generalWorldNotExistSpawn;
 
-    public String generalVaultNotExist;
+    public static String generalWorldNotExistWarp;
 
-    public String generalWorldNotExistSpawn;
+    public static String generalConfigReload;
 
-    public String generalWorldNotExistWarp;
+    public static List<String> generalHostConfigInfo;
 
-    public String generalConfigReload;
+    public static String generalHostWait;
 
-    public List<String> generalHostConfigInfo;
+    public static String kitsNotExist;
 
-    public String generalHostWait;
+    public static String kitsExist;
 
-    public String kitsNotExist;
+    public static String kitsCreateKitSuccess;
 
-    public String kitsExist;
+    public static String kitsDelKitSuccess;
 
-    public String kitsCreateKitSuccess;
+    public static String kitsEditKitSuccess;
 
-    public String kitsDelKitSuccess;
+    public static String kitsEditKitTime;
 
-    public String kitsEditKitSuccess;
+    public static String kitsEditKitInventoryItemsName;
 
-    public String kitsEditKitTime;
+    public static List<String> kitsEditKitInventoryItemsLore;
 
-    public String kitsEditKitInventoryItemsName;
+    public static String kitsEditKitInventoryTimeName;
 
-    public List<String> kitsEditKitInventoryItemsLore;
+    public static List<String> kitsEditKitInventoryTimeLore;
 
-    public String kitsEditKitInventoryTimeName;
+    public static String kitsEditKitInventoryNameName;
 
-    public List<String> kitsEditKitInventoryTimeLore;
+    public static List<String> kitsEditKitInventoryNameLore;
 
-    public String kitsEditKitInventoryNameName;
+    public static String kitsEditKitInventoryNameMessage;
 
-    public List<String> kitsEditKitInventoryNameLore;
+    public static String kitsEditKitInventoryWeightName;
 
-    public String kitsEditKitInventoryNameMessage;
+    public static List<String> kitsEditKitInventoryWeightLore;
 
-    public String kitsEditKitInventoryWeightName;
+    public static String kitsEditKitInventoryWeightMessage;
 
-    public List<String> kitsEditKitInventoryWeightLore;
+    public static String kitsEditKitInventoryTimeMessage;
 
-    public String kitsEditKitInventoryWeightMessage;
+    public static String kitsInventoryIconBackName;
 
-    public String kitsEditKitInventoryTimeMessage;
+    public static String kitsInventoryIconNextName;
 
-    public String kitsInventoryIconBackName;
+    public static String kitsInventoryItemsName;
 
-    public String kitsInventoryIconNextName;
+    public static String kitsNameLength;
 
-    public String kitsInventoryItemsName;
+    public static List<String> kitsInventoryItemsLore;
 
-    public String kitsNameLength;
+    public static String kitsCatchMessage;
 
-    public List<String> kitsInventoryItemsLore;
+    public static String kitsCatchIcon;
 
-    public String kitsCatchMessage;
+    public static String kitsCatchIconNotCatch;
 
-    public String kitsCatchIcon;
+    public static String kitsInventoryIconEditKitName;
 
-    public String kitsCatchIconNotCatch;
+    public static String kitsNotExistKits;
 
-    public String kitsInventoryIconEditKitName;
+    public static List<String> kitsCatchIconLoreNotPerm;
 
-    public String kitsNotExistKits;
+    public static List<String> kitsCatchIconLoreTime;
 
-    public List<String> kitsCatchIconLoreNotPerm;
+    public static String kitsList;
 
-    public List<String> kitsCatchIconLoreTime;
+    public static String kitsCatchSuccess;
 
-    public String kitsList;
+    public static String kitsCatchNoSpace;
 
-    public String kitsCatchSuccess;
+    public static String kitsGiveKitMessageOther;
 
-    public String kitsCatchNoSpace;
+    public static String kitsGiveKitMessage;
 
-    public String kitsGiveKitMessageOther;
+    public static String timeSeconds;
 
-    public String kitsGiveKitMessage;
+    public static String timeSecond;
 
-    public String timeSeconds;
+    public static String timeMinutes;
 
-    public String timeSecond;
+    public static String timeMinute;
 
-    public String timeMinutes;
+    public static String timeHours;
 
-    public String timeMinute;
+    public static String timeHour;
 
-    public String timeHours;
+    public static String timeDays;
 
-    public String timeHour;
+    public static String timeDay;
 
-    public String timeDays;
+    public static String timeSecondShort;
 
-    public String timeDay;
+    public static String timeMinuteShort;
 
-    public String timeSecondShort;
+    public static String timeHourShort;
 
-    public String timeMinuteShort;
+    public static String timeDayShort;
 
-    public String timeHourShort;
+    public static String nicksNameLength;
 
-    public String timeDayShort;
+    public static String nicksBlocked;
 
-    public String nicksNameLength;
+    public static String nicksExist;
 
-    public String nicksBlocked;
+    public static String nicksNickSuccess;
 
-    public String nicksExist;
+    public static String nicksNickRemovedSuccess;
 
-    public String nicksNickSuccess;
+    public static String nicksNickOtherSuccess;
 
-    public String nicksNickRemovedSuccess;
+    public static String nicksNickOtherPlayerSuccess;
 
-    public String nicksNickOtherSuccess;
+    public static String nicksNickRemovedOtherSuccess;
 
-    public String nicksNickOtherPlayerSuccess;
+    public static String nicksNickRemovedOtherPlayerSuccess;
 
-    public String nicksNickRemovedOtherSuccess;
+    public static String nicksNickAlreadyOriginal;
 
-    public String nicksNickRemovedOtherPlayerSuccess;
+    public static String nicksNickAlreadyOriginalOther;
 
-    public String nicksNickAlreadyOriginal;
+    public static String homesNameLength;
 
-    public String nicksNickAlreadyOriginalOther;
+    public static String homesNameAlreadyExist;
 
-    public String homesNameLength;
+    public static String homesNameDontExist;
 
-    public String homesNameAlreadyExist;
+    public static String homesSendTimeToTeleport;
 
-    public String homesNameDontExist;
+    public static String homesHomeRemoved;
 
-    public String homesSendTimeToTeleport;
+    public static String homesHomeOtherRemoved;
 
-    public String homesHomeRemoved;
+    public static String homesHomeCreated;
 
-    public String homesHomeOtherRemoved;
+    public static String homesHomeOtherCreated;
 
-    public String homesHomeCreated;
+    public static String homesHomeLimitCreated;
 
-    public String homesHomeOtherCreated;
+    public static String homesHomeWorldBlocked;
 
-    public String homesHomeLimitCreated;
+    public static String homesTeleported;
 
-    public String homesHomeWorldBlocked;
+    public static String homesTeleportedOther;
 
-    public String homesTeleported;
+    public static String homesInTeleport;
 
-    public String homesTeleportedOther;
+    public static String homesHomeList;
 
-    public String homesInTeleport;
+    public static String homesHomeOtherList;
 
-    public String homesHomeList;
+    public static String warpsNameLength;
 
-    public String homesHomeOtherList;
+    public static String warpsNameAlreadyExist;
 
-    public String warpsNameLength;
+    public static String warpsNameDontExist;
 
-    public String warpsNameAlreadyExist;
+    public static String warpsSendTimeToTeleport;
 
-    public String warpsNameDontExist;
+    public static String warpsTeleported;
 
-    public String warpsSendTimeToTeleport;
+    public static String warpsWarpList;
 
-    public String warpsTeleported;
+    public static String warpsWarpCreated;
 
-    public String warpsWarpList;
+    public static String warpsWarpRemoved;
 
-    public String warpsWarpCreated;
+    public static String tpTeleportedSuccess;
 
-    public String warpsWarpRemoved;
+    public static String tpTeleportedOtherSuccess;
 
-    public String tpTeleportedSuccess;
+    public static String tpaSendSuccess;
 
-    public String tpTeleportedOtherSuccess;
+    public static String tpaOtherReceived;
 
-    public String tpaSendSuccess;
+    public static String tpaAlreadySend;
 
-    public String tpaOtherReceived;
+    public static String tpaNotAnyRequest;
 
-    public String tpaAlreadySend;
+    public static String tpaNotAnyRequestToDeny;
 
-    public String tpaNotAnyRequest;
+    public static String tpaRequestAccepted;
 
-    public String tpaNotAnyRequestToDeny;
+    public static String tpaRequestOtherAccepted;
 
-    public String tpaRequestAccepted;
+    public static String tpaRequestOtherNoDelayAccepted;
 
-    public String tpaRequestOtherAccepted;
+    public static String tpaAlreadyInAccept;
 
-    public String tpaRequestOtherNoDelayAccepted;
+    public static String tpaRequestDeny;
 
-    public String tpaAlreadyInAccept;
+    public static String tpaRequestOtherDeny;
 
-    public String tpaRequestDeny;
+    public static String tpaSameName;
 
-    public String tpaRequestOtherDeny;
+    public static String echestSendSuccess;
 
-    public String tpaSameName;
+    public static String echestSendOtherSuccess;
 
-    public String echestSendSuccess;
+    public static String gamemodeUseSuccess;
 
-    public String echestSendOtherSuccess;
+    public static String gamemodeUseOtherSuccess;
 
-    public String gamemodeUseSuccess;
+    public static String gamemodeSameGamemode;
 
-    public String gamemodeUseOtherSuccess;
+    public static String gamemodeSameOtherGamemode;
 
-    public String gamemodeSameGamemode;
+    public static String gamemodeSendSuccessOtherMessage;
 
-    public String gamemodeSameOtherGamemode;
+    public static String vanishSendActive;
 
-    public String gamemodeSendSuccessOtherMessage;
+    public static String vanishSendDisable;
 
-    public String vanishSendActive;
+    public static String vanishSendOtherActive;
 
-    public String vanishSendDisable;
+    public static String vanishSendOtherDisable;
 
-    public String vanishSendOtherActive;
+    public static String vanishSendActivatedOther;
 
-    public String vanishSendOtherDisable;
+    public static String vanishSendDisabledOther;
 
-    public String vanishSendActivatedOther;
+    public static String feedSendMessage;
 
-    public String vanishSendDisabledOther;
+    public static String feedSendFullMessage;
 
-    public String feedSendMessage;
+    public static String feedSendOtherMessage;
 
-    public String feedSendFullMessage;
+    public static String feedSendOtherFullMessage;
 
-    public String feedSendOtherMessage;
+    public static String feedSendSuccessOtherMessage;
 
-    public String feedSendOtherFullMessage;
+    public static String healSendMessage;
 
-    public String feedSendSuccessOtherMessage;
+    public static String healSendFullMessage;
 
-    public String healSendMessage;
+    public static String healSendOtherMessage;
 
-    public String healSendFullMessage;
+    public static String healSendOtherFullMessage;
 
-    public String healSendOtherMessage;
+    public static String healSendSuccessOtherMessage;
 
-    public String healSendOtherFullMessage;
+    public static String lightSendActive;
 
-    public String healSendSuccessOtherMessage;
+    public static String lightSendDisable;
 
-    public String lightSendActive;
+    public static String lightSendOtherActive;
 
-    public String lightSendDisable;
+    public static String lightSendOtherDisable;
 
-    public String lightSendOtherActive;
+    public static String lightSendActivatedOther;
 
-    public String lightSendOtherDisable;
+    public static String lightSendDisabledOther;
 
-    public String lightSendActivatedOther;
+    public static String backSendNotToBack;
 
-    public String lightSendDisabledOther;
+    public static String backSendSuccess;
 
-    public String backSendNotToBack;
+    public static String spawnSendMessage;
 
-    public String backSendSuccess;
+    public static String spawnSendOtherMessage;
 
-    public String spawnSendMessage;
+    public static String spawnSendSuccessOtherMessage;
 
-    public String spawnSendOtherMessage;
+    public static String spawnSendNotSet;
 
-    public String spawnSendSuccessOtherMessage;
+    public static String spawnSendSetMessage;
 
-    public String spawnSendNotSet;
+    public static String spawnSendTimeToTeleport;
 
-    public String spawnSendSetMessage;
+    public static String spawnSendInTeleport;
 
-    public String spawnSendTimeToTeleport;
+    public static String flySendActive;
 
-    public String spawnSendInTeleport;
+    public static String flySendDisable;
 
-    public String flySendActive;
+    public static String flySendOtherActive;
 
-    public String flySendDisable;
+    public static String flySendOtherDisable;
 
-    public String flySendOtherActive;
+    public static String flySendActivatedOther;
 
-    public String flySendOtherDisable;
+    public static String flySendDisabledOther;
 
-    public String flySendActivatedOther;
+    public static String flySendDisabledWorld;
 
-    public String flySendDisabledOther;
+    public static String onlineSendOnline;
 
-    public String flySendDisabledWorld;
+    public static String deathmessagesPlayerKillPlayer;
 
-    public String onlineSendOnline;
+    public static String deathmessagesEntityKillPlayer;
 
-    public String deathmessagesPlayerKillPlayer;
+    public static String deathmessagesNothingKillPlayer;
 
-    public String deathmessagesEntityKillPlayer;
+    public static String deathmessagesCauseNotExist;
 
-    public String deathmessagesNothingKillPlayer;
+    public static String messagesEnterMessage;
 
-    public String deathmessagesCauseNotExist;
+    public static String messagesLeaveMessage;
 
-    public String messagesEnterMessage;
+    public static String announceSendAnnounce;
 
-    public String messagesLeaveMessage;
+    public static String discordchatNoToken;
 
-    public String announceSendAnnounce;
+    public static String discordchatNoChatId;
 
-    public String discordchatNoToken;
+    public static String discordchatMessageToDiscordPattern;
 
-    public String discordchatNoChatId;
+    public static String discordchatDiscordToServerPattern;
 
-    public String discordchatMessageToDiscordPattern;
+    public static String discordchatMessageNotSendToServer;
 
-    public String discordchatDiscordToServerPattern;
+    public static String discordchatDiscordSendLoginMessage;
 
-    public String discordchatMessageNotSendToServer;
+    public static String discordchatDiscordSendLeaveMessage;
 
-    public String discordchatDiscordSendLoginMessage;
+    public static String tphereTeleportedSuccess;
 
-    public String discordchatDiscordSendLeaveMessage;
+    public static String tphereTeleportedOtherSuccess;
 
-    public String tphereTeleportedSuccess;
+    public static String trashMenuName;
 
-    public String tphereTeleportedOtherSuccess;
+    public static String speedSendSuccess;
 
-    public String trashMenuName;
+    public static String speedSendRemove;
 
-    public String speedSendSuccess;
+    public static String speedSendOtherSuccess;
 
-    public String speedSendRemove;
+    public static String speedSendOtherRemove;
 
-    public String speedSendOtherSuccess;
+    public static String speedSendSuccessOther;
 
-    public String speedSendOtherRemove;
+    public static String speedSendRemoveOther;
 
-    public String speedSendSuccessOther;
-
-    public String speedSendRemoveOther;
-
-    public String speedSendIncorrectValue;
+    public static String speedSendIncorrectValue;
 
 }

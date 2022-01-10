@@ -5,6 +5,7 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
 import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.DiscordUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -27,35 +28,35 @@ class PlayerPreCommand : Listener {
     @EventHandler
     fun event(e: PlayerCommandPreprocessEvent) {
         val split = e.message.split(" ")
-        if (MainConfig.getInstance().vanishActivated) {
+        if (MainConfig.vanishActivated) {
             try {
                 vanishPreCommandEvent(e, split)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
         try {
             blockCommands(e, split)
         } catch (e: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
-        if (MainConfig.getInstance().discordbotConnectDiscordChat) {
+        if (MainConfig.discordbotConnectDiscordChat) {
             try {
                 discordChatEvent(e, split)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
 
     private fun blockCommands(e: PlayerCommandPreprocessEvent, split: List<String>) {
         val cmd = split[0]
-        for (blockedCmd in MainConfig.getInstance().antibugsBlockCmds) {
+        for (blockedCmd in MainConfig.antibugsBlockCmds) {
             if ((blockedCmd == cmd || cmd.split(":").toTypedArray().size > 1 && blockedCmd == "/" + cmd.split(":")
                     .toTypedArray()[1]) &&
                 !e.player.hasPermission("essentialsk.bypass.blockedcmd")
             ) {
-                e.player.sendMessage(GeneralLang.getInstance().generalNotPerm)
+                e.player.sendMessage(GeneralLang.generalNotPerm)
                 e.isCancelled = true
                 return
             }
@@ -66,12 +67,12 @@ class PlayerPreCommand : Listener {
         if (split.isEmpty()) {
             return
         }
-        OtherConfig.getInstance().vanishBlockedOtherCmds.also {
+        OtherConfig.vanishBlockedOtherCmds.also {
             if (it.containsKey(split[0])) {
                 val to = it[split[0]]
                 if (split.size >= to!!) {
                     val p = EssentialsK.instance.server.getPlayer(split[to - 1]) ?: return
-                    if (DataManager.getInstance().playerCacheV2[p.name.lowercase()]!!.vanishCache) {
+                    if (PlayerDataV2[p]?.vanishCache ?: return) {
                         e.isCancelled = true
                     }
                 }
@@ -80,43 +81,43 @@ class PlayerPreCommand : Listener {
     }
 
     private fun discordChatEvent(e: PlayerCommandPreprocessEvent, split: List<String>) {
-        if (MainConfig.getInstance().discordbotCommandChat.contains(split[0].lowercase())) {
-            if (DiscordUtil.getInstance().jda == null) {
-                PluginUtil.getInstance().consoleMessage(
-                    EColor.YELLOW.color + GeneralLang.getInstance().discordchatNoToken + EColor.RESET.color
+        if (MainConfig.discordbotCommandChat.contains(split[0].lowercase())) {
+            if (DiscordUtil.jda == null) {
+                PluginUtil.consoleMessage(
+                    EColor.YELLOW.color + GeneralLang.discordchatNoToken + EColor.RESET.color
                 )
                 return
             }
             if (chat == null) {
-                PluginUtil.getInstance().consoleMessage(
-                    EColor.YELLOW.color + GeneralLang.getInstance().generalVaultNotExist + EColor.RESET.color
+                PluginUtil.consoleMessage(
+                    EColor.YELLOW.color + GeneralLang.generalVaultNotExist + EColor.RESET.color
                 )
                 return
             }
             val msg = e.message.replace("${split[0]} ", "")
 
-            val patternMessage = GeneralLang.getInstance().discordchatMessageToDiscordPattern
+            val patternMessage = GeneralLang.discordchatMessageToDiscordPattern
                 .replace("%group%", chat.getPlayerPrefix(e.player))
                 .replace("%message%", msg)
                 .replace("%player%", e.player.name).replace("&[0-9,a-z]".toRegex(), "")
                 .replace("@", "")
 
-            if (DataManager.getInstance().discordChat == null) {
-                TaskUtil.getInstance().asyncExecutor {
+            if (DataManager.discordChat == null) {
+                TaskUtil.asyncExecutor {
                     val newChat =
-                        DiscordUtil.getInstance().jda!!.getTextChannelById(MainConfig.getInstance().discordbotIdDiscordChat)
+                        DiscordUtil.jda!!.getTextChannelById(MainConfig.discordbotIdDiscordChat)
                             ?: run {
-                                PluginUtil.getInstance().consoleMessage(
-                                    EColor.YELLOW.color + GeneralLang.getInstance().discordchatNoChatId + EColor.RESET.color
+                                PluginUtil.consoleMessage(
+                                    EColor.YELLOW.color + GeneralLang.discordchatNoChatId + EColor.RESET.color
                                 )
                                 return@asyncExecutor
                             }
-                    DataManager.getInstance().discordChat = newChat
-                    DataManager.getInstance().discordChat!!.sendMessage(patternMessage).queue()
+                    DataManager.discordChat = newChat
+                    DataManager.discordChat!!.sendMessage(patternMessage).queue()
                 }
                 return
             }
-            DataManager.getInstance().discordChat!!.sendMessage(patternMessage).queue()
+            DataManager.discordChat!!.sendMessage(patternMessage).queue()
         }
     }
 }

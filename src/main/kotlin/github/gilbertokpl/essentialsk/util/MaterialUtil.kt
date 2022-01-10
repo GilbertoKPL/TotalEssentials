@@ -1,17 +1,16 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.manager.IInstance
 import org.bukkit.Material
 
-class MaterialUtil {
+object MaterialUtil {
 
     fun startMaterials() {
-        DataManager.getInstance().material["glass"] =
+        DataManager.material["glass"] =
             materialHelper(listOf("STAINED_GLASS_PANE", "THIN_GLASS", "YELLOW_STAINED_GLASS"))
-        DataManager.getInstance().material["clock"] = materialHelper(listOf("CLOCK", "WATCH"))
-        DataManager.getInstance().material["feather"] = materialHelper(listOf("FEATHER"))
-        DataManager.getInstance().material["soil"] =
+        DataManager.material["clock"] = materialHelper(listOf("CLOCK", "WATCH"))
+        DataManager.material["feather"] = materialHelper(listOf("FEATHER"))
+        DataManager.material["soil"] =
             materialHelper(listOf("SOIL", "SOUL_SOIL"))
     }
 
@@ -25,13 +24,5 @@ class MaterialUtil {
             }
         }
         return mat
-    }
-
-    companion object : IInstance<MaterialUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): MaterialUtil = MaterialUtil()
-        override fun getInstance(): MaterialUtil {
-            return instance
-        }
     }
 }

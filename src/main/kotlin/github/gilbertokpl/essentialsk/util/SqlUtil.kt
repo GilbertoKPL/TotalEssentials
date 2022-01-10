@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.StartLang
-import github.gilbertokpl.essentialsk.manager.IInstance
 import github.gilbertokpl.essentialsk.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.tables.SpawnDataSQL
@@ -16,12 +15,12 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-class SqlUtil {
+object SqlUtil {
 
     lateinit var sql: Database
 
     fun <T> helperUpdater(field: String, col: Column<T>, value: T) {
-        TaskUtil.getInstance().asyncExecutor {
+        TaskUtil.asyncExecutor {
             transaction(sql) {
                 PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq field }) {
                     it[col] = value
@@ -31,34 +30,36 @@ class SqlUtil {
     }
 
     fun startSql() {
-        PluginUtil.getInstance().consoleMessage(StartLang.getInstance().connectDatabase)
+        PluginUtil.consoleMessage(StartLang.connectDatabase)
         try {
-            val type = MainConfig.getInstance().databaseType
+            val type = MainConfig.databaseType
             when (type.lowercase()) {
                 "h2" -> {
-                    sql = Database.connect("jdbc:h2:./${PluginUtil.getInstance().mainPath}/sql/H2SQLV2", "org.h2.Driver")
+                    sql = Database.connect("jdbc:h2:./${PluginUtil.mainPath}/sql/H2SQLV2", "org.h2.Driver")
                 }
                 "mysql" -> {
                     val config = HikariConfig().apply {
                         jdbcUrl =
-                            "jdbc:mysql://${MainConfig.getInstance().databaseSqlIp}:${MainConfig.getInstance().databaseSqlPort}/${MainConfig.getInstance().databaseSqlDatabase}"
+                            "jdbc:mysql://${MainConfig.databaseSqlIp}" +
+                                    ":${MainConfig.databaseSqlPort}" +
+                                    "/${MainConfig.databaseSqlDatabase}"
                         driverClassName = "org.mariadb.jdbc.Driver"
-                        username = MainConfig.getInstance().databaseSqlUsername
-                        password = MainConfig.getInstance().databaseSqlPassword
+                        username = MainConfig.databaseSqlUsername
+                        password = MainConfig.databaseSqlPassword
                         maximumPoolSize = 40
                     }
                     val dataSource = HikariDataSource(config)
                     sql = Database.connect(dataSource)
                 }
                 else -> {
-                    sql = Database.connect("jdbc:h2:./${PluginUtil.getInstance().mainPath}/sql/H2SQLV2", "org.h2.Driver")
-                    PluginUtil.getInstance().consoleMessage(StartLang.getInstance().databaseValid)
+                    sql = Database.connect("jdbc:h2:./${PluginUtil.mainPath}/sql/H2SQLV2", "org.h2.Driver")
+                    PluginUtil.consoleMessage(StartLang.databaseValid)
                 }
             }
-            PluginUtil.getInstance()
-                .consoleMessage(StartLang.getInstance().connectDatabaseSuccess.replace("%db%", type.lowercase()))
+            PluginUtil
+                .consoleMessage(StartLang.connectDatabaseSuccess.replace("%db%", type.lowercase()))
         } catch (ex: Exception) {
-            FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(ex))
+            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
         }
     }
 
@@ -68,13 +69,4 @@ class SqlUtil {
             SchemaUtils.createMissingTablesAndColumns(KitsDataSQL, PlayerDataSQL, WarpsDataSQL, SpawnDataSQL)
         }
     }
-
-    companion object : IInstance<SqlUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): SqlUtil = SqlUtil()
-        override fun getInstance(): SqlUtil {
-            return instance
-        }
-    }
 }
-

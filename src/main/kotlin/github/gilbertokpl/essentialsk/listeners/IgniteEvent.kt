@@ -10,11 +10,11 @@ import org.bukkit.event.block.BlockIgniteEvent
 class IgniteEvent : Listener {
     @EventHandler
     fun event(e: BlockIgniteEvent) {
-        if (MainConfig.getInstance().addonsBlockPropagationFire) {
+        if (MainConfig.addonsBlockPropagationFire) {
             try {
                 blockPropagationFire(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }

@@ -1,6 +1,5 @@
 package github.gilbertokpl.essentialsk.data.sql
 
-import github.gilbertokpl.essentialsk.manager.IInstance
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.util.LocationUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
@@ -9,11 +8,11 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-class PlayerDataSQLUtil {
+object PlayerDataSQLUtil {
 
     fun getHomeLocationSQL(home: String, playerID: String): Location? {
         lateinit var homesList: String
-        transaction(SqlUtil.getInstance().sql) {
+        transaction(SqlUtil.sql) {
             PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also { query ->
                 homesList = query.single()[PlayerDataSQL.SavedHomes]
             }
@@ -22,7 +21,7 @@ class PlayerDataSQLUtil {
             if (h == "") continue
             val split = h.split(",")
             if (home.lowercase() == split[0]) {
-                return LocationUtil.getInstance().locationSerializer(split[1])
+                return LocationUtil.locationSerializer(split[1])
             }
         }
         return null
@@ -32,7 +31,7 @@ class PlayerDataSQLUtil {
         lateinit var homesList: String
         val cacheHomes = ArrayList<String>()
         var bol = false
-        transaction(SqlUtil.getInstance().sql) {
+        transaction(SqlUtil.sql) {
             PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also { query ->
                 if (query.empty()) {
                     bol = true
@@ -57,7 +56,7 @@ class PlayerDataSQLUtil {
 
         lateinit var homes: String
 
-        transaction(SqlUtil.getInstance().sql) {
+        transaction(SqlUtil.sql) {
             PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also { query ->
                 homes = query.single()[PlayerDataSQL.SavedHomes]
             }
@@ -74,7 +73,7 @@ class PlayerDataSQLUtil {
             }
         }
 
-        transaction(SqlUtil.getInstance().sql) {
+        transaction(SqlUtil.sql) {
             PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq playerID }) {
                 it[SavedHomes] = newHome
             }
@@ -84,9 +83,9 @@ class PlayerDataSQLUtil {
 
     fun setHomeSQL(name: String, loc: Location, playerID: String) {
         lateinit var homes: String
-        val serializedHome = LocationUtil.getInstance().locationSerializer(loc)
+        val serializedHome = LocationUtil.locationSerializer(loc)
         var emptyQuery = false
-        transaction(SqlUtil.getInstance().sql) {
+        transaction(SqlUtil.sql) {
             PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also { query ->
                 emptyQuery = query.empty()
                 if (emptyQuery) {
@@ -108,7 +107,7 @@ class PlayerDataSQLUtil {
             newHome += "|$h"
         }
 
-        transaction(SqlUtil.getInstance().sql) {
+        transaction(SqlUtil.sql) {
             PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq playerID }) {
                 it[SavedHomes] = newHome
             }
@@ -119,7 +118,7 @@ class PlayerDataSQLUtil {
         var query = false
         lateinit var kitTime: String
 
-        transaction(SqlUtil.getInstance().sql) {
+        transaction(SqlUtil.sql) {
             PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also {
                 query = it.empty()
                 kitTime = it.single()[PlayerDataSQL.KitsTime]
@@ -127,7 +126,7 @@ class PlayerDataSQLUtil {
         }
 
         if (query || kitTime == "") {
-            transaction(SqlUtil.getInstance().sql) {
+            transaction(SqlUtil.sql) {
                 PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq playerID }) {
                     it[KitsTime] = "$kit,$time"
                 }
@@ -149,18 +148,10 @@ class PlayerDataSQLUtil {
         } else {
             "|$kit,$time"
         }
-        transaction(SqlUtil.getInstance().sql) {
+        transaction(SqlUtil.sql) {
             PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq playerID }) {
                 it[KitsTime] = newPlace
             }
-        }
-    }
-
-    companion object : IInstance<PlayerDataSQLUtil> {
-        private val instance = createInstance()
-        override fun createInstance(): PlayerDataSQLUtil = PlayerDataSQLUtil()
-        override fun getInstance(): PlayerDataSQLUtil {
-            return instance
         }
     }
 }

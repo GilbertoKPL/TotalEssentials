@@ -10,11 +10,11 @@ import org.bukkit.event.entity.CreatureSpawnEvent
 class CreatureSpawn : Listener {
     @EventHandler
     fun event(e: CreatureSpawnEvent) {
-        if (MainConfig.getInstance().antibugsBlockMobCatch) {
+        if (MainConfig.antibugsBlockMobCatch) {
             try {
                 blockMobCatch(e)
             } catch (e: Exception) {
-                FileLoggerUtil.getInstance().logError(ExceptionUtils.getStackTrace(e))
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
     }
