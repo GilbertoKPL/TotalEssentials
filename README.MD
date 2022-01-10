@@ -3,6 +3,14 @@
 * A core system for minecraft server that supports most versions (1.5.2 - 1.18.0), using only database as a storage
   medium and various built-in commands / systems, which can be disabled at any time.
 
+# Bstats
+
+<p align="center">
+    <a href="https://bstats.org/plugin/bukkit/EssentialsK" title="EssentialsK on bStats">
+        <img src="https://bstats.org/signatures/bukkit/EssentialsK.svg" />
+    </a>
+</p>
+
 ## Languages
 
 - pt_BR
