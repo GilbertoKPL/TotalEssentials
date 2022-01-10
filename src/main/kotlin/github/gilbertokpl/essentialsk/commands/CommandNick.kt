@@ -5,8 +5,8 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -20,8 +20,8 @@ class CommandNick : CommandCreator {
     override val minimumSize = 1
     override val maximumSize = 2
     override val commandUsage = listOf(
-        "/nick <NickName>",
-        "/nick remove",
+        "P_/nick <NickName>",
+        "P_/nick remove",
         "essentialsk.commands.nick.other_/nick <player> <NickName>",
         "essentialsk.commands.nick.other_/nick <player> remove"
     )
@@ -32,7 +32,7 @@ class CommandNick : CommandCreator {
         if (args.size == 1 && s is Player) {
 
             //check if nickname do not contain special
-            if (PluginUtil.checkSpecialCaracteres(args[0])) {
+            if (MainUtil.checkSpecialCaracteres(args[0])) {
                 s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
                 return false
             }
@@ -80,7 +80,7 @@ class CommandNick : CommandCreator {
         if (args.size != 2) return true
 
         //check if nickname do not contain . or - to not bug
-        if (PluginUtil.checkSpecialCaracteres(args[1])) {
+        if (MainUtil.checkSpecialCaracteres(args[1])) {
             s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
             return false
         }

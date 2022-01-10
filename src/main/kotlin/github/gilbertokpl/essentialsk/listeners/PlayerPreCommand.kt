@@ -9,7 +9,7 @@ import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.DiscordUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
+import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import net.milkbowl.vault.chat.Chat
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -83,13 +83,13 @@ class PlayerPreCommand : Listener {
     private fun discordChatEvent(e: PlayerCommandPreprocessEvent, split: List<String>) {
         if (MainConfig.discordbotCommandChat.contains(split[0].lowercase())) {
             if (DiscordUtil.jda == null) {
-                PluginUtil.consoleMessage(
+                MainUtil.consoleMessage(
                     EColor.YELLOW.color + GeneralLang.discordchatNoToken + EColor.RESET.color
                 )
                 return
             }
             if (chat == null) {
-                PluginUtil.consoleMessage(
+                MainUtil.consoleMessage(
                     EColor.YELLOW.color + GeneralLang.generalVaultNotExist + EColor.RESET.color
                 )
                 return
@@ -107,7 +107,7 @@ class PlayerPreCommand : Listener {
                     val newChat =
                         DiscordUtil.jda!!.getTextChannelById(MainConfig.discordbotIdDiscordChat)
                             ?: run {
-                                PluginUtil.consoleMessage(
+                                MainUtil.consoleMessage(
                                     EColor.YELLOW.color + GeneralLang.discordchatNoChatId + EColor.RESET.color
                                 )
                                 return@asyncExecutor

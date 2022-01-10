@@ -1,16 +1,19 @@
 package github.gilbertokpl.essentialsk.util
 
-import github.gilbertokpl.essentialsk.data.DataManager
 import org.bukkit.Material
 
 object MaterialUtil {
 
+    private val material = HashMap<String, Material>(10)
+
+    operator fun get(mat: String) = material[mat.lowercase()]
+
     fun startMaterials() {
-        DataManager.material["glass"] =
+        material["glass"] =
             materialHelper(listOf("STAINED_GLASS_PANE", "THIN_GLASS", "YELLOW_STAINED_GLASS"))
-        DataManager.material["clock"] = materialHelper(listOf("CLOCK", "WATCH"))
-        DataManager.material["feather"] = materialHelper(listOf("FEATHER"))
-        DataManager.material["soil"] =
+        material["clock"] = materialHelper(listOf("CLOCK", "WATCH"))
+        material["feather"] = materialHelper(listOf("FEATHER"))
+        material["soil"] =
             materialHelper(listOf("SOIL", "SOUL_SOIL"))
     }
 

@@ -66,7 +66,7 @@ object PlayerUtil {
 
     fun sendLoginEmbed(p: Player) {
         if (DiscordUtil.jda == null) {
-            PluginUtil.consoleMessage(
+            MainUtil.consoleMessage(
                 EColor.YELLOW.color + GeneralLang.discordchatNoToken + EColor.RESET.color
             )
             return
@@ -76,7 +76,7 @@ object PlayerUtil {
                 val newChat =
                     DiscordUtil.jda!!.getTextChannelById(MainConfig.discordbotIdDiscordChat)
                         ?: run {
-                            PluginUtil.consoleMessage(
+                            MainUtil.consoleMessage(
                                 EColor.YELLOW.color + GeneralLang.discordchatNoChatId + EColor.RESET.color
                             )
                             return@asyncExecutor
@@ -86,7 +86,7 @@ object PlayerUtil {
                 DataManager.discordChat!!.sendMessageEmbeds(
                     EmbedBuilder().setDescription(
                         GeneralLang.discordchatDiscordSendLoginMessage.replace("%player%", p.name)
-                    ).setColor(PluginUtil.randomColor()).build()
+                    ).setColor(MainUtil.randomColor()).build()
                 ).complete()
             }
         }
@@ -94,7 +94,7 @@ object PlayerUtil {
         DataManager.discordChat?.sendMessageEmbeds(
             EmbedBuilder().setDescription(
                 GeneralLang.discordchatDiscordSendLoginMessage.replace("%player%", p.name)
-            ).setColor(PluginUtil.randomColor()).build()
+            ).setColor(MainUtil.randomColor()).build()
         )?.queue()
     }
 }

@@ -1,10 +1,10 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.KitDataV2
 import github.gilbertokpl.essentialsk.data.sql.KitDataSQLUtil
 import github.gilbertokpl.essentialsk.manager.CommandCreator
-import github.gilbertokpl.essentialsk.util.PluginUtil
+import github.gilbertokpl.essentialsk.util.MainUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
@@ -25,12 +25,12 @@ class CommandCreateKit : CommandCreator {
         }
 
         //check if kit name do not contain special
-        if (PluginUtil.checkSpecialCaracteres(args[0])) {
+        if (MainUtil.checkSpecialCaracteres(args[0])) {
             s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
             return false
         }
 
-        val dataInstance = DataManager.kitCacheV2[args[0].lowercase()]
+        val dataInstance = KitDataV2[args[0]]
 
         //check if exist
         if (dataInstance != null) {

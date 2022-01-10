@@ -3,8 +3,8 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -32,7 +32,7 @@ class CommandAnnounce : CommandCreator {
         } else {
             PermissionUtil.colorPermission(s, msg.toString())
         }
-        PluginUtil.serverMessage(
+        MainUtil.serverMessage(
             GeneralLang.announceSendAnnounce
                 .replace("%name%", name)
                 .replace("%message%", newMessage)

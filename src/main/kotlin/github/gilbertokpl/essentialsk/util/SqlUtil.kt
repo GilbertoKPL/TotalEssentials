@@ -30,12 +30,12 @@ object SqlUtil {
     }
 
     fun startSql() {
-        PluginUtil.consoleMessage(StartLang.connectDatabase)
+        MainUtil.consoleMessage(StartLang.connectDatabase)
         try {
             val type = MainConfig.databaseType
             when (type.lowercase()) {
                 "h2" -> {
-                    sql = Database.connect("jdbc:h2:./${PluginUtil.mainPath}/sql/H2SQLV2", "org.h2.Driver")
+                    sql = Database.connect("jdbc:h2:./${MainUtil.mainPath}/sql/H2SQLV2", "org.h2.Driver")
                 }
                 "mysql" -> {
                     val config = HikariConfig().apply {
@@ -52,11 +52,11 @@ object SqlUtil {
                     sql = Database.connect(dataSource)
                 }
                 else -> {
-                    sql = Database.connect("jdbc:h2:./${PluginUtil.mainPath}/sql/H2SQLV2", "org.h2.Driver")
-                    PluginUtil.consoleMessage(StartLang.databaseValid)
+                    sql = Database.connect("jdbc:h2:./${MainUtil.mainPath}/sql/H2SQLV2", "org.h2.Driver")
+                    MainUtil.consoleMessage(StartLang.databaseValid)
                 }
             }
-            PluginUtil
+            MainUtil
                 .consoleMessage(StartLang.connectDatabaseSuccess.replace("%db%", type.lowercase()))
         } catch (ex: Exception) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))

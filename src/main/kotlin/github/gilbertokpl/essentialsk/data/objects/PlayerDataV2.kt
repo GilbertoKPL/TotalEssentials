@@ -92,7 +92,7 @@ data class PlayerDataV2(
                 !player.hasPermission("essentialsk.bypass.nickblockednicks") &&
                 !exist
             ) {
-                    return true
+                return true
             }
             player.setDisplayName(newNick)
         }
@@ -144,7 +144,8 @@ data class PlayerDataV2(
             ReflectUtil.getPlayers().forEach {
                 @Suppress("DEPRECATION")
                 if (!it.hasPermission("essentialsk.commands.vanish") &&
-                    !it.hasPermission("essentialsk.bypass.vanish")) {
+                    !it.hasPermission("essentialsk.bypass.vanish")
+                ) {
                     it.hidePlayer(player)
                 }
             }
@@ -223,7 +224,7 @@ data class PlayerDataV2(
 
     companion object : Listener {
 
-        private val playerCacheV2 = mutableMapOf<String, PlayerDataV2>()
+        private val playerCacheV2 = HashMap<String, PlayerDataV2>()
 
         operator fun get(p: Player) = playerCacheV2[p.name.lowercase()]
 
@@ -291,7 +292,7 @@ data class PlayerDataV2(
 
                         if (!vanish && !p.hasPermission("*")) {
                             if (MainConfig.messagesLoginMessage) {
-                                PluginUtil.serverMessage(
+                                MainUtil.serverMessage(
                                     GeneralLang.messagesEnterMessage
                                         .replace("%player%", p.name)
                                 )
@@ -301,9 +302,9 @@ data class PlayerDataV2(
                             }
                         }
 
-                        val spawn = SpawnData("spawn")
-                        if (!spawn.checkCache()) {
-                            p.teleport(SpawnData("spawn").getLocation())
+                        val spawn = SpawnDataV2["spawn"]
+                        if (spawn != null) {
+                            p.teleport(spawn)
                         }
                     }, 5L)
                 }
@@ -324,7 +325,7 @@ data class PlayerDataV2(
 
             if (!cache.vanishCache && !p.hasPermission("*")) {
                 if (MainConfig.messagesLoginMessage) {
-                    PluginUtil.serverMessage(
+                    MainUtil.serverMessage(
                         GeneralLang.messagesEnterMessage
                             .replace("%player%", p.name)
                     )

@@ -35,19 +35,19 @@ object ConfigUtil {
     private var bol = false
 
     fun start() {
-        PluginUtil.consoleMessage(StartLang.startVerification.replace("%to%", "config"))
+        MainUtil.consoleMessage(StartLang.startVerification.replace("%to%", "config"))
 
         startFun("configs", false)
 
-        PluginUtil.consoleMessage(StartLang.completeVerification)
+        MainUtil.consoleMessage(StartLang.completeVerification)
 
-        PluginUtil.consoleMessage(StartLang.startVerification.replace("%to%", "lang"))
+        MainUtil.consoleMessage(StartLang.startVerification.replace("%to%", "lang"))
 
         startFun("langs", true)
 
         OtherConfigUtil.start()
 
-        PluginUtil.consoleMessage(StartLang.completeVerification)
+        MainUtil.consoleMessage(StartLang.completeVerification)
     }
 
     internal fun getString(source: YamlFile, path: String, color: Boolean = true): String? {
@@ -140,18 +140,18 @@ object ConfigUtil {
 
     private fun langHelper(): File {
         var langSelected =
-            File(PluginUtil.langPath, "${MainConfig.generalSelectedLang}.yml")
+            File(MainUtil.langPath, "${MainConfig.generalSelectedLang}.yml")
 
         if (langSelected.exists()) {
-            PluginUtil.consoleMessage(
+            MainUtil.consoleMessage(
                 StartLang.langSelectedMessage.replace(
                     "%lang%",
                     "${MainConfig.generalSelectedLang}.yml"
                 )
             )
         } else {
-            langSelected = File(PluginUtil.langPath, "pt_BR.yml")
-            PluginUtil.consoleMessage(StartLang.langError)
+            langSelected = File(MainUtil.langPath, "pt_BR.yml")
+            MainUtil.consoleMessage(StartLang.langError)
         }
         return langSelected
     }
@@ -162,11 +162,11 @@ object ConfigUtil {
         val message: String
         if (lang) {
             location = "/langs/$source.yml"
-            dir = PluginUtil.langPath
+            dir = MainUtil.langPath
             message = "lang"
         } else {
             location = "/configs/$source.yml"
-            dir = PluginUtil.mainPath
+            dir = MainUtil.mainPath
             message = "config"
         }
         try {
@@ -199,7 +199,7 @@ object ConfigUtil {
             }
             File(dir).mkdirs()
             Files.copy(resource!!, configFile.toPath())
-            PluginUtil.consoleMessage(
+            MainUtil.consoleMessage(
                 StartLang.createMessage.replace("%to%", message).replace("%file%", configFile.name)
             )
             if (!lang) {
@@ -277,7 +277,7 @@ object ConfigUtil {
             if (toCheckYaml.getComment(createConfig.key) != null) {
                 checkerYaml.setComment(createConfig.key, toCheckYaml.getComment(createConfig.key))
             }
-            PluginUtil.consoleMessage(
+            MainUtil.consoleMessage(
                 StartLang.addMessage.replace("%path%", createConfig.key)
                     .replace("%file%", configFile.name)
             )
@@ -295,7 +295,7 @@ object ConfigUtil {
             if (checkerYaml.getComment(deleteConfig.key) != null) {
                 checkerYaml.setComment(deleteConfig.key, null)
             }
-            PluginUtil.consoleMessage(
+            MainUtil.consoleMessage(
                 StartLang.removeMessage.replace("%path%", deleteConfig.key)
                     .replace("%file%", configFile.name)
             )

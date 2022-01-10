@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.SpawnData
+import github.gilbertokpl.essentialsk.data.objects.SpawnDataV2
 import github.gilbertokpl.essentialsk.data.start.PlayerDataLoader
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -35,11 +35,13 @@ class PlayerRespawn : Listener {
     }
 
     private fun spawnRespawn(e: PlayerRespawnEvent) {
-        val loc = SpawnData("spawn")
-        if (loc.checkCache()) {
-            e.player.sendMessage(GeneralLang.spawnSendNotSet)
+        val p = e.player
+        val loc = SpawnDataV2["spawn"] ?: run {
+            if (p.hasPermission("*")) {
+                p.sendMessage(GeneralLang.spawnSendNotSet)
+            }
             return
         }
-        e.respawnLocation = loc.getLocation()
+        p.teleport(loc)
     }
 }

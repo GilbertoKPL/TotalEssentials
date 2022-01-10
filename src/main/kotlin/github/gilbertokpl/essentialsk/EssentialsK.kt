@@ -34,7 +34,7 @@ class EssentialsK : JavaPlugin() {
 
         ManifestUtil.start()
 
-        PluginUtil.startMetrics()
+        MainUtil.startMetrics()
 
         super.onLoad()
     }
@@ -49,13 +49,13 @@ class EssentialsK : JavaPlugin() {
 
         SqlUtil.startTables()
 
-        PluginUtil.startCommands()
+        MainUtil.startCommands()
 
         MaterialUtil.startMaterials()
 
-        PluginUtil.startInventories()
+        MainUtil.startInventories()
 
-        PluginUtil.startEvents()
+        MainUtil.startEvents()
 
         if (Bukkit.getBukkitVersion().contains("1.5.2") || Bukkit.getVersion().contains("1.5.2")) {
             lowVersion = true

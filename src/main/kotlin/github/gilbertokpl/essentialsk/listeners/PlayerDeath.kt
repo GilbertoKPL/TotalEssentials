@@ -5,7 +5,7 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
+import github.gilbertokpl.essentialsk.util.MainUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -59,7 +59,7 @@ class PlayerDeath : Listener {
         val pName = e.entity.player!!.name
 
         val damageCause = e.entity.player!!.lastDamageCause ?: run {
-            PluginUtil.serverMessage(
+            MainUtil.serverMessage(
                 GeneralLang.deathmessagesNothingKillPlayer
                     .replace("%player%", pName)
             )
@@ -69,7 +69,7 @@ class PlayerDeath : Listener {
         if (damageCause.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
             val ent = damageCause as EntityDamageByEntityEvent
             if (ent.damager is Player) {
-                PluginUtil.serverMessage(
+                MainUtil.serverMessage(
                     GeneralLang.deathmessagesPlayerKillPlayer
                         .replace("%player%", pName)
                         .replace("%killer%", ent.damager.name)
@@ -80,7 +80,7 @@ class PlayerDeath : Listener {
                 OtherConfig.deathmessageListReplacer[ent.damager.toString().lowercase()] ?: run {
                     ent.damager.toString().lowercase()
                 }
-            PluginUtil.serverMessage(
+            MainUtil.serverMessage(
                 GeneralLang.deathmessagesEntityKillPlayer
                     .replace("%player%", pName)
                     .replace("%entity%", causeMessage)
@@ -90,17 +90,17 @@ class PlayerDeath : Listener {
 
         val causeMessage =
             OtherConfig.deathmessageListReplacer[damageCause.cause.name.lowercase()] ?: run {
-                PluginUtil.consoleMessage(
+                MainUtil.consoleMessage(
                     GeneralLang.deathmessagesCauseNotExist
                         .replace("%cause%", damageCause.cause.name.lowercase())
                 )
-                PluginUtil.serverMessage(
+                MainUtil.serverMessage(
                     GeneralLang.deathmessagesNothingKillPlayer
                         .replace("%player%", pName)
                 )
                 return
             }
-        PluginUtil.serverMessage(
+        MainUtil.serverMessage(
             causeMessage.replace("%player%", pName)
         )
     }

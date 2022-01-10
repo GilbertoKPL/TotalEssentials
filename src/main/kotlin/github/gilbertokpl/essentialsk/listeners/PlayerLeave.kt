@@ -8,7 +8,7 @@ import github.gilbertokpl.essentialsk.data.start.PlayerDataLoader
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.DiscordUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
+import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import net.dv8tion.jda.api.EmbedBuilder
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -32,7 +32,7 @@ class PlayerLeave : Listener {
             val playerData = PlayerDataV2[e.player] ?: return
             if (!playerData.vanishCache && !e.player.hasPermission("*")) {
                 if (MainConfig.messagesLeaveMessage) {
-                    PluginUtil.serverMessage(
+                    MainUtil.serverMessage(
                         GeneralLang.messagesLeaveMessage
                             .replace("%player%", e.player.name)
                     )
@@ -61,7 +61,7 @@ class PlayerLeave : Listener {
 
     private fun sendLeaveEmbed(e: PlayerQuitEvent) {
         if (DiscordUtil.jda == null) {
-            PluginUtil.consoleMessage(
+            MainUtil.consoleMessage(
                 EColor.YELLOW.color + GeneralLang.discordchatNoToken + EColor.RESET.color
             )
             return
@@ -71,7 +71,7 @@ class PlayerLeave : Listener {
                 val newChat =
                     DiscordUtil.jda!!.getTextChannelById(MainConfig.discordbotIdDiscordChat)
                         ?: run {
-                            PluginUtil.consoleMessage(
+                            MainUtil.consoleMessage(
                                 EColor.YELLOW.color + GeneralLang.discordchatNoChatId + EColor.RESET.color
                             )
                             return@asyncExecutor
@@ -81,7 +81,7 @@ class PlayerLeave : Listener {
                 DataManager.discordChat!!.sendMessageEmbeds(
                     EmbedBuilder().setDescription(
                         GeneralLang.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name)
-                    ).setColor(PluginUtil.randomColor()).build()
+                    ).setColor(MainUtil.randomColor()).build()
                 ).complete()
             }
             return
@@ -90,7 +90,7 @@ class PlayerLeave : Listener {
         DataManager.discordChat!!.sendMessageEmbeds(
             EmbedBuilder().setDescription(
                 GeneralLang.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name)
-            ).setColor(PluginUtil.randomColor()).build()
+            ).setColor(MainUtil.randomColor()).build()
         ).queue()
     }
 }

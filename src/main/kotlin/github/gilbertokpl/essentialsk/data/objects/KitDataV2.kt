@@ -5,8 +5,11 @@ import github.gilbertokpl.essentialsk.data.sql.KitDataSQLUtil
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.util.ItemUtil
+import github.gilbertokpl.essentialsk.util.SqlUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.inventory.ItemStack
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 
 data class KitDataV2(
     val name: String,
@@ -80,5 +83,40 @@ data class KitDataV2(
 
     private fun reloadGui() {
         KitGuiInventory.setup()
+    }
+
+    companion object {
+
+        private val kitCacheV2 = mutableMapOf<String, KitDataV2>()
+
+        operator fun get(warp: String) = kitCacheV2[warp.lowercase()]
+
+        fun remove(warp: String) = kitCacheV2.remove(warp.lowercase())
+
+        fun put(warp: String, data: KitDataV2) = kitCacheV2.put(warp.lowercase(), data)
+
+        fun getList() = kitCacheV2.map { it.key }
+
+        fun getMap() = kitCacheV2
+
+        fun loadKitCache() {
+            transaction(SqlUtil.sql) {
+                for (values in KitsDataSQL.selectAll()) {
+                    val kit = values[KitsDataSQL.kitName]
+                    val kitFakeName = values[KitsDataSQL.kitFakeName]
+                    val kitTime = values[KitsDataSQL.kitTime]
+                    val item = values[KitsDataSQL.kitItems]
+                    val weight = values[KitsDataSQL.kitWeight]
+                    kitCacheV2[kit] = KitDataV2(
+                        kit,
+                        kitFakeName,
+                        ItemUtil.itemSerializer(item),
+                        kitTime,
+                        weight
+                    )
+                }
+            }
+        }
+
     }
 }

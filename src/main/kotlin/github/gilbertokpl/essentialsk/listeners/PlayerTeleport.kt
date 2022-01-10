@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
-import github.gilbertokpl.essentialsk.data.objects.SpawnData
+import github.gilbertokpl.essentialsk.data.objects.SpawnDataV2
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Material
@@ -39,6 +39,7 @@ class PlayerTeleport : Listener {
         }
     }
 
+
     private fun setBackLocation(e: PlayerTeleportEvent) {
         if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.backDisabledWorlds.contains(
                 e.player.world.name.lowercase()
@@ -65,16 +66,18 @@ class PlayerTeleport : Listener {
     }
 
     private fun blockPassNetherCeiling(e: PlayerTeleportEvent) {
+        val p = e.player
         if (
-            !e.player.hasPermission("essentialsk.bypass.netherceiling") &&
+            !p.hasPermission("essentialsk.bypass.netherceiling") &&
             e.to != null && e.to!!.world!!.environment === World.Environment.NETHER && e.to!!.y > 124.0
         ) {
-            val loc = SpawnData("spawn")
-            if (loc.checkCache()) {
-                e.player.sendMessage(GeneralLang.spawnSendNotSet)
+            val loc = SpawnDataV2["spawn"] ?: run {
+                if (p.hasPermission("*")) {
+                    p.sendMessage(GeneralLang.spawnSendNotSet)
+                }
                 return
             }
-            e.player.teleport(loc.getLocation())
+            p.teleport(loc)
             e.player.sendMessage(GeneralLang.generalNotPermAction)
         }
     }

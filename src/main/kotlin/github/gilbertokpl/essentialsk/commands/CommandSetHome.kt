@@ -5,8 +5,8 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.objects.OfflinePlayerData
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
-import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -65,7 +65,7 @@ class CommandSetHome : CommandCreator {
         }
 
         //check if home name do not contain . or - to not bug
-        if (PluginUtil.checkSpecialCaracteres(nameHome)) {
+        if (MainUtil.checkSpecialCaracteres(nameHome)) {
             s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
             return false
         }
@@ -95,7 +95,8 @@ class CommandSetHome : CommandCreator {
 
         //check limit of homes
         if (playerCache.homeCache.size >= playerCache.homeLimitCache &&
-            !s.hasPermission("essentialsk.bypass.homelimit")) {
+            !s.hasPermission("essentialsk.bypass.homelimit")
+        ) {
             s.sendMessage(
                 GeneralLang.homesHomeLimitCreated.replace(
                     "%limit%",

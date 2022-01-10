@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.util.ItemUtil
+import github.gilbertokpl.essentialsk.util.MaterialUtil
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -23,7 +24,7 @@ object EditKitInventory {
             if (inventory == 12) {
                 DataManager.editKitInventory[inventory] =
                     ItemUtil.item(
-                        DataManager.material["clock"]!!,
+                        MaterialUtil["clock"]!!,
                         GeneralLang.kitsEditKitInventoryTimeName,
                         GeneralLang.kitsEditKitInventoryTimeLore
                     )
@@ -41,14 +42,14 @@ object EditKitInventory {
             if (inventory == 16) {
                 DataManager.editKitInventory[inventory] =
                     ItemUtil.item(
-                        DataManager.material["feather"]!!,
+                        MaterialUtil["feather"]!!,
                         GeneralLang.kitsEditKitInventoryWeightName,
                         GeneralLang.kitsEditKitInventoryWeightLore
                     )
                 continue
             }
             DataManager.editKitInventory[inventory] =
-                ItemUtil.item(DataManager.material["glass"]!!, "", true)
+                ItemUtil.item(MaterialUtil["glass"]!!, "", true)
         }
     }
 

@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.KitDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.bukkit.command.Command
@@ -23,7 +24,7 @@ class CommandKit : CommandCreator {
             s.sendMessage(
                 GeneralLang.kitsList.replace(
                     "%kits%",
-                    DataManager.kitCacheV2.map { it.key }.toString()
+                    KitDataV2.getList().toString()
                 )
             )
             return false
@@ -41,14 +42,14 @@ class CommandKit : CommandCreator {
             return false
         }
 
-        val dataInstance = DataManager.kitCacheV2[args[0]]
+        val dataInstance = KitDataV2[args[0]]
 
         //check if not exist
         if (dataInstance == null) {
             s.sendMessage(
                 GeneralLang.kitsList.replace(
                     "%kits%",
-                    DataManager.kitCacheV2.map { it.key }.toString()
+                    KitDataV2.getList().toString()
                 )
             )
             return false

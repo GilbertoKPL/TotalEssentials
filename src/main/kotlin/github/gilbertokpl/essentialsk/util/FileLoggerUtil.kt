@@ -53,7 +53,7 @@ object FileLoggerUtil {
     }
 
     private fun printError(fileName: String) {
-        PluginUtil.consoleMessage(
+        MainUtil.consoleMessage(
             EColor.RED.color +
                     "Error in plugin" +
                     ", saved in $fileName" +
@@ -65,8 +65,8 @@ object FileLoggerUtil {
     fun logError(exception: String) {
         val dtf = DateTimeFormatter.ofPattern("HH-mm-ss_dd-MM-yyyy")
         val fileName = "/log/${dtf.format(LocalDateTime.now())}.txt"
-        val file = File(PluginUtil.mainPath, fileName)
-        File(PluginUtil.mainPath, "/log").mkdirs()
+        val file = File(MainUtil.mainPath, fileName)
+        File(MainUtil.mainPath, "/log").mkdirs()
 
         printError(fileName)
 

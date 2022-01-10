@@ -13,7 +13,7 @@ import java.nio.file.StandardCopyOption
 object VersionUtil {
     fun check(): Boolean {
         try {
-            PluginUtil
+            MainUtil
                 .consoleMessage(StartLang.startVerification.replace("%to%", "version of plugin"))
 
             val checkJson =
@@ -34,13 +34,13 @@ object VersionUtil {
             }
 
             if (versionJson.replace(".", "").toInt() > versionPlugin.replace(".", "").toDouble()) {
-                PluginUtil
+                MainUtil
                     .consoleMessage(StartLang.updatePlugin.replace("%version%", versionJson))
 
                 val newJar =
-                    PluginUtil.fileDownloader(checkJson.get("download").asString) ?: return false
+                    MainUtil.fileDownloader(checkJson.get("download").asString) ?: return false
 
-                val pluginPath = File(PluginUtil.pluginPath)
+                val pluginPath = File(MainUtil.pluginPath)
 
                 var pluginRealPath = File(
                     pluginPath.path.replace(
@@ -55,19 +55,30 @@ object VersionUtil {
 
                 Files.copy(newJar, pluginRealPath.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
-                PluginUtil.consoleMessage(StartLang.updatePluginMessage)
+                MainUtil.consoleMessage(StartLang.updatePluginMessage)
 
                 try {
-                    PluginUtil.unloadPlugin(EssentialsK.instance)
-                } finally {
+                    try {
+                        PluginUtil.unload(EssentialsK.instance)
+                    } finally {
+                        pluginPath.delete()
+                        EssentialsK.instance.server.dispatchCommand(
+                            EssentialsK.instance.server.consoleSender,
+                            "restart"
+                        )
+                    }
+                } catch (e: Exception) {
                     pluginPath.delete()
-                    EssentialsK.instance.server.dispatchCommand(EssentialsK.instance.server.consoleSender, "restart")
+                    EssentialsK.instance.server.dispatchCommand(
+                        EssentialsK.instance.server.consoleSender,
+                        "restart"
+                    )
                 }
                 return true
             } else {
                 FileLoggerUtil.logger = logger
             }
-            PluginUtil.consoleMessage(StartLang.completeVerification)
+            MainUtil.consoleMessage(StartLang.completeVerification)
             return false
         } catch (ex: Exception) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))

@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.objects.WarpData
+import github.gilbertokpl.essentialsk.data.objects.WarpDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -23,17 +23,13 @@ class CommandDelWarp : CommandCreator {
             return false
         }
 
-        val warpName = args[0].lowercase()
-        val warpInstance = WarpData(warpName)
-
-        //check if exist
-        if (warpInstance.checkCache()) {
+        WarpDataV2[args[0]] ?: run {
             s.sendMessage(GeneralLang.warpsNameDontExist)
             return false
         }
 
         s.sendMessage(GeneralLang.generalSendingInfoToDb)
-        warpInstance.delWarp(s)
+        WarpDataV2.del(args[0])
 
         return false
     }

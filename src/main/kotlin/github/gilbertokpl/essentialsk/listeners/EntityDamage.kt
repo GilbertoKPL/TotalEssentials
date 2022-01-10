@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.SpawnData
+import github.gilbertokpl.essentialsk.data.objects.SpawnDataV2
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.entity.Player
@@ -28,12 +28,13 @@ class EntityDamage : Listener {
             if (p.location.blockY < 0) {
                 e.isCancelled = true
                 p.fallDistance = 1.0f
-                val loc = SpawnData("spawn")
-                if (loc.checkCache()) {
-                    p.sendMessage(GeneralLang.spawnSendNotSet)
+                val loc = SpawnDataV2["spawn"] ?: run {
+                    if (p.hasPermission("*")) {
+                        p.sendMessage(GeneralLang.spawnSendNotSet)
+                    }
                     return
                 }
-                p.teleport(loc.getLocation())
+                p.teleport(loc)
             }
         }
     }

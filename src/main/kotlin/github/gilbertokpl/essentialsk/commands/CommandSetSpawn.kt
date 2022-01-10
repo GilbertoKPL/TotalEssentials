@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.data.objects.SpawnData
+import github.gilbertokpl.essentialsk.data.objects.SpawnDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -16,7 +16,7 @@ class CommandSetSpawn : CommandCreator {
     override val commandUsage = listOf("/setspawn")
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        SpawnData("spawn").setSpawn((s as Player).location, s)
+        SpawnDataV2.set("spawn", (s as Player).location, s)
         return false
     }
 }

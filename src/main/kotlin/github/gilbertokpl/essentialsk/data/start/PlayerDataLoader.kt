@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.data.start
 
-import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.KitDataV2
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.PlayerInfo
@@ -53,7 +53,7 @@ object PlayerDataLoader {
                     val timeKit = split[1].toLong()
                     val nameKit = split[0]
 
-                    val kitsCache = DataManager.kitCacheV2[nameKit]
+                    val kitsCache = KitDataV2[nameKit]
 
                     if (kitsCache != null) {
                         val timeAll = kitsCache.time

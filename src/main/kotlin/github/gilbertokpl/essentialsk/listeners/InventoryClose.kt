@@ -3,6 +3,7 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.KitDataV2
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.entity.Player
@@ -28,7 +29,7 @@ class InventoryClose : Listener {
             if (it == null) return false
             DataManager.editKit.remove(p)
             p.sendMessage(GeneralLang.generalSendingInfoToDb)
-            DataManager.kitCacheV2[it]?.setItems(e.inventory.contents.filterNotNull().toList(), p)
+            KitDataV2[it]?.setItems(e.inventory.contents.filterNotNull().toList(), p)
                 ?: return true
             return true
         }

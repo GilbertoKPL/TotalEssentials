@@ -2,9 +2,9 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.objects.WarpData
+import github.gilbertokpl.essentialsk.data.objects.WarpDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
-import github.gilbertokpl.essentialsk.util.PluginUtil
+import github.gilbertokpl.essentialsk.util.MainUtil
 import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -28,24 +28,19 @@ class CommandSetWarp : CommandCreator {
         }
 
         //check if warp name do not contain special
-        if (PluginUtil.checkSpecialCaracteres(args[0])) {
+        if (MainUtil.checkSpecialCaracteres(args[0])) {
             s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
             return false
         }
 
-        val warpName = args[0].lowercase()
-
-        val warpInstance = WarpData(warpName)
-
         //check if exist
-        if (!warpInstance.checkCache()) {
+        if (WarpDataV2[args[0]] != null) {
             s.sendMessage(GeneralLang.warpsNameAlreadyExist)
             return false
         }
 
         //check if a command have a location
         if (args.size == 5) {
-
             //check location
             val loc = try {
                 Location(
@@ -59,7 +54,7 @@ class CommandSetWarp : CommandCreator {
             }
 
             s.sendMessage(GeneralLang.generalSendingInfoToDb)
-            warpInstance.setWarp(loc, s)
+            WarpDataV2.set(args[0], loc, s)
 
 
             return false
@@ -67,7 +62,7 @@ class CommandSetWarp : CommandCreator {
 
         if (args.size == 1 && s is Player) {
             s.sendMessage(GeneralLang.generalSendingInfoToDb)
-            warpInstance.setWarp(s.location, s)
+            WarpDataV2.set(args[0], s.location, s)
             return false
         }
 

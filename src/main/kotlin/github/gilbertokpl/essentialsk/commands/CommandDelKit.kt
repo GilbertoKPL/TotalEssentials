@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.KitDataV2
 import github.gilbertokpl.essentialsk.data.sql.KitDataSQLUtil
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
@@ -18,7 +18,7 @@ class CommandDelKit : CommandCreator {
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
-        val dataInstance = DataManager.kitCacheV2[args[0].lowercase()]
+        val dataInstance = KitDataV2[args[0]]
 
         //check if not exist
         if (dataInstance == null) {

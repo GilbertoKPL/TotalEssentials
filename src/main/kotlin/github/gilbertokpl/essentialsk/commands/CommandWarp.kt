@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.objects.WarpData
+import github.gilbertokpl.essentialsk.data.objects.WarpDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
@@ -26,7 +26,7 @@ class CommandWarp : CommandCreator {
             s.sendMessage(
                 GeneralLang.warpsWarpList.replace(
                     "%list%",
-                    WarpData("").getWarpList(s).toString()
+                    WarpDataV2.getList(s).toString()
                 )
             )
             return false
@@ -36,15 +36,11 @@ class CommandWarp : CommandCreator {
             s.sendMessage(
                 GeneralLang.warpsWarpList.replace(
                     "%list%",
-                    WarpData("").getWarpList(null).toString()
+                    WarpDataV2.getList(null).toString()
                 )
             )
             return false
         }
-
-        val warpName = args[0].lowercase()
-
-        val warpInstance = WarpData(warpName)
 
         //check length of warp name
         if (args[0].length > 16) {
@@ -52,12 +48,16 @@ class CommandWarp : CommandCreator {
             return false
         }
 
+        val warpName = args[0].lowercase()
+
+        val warpInstance = WarpDataV2[warpName]
+
         //check if not exist
-        if (warpInstance.checkCache()) {
+        if (warpInstance == null) {
             s.sendMessage(
                 GeneralLang.warpsWarpList.replace(
                     "%list%",
-                    warpInstance.getWarpList(s).toString()
+                    WarpDataV2.getList(s).toString()
                 )
             )
             return false
@@ -69,7 +69,7 @@ class CommandWarp : CommandCreator {
         }
 
         if (s.hasPermission("essentialsk.bypass.teleport")) {
-            s.teleport(warpInstance.getLocation())
+            s.teleport(warpInstance)
             s.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
             return false
         }
@@ -82,7 +82,7 @@ class CommandWarp : CommandCreator {
 
         exe {
             DataManager.inTeleport.remove(s)
-            s.teleport(warpInstance.getLocation())
+            s.teleport(warpInstance)
             s.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
         }
 

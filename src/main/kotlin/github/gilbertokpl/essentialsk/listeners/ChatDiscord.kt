@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.util.PluginUtil
+import github.gilbertokpl.essentialsk.util.MainUtil
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import java.util.concurrent.TimeUnit
@@ -26,7 +26,7 @@ class ChatDiscord : ListenerAdapter() {
                     }
                     return
                 }
-                PluginUtil.serverMessage(
+                MainUtil.serverMessage(
                     GeneralLang.discordchatDiscordToServerPattern
                         .replace("%player%", e.author.name)
                         .replace("%message%", msg)

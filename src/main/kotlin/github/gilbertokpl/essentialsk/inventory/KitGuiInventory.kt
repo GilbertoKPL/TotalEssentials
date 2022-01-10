@@ -4,15 +4,20 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.KitDataV2
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.util.HashUtil
 import github.gilbertokpl.essentialsk.util.ItemUtil
+import github.gilbertokpl.essentialsk.util.MaterialUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 object KitGuiInventory {
+
+    private val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§eKIT", true)
+
     fun setup() {
         DataManager.kitClickGuiCache.clear()
         DataManager.kitGuiCache.clear()
@@ -22,16 +27,15 @@ object KitGuiInventory {
 
         val newHash = LinkedHashMap<String, Int>()
 
-        DataManager.kitCacheV2.forEach {
+        KitDataV2.getMap().forEach {
             newHash[it.key] = it.value.weight
         }
-
 
         val cache = HashUtil.hashMapReverse(HashUtil.hashMapSortMap(newHash))
 
 
         for (kit in cache) {
-            val i = DataManager.kitCacheV2[kit.key]!!
+            val i = KitDataV2[kit.key]!!
             val name = GeneralLang.kitsInventoryItemsName.replace("%kitrealname%", i.fakeName)
             val item = try {
                 ItemStack(i.items[0])
@@ -60,12 +64,12 @@ object KitGuiInventory {
                 inv.setItem(length, item)
                 for (to in 27..35) {
                     if (to == 27 && size > 1) {
-                            inv.setItem(
-                                to,
-                                ItemUtil
-                                    .item(Material.HOPPER, GeneralLang.kitsInventoryIconBackName, true)
-                            )
-                            continue
+                        inv.setItem(
+                            to,
+                            ItemUtil
+                                .item(Material.HOPPER, GeneralLang.kitsInventoryIconBackName, true)
+                        )
+                        continue
                     }
                     if (to == 35) {
                         inv.setItem(
@@ -77,7 +81,7 @@ object KitGuiInventory {
                     }
                     inv.setItem(
                         to,
-                        ItemUtil.item(DataManager.material["glass"]!!, "§eKIT", true)
+                        GLASS_MATERIAL
                     )
                 }
                 DataManager.kitGuiCache[size] = inv
@@ -95,13 +99,13 @@ object KitGuiInventory {
             } else {
                 inv.setItem(
                     27,
-                    ItemUtil.item(DataManager.material["glass"]!!, "§eKIT", true)
+                    GLASS_MATERIAL
                 )
             }
             for (to in 28..35) {
                 inv.setItem(
                     to,
-                    ItemUtil.item(DataManager.material["glass"]!!, "§eKIT", true)
+                    GLASS_MATERIAL
                 )
             }
             DataManager.kitGuiCache[size] = inv
@@ -113,7 +117,7 @@ object KitGuiInventory {
         val inv = EssentialsK.instance.server.createInventory(null, 45, "§eKit $kit $guiNumber")
 
         //load caches
-        val kitCache = DataManager.kitCacheV2[kit] ?: return
+        val kitCache = KitDataV2[kit] ?: return
         val playerCache = PlayerDataV2[p]!!
 
         //get all time of kits
@@ -137,18 +141,19 @@ object KitGuiInventory {
                 continue
             }
             if (to1 == 40 && p.hasPermission("essentialsk.commands.editkit")) {
-                    inv.setItem(
-                        to1,
-                        ItemUtil
-                            .item(Material.CHEST, GeneralLang.kitsInventoryIconEditKitName, true)
-                    )
-                    continue
+                inv.setItem(
+                    to1,
+                    ItemUtil
+                        .item(Material.CHEST, GeneralLang.kitsInventoryIconEditKitName, true)
+                )
+                continue
             }
             if (to1 == 44) {
                 if (p.hasPermission("essentialsk.commands.kit.$kit")) {
                     if (timeAll <= System.currentTimeMillis() ||
                         timeAll == 0L ||
-                        p.hasPermission("essentialsk.bypass.kitcatch")) {
+                        p.hasPermission("essentialsk.bypass.kitcatch")
+                    ) {
                         inv.setItem(
                             to1,
                             ItemUtil.item(Material.ARROW, GeneralLang.kitsCatchIcon, true)
@@ -186,7 +191,7 @@ object KitGuiInventory {
             }
             inv.setItem(
                 to1,
-                ItemUtil.item(DataManager.material["glass"]!!, "§eKIT", true)
+                GLASS_MATERIAL
             )
         }
         p.openInventory(inv)
