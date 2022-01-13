@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
@@ -9,13 +10,19 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandLight : CommandCreator {
+    override val active: Boolean = MainConfig.lightActivated
     override val consoleCanUse: Boolean = true
     override val commandName = "light"
     override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.light"
     override val minimumSize = 0
     override val maximumSize = 1
-    override val commandUsage = listOf("P_/light", "essentialsk.commands.light.other_/light <playerName>")
+    override val commandUsage =
+        listOf(
+            "P_/light",
+            "essentialsk.commands.light.other_/light <playerName>"
+        )
+
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         if (args.isEmpty() && s !is Player) {

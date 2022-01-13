@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.listeners
+package github.gilbertokpl.essentialsk.listeners.discord
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig

@@ -28,6 +28,11 @@ general:
     - '&aMemória Liberada: &f%used_server_mem% / %max_server_mem% mb'
     - '&aHD Usado: &f%used_hd%/%max_hd% mb'
     - '&aGPU: &f%gpu%'
+  plugin-not-found: '%prefix%&cPlugin não encontrado.'
+  plugin-unload: '%prefix%&ePlugin descarregado com sucesso.'
+  plugin-unload-problems: '%prefix%&cPlugin descarregado com problemas.'
+  plugin-load: '%prefix%&ePlugin carregado com sucesso.'
+  plugin-load-problems: '%prefix%&cPlugin carregado com problemas.'
 time:
   seconds: 'segundos'
   second: 'segundo'
@@ -208,7 +213,7 @@ fly:
 online:
   send-online: '%prefix%&eExiste %amount% players online.'
 announce:
-  send-announce: '%prefix%&e[Anuncio] &9%name%&e: %message%'
+  send-announce: '&e[Anuncio] &9%name%&e: %message%'
 trash:
   menu-name: '&cLixeira'
 speed:
@@ -219,6 +224,9 @@ speed:
   send-success-other: '%prefix%&eA Velocidade do(a) %player% foi foi setado para %value%.'
   send-remove-other: '%prefix%&eA Velocidade do(a) %player% voltou para o padrão.'
   send-incorrect-value: '%prefix%&eA Velocidade pode ser setado de 0 a 10.'
+hat:
+  send-success: '%prefix%&eVocê acaba de colocar um Chapéu.'
+  send-not-found: '%prefix%&eFoi só encontrado ar em sua mão, coloque algum item!'
 deathmessages:
   # Player mata outro player.
   player-kill-player: '%prefix%&cO %player% morreu para o(a) %killer%.'

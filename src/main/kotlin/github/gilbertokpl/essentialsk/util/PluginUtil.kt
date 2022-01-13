@@ -1,12 +1,10 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.EssentialsK
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Bukkit
-import org.bukkit.command.Command
-import org.bukkit.command.CommandMap
-import org.bukkit.command.PluginCommand
-import org.bukkit.command.SimpleCommandMap
+import org.bukkit.command.*
 import org.bukkit.event.Event
 import org.bukkit.plugin.*
 import java.io.File
@@ -32,12 +30,15 @@ object PluginUtil {
         if (plugin != null && plugin.isEnabled) Bukkit.getPluginManager().disablePlugin(plugin)
     }
 
-    fun load(plugin: Plugin): String {
-        val name = plugin.name
-        var target: Plugin?
+    private fun load(plugin: Plugin) : String {
+        return load(plugin.name)
+    }
+
+    fun load(name: String): String {
+        val target: Plugin?
         val pluginDir = File("plugins")
         if (!pluginDir.isDirectory) {
-            return ""
+            return GeneralLang.generalPluginNotFound
         }
         var pluginFile = File(pluginDir, "$name.jar")
         if (!pluginFile.isFile) {
@@ -50,6 +51,7 @@ object PluginUtil {
                     }
                 } catch (e: InvalidDescriptionException) {
                     FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
+                    return GeneralLang.generalPluginLoadProblems
                 }
             }
         }
@@ -57,20 +59,20 @@ object PluginUtil {
             Bukkit.getPluginManager().loadPlugin(pluginFile)
         } catch (e: InvalidDescriptionException) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
-            return ""
+            return GeneralLang.generalPluginLoadProblems
         } catch (e: InvalidPluginException) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
-            return ""
+            return GeneralLang.generalPluginLoadProblems
         }
         target!!.onLoad()
         Bukkit.getPluginManager().enablePlugin(target)
-        return ""
+        return GeneralLang.generalPluginLoad
     }
 
-    fun reload(plugin: Plugin?) {
+    fun reload(plugin: Plugin?, s: CommandSender) {
         if (plugin != null) {
-            unload(plugin)
-            load(plugin)
+            s.sendMessage(unload(plugin))
+            s.sendMessage(load(plugin))
         }
     }
 
@@ -107,8 +109,10 @@ object PluginUtil {
                 commands = knownCommandsField.get(commandMap) as MutableMap<String?, Command>
             } catch (e: NoSuchFieldException) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
+                return GeneralLang.generalPluginUnloadProblems
             } catch (e: IllegalAccessException) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
+                return GeneralLang.generalPluginUnloadProblems
             }
         }
         pluginManager.disablePlugin(plugin)
@@ -161,6 +165,6 @@ object PluginUtil {
             }
         }
         System.gc()
-        return ""
+        return GeneralLang.generalPluginUnload
     }
 }

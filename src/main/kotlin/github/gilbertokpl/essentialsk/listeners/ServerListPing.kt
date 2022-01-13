@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
+import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
@@ -21,7 +22,7 @@ class ServerListPing : Listener {
     }
 
     private fun motd(e: ServerListPingEvent) {
-        val motd = MainConfig.motdListMotd.random().replace(
+        val motd = MainUtil.getRandom(MainConfig.motdListMotd).replace(
             "%players_online%",
             PlayerUtil.getIntOnlinePlayers(false).toString()
         ).replace("\\n", "\n")

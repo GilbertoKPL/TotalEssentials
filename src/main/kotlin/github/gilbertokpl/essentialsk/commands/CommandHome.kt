@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandHome : CommandCreator {
+    override val active: Boolean = MainConfig.homesActivated
     override val consoleCanUse: Boolean = false
     override val commandName = "home"
     override val timeCoolDown: Long? = null

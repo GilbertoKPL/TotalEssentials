@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandSetHome : CommandCreator {
+    override val active: Boolean = MainConfig.homesActivated
     override val consoleCanUse: Boolean = false
     override val commandName = "sethome"
     override val timeCoolDown: Long? = null
@@ -20,7 +21,10 @@ class CommandSetHome : CommandCreator {
     override val minimumSize = 1
     override val maximumSize = 1
     override val commandUsage =
-        listOf("/sethome <homeName>", "essentialsk.commands.sethome.other_/sethome <playername>:<homeName>")
+        listOf(
+            "/sethome <homeName>",
+            "essentialsk.commands.sethome.other_/sethome <playername>:<homeName>"
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandWarp : CommandCreator {
+    override val active: Boolean = MainConfig.warpsActivated
     override val consoleCanUse: Boolean = false
     override val commandName = "warp"
     override val timeCoolDown: Long? = null
@@ -18,25 +19,24 @@ class CommandWarp : CommandCreator {
     override val minimumSize = 0
     override val maximumSize = 1
     override val commandUsage =
-        listOf("/warp <warpName>")
+        listOf(
+            "/warp <warpName>",
+            "essentialsk.commands.warp.other_/warp <playerName> <warpName>"
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
-        if (args.isEmpty() && s is Player) {
-            s.sendMessage(
-                GeneralLang.warpsWarpList.replace(
-                    "%list%",
-                    WarpDataV2.getList(s).toString()
-                )
-            )
-            return false
+        val p = if (s is Player) {
+            s
+        } else {
+            null
         }
 
-        if (s !is Player) {
+        if (args.isEmpty() || p == null) {
             s.sendMessage(
                 GeneralLang.warpsWarpList.replace(
                     "%list%",
-                    WarpDataV2.getList(null).toString()
+                    WarpDataV2.getList(p).toString()
                 )
             )
             return false
@@ -57,7 +57,7 @@ class CommandWarp : CommandCreator {
             s.sendMessage(
                 GeneralLang.warpsWarpList.replace(
                     "%list%",
-                    WarpDataV2.getList(s).toString()
+                    WarpDataV2.getList(p).toString()
                 )
             )
             return false
@@ -69,7 +69,7 @@ class CommandWarp : CommandCreator {
         }
 
         if (s.hasPermission("essentialsk.bypass.teleport")) {
-            s.teleport(warpInstance)
+            p.teleport(warpInstance)
             s.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
             return false
         }
@@ -78,11 +78,11 @@ class CommandWarp : CommandCreator {
 
         val exe = TaskUtil.teleportExecutor(time)
 
-        DataManager.inTeleport.add(s)
+        DataManager.inTeleport.add(p)
 
         exe {
             DataManager.inTeleport.remove(s)
-            s.teleport(warpInstance)
+            p.teleport(warpInstance)
             s.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
         }
 

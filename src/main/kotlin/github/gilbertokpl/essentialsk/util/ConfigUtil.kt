@@ -52,7 +52,8 @@ object ConfigUtil {
 
     internal fun getString(source: YamlFile, path: String, color: Boolean = true): String? {
         return if (color) {
-            source.getString(path).replace("&", "§").replace("%prefix%", OtherConfig.serverPrefix)
+            PermissionUtil.colorPermission(null, source.getString(path))
+                .replace("%prefix%", OtherConfig.serverPrefix)
         } else source.getString(path)
     }
 
@@ -62,7 +63,7 @@ object ConfigUtil {
         }
         return if (color) {
             source.getStringList(path).stream()
-                .map { to -> to.replace("&", "§").replace("%prefix%", OtherConfig.serverPrefix) }
+                .map { to -> PermissionUtil.colorPermission(null, to).replace("%prefix%", OtherConfig.serverPrefix) }
                 .collect(Collectors.toList())
         } else source.getStringList(path)
     }

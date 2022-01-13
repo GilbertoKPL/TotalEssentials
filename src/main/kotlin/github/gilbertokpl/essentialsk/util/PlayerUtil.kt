@@ -9,10 +9,12 @@ import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.EColor
 import net.dv8tion.jda.api.EmbedBuilder
 import org.apache.commons.io.IOUtils
+import org.bukkit.ChatColor
 import org.bukkit.GameMode
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.net.URL
+import java.util.regex.Pattern
 
 object PlayerUtil {
 
@@ -24,10 +26,31 @@ object PlayerUtil {
         return amount.size
     }
 
+    fun getNumberGamemode(gamemode: GameMode): Int {
+        return when (gamemode) {
+            GameMode.SURVIVAL -> 0
+            GameMode.CREATIVE -> 1
+            GameMode.ADVENTURE -> 2
+            GameMode.SPECTATOR -> 3
+        }
+    }
+
     fun getGamemodeNumber(number: String): GameMode {
-        return when (number) {
+        return when (number.lowercase()) {
             "0" -> GameMode.SURVIVAL
             "1" -> GameMode.CREATIVE
+            "survival" -> GameMode.SURVIVAL
+            "creative" -> GameMode.CREATIVE
+            "adventure" -> try {
+                GameMode.ADVENTURE
+            } catch (e: NoSuchMethodError) {
+                GameMode.SURVIVAL
+            }
+            "spectactor" -> try {
+                GameMode.SPECTATOR
+            } catch (e: NoSuchMethodError) {
+                GameMode.SURVIVAL
+            }
             "2" -> try {
                 GameMode.ADVENTURE
             } catch (e: NoSuchMethodError) {

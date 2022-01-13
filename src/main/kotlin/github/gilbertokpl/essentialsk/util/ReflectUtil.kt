@@ -1,5 +1,6 @@
 package github.gilbertokpl.essentialsk.util
 
+import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.manager.EType
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -10,6 +11,10 @@ import org.simpleyaml.configuration.file.YamlFile
 import java.io.File
 import java.lang.reflect.Field
 import java.lang.reflect.Type
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Paths
+
 
 object ReflectUtil {
 
@@ -151,4 +156,29 @@ object ReflectUtil {
             }
         }
     }
+
+    fun <T> getClasses(packageName: String): List<T> {
+        val classes = ArrayList<T>()
+        val directory = try {
+            val path = packageName.replace('.', '/')
+            Files.newDirectoryStream(
+                FileSystems.newFileSystem(
+                    Paths.get(EssentialsK.instance.javaClass.protectionDomain.codeSource.location.toURI()),
+                    EssentialsK.instance.javaClass.classLoader
+                ).getPath("/$path")
+            )
+        } catch (x: NullPointerException) {
+            return emptyList()
+        }
+        for (i in directory) {
+            if (i.fileName.toString().endsWith(".class")) {
+                if (i.fileName.toString().contains("$")) continue
+                val cla = Class.forName(packageName + i.fileName.toString().replace(".class", ""))
+                classes.add(cla.newInstance() as T)
+            }
+        }
+
+        return classes.toList()
+    }
+
 }

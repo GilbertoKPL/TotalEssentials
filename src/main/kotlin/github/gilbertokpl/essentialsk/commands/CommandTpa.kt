@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 class CommandTpa : CommandCreator {
+    override val active: Boolean = MainConfig.tpaActivated
     override val consoleCanUse: Boolean = false
     override val commandName = "tpa"
     override val timeCoolDown: Long? = null

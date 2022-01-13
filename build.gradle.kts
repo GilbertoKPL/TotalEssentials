@@ -56,9 +56,6 @@ dependencies {
         exclude("org.bukkit", "bukkit")
     }
 
-    //libs
-    compileOnly("com.github.GilbertoKPL:PluginLibs:1.3")
-
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
     compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion")
     compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion")
@@ -78,8 +75,6 @@ dependencies {
 }
 
 project.gradle.startParameter.excludedTaskNames.also {
-    it.add("compileTestKotlin")
-    it.add("compileTestJava")
     it.add("processTestResources")
     it.add("testClasses")
 }
@@ -237,6 +232,9 @@ bukkit {
         }
         register("speed") {
             description = "This is a speed command!"
+        }
+        register("hat") {
+            description = "This is a hat command!"
         }
     }
     permissions {

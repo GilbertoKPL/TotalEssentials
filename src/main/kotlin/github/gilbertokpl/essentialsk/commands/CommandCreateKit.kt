@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.objects.KitDataV2
 import github.gilbertokpl.essentialsk.data.sql.KitDataSQLUtil
 import github.gilbertokpl.essentialsk.manager.CommandCreator
@@ -9,6 +10,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class CommandCreateKit : CommandCreator {
+    override val active: Boolean = MainConfig.kitsActivated
     override val consoleCanUse = false
     override val permission = "essentialsk.commands.createkit"
     override val commandName = "createkit"

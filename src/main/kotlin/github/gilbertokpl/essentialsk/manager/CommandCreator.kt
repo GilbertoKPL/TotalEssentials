@@ -12,6 +12,7 @@ import org.bukkit.entity.Player
 
 interface CommandCreator : CommandExecutor {
 
+    val active: Boolean
     val timeCoolDown: Long?
     val commandName: String
     val permission: String?

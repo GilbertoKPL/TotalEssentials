@@ -2,7 +2,6 @@ package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 import oshi.SystemInfo
 import oshi.hardware.CentralProcessor
 import java.io.File

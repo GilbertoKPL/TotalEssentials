@@ -176,4 +176,6 @@ public class MainConfig {
 
     public static Boolean speedActivated;
 
+    public static Boolean hatActivated;
+
 }

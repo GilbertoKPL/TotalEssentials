@@ -228,7 +228,7 @@ data class PlayerDataV2(
 
         operator fun get(p: Player) = playerCacheV2[p.name.lowercase()]
 
-        fun loadCache(e: PlayerJoinEvent) {
+        fun loadCache(e: PlayerJoinEvent): Boolean {
             val p = e.player
 
             val limitHome: Int = PermissionUtil.getNumberPermission(
@@ -290,17 +290,7 @@ data class PlayerDataV2(
                             speedCache = PlayerDataLoader.startSpeedCache(p, speed)
                         )
 
-                        if (!vanish && !p.hasPermission("*")) {
-                            if (MainConfig.messagesLoginMessage) {
-                                MainUtil.serverMessage(
-                                    GeneralLang.messagesEnterMessage
-                                        .replace("%player%", p.name)
-                                )
-                            }
-                            if (MainConfig.discordbotSendLoginMessage) {
-                                PlayerUtil.sendLoginEmbed(p)
-                            }
-                        }
+                        sendLoginMessage(vanish, p)
 
                         val spawn = SpawnDataV2["spawn"]
                         if (spawn != null) {
@@ -308,7 +298,7 @@ data class PlayerDataV2(
                         }
                     }, 5L)
                 }
-                return
+                return false
             }
 
             cache.homeLimitCache = limitHome
@@ -323,7 +313,13 @@ data class PlayerDataV2(
                 PlayerDataLoader.startSpeedCache(p, cache.speedCache)
             }, 5L)
 
-            if (!cache.vanishCache && !p.hasPermission("*")) {
+            sendLoginMessage(cache.vanishCache, p)
+
+            return true
+        }
+
+        private fun sendLoginMessage(vanishCache: Boolean, p: Player) {
+            if (!vanishCache && !p.hasPermission("*")) {
                 if (MainConfig.messagesLoginMessage) {
                     MainUtil.serverMessage(
                         GeneralLang.messagesEnterMessage
@@ -334,7 +330,6 @@ data class PlayerDataV2(
                     PlayerUtil.sendLoginEmbed(p)
                 }
             }
-            return
         }
     }
 }

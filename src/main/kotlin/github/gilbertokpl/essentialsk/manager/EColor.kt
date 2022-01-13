@@ -10,4 +10,5 @@ enum class EColor(val color: String) {
     CYAN("\u001B[36m"),
     WHITE("\u001B[37m"),
     RESET("\u001B[0m");
+
 }

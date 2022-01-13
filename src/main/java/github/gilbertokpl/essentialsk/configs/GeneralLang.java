@@ -36,6 +36,16 @@ public class GeneralLang {
 
     public static String generalHostWait;
 
+    public static String generalPluginNotFound;
+
+    public static String generalPluginUnload;
+
+    public static String generalPluginUnloadProblems;
+
+    public static String generalPluginLoad;
+
+    public static String generalPluginLoadProblems;
+
     public static String kitsNotExist;
 
     public static String kitsExist;
@@ -364,4 +374,7 @@ public class GeneralLang {
 
     public static String speedSendIncorrectValue;
 
+    public static String hatSendSuccess;
+
+    public static String hatSendNotFound;
 }

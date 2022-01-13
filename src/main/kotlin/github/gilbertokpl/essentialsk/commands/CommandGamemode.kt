@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.PlayerUtil
@@ -10,6 +11,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandGamemode : CommandCreator {
+    override val active: Boolean = MainConfig.gamemodeActivated
     override val consoleCanUse: Boolean = true
     override val commandName = "gamemode"
     override val timeCoolDown: Long? = null
@@ -34,7 +36,7 @@ class CommandGamemode : CommandCreator {
 
             (PlayerDataV2[s] ?: return false).setGamemode(
                 playerGameMode,
-                args[0].toInt()
+                PlayerUtil.getNumberGamemode(playerGameMode)
             )
             s.sendMessage(
                 GeneralLang.gamemodeUseSuccess.replace(

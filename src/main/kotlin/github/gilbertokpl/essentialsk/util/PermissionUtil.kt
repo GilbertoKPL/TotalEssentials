@@ -1,6 +1,8 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.EssentialsK.Companion.lowVersion
+import github.gilbertokpl.essentialsk.manager.EColor
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 object PermissionUtil {
@@ -39,39 +41,16 @@ object PermissionUtil {
         }
     }
 
-    fun colorPermission(p: Player, message: String): String {
-        if (!message.contains("&")) return message
-        var newMessage = message
-        fun colorHelper(color: String) {
-            newMessage = if (p.hasPermission("essentialsk.color.$color")) {
-                newMessage.replace(color, color.replace("&", "§"))
-            } else {
-                newMessage.replace(color, "")
-            }
+    fun colorPermission(p: Player?, message: String): String {
+        if (!message.contains("&") && !message.contains("#") ) return message
+
+        if (p == null) {
+            return ColorUtil.rgbHex(null, message)
         }
-        listOf(
-            "&1",
-            "&2",
-            "&3",
-            "&4",
-            "&5",
-            "&6",
-            "&7",
-            "&8",
-            "&9",
-            "&a",
-            "&b",
-            "&c",
-            "&d",
-            "&e",
-            "&f",
-            "&k",
-            "&r",
-            "&l",
-            "&n"
-        ).forEach {
-            colorHelper(it)
+
+        if (p.hasPermission("essentialsk.color.*")) {
+            return ColorUtil.rgbHex(p, message)
         }
-        return newMessage
+        return ColorUtil.color(p, message)
     }
 }

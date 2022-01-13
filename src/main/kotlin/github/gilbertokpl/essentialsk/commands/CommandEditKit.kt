@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.objects.KitDataV2
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGui
 import github.gilbertokpl.essentialsk.manager.CommandCreator
@@ -9,7 +10,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandEditKit : CommandCreator {
-
+    override val active: Boolean = MainConfig.kitsActivated
     override val consoleCanUse: Boolean = false
     override val commandName = "editkit"
     override val timeCoolDown: Long? = null

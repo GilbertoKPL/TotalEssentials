@@ -4,9 +4,8 @@ general:
   # Nome do seu servidor.
   server-name: unamed
 database:
-  # Selecione seu tipo de conexão, Disponiveis H2 (Local) e Mysql (Nuvem).
+  # Selecione a sua conexão, Disponiveis H2 (Local) e Mysql (Nuvem).
   type: H2
-  # If you have selected MYSQL add ip, port, username, database and password;
   # Se você selecionou MYSQL coloque essas informações paar conexão.
   sql-ip: 'localhost'
   sql-port: '3306'
@@ -158,6 +157,9 @@ online:
   # Se estiver ativado (true), O comando online contará também os players de vanish.
   count-remove-vanish: false
 # Config dos comandos anunciar.
+hat:
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
 announce:
   # Se estiver ativado (true), O comando será ativado.
   activated: true

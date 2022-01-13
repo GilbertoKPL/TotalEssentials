@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.objects.OfflinePlayerData
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
@@ -10,6 +11,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandDelHome : CommandCreator {
+    override val active: Boolean = MainConfig.homesActivated
     override val consoleCanUse: Boolean = false
     override val commandName = "delhome"
     override val timeCoolDown: Long? = null
@@ -17,7 +19,10 @@ class CommandDelHome : CommandCreator {
     override val minimumSize = 1
     override val maximumSize = 1
     override val commandUsage =
-        listOf("/delhome <homeName>", "essentialsk.commands.delhome.other_/delhome <playername>:<homeName>")
+        listOf(
+            "/delhome <homeName>",
+            "essentialsk.commands.delhome.other_/delhome <playername>:<homeName>"
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

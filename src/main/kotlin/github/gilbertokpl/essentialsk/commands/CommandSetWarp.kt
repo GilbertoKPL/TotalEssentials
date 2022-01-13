@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.objects.WarpDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.MainUtil
@@ -11,6 +12,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandSetWarp : CommandCreator {
+    override val active: Boolean = MainConfig.warpsActivated
     override val consoleCanUse: Boolean = true
     override val commandName = "setwarp"
     override val timeCoolDown: Long? = null
@@ -18,7 +20,10 @@ class CommandSetWarp : CommandCreator {
     override val minimumSize = 1
     override val maximumSize = 1
     override val commandUsage =
-        listOf("/setwarp <warpName>", "/setwarp <warpName> <worldName> <x> <y> <z>")
+        listOf(
+            "/setwarp <warpName>",
+            "/setwarp <warpName> <worldName> <x> <y> <z>"
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of warp name

@@ -13,18 +13,20 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandNick : CommandCreator {
+    override val active: Boolean = MainConfig.nicksActivated
     override val consoleCanUse: Boolean = true
     override val commandName = "nick"
     override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.nick"
     override val minimumSize = 1
     override val maximumSize = 2
-    override val commandUsage = listOf(
-        "P_/nick <NickName>",
-        "P_/nick remove",
-        "essentialsk.commands.nick.other_/nick <player> <NickName>",
-        "essentialsk.commands.nick.other_/nick <player> remove"
-    )
+    override val commandUsage =
+        listOf(
+            "P_/nick <NickName>",
+            "P_/nick remove",
+            "essentialsk.commands.nick.other_/nick <player> <NickName>",
+            "essentialsk.commands.nick.other_/nick <player> remove"
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

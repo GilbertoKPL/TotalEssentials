@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.objects.KitDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.ItemUtil
@@ -9,13 +10,16 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class CommandGiveKit : CommandCreator {
+    override val active: Boolean = MainConfig.kitsActivated
     override val consoleCanUse: Boolean = true
     override val commandName = "givekit"
     override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.givekit"
     override val minimumSize = 2
     override val maximumSize = 2
-    override val commandUsage = listOf("/givekit <playerName> <kitName>")
+    override val commandUsage = listOf(
+        "/givekit <playerName> <kitName>"
+    )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of kit name

@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.Location
 import org.bukkit.command.Command
@@ -9,6 +10,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandTp : CommandCreator {
+    override val active: Boolean = MainConfig.tpActivated
     override val consoleCanUse: Boolean = false
     override val commandName = "tp"
     override val timeCoolDown: Long? = null

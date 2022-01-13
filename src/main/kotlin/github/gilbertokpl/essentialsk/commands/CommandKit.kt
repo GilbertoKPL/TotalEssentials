@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.objects.KitDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
@@ -10,13 +11,17 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandKit : CommandCreator {
+    override val active: Boolean = MainConfig.kitsActivated
     override val consoleCanUse: Boolean = true
     override val commandName = "kit"
     override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.kit"
     override val minimumSize = 0
     override val maximumSize = 1
-    override val commandUsage = listOf("/kit", "/kit <kitName>")
+    override val commandUsage = listOf(
+        "/kit",
+        "/kit <kitName>"
+    )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

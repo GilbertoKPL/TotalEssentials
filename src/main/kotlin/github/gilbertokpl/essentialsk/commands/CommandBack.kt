@@ -10,6 +10,7 @@ import org.bukkit.entity.Player
 
 class CommandBack : CommandCreator {
 
+    override val active: Boolean = MainConfig.backActivated
     override val consoleCanUse: Boolean = false
     override val commandName = "back"
     override val timeCoolDown: Long? = null
@@ -36,7 +37,9 @@ class CommandBack : CommandCreator {
         }
 
         p.teleport(loc)
+
         playerCache.clearBack()
+
         p.sendMessage(GeneralLang.backSendSuccess)
         return false
     }

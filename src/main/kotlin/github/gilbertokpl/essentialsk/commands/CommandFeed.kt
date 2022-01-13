@@ -9,13 +9,18 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandFeed : CommandCreator {
+    override val active: Boolean = MainConfig.feedActivated
     override val consoleCanUse: Boolean = true
     override val commandName = "feed"
     override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.feed"
     override val minimumSize = 0
     override val maximumSize = 1
-    override val commandUsage = listOf("P_/feed", "essentialsk.commands.feed.other_/feed <playerName>")
+    override val commandUsage =
+        listOf(
+            "P_/feed",
+            "essentialsk.commands.feed.other_/feed <playerName>"
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

@@ -8,6 +8,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class CommandOnline : CommandCreator {
+    override val active: Boolean = MainConfig.onlineActivated
     override val consoleCanUse: Boolean = true
     override val commandName = "online"
     override val timeCoolDown: Long? = null

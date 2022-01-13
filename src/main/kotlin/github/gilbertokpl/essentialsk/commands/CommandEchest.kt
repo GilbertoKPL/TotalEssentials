@@ -2,12 +2,14 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandEchest : CommandCreator {
+    override val active: Boolean = MainConfig.echestActivated
     override val consoleCanUse: Boolean = false
     override val commandName = "echest"
     override val timeCoolDown: Long? = null

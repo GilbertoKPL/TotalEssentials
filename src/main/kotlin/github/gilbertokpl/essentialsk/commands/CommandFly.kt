@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandFly : CommandCreator {
+    override val active: Boolean = MainConfig.flyActivated
     override val consoleCanUse: Boolean = true
     override val commandName = "fly"
     override val timeCoolDown: Long? = null

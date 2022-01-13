@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.listeners.ChatDiscord
+import github.gilbertokpl.essentialsk.listeners.discord.ChatDiscord
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.requests.GatewayIntent
