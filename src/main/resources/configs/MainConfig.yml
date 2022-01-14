@@ -30,10 +30,14 @@ discordbot:
   send-login-message: false
   # Mandar mensagem ao discord (embed) que o ‘player‘ saiu.
   send-leave-message: false
+  # Mudar o assunto do canal a cada 10 minutos, com a mensagem setada na sua lang.
+  send-topic-update: false
 # Config dos comandos Kits.
 kits:
   # Se estiver ativado (true), O comando será ativado.
   activated: true
+  # Se estiver ativado (true), será enviado um menu ao ‘player’.
+  menu-kit: true
   # Se estiver ativado (true), será enviado o tempo em pequena escala, exemplo segundos para s.
   use-short-time: false
   # Se estiver ativado (true) dropar items caso o invetário esteja cheio.

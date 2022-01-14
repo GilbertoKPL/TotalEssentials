@@ -7,7 +7,7 @@
 
 <p align="center">
     <a href="https://bstats.org/plugin/bukkit/EssentialsK" title="EssentialsK on bStats">
-        <img src="https://bstats.org/signatures/bukkit/EssentialsK.svg" />
+        <img src="https://bstats.org/signatures/bukkit/EssentialsK.svg"  alt=""/>
     </a>
 </p>
 
@@ -48,6 +48,7 @@
 | /craft                             | Open craft to player.                                                                           | essentialsk.commands.craft       |
 | /trash and /lixo                   | Open trash to player.                                                                           | essentialsk.commands.trash       |
 | /speed                             | set speed of player.                                                                            | essentialsk.commands.speed       |
+| /hat                               | set hat of player.                                                                              | essentialsk.commands.hat         |
 
 ## Permission Color
 

@@ -315,10 +315,28 @@ data class PlayerDataV2(
 
             sendLoginMessage(cache.vanishCache, p)
 
+            val spawn = SpawnDataV2["spawn"]
+            if (spawn != null) {
+                p.teleport(spawn)
+            }
+
             return true
         }
 
+        private fun spawnLogin(p: Player) {
+            if (MainConfig.spawnSendToSpawnOnLogin) {
+                val loc = SpawnDataV2["spawn"] ?: run {
+                    if (p.hasPermission("*")) {
+                        p.sendMessage(GeneralLang.spawnSendNotSet)
+                    }
+                    return
+                }
+                p.teleport(loc)
+            }
+        }
+
         private fun sendLoginMessage(vanishCache: Boolean, p: Player) {
+            spawnLogin(p)
             if (!vanishCache && !p.hasPermission("*")) {
                 if (MainConfig.messagesLoginMessage) {
                     MainUtil.serverMessage(

@@ -53,9 +53,9 @@ class CommandTp : CommandCreator {
 
             p.teleport(p1.location)
 
-            p.sendMessage(GeneralLang.tpTeleportedOtherSuccess)
+            p1.sendMessage(GeneralLang.tpTeleportedOtherSuccess)
 
-            s.sendMessage(GeneralLang.tpTeleportedSuccess)
+            p.sendMessage(GeneralLang.tpTeleportedSuccess)
             return false
         }
 

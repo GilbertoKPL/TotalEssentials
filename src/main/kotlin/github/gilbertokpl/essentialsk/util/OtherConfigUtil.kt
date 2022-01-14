@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.loops.Announcements
+import github.gilbertokpl.essentialsk.loops.Discord
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 object OtherConfigUtil {
@@ -109,6 +110,15 @@ object OtherConfigUtil {
             }
         } catch (e: Exception) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
+        }
+
+        if (!MainConfig.discordbotConnectDiscordChat && Discord.start) {
+            TaskUtil.getDiscordExecutor().shutdown()
+            Discord.start = false
+        }
+
+        if (MainConfig.discordbotConnectDiscordChat && !Discord.start) {
+            Discord.start()
         }
     }
 }

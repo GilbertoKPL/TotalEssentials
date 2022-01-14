@@ -30,7 +30,7 @@ object PluginUtil {
         if (plugin != null && plugin.isEnabled) Bukkit.getPluginManager().disablePlugin(plugin)
     }
 
-    private fun load(plugin: Plugin) : String {
+    private fun load(plugin: Plugin): String {
         return load(plugin.name)
     }
 
@@ -149,14 +149,10 @@ object PluginUtil {
                 val pluginInitField: Field = cl.javaClass.getDeclaredField("pluginInit")
                 pluginInitField.isAccessible = true
                 pluginInitField.set(cl, null as Any?)
-            } catch (ex: NoSuchFieldException) {
-                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
-            } catch (ex: SecurityException) {
-                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
-            } catch (ex: IllegalArgumentException) {
-                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
-            } catch (ex: IllegalAccessException) {
-                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
+            } catch (ignored: NoSuchFieldException) {
+            } catch (ignored: SecurityException) {
+            } catch (ignored: IllegalArgumentException) {
+            } catch (ignored: IllegalAccessException) {
             }
             try {
                 cl.close()

@@ -315,3 +315,4 @@ discordchat:
   discord-to-server-pattern: '&e[Disc] %player%: %message%'
   discord-send-login-message: '%player% Entrou no servidor.'
   discord-send-leave-message: '%player% Saiu do servidor.'
+  discord-topic: 'Online: %online% players, Tempo Online: %online_time%, Atualizado: %time%'

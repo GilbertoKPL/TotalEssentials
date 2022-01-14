@@ -23,7 +23,11 @@ class CommandHat : CommandCreator {
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val p = s as Player
 
-        val itemHand = p.inventory.itemInMainHand
+        val itemHand = try {
+            p.inventory.itemInMainHand
+        } catch (e: NoSuchMethodError) {
+            p.itemInHand
+        }
 
         if (itemHand.type == Material.AIR) {
             p.sendMessage(GeneralLang.hatSendNotFound)
@@ -33,7 +37,13 @@ class CommandHat : CommandCreator {
         val helmet = p.inventory.helmet
 
         p.inventory.helmet = itemHand
-        p.inventory.setItemInMainHand(helmet)
+
+        try {
+            p.inventory.setItemInMainHand(helmet)
+        } catch (e: NoSuchMethodError) {
+            p.setItemInHand(helmet)
+        }
+
 
         p.sendMessage(GeneralLang.hatSendSuccess)
 

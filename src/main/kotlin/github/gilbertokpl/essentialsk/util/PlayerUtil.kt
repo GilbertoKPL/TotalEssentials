@@ -9,29 +9,37 @@ import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.EColor
 import net.dv8tion.jda.api.EmbedBuilder
 import org.apache.commons.io.IOUtils
-import org.bukkit.ChatColor
 import org.bukkit.GameMode
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.net.URL
-import java.util.regex.Pattern
 
 object PlayerUtil {
 
     fun getIntOnlinePlayers(vanish: Boolean): Int {
         var amount = ReflectUtil.getPlayers()
         if (!vanish) {
-            amount = amount.filter { !(PlayerDataV2[it]!!).vanishCache }
+            amount = amount.filter {
+                PlayerDataV2[it] != null && PlayerDataV2[it]!!.vanishCache
+            }
         }
         return amount.size
     }
 
     fun getNumberGamemode(gamemode: GameMode): Int {
-        return when (gamemode) {
-            GameMode.SURVIVAL -> 0
-            GameMode.CREATIVE -> 1
-            GameMode.ADVENTURE -> 2
-            GameMode.SPECTATOR -> 3
+        return try {
+            when (gamemode) {
+                GameMode.SURVIVAL -> 0
+                GameMode.CREATIVE -> 1
+                GameMode.ADVENTURE -> 2
+                GameMode.SPECTATOR -> 3
+            }
+        } catch (e: NoSuchFieldError) {
+            when (gamemode) {
+                GameMode.SURVIVAL -> 0
+                GameMode.CREATIVE -> 1
+                else -> 0
+            }
         }
     }
 

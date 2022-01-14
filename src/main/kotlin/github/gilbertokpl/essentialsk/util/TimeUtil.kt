@@ -1,7 +1,10 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
+
 
 object TimeUtil {
 
@@ -10,6 +13,22 @@ object TimeUtil {
     private const val SECOUNDS_TO_MINUTES = 60
 
     private const val HOURS_TO_DAYS = 24
+
+    private var onlineTime = 0L
+
+    fun getOnlineTime(): Long {
+        return System.currentTimeMillis() - onlineTime
+    }
+
+    fun start() {
+        onlineTime = System.currentTimeMillis()
+    }
+
+    fun getCurrentDate(): String {
+        val dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+        val now = LocalDateTime.now()
+        return dtf.format(now)
+    }
 
     fun convertStringToMillis(timeString: String): Long {
         val messageSplit = timeString.split(" ")

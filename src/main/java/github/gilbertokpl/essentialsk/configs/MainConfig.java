@@ -22,6 +22,8 @@ public class MainConfig {
 
     public static Boolean kitsActivated;
 
+    public static Boolean kitsMenuKit;
+
     public static Boolean kitsUseShortTime;
 
     public static Boolean kitsDropItemsInCatch;

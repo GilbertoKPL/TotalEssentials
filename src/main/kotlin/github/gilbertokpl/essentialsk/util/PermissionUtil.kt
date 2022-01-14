@@ -1,8 +1,6 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.EssentialsK.Companion.lowVersion
-import github.gilbertokpl.essentialsk.manager.EColor
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 object PermissionUtil {
@@ -42,7 +40,7 @@ object PermissionUtil {
     }
 
     fun colorPermission(p: Player?, message: String): String {
-        if (!message.contains("&") && !message.contains("#") ) return message
+        if (!message.contains("&") && !message.contains("#")) return message
 
         if (p == null) {
             return ColorUtil.rgbHex(null, message)

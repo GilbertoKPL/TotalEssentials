@@ -14,10 +14,22 @@ object TaskUtil {
 
     private var announceExecutor = Executors.newSingleThreadScheduledExecutor()
 
+    private var discordExecutor = Executors.newSingleThreadScheduledExecutor()
+
     fun disable() {
         poolExecutor.shutdown()
         poolExecutorTeleport.shutdown()
         announceExecutor.shutdown()
+        discordExecutor.shutdown()
+    }
+
+    fun getDiscordExecutor(): ScheduledExecutorService {
+        return discordExecutor
+    }
+
+    fun restartDiscordExecutor() {
+        discordExecutor.shutdownNow()
+        discordExecutor = Executors.newSingleThreadScheduledExecutor()
     }
 
     fun getAnnounceExecutor(): ScheduledExecutorService {

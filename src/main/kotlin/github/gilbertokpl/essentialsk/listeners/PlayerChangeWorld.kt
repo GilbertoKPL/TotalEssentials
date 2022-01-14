@@ -31,7 +31,7 @@ class PlayerChangeWorld : Listener {
             if (gm != e.player.gameMode) {
                 e.player.gameMode = gm
             }
-            if (playerCache.flyCache) {
+            if (playerCache.flyCache && playerCache.gameModeCache == 0) {
                 if (!MainConfig.flyDisabledWorlds.contains(e.player.world.name)) {
                     e.player.allowFlight = true
                     e.player.isFlying = true

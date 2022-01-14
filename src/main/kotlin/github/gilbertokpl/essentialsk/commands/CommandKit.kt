@@ -25,7 +25,7 @@ class CommandKit : CommandCreator {
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
-        if (s !is Player) {
+        if (s !is Player || (args.isEmpty() && !MainConfig.kitsMenuKit)) {
             s.sendMessage(
                 GeneralLang.kitsList.replace(
                     "%kits%",
@@ -37,6 +37,7 @@ class CommandKit : CommandCreator {
 
         //send gui
         if (args.isEmpty()) {
+
             DataManager.kitGuiCache[1].also {
                 it ?: run {
                     s.sendMessage(GeneralLang.kitsNotExistKits)

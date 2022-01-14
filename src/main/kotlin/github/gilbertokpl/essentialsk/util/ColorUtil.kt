@@ -31,17 +31,17 @@ object ColorUtil {
                 return string
             } catch (e: ClassNotFoundException) {
                 return color(p, strv)
-            }
-            catch (e: Exception) {
+            } catch (e: NoClassDefFoundError) {
+                return color(p, strv)
+            } catch (e: Exception) {
                 return color(p, strv)
             }
-        }
-        else {
+        } else {
             return color(p, strv)
         }
     }
 
-    fun color(p: Player?, strv: String) : String {
+    fun color(p: Player?, strv: String): String {
         if (p == null) {
             return strv.replace("&", "§")
         }

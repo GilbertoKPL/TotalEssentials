@@ -14,6 +14,7 @@ import org.simpleyaml.configuration.file.YamlFile
 import java.io.File
 import java.nio.file.*
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import java.util.stream.Collectors
 
 object ConfigUtil {
@@ -225,7 +226,14 @@ object ConfigUtil {
             OtherConfigUtil.start()
 
             EditKitInventory.setup()
+
             KitGuiInventory.setup()
+
+            if (MainConfig.discordbotConnectDiscordChat && DiscordUtil.jda == null) {
+                CompletableFuture.runAsync {
+                    DiscordUtil.startBot()
+                }
+            }
 
             return true
         }

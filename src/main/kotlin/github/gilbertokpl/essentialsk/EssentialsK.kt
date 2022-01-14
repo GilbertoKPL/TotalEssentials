@@ -62,6 +62,8 @@ class EssentialsK : JavaPlugin() {
             lowVersion = true
         }
 
+        TimeUtil.start()
+
         CompletableFuture.runAsync {
             DiscordUtil.startBot()
         }
@@ -72,6 +74,8 @@ class EssentialsK : JavaPlugin() {
     override fun onDisable() {
 
         TaskUtil.disable()
+
+        DiscordUtil.jda = null
 
         super.onDisable()
     }

@@ -354,6 +354,8 @@ public class GeneralLang {
 
     public static String discordchatDiscordSendLeaveMessage;
 
+    public static String discordchatDiscordTopic;
+
     public static String tphereTeleportedSuccess;
 
     public static String tphereTeleportedOtherSuccess;
