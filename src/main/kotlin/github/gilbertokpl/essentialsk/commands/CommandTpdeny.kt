@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.TpaData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -20,24 +21,12 @@ class CommandTpdeny : CommandCreator {
     override val commandUsage = listOf("/tpdeny")
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        val p = DataManager.tpaHash[s as Player] ?: run {
+        val p = TpaData.getTpa(s as Player) ?: run {
             s.sendMessage(GeneralLang.tpaNotAnyRequestToDeny)
             return false
         }
 
-        //remove checker
-
-        val value = DataManager.tpAcceptHash[p] ?: run {
-            s.sendMessage(GeneralLang.tpaNotAnyRequestToDeny)
-            return false
-        }
-
-        DataManager.tpaHash.remove(s)
-        DataManager.tpaHash.remove(p)
-
-        if (value == 1) {
-            DataManager.tpAcceptHash.remove(p)
-        }
+        TpaData.remove(p)
 
         s.sendMessage(GeneralLang.tpaRequestDeny.replace("%player%", p.name))
 

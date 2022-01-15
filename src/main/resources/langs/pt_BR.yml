@@ -137,6 +137,8 @@ warps:
   send-time-to-teleport: '%prefix%&eEm %time% segundos você será teleportado para warp %warp%.'
   teleported: '%prefix%&eVocê foi teleportado com sucesso para warp %warp%.'
   warp-list: '%prefix%&eLista de warps -> %list%'
+  teleported-other-message: '%prefix%&eVocê foi teleportado para o warp %warp% do além.'
+  teleported-other-success: '%prefix%&eO %player% foi teleportado para warp %warp% com sucesso.'
 tp:
   teleported-success: '%prefix%&eVocê foi teleportado com sucesso'
   teleported-other-success: '%prefix%&eVocê foi teleportado do além'
@@ -152,6 +154,7 @@ tpa:
   request-other-no-delay-accepted: '%prefix%&eO %player% acaba de aceitar seu pedido de teleporte, teleportando.'
   request-deny: '%prefix%&eVocê acaba de cancelar o pedido de %player%.'
   request-other-deny: '%prefix%&eSeu pedido acaba de ser cancelado pelo(a) %player%.'
+  request-other-deny-time: '%prefix%&eSeu pedido de TPA foi cancelado porque o %player% não aceitou.'
   same-name: '%prefix%&cVocê não pode enviar tpa para você mesmo.'
 tphere:
   teleported-success: '%prefix%&eVocê teleportou com sucesso o(a) %player% para você.'

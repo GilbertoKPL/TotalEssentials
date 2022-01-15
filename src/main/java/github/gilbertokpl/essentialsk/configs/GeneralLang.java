@@ -206,6 +206,10 @@ public class GeneralLang {
 
     public static String warpsWarpRemoved;
 
+    public static String warpsTeleportedOtherMessage;
+
+    public static String warpsTeleportedOtherSuccess;
+
     public static String tpTeleportedSuccess;
 
     public static String tpTeleportedOtherSuccess;
@@ -231,6 +235,8 @@ public class GeneralLang {
     public static String tpaRequestDeny;
 
     public static String tpaRequestOtherDeny;
+
+    public static String tpaRequestOtherDenyTime;
 
     public static String tpaSameName;
 

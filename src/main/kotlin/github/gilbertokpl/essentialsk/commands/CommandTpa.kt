@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.TpaData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
@@ -41,48 +42,25 @@ class CommandTpa : CommandCreator {
         }
 
         //check if player already send
-        if (DataManager.tpaHash.contains(s) || DataManager.tpaHash.containsValue(p)) {
+        if (TpaData.checkTpa(s as Player)) {
             s.sendMessage(GeneralLang.tpaAlreadySend)
             return false
         }
 
         //check if player has telepot request
-        if (DataManager.tpaHash.contains(p)) {
+        if (TpaData.checkOtherTpa(p)) {
             s.sendMessage(GeneralLang.tpaAlreadyInAccept)
             return false
         }
 
         val time = MainConfig.tpaTimeToAccept
 
-        coolDown(s as Player, p, time)
+        TpaData.createNewTpa(s, p, time)
 
         s.sendMessage(GeneralLang.tpaSendSuccess.replace("%player%", p.name))
         p.sendMessage(
             GeneralLang.tpaOtherReceived.replace("%player%", s.name).replace("%time%", time.toString())
         )
         return false
-    }
-
-
-    private fun coolDown(pSender: Player, pReceived: Player, time: Int) {
-        DataManager.tpaHash[pSender] = pReceived
-        DataManager.tpaHash[pReceived] = pSender
-        DataManager.tpAcceptHash[pSender] = 1
-
-        CompletableFuture.runAsync({
-            TimeUnit.SECONDS.sleep(time.toLong())
-            try {
-                val value = DataManager.tpAcceptHash[pSender]
-                if (value != null && value == 1) {
-                    DataManager.tpAcceptHash.remove(pSender)
-                    EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
-                        DataManager.tpaHash.remove(pSender)
-                        DataManager.tpaHash.remove(pReceived)
-                    })
-                }
-            } catch (ex: Exception) {
-                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
-            }
-        }, TaskUtil.getTeleportExecutor())
     }
 }

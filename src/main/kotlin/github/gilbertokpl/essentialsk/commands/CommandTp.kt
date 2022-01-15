@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -11,30 +12,33 @@ import org.bukkit.entity.Player
 
 class CommandTp : CommandCreator {
     override val active: Boolean = MainConfig.tpActivated
-    override val consoleCanUse: Boolean = false
+    override val consoleCanUse: Boolean = true
     override val commandName = "tp"
     override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.tp"
     override val minimumSize = 1
     override val maximumSize = 4
     override val commandUsage = listOf(
-        "/tp <playerName>",
+        "P_/tp <world> <x> <y> <z>",
+        "P_/tp <x> <y> <z> <world>",
+        "P_/tp <x> <y> <z>",
+        "P_/tp <playerName>",
         "/tp <playerName> <OtherPlayerName>",
-        "/tp <world> <x> <y> <z>",
-        "/tp <x> <y> <z> <world>",
-        "/tp <x> <y> <z>",
+        "/tp <playerName> <world> <x> <y> <z>",
+        "/tp <playerName> <x> <y> <z> <world>",
+        "/tp <playerName> <x> <y> <z>",
     )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         //only player name
-        if (args.size == 1) {
+        if (args.size == 1 && s is Player) {
             val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
                 s.sendMessage(GeneralLang.generalPlayerNotOnline)
                 return false
             }
 
-            (s as Player).teleport(p.location)
+            s.teleport(p.location)
             s.sendMessage(GeneralLang.tpTeleportedSuccess)
             return false
         }
@@ -53,16 +57,16 @@ class CommandTp : CommandCreator {
 
             p.teleport(p1.location)
 
-            p1.sendMessage(GeneralLang.tpTeleportedOtherSuccess)
+            p.sendMessage(GeneralLang.tpTeleportedOtherSuccess)
 
-            p.sendMessage(GeneralLang.tpTeleportedSuccess)
+            s.sendMessage(GeneralLang.tpTeleportedSuccess)
             return false
         }
 
         //only x y and z
-        if (args.size == 3) {
+        if (args.size == 3 && s is Player) {
             val loc = try {
-                Location((s as Player).world, args[0].toDouble(), args[1].toDouble(), args[2].toDouble())
+                Location(s.world, args[0].toDouble(), args[1].toDouble(), args[2].toDouble())
             } catch (ex: Exception) {
                 return true
             }
@@ -73,26 +77,72 @@ class CommandTp : CommandCreator {
 
         //only x y and z world
         if (args.size == 4) {
+
+            val p = Bukkit.getPlayer(args[0].lowercase())
+
+            if (p != null) {
+
+                val loc = try {
+                    Location(p.world, args[1].toDouble(), args[2].toDouble(), args[3].toDouble())
+                } catch (ex: Exception) {
+                    return true
+                }
+                p.teleport(loc)
+                s.sendMessage(GeneralLang.tpTeleportedSuccess)
+                p.sendMessage(GeneralLang.tpTeleportedOtherSuccess)
+
+                return false
+            }
+
+            if (s is Player) {
+                val world = try {
+                    EssentialsK.instance.server.getWorld(args[0]) ?: EssentialsK.instance.server.getWorld(args[3])
+                    ?: return true
+                } catch (ex: Exception) {
+                    return true
+                }
+                val loc = try {
+                    Location(world, args[0].toDouble(), args[1].toDouble(), args[2].toDouble())
+                } catch (ex: Exception) {
+                    try {
+                        Location(world, args[1].toDouble(), args[2].toDouble(), args[3].toDouble())
+                    } catch (ex: Exception) {
+                        return true
+                    }
+                }
+
+                s.teleport(loc)
+                s.sendMessage(GeneralLang.tpTeleportedSuccess)
+                return false
+            }
+        }
+
+        //only player x y and z world
+        if (args.size == 5) {
+            val p = Bukkit.getPlayer(args[0].lowercase()) ?: return true
+
             val world = try {
-                EssentialsK.instance.server.getWorld(args[0]) ?: EssentialsK.instance.server.getWorld(args[3])
+                EssentialsK.instance.server.getWorld(args[1]) ?: EssentialsK.instance.server.getWorld(args[4])
                 ?: return true
             } catch (ex: Exception) {
                 return true
             }
             val loc = try {
-                Location(world, args[0].toDouble(), args[1].toDouble(), args[2].toDouble())
+                Location(world, args[1].toDouble(), args[2].toDouble(), args[3].toDouble())
             } catch (ex: Exception) {
                 try {
-                    Location(world, args[1].toDouble(), args[2].toDouble(), args[3].toDouble())
+                    Location(world, args[2].toDouble(), args[3].toDouble(), args[4].toDouble())
                 } catch (ex: Exception) {
                     return true
                 }
             }
 
-            (s as Player).teleport(loc)
+            p.teleport(loc)
             s.sendMessage(GeneralLang.tpTeleportedSuccess)
-            return false
+            p.sendMessage(GeneralLang.tpTeleportedOtherSuccess)
+
         }
-        return false
+
+        return true
     }
 }

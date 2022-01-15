@@ -14,13 +14,6 @@ import org.bukkit.event.player.PlayerRespawnEvent
 class PlayerRespawn : Listener {
     @EventHandler
     fun event(e: PlayerRespawnEvent) {
-        if (MainConfig.spawnSendToSpawnOnDeath) {
-            try {
-                spawnRespawn(e)
-            } catch (e: Exception) {
-                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
-            }
-        }
         try {
             playerData(e)
         } catch (e: Exception) {
@@ -31,6 +24,15 @@ class PlayerRespawn : Listener {
     private fun playerData(e: PlayerRespawnEvent) {
         EssentialsK.instance.server.scheduler.runTaskLater(EssentialsK.instance, Runnable {
             PlayerDataLoader.death(e.player)
+
+            if (MainConfig.spawnSendToSpawnOnDeath) {
+                try {
+                    spawnRespawn(e)
+                } catch (e: Exception) {
+                    FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
+                }
+            }
+
         }, 5L)
     }
 

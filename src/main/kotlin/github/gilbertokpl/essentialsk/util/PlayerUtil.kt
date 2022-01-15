@@ -20,7 +20,7 @@ object PlayerUtil {
         var amount = ReflectUtil.getPlayers()
         if (!vanish) {
             amount = amount.filter {
-                PlayerDataV2[it] != null && PlayerDataV2[it]!!.vanishCache
+                PlayerDataV2[it] != null && !PlayerDataV2[it]!!.vanishCache
             }
         }
         return amount.size

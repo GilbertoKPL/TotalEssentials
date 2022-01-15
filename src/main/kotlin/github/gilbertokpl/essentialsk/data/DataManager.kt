@@ -10,11 +10,6 @@ object DataManager {
     //discord
     var discordChat: TextChannel? = null
 
-    //tpa
-    val tpaHash = HashMap<Player, Player>()
-
-    val tpAcceptHash = HashMap<Player, Int>()
-
     //in teleport
     val inTeleport = ArrayList<Player>()
 

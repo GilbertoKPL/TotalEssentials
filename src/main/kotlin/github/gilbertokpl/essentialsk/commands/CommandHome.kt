@@ -114,7 +114,7 @@ class CommandHome : CommandCreator {
 
         exe {
             DataManager.inTeleport.remove(s)
-            p.teleport(playerCache.homeCache[nameHome]!!)
+            p.teleport(playerCache.homeCache[nameHome] ?: return@exe)
             p.sendMessage(GeneralLang.homesTeleported.replace("%home%", nameHome))
         }
 

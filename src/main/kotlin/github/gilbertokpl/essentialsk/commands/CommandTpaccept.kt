@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.objects.TpaData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
@@ -21,21 +22,10 @@ class CommandTpaccept : CommandCreator {
     override val commandUsage = listOf("/tpaccept")
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        val p = DataManager.tpaHash[s as Player] ?: run {
+
+        val p = TpaData.getTpa(s as Player) ?: run {
             s.sendMessage(GeneralLang.tpaNotAnyRequest)
             return false
-        }
-
-        //remove checker
-        val value = DataManager.tpAcceptHash[p] ?: run {
-            s.sendMessage(GeneralLang.tpaNotAnyRequest)
-            return false
-        }
-
-        DataManager.tpaHash.remove(s)
-
-        if (value == 1) {
-            DataManager.tpAcceptHash.remove(p)
         }
 
         //check if player is online
@@ -46,8 +36,13 @@ class CommandTpaccept : CommandCreator {
 
         s.sendMessage(GeneralLang.tpaRequestAccepted.replace("%player%", p.name))
 
+        val data = TpaData[p] ?: return false
+
+        data.otherPlayer = null
+        data.wait = false
+
         if (p.hasPermission("essentialsk.bypass.teleport")) {
-            DataManager.tpaHash.remove(p)
+            TpaData.remove(p)
             p.sendMessage(GeneralLang.tpaRequestOtherNoDelayAccepted.replace("%player%", s.name))
             p.teleport(s.location)
             return false
@@ -63,8 +58,8 @@ class CommandTpaccept : CommandCreator {
         val exe = TaskUtil.teleportExecutor(time)
 
         exe {
+            TpaData.remove(p)
             p.teleport(s.location)
-            DataManager.tpaHash.remove(p)
         }
 
         return false

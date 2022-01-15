@@ -6,21 +6,22 @@ import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.objects.WarpDataV2
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.TaskUtil
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandWarp : CommandCreator {
     override val active: Boolean = MainConfig.warpsActivated
-    override val consoleCanUse: Boolean = false
+    override val consoleCanUse: Boolean = true
     override val commandName = "warp"
     override val timeCoolDown: Long? = null
     override val permission: String = "essentialsk.commands.warp"
     override val minimumSize = 0
-    override val maximumSize = 1
+    override val maximumSize = 2
     override val commandUsage =
         listOf(
-            "/warp <warpName>",
+            "P_/warp <warpName>",
             "essentialsk.commands.warp.other_/warp <playerName> <warpName>"
         )
 
@@ -32,13 +33,42 @@ class CommandWarp : CommandCreator {
             null
         }
 
-        if (args.isEmpty() || p == null) {
+        if (args.isEmpty()) {
             s.sendMessage(
                 GeneralLang.warpsWarpList.replace(
                     "%list%",
                     WarpDataV2.getList(p).toString()
                 )
             )
+            return false
+        }
+
+        if (args.size == 2 || p == null) {
+            val newPlayer = Bukkit.getPlayer(args[0].lowercase()) ?: return true
+
+            val warpName = args[1].lowercase()
+
+            val warpInstance = WarpDataV2[warpName]
+
+            //check if not exist
+            if (warpInstance == null) {
+                s.sendMessage(
+                    GeneralLang.warpsWarpList.replace(
+                        "%list%",
+                        WarpDataV2.getList(null).toString()
+                    )
+                )
+                return false
+            }
+
+            newPlayer.teleport(warpInstance)
+
+            newPlayer.sendMessage(GeneralLang.warpsTeleportedOtherMessage.replace("%warp%", warpName))
+            s.sendMessage(GeneralLang.warpsTeleportedOtherSuccess
+                .replace("%warp%", warpName)
+                .replace("%player%", newPlayer.name.lowercase())
+            )
+
             return false
         }
 

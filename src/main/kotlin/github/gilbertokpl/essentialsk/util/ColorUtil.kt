@@ -33,6 +33,8 @@ object ColorUtil {
                 return color(p, strv)
             } catch (e: NoClassDefFoundError) {
                 return color(p, strv)
+            } catch(e : NoSuchMethodError) {
+                return color(p, strv)
             } catch (e: Exception) {
                 return color(p, strv)
             }
