@@ -103,6 +103,11 @@ class CommandWarp : CommandCreator {
             s.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
             return false
         }
+        
+        if (DataManager.inTeleport.contains(s)) {
+            p.sendMessage(GeneralLang.warpsInTeleport)
+            return false
+        }
 
         val time = MainConfig.warpsTimeToTeleport
 
