@@ -14,7 +14,7 @@ class EntityChangeBlock : Listener {
         if (MainConfig.addonsBlockPlayerBreakPlantationFall) {
             try {
                 blockPlayerBreakPlantation(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

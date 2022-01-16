@@ -6,10 +6,7 @@ import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.data.start.PlayerDataLoader
 import github.gilbertokpl.essentialsk.manager.EColor
-import github.gilbertokpl.essentialsk.util.DiscordUtil
-import github.gilbertokpl.essentialsk.util.FileLoggerUtil
-import github.gilbertokpl.essentialsk.util.MainUtil
-import github.gilbertokpl.essentialsk.util.TaskUtil
+import github.gilbertokpl.essentialsk.util.*
 import net.dv8tion.jda.api.EmbedBuilder
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
@@ -24,7 +21,7 @@ class PlayerLeave : Listener {
         if (MainConfig.backActivated) {
             try {
                 setBackLocation(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
@@ -41,12 +38,12 @@ class PlayerLeave : Listener {
                     sendLeaveEmbed(e)
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
         try {
             PlayerDataLoader.saveCache(e.player)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
     }
@@ -68,21 +65,15 @@ class PlayerLeave : Listener {
         }
         if (DataManager.discordChat == null) {
             TaskUtil.asyncExecutor {
-                val newChat =
-                    DiscordUtil.jda!!.getTextChannelById(MainConfig.discordbotIdDiscordChat)
-                        ?: run {
-                            MainUtil.consoleMessage(
-                                EColor.YELLOW.color + GeneralLang.discordchatNoChatId + EColor.RESET.color
-                            )
-                            return@asyncExecutor
-                        }
+                val newChat = DiscordUtil.setupDiscordChat() ?: return@asyncExecutor
+
                 DataManager.discordChat = newChat
 
                 DataManager.discordChat!!.sendMessageEmbeds(
                     EmbedBuilder().setDescription(
                         GeneralLang.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name)
-                    ).setColor(MainUtil.randomColor()).build()
-                ).complete()
+                    ).setColor(ColorUtil.randomColor()).build()
+                ).queue()
             }
             return
         }
@@ -90,7 +81,7 @@ class PlayerLeave : Listener {
         DataManager.discordChat!!.sendMessageEmbeds(
             EmbedBuilder().setDescription(
                 GeneralLang.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name)
-            ).setColor(MainUtil.randomColor()).build()
+            ).setColor(ColorUtil.randomColor()).build()
         ).queue()
     }
 }

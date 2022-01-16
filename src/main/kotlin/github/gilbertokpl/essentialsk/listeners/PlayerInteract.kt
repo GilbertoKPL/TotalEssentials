@@ -15,7 +15,7 @@ class PlayerInteract : Listener {
         if (MainConfig.addonsInfinityAnvil) {
             try {
                 infinityAnvil(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

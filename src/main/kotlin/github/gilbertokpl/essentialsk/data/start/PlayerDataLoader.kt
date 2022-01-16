@@ -64,7 +64,7 @@ object PlayerDataLoader {
                         continue
                     }
                 }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

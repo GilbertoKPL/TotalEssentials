@@ -25,7 +25,7 @@ object PermissionUtil {
         player.effectivePermissions.filter { it.permission.contains(permission) }.forEach {
             val int = try {
                 it.permission.split(".").last().toInt()
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 0
             }
             if (newAmount <= int) {

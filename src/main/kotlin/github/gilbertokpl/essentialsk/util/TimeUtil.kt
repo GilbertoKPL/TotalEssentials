@@ -38,13 +38,13 @@ object TimeUtil {
                 .split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)".toRegex())
             val unit = try {
                 split[1]
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 null
             }
             convert += if (unit == null) {
                 try {
                     TimeUnit.MINUTES.toMillis(split[0].toLong())
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     0L
                 }
             } else {
@@ -56,7 +56,7 @@ object TimeUtil {
                         "d" -> TimeUnit.DAYS.toMillis(split[0].toLong())
                         else -> TimeUnit.MINUTES.toMillis(split[0].toLong())
                     }
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     0L
                 }
             }

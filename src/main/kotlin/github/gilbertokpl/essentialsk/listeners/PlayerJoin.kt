@@ -17,14 +17,14 @@ class PlayerJoin : Listener {
 
         try {
             PlayerDataV2.loadCache(e)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
 
         if (MainConfig.vanishActivated) {
             try {
                 vanishLoginEvent(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

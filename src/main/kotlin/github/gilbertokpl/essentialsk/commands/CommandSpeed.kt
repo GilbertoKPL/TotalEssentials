@@ -41,7 +41,7 @@ class CommandSpeed : CommandCreator {
             //check int
             try {
                 args[0].toInt()
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 return true
             }
 

@@ -3,7 +3,6 @@ package github.gilbertokpl.essentialsk.util
 import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.EColor
@@ -27,20 +26,28 @@ object PlayerUtil {
     }
 
     fun getNumberGamemode(gamemode: GameMode): Int {
-        return try {
-            when (gamemode) {
-                GameMode.SURVIVAL -> 0
-                GameMode.CREATIVE -> 1
-                GameMode.ADVENTURE -> 2
-                GameMode.SPECTATOR -> 3
+        try {
+            if (gamemode == GameMode.SURVIVAL) {
+                return 1
             }
-        } catch (e: NoSuchFieldError) {
-            when (gamemode) {
-                GameMode.SURVIVAL -> 0
-                GameMode.CREATIVE -> 1
-                else -> 0
+            if (gamemode == GameMode.CREATIVE) {
+                return 2
+            }
+            if (gamemode == GameMode.ADVENTURE) {
+                return 3
+            }
+            if (gamemode == GameMode.SPECTATOR) {
+                return 4
+            }
+        } catch (e: Throwable) {
+            if (gamemode == GameMode.SURVIVAL) {
+                return 1
+            }
+            if (gamemode == GameMode.CREATIVE) {
+                return 2
             }
         }
+        return 1
     }
 
     fun getGamemodeNumber(number: String): GameMode {
@@ -104,28 +111,22 @@ object PlayerUtil {
         }
         if (DataManager.discordChat == null) {
             TaskUtil.asyncExecutor {
-                val newChat =
-                    DiscordUtil.jda!!.getTextChannelById(MainConfig.discordbotIdDiscordChat)
-                        ?: run {
-                            MainUtil.consoleMessage(
-                                EColor.YELLOW.color + GeneralLang.discordchatNoChatId + EColor.RESET.color
-                            )
-                            return@asyncExecutor
-                        }
+                val newChat = DiscordUtil.setupDiscordChat() ?: return@asyncExecutor
+
                 DataManager.discordChat = newChat
 
                 DataManager.discordChat!!.sendMessageEmbeds(
                     EmbedBuilder().setDescription(
                         GeneralLang.discordchatDiscordSendLoginMessage.replace("%player%", p.name)
-                    ).setColor(MainUtil.randomColor()).build()
-                ).complete()
+                    ).setColor(ColorUtil.randomColor()).build()
+                ).queue()
             }
         }
 
         DataManager.discordChat?.sendMessageEmbeds(
             EmbedBuilder().setDescription(
                 GeneralLang.discordchatDiscordSendLoginMessage.replace("%player%", p.name)
-            ).setColor(MainUtil.randomColor()).build()
+            ).setColor(ColorUtil.randomColor()).build()
         )?.queue()
     }
 }

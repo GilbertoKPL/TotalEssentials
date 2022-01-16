@@ -181,7 +181,7 @@ object ItemUtil {
             }
             dataOutput.close()
             toReturn = Base64Coder.encodeLines(outputStream.toByteArray())
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
         return toReturn
@@ -203,7 +203,7 @@ object ItemUtil {
             }
             dataInput.close()
             toReturn = items.filterNotNull().toList()
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
         return toReturn

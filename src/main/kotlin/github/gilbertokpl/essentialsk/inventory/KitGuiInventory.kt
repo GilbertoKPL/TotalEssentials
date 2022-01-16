@@ -39,7 +39,7 @@ object KitGuiInventory {
             val name = GeneralLang.kitsInventoryItemsName.replace("%kitrealname%", i.fakeName)
             val item = try {
                 ItemStack(i.items[0])
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 ItemStack(Material.CHEST)
             }
             val meta = item.itemMeta

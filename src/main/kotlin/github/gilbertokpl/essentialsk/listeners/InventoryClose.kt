@@ -17,7 +17,7 @@ class InventoryClose : Listener {
         if (MainConfig.kitsActivated) {
             try {
                 if (editKitInventoryCloseEvent(e)) return
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

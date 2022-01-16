@@ -13,7 +13,7 @@ class WeatherChange : Listener {
         if (MainConfig.addonsDisableRain) {
             try {
                 disableRain(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

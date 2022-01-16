@@ -18,6 +18,10 @@ import java.nio.file.Paths
 
 object ReflectUtil {
 
+    private var healWork = false
+
+    private var feedWork = false
+
     private var getPlayersList: Boolean? = null
 
     fun removeCommand(cmd: String) {
@@ -132,10 +136,9 @@ object ReflectUtil {
     fun getHealth(p: Player): Double {
         return try {
             p.health
-        } catch (e: NoSuchMethodError) {
+        } catch (e: Throwable) {
             try {
-                (p.javaClass.getMethod("getHealth", *arrayOfNulls(0)).invoke(p, *arrayOfNulls(0)) as Int).toInt()
-                    .toDouble()
+                (p.javaClass.getMethod("getHealth").invoke(p, arrayListOf<Int>()) as Int).toDouble()
             } catch (e1: Throwable) {
                 0.0
             }
@@ -144,12 +147,11 @@ object ReflectUtil {
 
     fun setHealth(p: Player, health: Int) {
         try {
-            p.javaClass.getMethod("setHealth", Double::class.javaPrimitiveType)
-                .invoke(p, java.lang.Double.valueOf(health.toDouble()))
+            p.health = health.toDouble()
         } catch (e: Throwable) {
             try {
-                p.javaClass.getMethod("setHealth", Int::class.javaPrimitiveType).invoke(
-                    p, Integer.valueOf(health)
+                p.javaClass.getMethod("setHealth").invoke(
+                    p, health
                 )
             } catch (e: Throwable) {
                 e.printStackTrace()

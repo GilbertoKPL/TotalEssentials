@@ -13,7 +13,7 @@ class BurnEvent : Listener {
         if (MainConfig.addonsBlockPropagationFire) {
             try {
                 blockPropagationFire(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

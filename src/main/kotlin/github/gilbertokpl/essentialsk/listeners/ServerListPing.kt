@@ -15,7 +15,7 @@ class ServerListPing : Listener {
         if (MainConfig.motdEnabled) {
             try {
                 motd(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

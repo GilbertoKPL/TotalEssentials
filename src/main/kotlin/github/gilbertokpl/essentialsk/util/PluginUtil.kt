@@ -98,7 +98,7 @@ object PluginUtil {
                     val listenersField: Field = Bukkit.getPluginManager().javaClass.getDeclaredField("listeners")
                     listenersField.isAccessible = true
                     listeners = listenersField.get(pluginManager) as Map<Event?, SortedSet<RegisteredListener>>
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     reloadlisteners = false
                 }
                 val commandMapField: Field = Bukkit.getPluginManager().javaClass.getDeclaredField("commandMap")

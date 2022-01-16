@@ -14,7 +14,7 @@ class PlayerBedEnter : Listener {
         if (MainConfig.antibugsBlockBed) {
             try {
                 blockEnterInBed(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

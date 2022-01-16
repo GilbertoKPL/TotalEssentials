@@ -31,7 +31,7 @@ object HostUtil {
 
             val ip = try {
                 InetAddress.getLocalHost().hostAddress
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 "Unknow"
             }
 
@@ -47,7 +47,7 @@ object HostUtil {
 
             val cpuMinMHZ = (try {
                 siProcessor.currentFreq[0] / MHZ_CONVERSOR
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 "Unknown"
             }).toString()
 
@@ -68,13 +68,13 @@ object HostUtil {
 
             val hdName = try {
                 si.hardware.diskStores[0].name
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 "Unknow"
             }
 
             val gpu = try {
                 si.hardware.graphicsCards[0].name
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 "Unknow"
             }
 

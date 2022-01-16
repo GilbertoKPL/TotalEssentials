@@ -14,7 +14,7 @@ class InventoryOpen : Listener {
         if (MainConfig.containersBlockOpenEnable) {
             try {
                 blockOpenInventory(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

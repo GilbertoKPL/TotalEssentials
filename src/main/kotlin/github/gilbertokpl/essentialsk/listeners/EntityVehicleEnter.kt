@@ -15,7 +15,7 @@ class EntityVehicleEnter : Listener {
         if (MainConfig.antibugsBlockClimbingOnVehicles) {
             try {
                 blockEnterInVehicles(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

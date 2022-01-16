@@ -21,21 +21,21 @@ object LocationUtil {
             val z = parts[2].toDouble()
             val w = try {
                 EssentialsK.instance.server.getWorld(parts[3])
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 null
             }
             Location(
                 w, x, y, z, try {
                     parts[5].toFloat()
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     0F
                 }, try {
                     parts[4].toFloat()
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     0F
                 }
             )
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             null
         }
     }

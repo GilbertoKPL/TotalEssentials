@@ -18,7 +18,7 @@ class PlayerChangeWorld : Listener {
         if (MainConfig.flyActivated) {
             try {
                 data(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

@@ -15,7 +15,7 @@ class EntityPortalCreate : Listener {
         if (MainConfig.antibugsBlockCreatePortal) {
             try {
                 blockCreationPortal(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

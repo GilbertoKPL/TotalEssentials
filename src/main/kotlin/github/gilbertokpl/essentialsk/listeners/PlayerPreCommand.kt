@@ -31,19 +31,19 @@ class PlayerPreCommand : Listener {
         if (MainConfig.vanishActivated) {
             try {
                 vanishPreCommandEvent(e, split)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
         try {
             blockCommands(e, split)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
         if (MainConfig.discordbotConnectDiscordChat) {
             try {
                 discordChatEvent(e, split)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
@@ -103,15 +103,9 @@ class PlayerPreCommand : Listener {
                 .replace("@", "")
 
             if (DataManager.discordChat == null) {
+
                 TaskUtil.asyncExecutor {
-                    val newChat =
-                        DiscordUtil.jda!!.getTextChannelById(MainConfig.discordbotIdDiscordChat)
-                            ?: run {
-                                MainUtil.consoleMessage(
-                                    EColor.YELLOW.color + GeneralLang.discordchatNoChatId + EColor.RESET.color
-                                )
-                                return@asyncExecutor
-                            }
+                    val newChat = DiscordUtil.setupDiscordChat() ?: return@asyncExecutor
                     DataManager.discordChat = newChat
                     DataManager.discordChat!!.sendMessage(patternMessage).queue()
                 }

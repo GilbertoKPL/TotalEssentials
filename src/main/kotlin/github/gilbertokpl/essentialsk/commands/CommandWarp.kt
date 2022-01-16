@@ -43,7 +43,7 @@ class CommandWarp : CommandCreator {
             return false
         }
 
-        if (args.size == 2 || p == null) {
+        if (p == null || (args.size == 2 && p.hasPermission("essentialsk.commands.warp.other"))) {
             val newPlayer = Bukkit.getPlayer(args[0].lowercase()) ?: return true
 
             val warpName = args[1].lowercase()
@@ -64,9 +64,10 @@ class CommandWarp : CommandCreator {
             newPlayer.teleport(warpInstance)
 
             newPlayer.sendMessage(GeneralLang.warpsTeleportedOtherMessage.replace("%warp%", warpName))
-            s.sendMessage(GeneralLang.warpsTeleportedOtherSuccess
-                .replace("%warp%", warpName)
-                .replace("%player%", newPlayer.name.lowercase())
+            s.sendMessage(
+                GeneralLang.warpsTeleportedOtherSuccess
+                    .replace("%warp%", warpName)
+                    .replace("%player%", newPlayer.name.lowercase())
             )
 
             return false
@@ -84,7 +85,7 @@ class CommandWarp : CommandCreator {
 
         //check if not exist
         if (warpInstance == null) {
-            s.sendMessage(
+            p.sendMessage(
                 GeneralLang.warpsWarpList.replace(
                     "%list%",
                     WarpDataV2.getList(p).toString()
@@ -93,18 +94,18 @@ class CommandWarp : CommandCreator {
             return false
         }
 
-        if (!s.hasPermission("essentialsk.commands.warp.$warpName")) {
-            s.sendMessage(GeneralLang.generalNotPerm)
+        if (!p.hasPermission("essentialsk.commands.warp.$warpName")) {
+            p.sendMessage(GeneralLang.generalNotPerm)
             return false
         }
 
-        if (s.hasPermission("essentialsk.bypass.teleport")) {
+        if (p.hasPermission("essentialsk.bypass.teleport")) {
             p.teleport(warpInstance)
-            s.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
+            p.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
             return false
         }
-        
-        if (DataManager.inTeleport.contains(s)) {
+
+        if (DataManager.inTeleport.contains(p)) {
             p.sendMessage(GeneralLang.warpsInTeleport)
             return false
         }
@@ -116,7 +117,7 @@ class CommandWarp : CommandCreator {
         DataManager.inTeleport.add(p)
 
         exe {
-            DataManager.inTeleport.remove(s)
+            DataManager.inTeleport.remove(p)
             p.teleport(warpInstance)
             s.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
         }

@@ -16,7 +16,7 @@ class PlayerRespawn : Listener {
     fun event(e: PlayerRespawnEvent) {
         try {
             playerData(e)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
     }
@@ -28,7 +28,7 @@ class PlayerRespawn : Listener {
             if (MainConfig.spawnSendToSpawnOnDeath) {
                 try {
                     spawnRespawn(e)
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
                 }
             }

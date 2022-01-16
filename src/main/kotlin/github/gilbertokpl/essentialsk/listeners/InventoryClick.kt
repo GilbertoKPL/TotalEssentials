@@ -27,26 +27,26 @@ class InventoryClick : Listener {
         if (MainConfig.kitsActivated) {
             try {
                 if (editKitInventoryClickEvent(e)) return
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
             try {
                 if (kitGuiEvent(e)) return
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
         if (MainConfig.containersBlockShiftEnable) {
             try {
                 blockShiftInInventory(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
         if (MainConfig.addonsColorInAnvil) {
             try {
                 anvilColor(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

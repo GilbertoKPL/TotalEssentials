@@ -14,7 +14,7 @@ class PlayerPortal : Listener {
         if (MainConfig.antibugsBlockPlayerTeleportPortal) {
             try {
                 blockPlayerTeleport(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

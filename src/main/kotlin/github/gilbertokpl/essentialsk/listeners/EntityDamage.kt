@@ -16,7 +16,7 @@ class EntityDamage : Listener {
         if (MainConfig.addonsBlockPlayerGoToVoid) {
             try {
                 blockPlayerFallInVoid(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

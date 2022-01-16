@@ -20,21 +20,21 @@ class PlayerDeath : Listener {
         if (MainConfig.backActivated) {
             try {
                 setBackLocation(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
         if (MainConfig.messagesDeathmessagesMessage) {
             try {
                 deathMessage(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
         if (MainConfig.addonsPlayerPreventLoseXp) {
             try {
                 loseXP(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

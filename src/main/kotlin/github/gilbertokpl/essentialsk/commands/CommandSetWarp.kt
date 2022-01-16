@@ -54,7 +54,7 @@ class CommandSetWarp : CommandCreator {
                     args[3].toDouble(),
                     args[4].toDouble()
                 )
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 return true
             }
 

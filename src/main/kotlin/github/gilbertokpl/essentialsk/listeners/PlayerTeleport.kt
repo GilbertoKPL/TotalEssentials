@@ -19,21 +19,21 @@ class PlayerTeleport : Listener {
         if (MainConfig.backActivated) {
             try {
                 setBackLocation(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
         if (MainConfig.antibugsBlockGoingEdgeEnderpearl) {
             try {
                 blockPassEdgeEnderPearl(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
         if (MainConfig.antibugsBlockPlayerGoToNetherCeiling) {
             try {
                 blockPassNetherCeiling(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

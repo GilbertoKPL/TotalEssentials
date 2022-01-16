@@ -104,12 +104,12 @@ object ConfigUtil {
                 if (bol) {
                     val timezone = try {
                         TimeZone.getDefault().id.split("/")[1].uppercase()
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         "OTHER"
                     }
                     val enum = try {
                         ELang.valueOf(timezone).locale
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         ELang.valueOf("OTHER").locale
                     }
                     MainConfig.generalSelectedLang = enum

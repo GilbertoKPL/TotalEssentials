@@ -12,7 +12,6 @@ import github.gilbertokpl.essentialsk.manager.EColor
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bstats.bukkit.Metrics
 import org.bukkit.event.Listener
-import java.awt.Color
 import java.io.InputStream
 import java.net.URL
 import java.util.*
@@ -104,12 +103,6 @@ object MainUtil {
             )?.setExecutor(c)
         }
     }
-
-    fun randomColor(): Color = Color.getHSBColor(
-        (Math.random() * 255 + 1).toFloat(),
-        (Math.random() * 255 + 1).toFloat(),
-        (Math.random() * 255 + 1).toFloat()
-    )
 
     fun checkSpecialCaracteres(s: String?): Boolean {
         return s?.matches(Regex("[^A-Za-z0-9 ]")) ?: false

@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.util
 
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player
+import java.awt.Color
 import java.util.regex.Pattern
 
 object ColorUtil {
@@ -11,7 +12,7 @@ object ColorUtil {
         "&f", "&k", "&r", "&l", "&n"
     )
 
-    var works = true
+    private var works = true
 
     fun rgbHex(p: Player?, strv: String): String {
         if (works) {
@@ -33,9 +34,9 @@ object ColorUtil {
                 return color(p, strv)
             } catch (e: NoClassDefFoundError) {
                 return color(p, strv)
-            } catch(e : NoSuchMethodError) {
+            } catch (e: NoSuchMethodError) {
                 return color(p, strv)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 return color(p, strv)
             }
         } else {
@@ -60,4 +61,10 @@ object ColorUtil {
         }
         return newMessage
     }
+
+    fun randomColor(): Color = Color.getHSBColor(
+        (Math.random() * 255 + 1).toFloat(),
+        (Math.random() * 255 + 1).toFloat(),
+        (Math.random() * 255 + 1).toFloat()
+    )
 }

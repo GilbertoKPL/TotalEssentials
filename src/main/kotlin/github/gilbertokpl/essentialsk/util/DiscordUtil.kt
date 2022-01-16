@@ -1,9 +1,12 @@
 package github.gilbertokpl.essentialsk.util
 
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.listeners.discord.ChatDiscord
+import github.gilbertokpl.essentialsk.manager.EColor
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
+import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 
@@ -22,8 +25,19 @@ object DiscordUtil {
                 .build()
         } catch (e: javax.security.auth.login.LoginException) {
             null
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             null
         }
+    }
+
+    fun setupDiscordChat(): TextChannel? {
+        val newChat =
+            jda!!.getTextChannelById(MainConfig.discordbotIdDiscordChat) ?: run {
+                MainUtil.consoleMessage(
+                    EColor.YELLOW.color + GeneralLang.discordchatNoChatId + EColor.RESET.color
+                )
+                return null
+            }
+        return newChat
     }
 }

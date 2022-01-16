@@ -13,7 +13,7 @@ class CreatureSpawn : Listener {
         if (MainConfig.antibugsBlockMobCatch) {
             try {
                 blockMobCatch(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

@@ -67,7 +67,7 @@ object VersionUtil {
                             "restart"
                         )
                     }
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     pluginPath.delete()
                     EssentialsK.instance.server.dispatchCommand(
                         EssentialsK.instance.server.consoleSender,

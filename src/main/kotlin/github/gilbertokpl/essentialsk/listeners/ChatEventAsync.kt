@@ -18,14 +18,14 @@ class ChatEventAsync : Listener {
         if (MainConfig.kitsActivated) {
             try {
                 if (editKitChatEvent(e)) return
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
         if (MainConfig.addonsColorInChat) {
             try {
                 colorChat(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }
@@ -75,7 +75,7 @@ class ChatEventAsync : Listener {
 
                 val integer = try {
                     e.message.toInt()
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     0
                 }
 

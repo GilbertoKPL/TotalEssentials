@@ -15,7 +15,7 @@ class PlayerInteractEntity : Listener {
         if (MainConfig.antibugsBlockNametag) {
             try {
                 blockNameTag(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
         }

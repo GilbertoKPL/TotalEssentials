@@ -37,7 +37,7 @@ object OtherConfigUtil {
                 } catch (ignored: Exception) {
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
 
@@ -49,7 +49,7 @@ object OtherConfigUtil {
                 } catch (ignored: Exception) {
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
 
@@ -74,7 +74,7 @@ object OtherConfigUtil {
                     continue
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
 
@@ -108,7 +108,7 @@ object OtherConfigUtil {
                     Announcements.start(announce.size, MainConfig.announcementsTime)
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
 

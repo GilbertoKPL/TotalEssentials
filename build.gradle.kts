@@ -6,7 +6,7 @@ version = "1.5.3"
 val base = "github.gilbertokpl.libs"
 val exposedVersion = "0.37.3"
 val kotlin = "1.6.10"
-val buildVersion = "1.16.5"
+val buildVersion = "1.18.1"
 
 plugins {
     kotlin("jvm") version "1.6.10"

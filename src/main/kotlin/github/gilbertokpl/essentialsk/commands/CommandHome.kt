@@ -87,11 +87,6 @@ class CommandHome : CommandCreator {
             return false
         }
 
-        if (DataManager.inTeleport.contains(s)) {
-            p.sendMessage(GeneralLang.homesInTeleport)
-            return false
-        }
-
         val nameHome = args[0].lowercase()
 
         //check if home don't exist
@@ -101,8 +96,13 @@ class CommandHome : CommandCreator {
         }
 
         if (p.hasPermission("essentialsk.bypass.teleport")) {
-            p.teleport(playerCache.homeCache[nameHome]!!)
+            p.teleport(playerCache.homeCache[nameHome] ?: return false)
             p.sendMessage(GeneralLang.homesTeleported.replace("%home%", nameHome))
+            return false
+        }
+
+        if (DataManager.inTeleport.contains(p)) {
+            p.sendMessage(GeneralLang.homesInTeleport)
             return false
         }
 
@@ -113,7 +113,7 @@ class CommandHome : CommandCreator {
         DataManager.inTeleport.add(p)
 
         exe {
-            DataManager.inTeleport.remove(s)
+            DataManager.inTeleport.remove(p)
             p.teleport(playerCache.homeCache[nameHome] ?: return@exe)
             p.sendMessage(GeneralLang.homesTeleported.replace("%home%", nameHome))
         }
