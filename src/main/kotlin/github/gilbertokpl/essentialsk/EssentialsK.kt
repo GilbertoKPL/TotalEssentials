@@ -14,7 +14,6 @@ class EssentialsK : JavaPlugin() {
 
     override fun onLoad() {
 
-
         val startInstant = Instant.now()
         println(
             "${EColor.CYAN.color}[${name}]${EColor.RESET.color} " +

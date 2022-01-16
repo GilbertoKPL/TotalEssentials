@@ -68,11 +68,12 @@ class PlayerDeath : Listener {
 
         if (damageCause.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
             val ent = damageCause as EntityDamageByEntityEvent
-            if (ent.damager is Player) {
+            val dmg = ent.damager
+            if (dmg is Player) {
                 MainUtil.serverMessage(
                     GeneralLang.deathmessagesPlayerKillPlayer
                         .replace("%player%", pName)
-                        .replace("%killer%", ent.damager.name)
+                        .replace("%killer%", dmg.name)
                 )
                 return
             }

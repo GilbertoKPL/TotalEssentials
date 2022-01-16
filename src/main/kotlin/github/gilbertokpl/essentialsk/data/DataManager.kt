@@ -7,9 +7,6 @@ import org.bukkit.inventory.ItemStack
 
 object DataManager {
 
-    //discord
-    var discordChat: TextChannel? = null
-
     //in teleport
     val inTeleport = ArrayList<Player>()
 

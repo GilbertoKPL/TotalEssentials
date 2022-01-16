@@ -55,7 +55,7 @@ object TaskUtil {
                 TimeUnit.SECONDS.sleep(time.toLong())
                 try {
                     EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable { it() })
-                } catch (ex: Exception) {
+                } catch (ex: Throwable) {
                     FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
                 }
             }, poolExecutorTeleport)
@@ -67,7 +67,7 @@ object TaskUtil {
             CompletableFuture.runAsync({
                 try {
                     it()
-                } catch (ex: Exception) {
+                } catch (ex: Throwable) {
                     FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
                 }
             }, poolExecutor)

@@ -61,17 +61,17 @@ object MainUtil {
         return CompletableFuture.supplyAsync({
             try {
                 KitDataV2.loadKitCache()
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }
             try {
                 WarpDataV2.loadWarpCache()
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }
             try {
                 SpawnDataV2.loadSpawnCache()
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }
             return@supplyAsync true

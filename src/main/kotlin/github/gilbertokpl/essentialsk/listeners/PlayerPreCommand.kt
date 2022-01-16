@@ -1,16 +1,15 @@
 package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.EssentialsK
+import github.gilbertokpl.essentialsk.api.DiscordAPI
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
-import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.DiscordUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.MainUtil
-import github.gilbertokpl.essentialsk.util.TaskUtil
 import net.milkbowl.vault.chat.Chat
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
@@ -82,12 +81,6 @@ class PlayerPreCommand : Listener {
 
     private fun discordChatEvent(e: PlayerCommandPreprocessEvent, split: List<String>) {
         if (MainConfig.discordbotCommandChat.contains(split[0].lowercase())) {
-            if (DiscordUtil.jda == null) {
-                MainUtil.consoleMessage(
-                    EColor.YELLOW.color + GeneralLang.discordchatNoToken + EColor.RESET.color
-                )
-                return
-            }
             if (chat == null) {
                 MainUtil.consoleMessage(
                     EColor.YELLOW.color + GeneralLang.generalVaultNotExist + EColor.RESET.color
@@ -95,23 +88,19 @@ class PlayerPreCommand : Listener {
                 return
             }
             val msg = e.message.replace("${split[0]} ", "")
+                .replace("@", "")
+                .replace("*", "")
+                .replace("#", "")
+                .replace("`", "")
+
+            if (msg == "/g" || msg == "") return
 
             val patternMessage = GeneralLang.discordchatMessageToDiscordPattern
                 .replace("%group%", chat.getPlayerPrefix(e.player))
                 .replace("%message%", msg)
                 .replace("%player%", e.player.name).replace("&[0-9,a-z]".toRegex(), "")
-                .replace("@", "")
 
-            if (DataManager.discordChat == null) {
-
-                TaskUtil.asyncExecutor {
-                    val newChat = DiscordUtil.setupDiscordChat() ?: return@asyncExecutor
-                    DataManager.discordChat = newChat
-                    DataManager.discordChat!!.sendMessage(patternMessage).queue()
-                }
-                return
-            }
-            DataManager.discordChat!!.sendMessage(patternMessage).queue()
+            DiscordAPI.sendMessageDiscord(patternMessage, false)
         }
     }
 }

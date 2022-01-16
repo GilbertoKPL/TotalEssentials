@@ -205,7 +205,7 @@ public class GeneralLang {
     public static String warpsWarpCreated;
 
     public static String warpsWarpRemoved;
-    
+
     public static String warpsInTeleport;
 
     public static String warpsTeleportedOtherMessage;

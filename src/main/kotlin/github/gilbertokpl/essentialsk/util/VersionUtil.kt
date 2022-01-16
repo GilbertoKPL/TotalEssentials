@@ -80,7 +80,7 @@ object VersionUtil {
             }
             MainUtil.consoleMessage(StartLang.completeVerification)
             return false
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
         }
         return false

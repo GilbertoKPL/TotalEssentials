@@ -58,7 +58,7 @@ object SqlUtil {
             }
             MainUtil
                 .consoleMessage(StartLang.connectDatabaseSuccess.replace("%db%", type.lowercase()))
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
         }
     }

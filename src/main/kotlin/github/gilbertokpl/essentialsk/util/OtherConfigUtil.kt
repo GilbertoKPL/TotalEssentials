@@ -2,7 +2,6 @@ package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
-import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.loops.Announcements
 import github.gilbertokpl.essentialsk.loops.Discord
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -11,9 +10,7 @@ object OtherConfigUtil {
 
     fun start() {
 
-        if (DataManager.discordChat != null) {
-            DataManager.discordChat = null
-        }
+        github.gilbertokpl.essentialsk.api.DiscordAPI.reloadDiscordChat()
 
         val vanish = ConfigUtil
             .getStringList(ConfigUtil.configYaml, "vanish.blocked-other-cmds", false)

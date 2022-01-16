@@ -18,10 +18,6 @@ import java.nio.file.Paths
 
 object ReflectUtil {
 
-    private var healWork = false
-
-    private var feedWork = false
-
     private var getPlayersList: Boolean? = null
 
     fun removeCommand(cmd: String) {

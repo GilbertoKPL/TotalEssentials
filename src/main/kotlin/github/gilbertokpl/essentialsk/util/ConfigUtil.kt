@@ -126,7 +126,7 @@ object ConfigUtil {
                 ReflectUtil
                     .setValuesOfClass(GeneralLang::class.java, GeneralLang(), langYaml)
 
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }
             return
@@ -135,7 +135,7 @@ object ConfigUtil {
         try {
             ReflectUtil
                 .setValuesOfClass(MainConfig::class.java, MainConfig(), configYaml)
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
         }
     }
@@ -211,7 +211,7 @@ object ConfigUtil {
             }
 
             return true
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             return false
         }

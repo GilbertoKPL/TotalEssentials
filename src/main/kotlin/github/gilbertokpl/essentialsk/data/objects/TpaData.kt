@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 data class TpaData(
-    val p : Player,
+    val p: Player,
     var otherPlayer: Player?,
     var wait: Boolean
 ) {
@@ -23,11 +23,11 @@ data class TpaData(
             tpaData.remove(p)
         }
 
-        fun checkTpa(p: Player) : Boolean {
+        fun checkTpa(p: Player): Boolean {
             return tpaData.contains(p)
         }
 
-        fun checkOtherTpa(p: Player) : Boolean {
+        fun checkOtherTpa(p: Player): Boolean {
             for (i in tpaData) {
                 if (i.value.otherPlayer == p) {
                     return true
@@ -36,7 +36,7 @@ data class TpaData(
             return false
         }
 
-        fun getTpa(p: Player) : Player? {
+        fun getTpa(p: Player): Player? {
             for (i in tpaData) {
                 if (i.value.otherPlayer == p) {
                     return i.key
@@ -45,7 +45,7 @@ data class TpaData(
             return null
         }
 
-        fun createNewTpa(pSender : Player, pReceived: Player, time : Int) {
+        fun createNewTpa(pSender: Player, pReceived: Player, time: Int) {
 
             tpaData[pSender] = TpaData(pSender, pReceived, true)
 

@@ -45,13 +45,15 @@ class CommandLight : CommandCreator {
 
             if (PlayerDataV2[p]?.switchLight() ?: return false) {
                 p.sendMessage(GeneralLang.lightSendOtherActive)
-                s.sendMessage(GeneralLang.lightSendActivatedOther
-                    .replace("%player%", p.name.lowercase())
+                s.sendMessage(
+                    GeneralLang.lightSendActivatedOther
+                        .replace("%player%", p.name.lowercase())
                 )
             } else {
                 p.sendMessage(GeneralLang.lightSendOtherDisable)
-                s.sendMessage(GeneralLang.lightSendDisabledOther
-                    .replace("%player%", p.name.lowercase())
+                s.sendMessage(
+                    GeneralLang.lightSendDisabledOther
+                        .replace("%player%", p.name.lowercase())
                 )
             }
 
