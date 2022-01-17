@@ -69,7 +69,7 @@ class CommandGamemode : CommandCreator {
 
             (PlayerDataV2[p] ?: return false).setGamemode(
                 playerGameMode,
-                args[0].toInt()
+                PlayerUtil.getNumberGamemode(playerGameMode)
             )
 
             p.sendMessage(
