@@ -96,7 +96,7 @@ object MainUtil {
             ).lowercase()
             if (!c.active) {
                 ReflectUtil.removeCommand(cmdName)
-                return
+                continue
             }
             EssentialsK.instance.getCommand(
                 cmdName
