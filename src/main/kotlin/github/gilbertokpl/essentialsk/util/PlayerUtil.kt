@@ -26,23 +26,23 @@ object PlayerUtil {
     fun getNumberGamemode(gamemode: GameMode): Int {
         try {
             if (gamemode == GameMode.SURVIVAL) {
-                return 1
+                return 0
             }
             if (gamemode == GameMode.CREATIVE) {
-                return 2
+                return 1
             }
             if (gamemode == GameMode.ADVENTURE) {
-                return 3
+                return 2
             }
             if (gamemode == GameMode.SPECTATOR) {
-                return 4
+                return 3
             }
         } catch (e: Throwable) {
             if (gamemode == GameMode.SURVIVAL) {
-                return 1
+                return 0
             }
             if (gamemode == GameMode.CREATIVE) {
-                return 2
+                return 1
             }
         }
         return 1

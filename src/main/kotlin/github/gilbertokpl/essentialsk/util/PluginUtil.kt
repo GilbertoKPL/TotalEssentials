@@ -132,9 +132,8 @@ object PluginUtil {
             while (it.hasNext()) {
                 val (_, value) = it.next()
                 if (value is PluginCommand) {
-                    val c = value
-                    if (c.plugin === plugin) {
-                        c.unregister(commandMap as CommandMap)
+                    if (value.plugin === plugin) {
+                        value.unregister(commandMap as CommandMap)
                         it.remove()
                     }
                 }

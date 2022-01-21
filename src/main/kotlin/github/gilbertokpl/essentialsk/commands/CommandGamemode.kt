@@ -35,8 +35,7 @@ class CommandGamemode : CommandCreator {
             }
 
             (PlayerDataV2[s] ?: return false).setGamemode(
-                playerGameMode,
-                PlayerUtil.getNumberGamemode(playerGameMode)
+                playerGameMode
             )
             s.sendMessage(
                 GeneralLang.gamemodeUseSuccess.replace(
@@ -68,8 +67,7 @@ class CommandGamemode : CommandCreator {
             }
 
             (PlayerDataV2[p] ?: return false).setGamemode(
-                playerGameMode,
-                PlayerUtil.getNumberGamemode(playerGameMode)
+                playerGameMode
             )
 
             p.sendMessage(

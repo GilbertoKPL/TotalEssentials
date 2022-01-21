@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk
 
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.*
-import github.gilbertokpl.libchecker.app.builder.ApplicationBuilder
+import github.slimjar.app.builder.ApplicationBuilder
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File

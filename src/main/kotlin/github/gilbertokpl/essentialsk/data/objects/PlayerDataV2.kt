@@ -117,10 +117,10 @@ data class PlayerDataV2(
 
     //gamemode
 
-    fun setGamemode(gm: GameMode, value: Int) {
+    fun setGamemode(gm: GameMode) {
         player.gameMode = gm
 
-        gameModeCache = value
+        gameModeCache = PlayerUtil.getNumberGamemode(gm)
 
         //desbug fly on set gamemode 0
         if (gm == GameMode.SURVIVAL && flyCache) {

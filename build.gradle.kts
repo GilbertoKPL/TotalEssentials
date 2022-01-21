@@ -1,3 +1,4 @@
+import github.slimjar.func.slim
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "github.gilbertokpl.essentialsk"
@@ -8,13 +9,25 @@ val exposedVersion = "0.37.3"
 val kotlin = "1.6.10"
 val buildVersion = "1.18.1"
 
+buildscript {
+    repositories {
+        maven {
+            url = uri("https://jitpack.io")
+        }
+    }
+    dependencies {
+        classpath("com.github.GilbertoKPL.slimjar:github.slimjar.gradle.plugin:v1.2.8")
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.6.10"
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
-    id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1"
-    id("io.github.slimjar") version "1.3.0"
 }
+
+apply(plugin = "github.slimjar")
 
 detekt {
     config = files("$projectDir/config/detekt.yml")
@@ -25,26 +38,14 @@ detekt {
 allprojects {
     repositories {
         mavenCentral()
-
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/GilbertoKpl/EssentialsK")
-            credentials {
-                username = "GilbertoKPL"
-                password = project.findProperty("TOKEN").toString()
-            }
-        }
-
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-        maven("https://repo.codemc.io/repository/maven-snapshots/")
         maven("https://mvnrepository.com/artifact/")
         maven("https://jitpack.io")
-        maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
 dependencies {
-    implementation("github.gilbertokpl.lib:libchecker-jar:1.0")
+    implementation("com.github.GilbertoKPL.slimjar:slimjar:v1.2.8")
 
     compileOnly("org.spigotmc:spigot-api:$buildVersion-R0.1-SNAPSHOT") {
         exclude("commons-lang", "commons-lang")
@@ -58,21 +59,30 @@ dependencies {
         exclude("org.bukkit", "bukkit")
     }
 
-    slim("org.jetbrains:annotations:23.0.0")
-
     slim("org.jetbrains.kotlin:kotlin-stdlib:$kotlin") {
         exclude("org.jetbrains", "annotations")
     }
 
-    slim("org.jetbrains.exposed:exposed-dao:$exposedVersion") {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
+    slim("org.yaml:snakeyaml:1.30")
+
+    slim("org.jetbrains:annotations:23.0.0")
+
+    slim("org.jetbrains.exposed:exposed-core:$exposedVersion") {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+        exclude("org.slf4j", "slf4j-api")
+    }
+
+    slim("org.jetbrains.exposed:exposed-dao:$exposedVersion") {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+        exclude("org.jetbrains.exposed", "exposed-core")
         exclude("org.slf4j", "slf4j-api")
     }
 
     slim("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+        exclude("org.jetbrains.exposed", "exposed-core")
         exclude("org.slf4j", "slf4j-api")
     }
 
@@ -94,16 +104,18 @@ dependencies {
 
     slim("commons-io:commons-io:2.11.0")
 
-    slim("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2")
+    slim("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2") {
+        exclude("org.yaml", "snakeyaml")
+    }
 
     slim("org.apache.commons:commons-lang3:3.12.0")
 
-    slim("com.github.oshi:oshi-core:6.1.0-SNAPSHOT") {
+    slim("com.github.oshi:oshi-core:6.1.0") {
         exclude("org.slf4j", "slf4j-api")
     }
 
     slim("net.dv8tion:JDA:5.0.0-alpha.4") {
-        exclude ("club.minnced", "opus-java")
+        exclude("club.minnced", "opus-java")
         exclude("org.slf4j", "slf4j-api")
         exclude("org.jetbrains", "annotations")
     }
@@ -115,7 +127,7 @@ project.gradle.startParameter.excludedTaskNames.also {
     it.add("testClasses")
 }
 
-tasks.slimJar {
+tasks.withType(github.slimjar.task.SlimJar::class) {
     relocate("org.bstats", "$base.bstats")
     relocate("org.apache.commons.lang3", "$base.lang3")
     relocate("org.apache.commons.io", "$base.io")
