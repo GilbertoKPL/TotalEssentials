@@ -17,7 +17,7 @@ class EssentialsK : JavaPlugin() {
         val startInstant = Instant.now()
         println(
             "${EColor.CYAN.color}[${name}]${EColor.RESET.color} " +
-                    "${EColor.YELLOW.color}Loading Libraries, please wait...${EColor.RESET.color}"
+                    "${EColor.YELLOW.color}Carregando Livrarias, porfavor aguarde, primeira vez pode demorar até 1 minuto...${EColor.RESET.color}"
         )
 
         ApplicationBuilder.appending("essentialsK").downloadDirectoryPath(
@@ -29,19 +29,19 @@ class EssentialsK : JavaPlugin() {
         val timeTakenMillis = Duration.between(startInstant, Instant.now()).toMillis()
         println(
             "${EColor.CYAN.color}[${name}]${EColor.RESET.color} " +
-                    "${EColor.YELLOW.color}Loaded libraries in ${timeTakenMillis / 1000} seconds${EColor.RESET.color}"
+                    "${EColor.YELLOW.color}Livraria carregada em ${timeTakenMillis / 1000} segundos${EColor.RESET.color}"
         )
-
-        ManifestUtil.start()
-
-        MainUtil.startMetrics()
 
         super.onLoad()
     }
 
     override fun onEnable() {
 
+        ManifestUtil.start()
+
         if (VersionUtil.check()) return
+
+        MainUtil.startMetrics()
 
         ConfigUtil.start()
 

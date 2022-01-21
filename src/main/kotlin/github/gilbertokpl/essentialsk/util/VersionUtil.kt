@@ -29,11 +29,22 @@ object VersionUtil {
 
             var versionPlugin = ManifestUtil.getManifestValue("Plugin-Version") ?: return false
 
-            if (versionPlugin.split(".").size == 2) {
-                versionPlugin = checkJson.get("version").asString + ".0"
+            val split = versionPlugin.split("-")
+
+            var snapshot = false
+
+            if (split.size == 2) {
+                snapshot = true
+                versionPlugin = split[0]
             }
 
-            if (versionJson.replace(".", "").toInt() > versionPlugin.replace(".", "").toDouble()) {
+            var versionPluginInt = versionPlugin.replace(".", "").toDouble()
+
+            if (snapshot) {
+                versionPluginInt -= 1
+            }
+
+            if (versionJson.replace(".", "").toInt() > versionPluginInt) {
                 MainUtil
                     .consoleMessage(StartLang.updatePlugin.replace("%version%", versionJson))
 

@@ -39,10 +39,16 @@ object HostUtil {
 
             val osVersion = System.getProperty("os.version") ?: "Unknown"
 
-            val cpuName = if (siProcessor.processorIdentifier.name == "") {
-                "Unknown"
+            val name = siProcessor.processorIdentifier.name
+
+            val cpuName = if (name == "") {
+                when (siProcessor.processorIdentifier.model) {
+                    "0xd0c" -> "Neoverse-N1"
+                    "0xd49" -> "Neoverse-N2"
+                    else -> "Unknown"
+                }
             } else {
-                siProcessor.processorIdentifier.name
+                name
             }
 
             val cpuMinMHZ = (try {

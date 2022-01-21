@@ -1,9 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "github.gilbertokpl.essentialsk"
-version = "1.5.3"
+version = "1.5.4-SNAPSHOT"
 
-val base = "github.gilbertokpl.libs"
+val base = "libs"
 val exposedVersion = "0.37.3"
 val kotlin = "1.6.10"
 val buildVersion = "1.18.1"
@@ -13,6 +13,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1"
+    id("io.github.slimjar") version "1.3.0"
 }
 
 detekt {
@@ -38,6 +39,7 @@ allprojects {
         maven("https://repo.codemc.io/repository/maven-snapshots/")
         maven("https://mvnrepository.com/artifact/")
         maven("https://jitpack.io")
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
@@ -56,22 +58,56 @@ dependencies {
         exclude("org.bukkit", "bukkit")
     }
 
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
-    compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    compileOnly("org.bstats:bstats-bukkit:2.2.1")
-    compileOnly("org.mariadb.jdbc:mariadb-java-client:2.7.4")
-    compileOnly("org.slf4j:slf4j-nop:1.7.32")
-    compileOnly("com.google.code.gson:gson:2.8.9")
-    compileOnly("com.googlecode.json-simple:json-simple:1.1.1")
-    compileOnly("com.h2database:h2:2.0.206")
-    compileOnly("com.zaxxer:HikariCP:4.0.3")
-    compileOnly("commons-io:commons-io:2.11.0")
-    compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2")
-    compileOnly("org.apache.commons:commons-lang3:3.12.0")
-    compileOnly("com.github.oshi:oshi-core:6.0.0")
-    compileOnly("net.dv8tion:JDA:5.0.0-alpha.3")
+    slim("org.jetbrains:annotations:23.0.0")
+
+    slim("org.jetbrains.kotlin:kotlin-stdlib:$kotlin") {
+        exclude("org.jetbrains", "annotations")
+    }
+
+    slim("org.jetbrains.exposed:exposed-dao:$exposedVersion") {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+        exclude("org.slf4j", "slf4j-api")
+    }
+
+    slim("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+        exclude("org.slf4j", "slf4j-api")
+    }
+
+    slim("org.bstats:bstats-bukkit:2.2.1")
+
+    slim("org.mariadb.jdbc:mariadb-java-client:2.7.4")
+
+    slim("org.slf4j:slf4j-nop:1.7.33")
+
+    slim("com.google.code.gson:gson:2.8.9")
+
+    slim("com.googlecode.json-simple:json-simple:1.1.1")
+
+    slim("com.h2database:h2:2.1.210")
+
+    slim("com.zaxxer:HikariCP:4.0.3") {
+        exclude("org.slf4j", "slf4j-api")
+    }
+
+    slim("commons-io:commons-io:2.11.0")
+
+    slim("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2")
+
+    slim("org.apache.commons:commons-lang3:3.12.0")
+
+    slim("com.github.oshi:oshi-core:6.1.0-SNAPSHOT") {
+        exclude("org.slf4j", "slf4j-api")
+    }
+
+    slim("net.dv8tion:JDA:5.0.0-alpha.4") {
+        exclude ("club.minnced", "opus-java")
+        exclude("org.slf4j", "slf4j-api")
+        exclude("org.jetbrains", "annotations")
+    }
+
 }
 
 project.gradle.startParameter.excludedTaskNames.also {
@@ -79,15 +115,18 @@ project.gradle.startParameter.excludedTaskNames.also {
     it.add("testClasses")
 }
 
-tasks.shadowJar {
-    archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
-    destinationDirectory.set(File("$projectDir/Minecraft/plugins"))
+tasks.slimJar {
     relocate("org.bstats", "$base.bstats")
     relocate("org.apache.commons.lang3", "$base.lang3")
     relocate("org.apache.commons.io", "$base.io")
     relocate("org.yaml", "$base.yaml")
     relocate("com.google.gson", "$base.gson")
     relocate("org.slf4j", "$base.slf4j")
+}
+
+tasks.shadowJar {
+    archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
+    destinationDirectory.set(File("$projectDir/Minecraft/plugins"))
     manifest {
         attributes(
             "Plugin-Version" to project.version.toString(),
