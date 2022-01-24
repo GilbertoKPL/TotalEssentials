@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-object SqlUtil {
+internal object SqlUtil {
 
     lateinit var sql: Database
 

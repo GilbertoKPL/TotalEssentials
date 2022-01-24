@@ -9,7 +9,7 @@ import java.net.InetAddress
 import java.nio.file.Files
 import java.text.DecimalFormat
 
-object HostUtil {
+internal object HostUtil {
     private var oldTicks = LongArray(CentralProcessor.TickType.values().size)
 
     private var si = SystemInfo()

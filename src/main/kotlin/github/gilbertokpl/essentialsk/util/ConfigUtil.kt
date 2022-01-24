@@ -17,7 +17,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.stream.Collectors
 
-object ConfigUtil {
+internal object ConfigUtil {
     lateinit var configYaml: YamlFile
 
     lateinit var langYaml: YamlFile

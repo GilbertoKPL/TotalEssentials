@@ -10,7 +10,7 @@ import java.net.URL
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-object VersionUtil {
+internal object VersionUtil {
     fun check(): Boolean {
         try {
             MainUtil

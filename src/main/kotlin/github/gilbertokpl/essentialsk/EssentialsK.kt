@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk
 
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.api.EssentialsKAPI
 import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.*
@@ -12,7 +12,7 @@ import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.CompletableFuture
 
-class EssentialsK : JavaPlugin() {
+internal class EssentialsK : JavaPlugin() {
 
     override fun onLoad() {
 
@@ -27,6 +27,8 @@ class EssentialsK : JavaPlugin() {
         ).build()
 
         instance = this
+
+        api = EssentialsKAPI(this)
 
         val timeTakenMillis = Duration.between(startInstant, Instant.now()).toMillis()
         println(
@@ -85,6 +87,7 @@ class EssentialsK : JavaPlugin() {
 
     companion object {
         lateinit var instance: EssentialsK
+        lateinit var api: EssentialsKAPI
         var lowVersion = false
     }
 }

@@ -11,7 +11,7 @@ import org.bukkit.Location
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class OfflinePlayerDAO(player: String) {
+internal class OfflinePlayerDAO(player: String) {
     private val p = EssentialsK.instance.server.getPlayerExact(player)
 
     private val online = p != null

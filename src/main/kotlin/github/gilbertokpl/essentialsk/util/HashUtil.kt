@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.util
 
-object HashUtil {
+internal object HashUtil {
 
     fun hashMapSortMap(passedMap: HashMap<String, Int>): LinkedHashMap<String, Int> {
         val mapKeys: ArrayList<String> = ArrayList(passedMap.keys)

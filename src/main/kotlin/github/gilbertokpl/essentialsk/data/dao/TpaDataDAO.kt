@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-data class TpaDataDAO(
+internal data class TpaDataDAO(
     val p: Player,
     var otherPlayer: Player?,
     var wait: Boolean

@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 
-object TimeUtil {
+internal object TimeUtil {
 
     private const val MILLIS_TO_SECOUNDS = 1_000
 

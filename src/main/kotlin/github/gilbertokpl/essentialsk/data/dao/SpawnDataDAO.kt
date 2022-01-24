@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-object SpawnDataDAO {
+internal object SpawnDataDAO {
     private val spawnCache = HashMap<String, Location>(2)
 
     operator fun get(warp: String) = spawnCache[warp.lowercase()]

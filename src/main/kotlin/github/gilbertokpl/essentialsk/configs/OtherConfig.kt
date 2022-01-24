@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.configs
 
 
-object OtherConfig {
+internal object OtherConfig {
 
     var serverPrefix = ""
 

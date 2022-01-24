@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-data class KitDataDAO(
+internal data class KitDataDAO(
     val name: String,
     var fakeName: String,
     var items: List<ItemStack>,

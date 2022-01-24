@@ -26,7 +26,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-data class PlayerDataDAO(
+internal data class PlayerDataDAO(
     val playerID: String,
     var player: Player,
     val coolDownCommand: HashMap<String, Long>,

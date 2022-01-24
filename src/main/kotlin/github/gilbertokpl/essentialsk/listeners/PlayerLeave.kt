@@ -1,6 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.api.DiscordAPI
+import github.gilbertokpl.essentialsk.EssentialsK
+import github.gilbertokpl.essentialsk.api.discord.Discord
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
@@ -56,7 +57,7 @@ class PlayerLeave : Listener {
 
     private fun sendLeaveEmbed(e: PlayerQuitEvent) {
 
-        DiscordAPI.sendMessageDiscord(
+        EssentialsK.api.getDiscordAPI().sendDiscordMessage(
             GeneralLang.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name),
             true
         )

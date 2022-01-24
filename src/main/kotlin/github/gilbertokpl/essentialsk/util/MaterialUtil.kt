@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.util
 
 import org.bukkit.Material
 
-object MaterialUtil {
+internal object MaterialUtil {
 
     private val material = HashMap<String, Material>(10)
 

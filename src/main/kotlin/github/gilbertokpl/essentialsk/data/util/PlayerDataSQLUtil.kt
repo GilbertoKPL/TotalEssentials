@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-object PlayerDataSQLUtil {
+internal object PlayerDataSQLUtil {
 
     fun getHomeLocationSQL(home: String, playerID: String): Location? {
         lateinit var homesList: String

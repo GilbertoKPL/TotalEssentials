@@ -2,7 +2,6 @@ package github.gilbertokpl.essentialsk.util
 
 import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.api.DiscordAPI
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
@@ -13,7 +12,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.net.URL
 
-object PlayerUtil {
+internal object PlayerUtil {
 
     fun getIntOnlinePlayers(vanish: Boolean): Int {
         var amount = ReflectUtil.getPlayers()
@@ -122,7 +121,7 @@ object PlayerUtil {
                 )
             }
             if (MainConfig.discordbotSendLoginMessage) {
-                DiscordAPI.sendMessageDiscord(
+                EssentialsK.api.getDiscordAPI().sendDiscordMessage(
                     GeneralLang.discordchatDiscordSendLoginMessage.replace("%player%", p.name),
                     true
                 )

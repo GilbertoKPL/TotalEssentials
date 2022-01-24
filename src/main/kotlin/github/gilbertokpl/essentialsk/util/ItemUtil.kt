@@ -18,7 +18,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-object ItemUtil {
+internal object ItemUtil {
 
     fun pickupKit(p: Player, kit: String) {
 

@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.configs
 
 import github.gilbertokpl.essentialsk.manager.EColor
 
-object StartLang {
+internal object StartLang {
     val startVerification = EColor.YELLOW.color +
             "Starting %to% verification..." +
             EColor.RESET.color

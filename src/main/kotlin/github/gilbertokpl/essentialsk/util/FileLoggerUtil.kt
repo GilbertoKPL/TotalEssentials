@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.CompletableFuture
 import javax.net.ssl.HttpsURLConnection
 
-object FileLoggerUtil {
+internal object FileLoggerUtil {
 
     var logger: String? = null
 

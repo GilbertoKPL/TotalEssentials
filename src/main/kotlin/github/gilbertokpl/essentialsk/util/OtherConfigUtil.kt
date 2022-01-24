@@ -1,16 +1,17 @@
 package github.gilbertokpl.essentialsk.util
 
+import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
-import github.gilbertokpl.essentialsk.loops.Announcements
-import github.gilbertokpl.essentialsk.loops.Discord
+import github.gilbertokpl.essentialsk.loops.AnnounceLoop
+import github.gilbertokpl.essentialsk.loops.DiscordLoop
 import org.apache.commons.lang3.exception.ExceptionUtils
 
-object OtherConfigUtil {
+internal object OtherConfigUtil {
 
     fun start() {
 
-        github.gilbertokpl.essentialsk.api.DiscordAPI.reloadDiscordChat()
+        EssentialsK.api.getDiscordAPI().reloadDiscordChat()
 
         val vanish = ConfigUtil
             .getStringList(ConfigUtil.configYaml, "vanish.blocked-other-cmds", false)
@@ -102,20 +103,20 @@ object OtherConfigUtil {
                 OtherConfig.announcementsListAnnounce = hash
                 if (MainConfig.announcementsEnabled) {
                     TaskUtil.restartAnnounceExecutor()
-                    Announcements.start(announce.size, MainConfig.announcementsTime)
+                    AnnounceLoop.start(announce.size, MainConfig.announcementsTime)
                 }
             }
         } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
 
-        if (!MainConfig.discordbotConnectDiscordChat && Discord.start) {
+        if (!MainConfig.discordbotConnectDiscordChat && DiscordLoop.start) {
             TaskUtil.getDiscordExecutor().shutdown()
-            Discord.start = false
+            DiscordLoop.start = false
         }
 
-        if (MainConfig.discordbotConnectDiscordChat && !Discord.start) {
-            Discord.start()
+        if (MainConfig.discordbotConnectDiscordChat && !DiscordLoop.start) {
+            DiscordLoop.start()
         }
     }
 }

@@ -1,29 +1,38 @@
-package github.gilbertokpl.essentialsk.api
+package github.gilbertokpl.essentialsk.api.discord
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.data.DataManager.hashTextChannel
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.*
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.entities.TextChannel
+import org.bukkit.plugin.java.JavaPlugin
 
-object DiscordAPI {
+class Discord(pl: JavaPlugin) {
 
-    private var discordChat: TextChannel? = null
+    /**
+     * Send message to discord.
+     */
+    fun sendDiscordMessage(message: String, embed: Boolean) {
+        sendDiscordMessage(message, MainConfig.discordbotIdDiscordChat, embed)
+    }
 
-    fun sendMessageDiscord(message: String, embed: Boolean = false) {
+    /**
+     * Send message to discord with chat ID.
+     */
+    fun sendDiscordMessage(message: String, chatID: String, embed: Boolean) {
         if (DiscordUtil.jda == null && MainConfig.discordbotConnectDiscordChat) {
             MainUtil.consoleMessage(
                 EColor.YELLOW.color + GeneralLang.discordchatNoToken + EColor.RESET.color
             )
             return
         }
-        if (discordChat == null) {
+
+        if (hashTextChannel[chatID] == null) {
             TaskUtil.asyncExecutor {
                 val newChat = DiscordUtil.setupDiscordChat() ?: return@asyncExecutor
 
-                discordChat = newChat
+                hashTextChannel[chatID] = newChat
 
                 if (embed) {
                     val msg = EmbedBuilder().setDescription(message).setColor(ColorUtil.randomColor())
@@ -36,37 +45,41 @@ object DiscordAPI {
             }
             return
         }
+
         try {
             if (embed) {
                 val msg = EmbedBuilder().setDescription(message).setColor(ColorUtil.randomColor())
-                discordChat!!.sendMessageEmbeds(msg.build()).queue()
+                hashTextChannel[chatID]!!.sendMessageEmbeds(msg.build()).queue()
                 return
             }
-            discordChat!!.sendMessage(message).queue()
+            hashTextChannel[chatID]!!.sendMessage(message).queue()
         } catch (e: Throwable) {
-            discordChat = null
+            hashTextChannel.remove(chatID)
         }
     }
 
-    fun getJDA(): JDA? {
-        return DiscordUtil.jda
-    }
-
+    /**
+     * Reload all chat ids.
+     */
     fun reloadDiscordChat() {
-        if (discordChat != null) {
-            discordChat = null
-        }
+        hashTextChannel.clear()
     }
 
-    fun getTextChannel() : TextChannel? {
-        return discordChat
+    /**
+     * Get chat id in use.
+     *
+     * @return chat in use, null if bot not in use.
+     */
+    fun getChatIdInUse(): String? {
+        return hashTextChannel[MainConfig.discordbotIdDiscordChat]?.id
     }
 
-    fun getChatIdInUse() : String? {
-        return discordChat?.id
-    }
-
-    fun botInUse() : Boolean {
+    /**
+     * Check bot usage.
+     *
+     * @return true if bot is in use.
+     */
+    fun botInUse(): Boolean {
         return DiscordUtil.jda != null
     }
 }

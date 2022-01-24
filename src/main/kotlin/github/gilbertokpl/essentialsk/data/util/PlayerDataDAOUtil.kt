@@ -13,7 +13,7 @@ import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-object PlayerDataDAOUtil {
+internal object PlayerDataDAOUtil {
 
     fun createEmptyCache(p: Player, playerID: String, limitHome: Int): PlayerDataDAO {
         return PlayerDataDAO(

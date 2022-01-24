@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.util
 import github.gilbertokpl.essentialsk.EssentialsK.Companion.lowVersion
 import org.bukkit.entity.Player
 
-object PermissionUtil {
+internal object PermissionUtil {
     private const val MAX_HOME_VALUE = 1000
 
     fun getNumberPermission(player: Player, permission: String, default: Int): Int {

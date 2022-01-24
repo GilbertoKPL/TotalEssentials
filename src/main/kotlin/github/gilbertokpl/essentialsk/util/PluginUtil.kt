@@ -13,7 +13,7 @@ import java.lang.reflect.Field
 import java.net.URLClassLoader
 import java.util.*
 
-object PluginUtil {
+internal object PluginUtil {
 
     fun getPluginByName(name: String): Plugin? {
         for (plugin in Bukkit.getPluginManager().plugins) {

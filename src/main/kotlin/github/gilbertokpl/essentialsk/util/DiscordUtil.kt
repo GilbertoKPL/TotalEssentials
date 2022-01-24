@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 
-object DiscordUtil {
+internal object DiscordUtil {
 
     var jda: JDA? = null
 

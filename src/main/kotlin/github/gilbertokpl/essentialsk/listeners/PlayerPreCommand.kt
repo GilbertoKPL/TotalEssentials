@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.api.DiscordAPI
+import github.gilbertokpl.essentialsk.api.discord.Discord
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
@@ -99,7 +99,7 @@ class PlayerPreCommand : Listener {
                 .replace("%message%", msg)
                 .replace("%player%", e.player.name).replace("&[0-9,a-z]".toRegex(), "")
 
-            DiscordAPI.sendMessageDiscord(patternMessage, false)
+            EssentialsK.api.getDiscordAPI().sendDiscordMessage(patternMessage, false)
         }
     }
 }

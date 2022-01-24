@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.util
 import github.gilbertokpl.essentialsk.EssentialsK
 import org.bukkit.Location
 
-object LocationUtil {
+internal object LocationUtil {
     fun locationSerializer(loc: Location?): String {
         loc ?: return ""
         return loc.x.toString() + ";" +

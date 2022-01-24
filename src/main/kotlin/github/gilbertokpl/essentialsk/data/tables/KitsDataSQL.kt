@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.data.tables
 
 import org.jetbrains.exposed.sql.Table
 
-object KitsDataSQL : Table() {
+internal object KitsDataSQL : Table() {
     val kitName = varchar("kitName", 16)
     val kitFakeName = varchar("kitRealName", 32).default("")
     val kitTime = long("kitTime").default(0L)

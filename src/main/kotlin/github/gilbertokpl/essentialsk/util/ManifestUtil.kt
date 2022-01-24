@@ -7,7 +7,7 @@ import java.io.InputStream
 import java.net.URL
 import java.util.jar.Manifest
 
-object ManifestUtil {
+internal object ManifestUtil {
     private val attributes: HashMap<String, String> = HashMap()
 
     fun getManifestValue(key: String): String? {

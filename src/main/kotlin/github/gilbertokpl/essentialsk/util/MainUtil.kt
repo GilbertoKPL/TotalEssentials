@@ -17,7 +17,7 @@ import java.net.URL
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-object MainUtil {
+internal object MainUtil {
 
     private const val METRICS_ID = 13_441
 

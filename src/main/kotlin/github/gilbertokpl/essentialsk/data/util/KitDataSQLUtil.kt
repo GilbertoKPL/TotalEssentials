@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-object KitDataSQLUtil {
+internal object KitDataSQLUtil {
 
     private fun reloadGui() {
         KitGuiInventory.setup()

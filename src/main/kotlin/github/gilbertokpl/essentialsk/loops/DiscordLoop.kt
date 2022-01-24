@@ -6,7 +6,7 @@ import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.*
 import java.util.concurrent.TimeUnit
 
-object Discord {
+internal object DiscordLoop {
 
     var start = false
 

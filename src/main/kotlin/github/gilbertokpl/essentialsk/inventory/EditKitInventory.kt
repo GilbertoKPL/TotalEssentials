@@ -9,7 +9,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-object EditKitInventory {
+internal object EditKitInventory {
     fun setup() {
         for (inventory in 0..26) {
             if (inventory == 10) {

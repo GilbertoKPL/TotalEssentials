@@ -6,7 +6,7 @@ import github.gilbertokpl.essentialsk.util.ReflectUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import java.util.concurrent.TimeUnit
 
-object Announcements {
+internal object AnnounceLoop {
 
     private var maxValue = 0
 
