@@ -4,7 +4,8 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.objects.SpawnDataV2
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.SpawnDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
@@ -31,12 +32,14 @@ class CommandSpawn : CommandCreator {
             return true
         }
 
-        val data = SpawnDataV2["spawn"] ?: run {
-            s.sendMessage(GeneralLang.spawnSendNotSet)
+        val spawnCache = SpawnDataDAO["spawn"] ?: run {
+            if ((s !is Player) || s.hasPermission("*")) {
+                s.sendMessage(GeneralLang.spawnSendNotSet)
+            }
             return false
         }
 
-        if (args.size == 1) {
+        if (args.size == 1 || s !is Player) {
 
             //check perms
             if (s is Player && !s.hasPermission("essentialsk.commands.spawn.other")) {
@@ -50,20 +53,22 @@ class CommandSpawn : CommandCreator {
                 return false
             }
 
-            p.teleport(data)
+            p.teleport(spawnCache)
             p.sendMessage(GeneralLang.spawnSendOtherMessage)
             s.sendMessage(GeneralLang.spawnSendSuccessOtherMessage.replace("%player%", p.name))
 
             return false
         }
 
-        if (DataManager.inTeleport.contains(s)) {
+        val playerCache = PlayerDataDAO[s] ?: return false
+
+        if (playerCache.inTeleport) {
             s.sendMessage(GeneralLang.spawnSendInTeleport)
             return false
         }
 
         if (s.hasPermission("essentialsk.bypass.teleport")) {
-            (s as Player).teleport(data)
+            s.teleport(spawnCache)
             s.sendMessage(GeneralLang.spawnSendMessage)
             return false
         }
@@ -74,11 +79,11 @@ class CommandSpawn : CommandCreator {
 
         val exe = TaskUtil.teleportExecutor(time)
 
-        DataManager.inTeleport.add((s as Player))
+        playerCache.inTeleport = true
 
         exe {
-            DataManager.inTeleport.remove(s)
-            s.teleport(data)
+            playerCache.inTeleport = false
+            s.teleport(spawnCache)
             s.sendMessage(GeneralLang.spawnSendMessage)
         }
 

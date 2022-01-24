@@ -4,10 +4,10 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.StartLang
-import github.gilbertokpl.essentialsk.tables.KitsDataSQL
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
-import github.gilbertokpl.essentialsk.tables.SpawnDataSQL
-import github.gilbertokpl.essentialsk.tables.WarpsDataSQL
+import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
+import github.gilbertokpl.essentialsk.data.tables.SpawnDataSQL
+import github.gilbertokpl.essentialsk.data.tables.WarpsDataSQL
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Database
@@ -22,7 +22,7 @@ object SqlUtil {
     fun <T> helperUpdater(field: String, col: Column<T>, value: T) {
         TaskUtil.asyncExecutor {
             transaction(sql) {
-                PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq field }) {
+                PlayerDataSQL.update({ PlayerDataSQL.playerTable eq field }) {
                     it[col] = value
                 }
             }

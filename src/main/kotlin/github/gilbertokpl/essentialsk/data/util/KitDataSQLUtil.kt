@@ -1,9 +1,9 @@
-package github.gilbertokpl.essentialsk.data.sql
+package github.gilbertokpl.essentialsk.data.util
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.objects.KitDataV2
+import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
-import github.gilbertokpl.essentialsk.tables.KitsDataSQL
+import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
@@ -23,7 +23,7 @@ object KitDataSQLUtil {
 
     fun delKitData(s: CommandSender? = null, name: String) {
         //cache
-        KitDataV2.remove(name.lowercase())
+        KitDataDAO.remove(name.lowercase())
 
         reloadGui()
 
@@ -42,9 +42,9 @@ object KitDataSQLUtil {
 
     fun createNewKitData(s: CommandSender? = null, name: String) {
         //cache
-        KitDataV2.put(
+        KitDataDAO.put(
             name.lowercase(),
-            KitDataV2(name.lowercase(), name, emptyList(), 0L, 0)
+            KitDataDAO(name.lowercase(), name, emptyList(), 0L, 0)
         )
         reloadGui()
 

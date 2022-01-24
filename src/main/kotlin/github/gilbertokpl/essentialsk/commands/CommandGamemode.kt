@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import org.bukkit.command.Command
@@ -34,7 +34,7 @@ class CommandGamemode : CommandCreator {
                 return false
             }
 
-            (PlayerDataV2[s] ?: return false).setGamemode(
+            (PlayerDataDAO[s] ?: return false).setGamemode(
                 playerGameMode
             )
             s.sendMessage(
@@ -66,7 +66,7 @@ class CommandGamemode : CommandCreator {
                 return false
             }
 
-            (PlayerDataV2[p] ?: return false).setGamemode(
+            (PlayerDataDAO[p] ?: return false).setGamemode(
                 playerGameMode
             )
 

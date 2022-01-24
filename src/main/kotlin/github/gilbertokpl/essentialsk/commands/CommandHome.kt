@@ -3,9 +3,8 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.objects.OfflinePlayerData
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.data.dao.OfflinePlayerDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
@@ -30,7 +29,7 @@ class CommandHome : CommandCreator {
 
         val p = s as Player
 
-        val playerCache = PlayerDataV2[p] ?: return false
+        val playerCache = PlayerDataDAO[p] ?: return false
 
         if (args.isEmpty()) {
             p.sendMessage(
@@ -49,7 +48,7 @@ class CommandHome : CommandCreator {
 
                 val pName = split[0].lowercase()
 
-                val otherPlayerInstance = OfflinePlayerData(pName)
+                val otherPlayerInstance = OfflinePlayerDAO(pName)
 
                 if (!otherPlayerInstance.checkSql()) {
                     p.sendMessage(GeneralLang.generalPlayerNotExist)
@@ -101,7 +100,7 @@ class CommandHome : CommandCreator {
             return false
         }
 
-        if (DataManager.inTeleport.contains(p)) {
+        if (playerCache.inTeleport) {
             p.sendMessage(GeneralLang.homesInTeleport)
             return false
         }
@@ -110,10 +109,10 @@ class CommandHome : CommandCreator {
 
         val exe = TaskUtil.teleportExecutor(time)
 
-        DataManager.inTeleport.add(p)
+        playerCache.inTeleport = true
 
         exe {
-            DataManager.inTeleport.remove(p)
+            playerCache.inTeleport = false
             p.teleport(playerCache.homeCache[nameHome] ?: return@exe)
             p.sendMessage(GeneralLang.homesTeleported.replace("%home%", nameHome))
         }

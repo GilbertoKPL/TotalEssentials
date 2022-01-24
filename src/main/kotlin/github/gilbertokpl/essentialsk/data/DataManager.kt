@@ -1,14 +1,10 @@
 package github.gilbertokpl.essentialsk.data
 
-import net.dv8tion.jda.api.entities.TextChannel
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 object DataManager {
-
-    //in teleport
-    val inTeleport = ArrayList<Player>()
 
     //editKitInv
     val editKitInventory = HashMap<Int, ItemStack>(50)

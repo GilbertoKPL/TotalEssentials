@@ -2,8 +2,8 @@ package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.KitDataV2
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
 import github.gilbertokpl.essentialsk.manager.InternalBukkitObjectInputStream
 import github.gilbertokpl.essentialsk.manager.InternalBukkitObjectOutputStream
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -29,8 +29,8 @@ object ItemUtil {
         }
 
         //load caches
-        val kitCache = KitDataV2[kit] ?: return
-        val playerCache = PlayerDataV2[p] ?: return
+        val kitCache = KitDataDAO[kit] ?: return
+        val playerCache = PlayerDataDAO[p] ?: return
 
         //get all time of kit
         var timeAll = playerCache.kitsCache[kit] ?: 0L

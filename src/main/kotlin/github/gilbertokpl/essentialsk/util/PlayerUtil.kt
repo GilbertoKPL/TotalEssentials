@@ -4,7 +4,9 @@ import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.api.DiscordAPI
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.SpawnDataDAO
 import org.apache.commons.io.IOUtils
 import org.bukkit.GameMode
 import org.bukkit.OfflinePlayer
@@ -17,7 +19,7 @@ object PlayerUtil {
         var amount = ReflectUtil.getPlayers()
         if (!vanish) {
             amount = amount.filter {
-                PlayerDataV2[it] != null && !PlayerDataV2[it]!!.vanishCache
+                PlayerDataDAO[it] != null && !PlayerDataDAO[it]!!.vanishCache
             }
         }
         return amount.size
@@ -100,10 +102,43 @@ object PlayerUtil {
         }
     }
 
-    fun sendLoginEmbed(p: Player) {
-        DiscordAPI.sendMessageDiscord(
-            GeneralLang.discordchatDiscordSendLoginMessage.replace("%player%", p.name),
-            true
-        )
+    fun finishLogin(p: Player, vanishCache: Boolean) {
+
+        if (MainConfig.spawnSendToSpawnOnLogin) {
+            val loc = SpawnDataDAO["spawn"] ?: run {
+                if (p.hasPermission("*")) {
+                    p.sendMessage(GeneralLang.spawnSendNotSet)
+                }
+                return
+            }
+            p.teleport(loc)
+        }
+
+        if (!vanishCache && !p.hasPermission("*")) {
+            if (MainConfig.messagesLoginMessage) {
+                MainUtil.serverMessage(
+                    GeneralLang.messagesEnterMessage
+                        .replace("%player%", p.name)
+                )
+            }
+            if (MainConfig.discordbotSendLoginMessage) {
+                DiscordAPI.sendMessageDiscord(
+                    GeneralLang.discordchatDiscordSendLoginMessage.replace("%player%", p.name),
+                    true
+                )
+            }
+        }
+
+        if (MainConfig.vanishActivated) {
+            if (p.hasPermission("essentialsk.commands.vanish") ||
+                p.hasPermission("essentialsk.bypass.vanish")
+            ) return
+            for (it in ReflectUtil.getPlayers()) {
+                if (PlayerDataDAO[it]?.vanishCache ?: continue) {
+                    @Suppress("DEPRECATION")
+                    p.hidePlayer(it)
+                }
+            }
+        }
     }
 }

@@ -1,9 +1,9 @@
-package github.gilbertokpl.essentialsk.data.objects
+package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.sql.KitDataSQLUtil
+import github.gilbertokpl.essentialsk.data.util.KitDataSQLUtil
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
-import github.gilbertokpl.essentialsk.tables.KitsDataSQL
+import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
 import org.bukkit.command.CommandSender
@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-data class KitDataV2(
+data class KitDataDAO(
     val name: String,
     var fakeName: String,
     var items: List<ItemStack>,
@@ -87,13 +87,13 @@ data class KitDataV2(
 
     companion object {
 
-        private val kitCacheV2 = mutableMapOf<String, KitDataV2>()
+        private val kitCacheV2 = mutableMapOf<String, KitDataDAO>()
 
         operator fun get(warp: String) = kitCacheV2[warp.lowercase()]
 
         fun remove(warp: String) = kitCacheV2.remove(warp.lowercase())
 
-        fun put(warp: String, data: KitDataV2) = kitCacheV2.put(warp.lowercase(), data)
+        fun put(warp: String, data: KitDataDAO) = kitCacheV2.put(warp.lowercase(), data)
 
         fun getList() = kitCacheV2.map { it.key }
 
@@ -107,7 +107,7 @@ data class KitDataV2(
                     val kitTime = values[KitsDataSQL.kitTime]
                     val item = values[KitsDataSQL.kitItems]
                     val weight = values[KitsDataSQL.kitWeight]
-                    kitCacheV2[kit] = KitDataV2(
+                    kitCacheV2[kit] = KitDataDAO(
                         kit,
                         kitFakeName,
                         ItemUtil.itemSerializer(item),

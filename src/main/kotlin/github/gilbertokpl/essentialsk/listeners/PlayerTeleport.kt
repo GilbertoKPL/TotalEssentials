@@ -2,8 +2,8 @@ package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
-import github.gilbertokpl.essentialsk.data.objects.SpawnDataV2
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.SpawnDataDAO
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Material
@@ -45,7 +45,7 @@ class PlayerTeleport : Listener {
                 e.player.world.name.lowercase()
             ) && !e.player.hasPermission("essentialsk.bypass.backblockedworlds")
         ) return
-        PlayerDataV2[e.player]?.setBack(e.player.location) ?: return
+        PlayerDataDAO[e.player]?.setBack(e.player.location) ?: return
     }
 
     private fun blockPassEdgeEnderPearl(e: PlayerTeleportEvent) {
@@ -71,7 +71,7 @@ class PlayerTeleport : Listener {
             !p.hasPermission("essentialsk.bypass.netherceiling") &&
             e.to != null && e.to!!.world!!.environment === World.Environment.NETHER && e.to!!.y > 124.0
         ) {
-            val loc = SpawnDataV2["spawn"] ?: run {
+            val loc = SpawnDataDAO["spawn"] ?: run {
                 if (p.hasPermission("*")) {
                     p.sendMessage(GeneralLang.spawnSendNotSet)
                 }

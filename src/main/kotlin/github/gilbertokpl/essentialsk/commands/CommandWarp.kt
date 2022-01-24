@@ -2,8 +2,8 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.objects.WarpDataV2
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.WarpDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.Bukkit
@@ -37,7 +37,7 @@ class CommandWarp : CommandCreator {
             s.sendMessage(
                 GeneralLang.warpsWarpList.replace(
                     "%list%",
-                    WarpDataV2.getList(p).toString()
+                    WarpDataDAO.getList(p).toString()
                 )
             )
             return false
@@ -48,14 +48,14 @@ class CommandWarp : CommandCreator {
 
             val warpName = args[1].lowercase()
 
-            val warpInstance = WarpDataV2[warpName]
+            val warpInstance = WarpDataDAO[warpName]
 
             //check if not exist
             if (warpInstance == null) {
                 s.sendMessage(
                     GeneralLang.warpsWarpList.replace(
                         "%list%",
-                        WarpDataV2.getList(null).toString()
+                        WarpDataDAO.getList(null).toString()
                     )
                 )
                 return false
@@ -81,18 +81,17 @@ class CommandWarp : CommandCreator {
 
         val warpName = args[0].lowercase()
 
-        val warpInstance = WarpDataV2[warpName]
-
-        //check if not exist
-        if (warpInstance == null) {
+        val warpInstance = WarpDataDAO[warpName] ?: run {
             p.sendMessage(
                 GeneralLang.warpsWarpList.replace(
                     "%list%",
-                    WarpDataV2.getList(p).toString()
+                    WarpDataDAO.getList(p).toString()
                 )
             )
             return false
         }
+
+        val playerCache = PlayerDataDAO[p] ?: return false
 
         if (!p.hasPermission("essentialsk.commands.warp.$warpName")) {
             p.sendMessage(GeneralLang.generalNotPerm)
@@ -105,7 +104,7 @@ class CommandWarp : CommandCreator {
             return false
         }
 
-        if (DataManager.inTeleport.contains(p)) {
+        if (playerCache.inTeleport) {
             p.sendMessage(GeneralLang.warpsInTeleport)
             return false
         }
@@ -114,10 +113,10 @@ class CommandWarp : CommandCreator {
 
         val exe = TaskUtil.teleportExecutor(time)
 
-        DataManager.inTeleport.add(p)
+        playerCache.inTeleport = true
 
         exe {
-            DataManager.inTeleport.remove(p)
+            playerCache.inTeleport = false
             p.teleport(warpInstance)
             s.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
         }

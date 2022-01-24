@@ -178,9 +178,9 @@ motd:
   # Variaveis -> %players_online%.
   list-motd:
     - '&1Minecraft Server \n&1Está aberto com players %players_online% online!'
-    - '&2Minecraft Server \n&21Está aberto com players %players_online% online!'
-    - '&3Minecraft Server \n&31Está aberto com players %players_online% online!'
-    - '&4Minecraft Server \n&41Está aberto com players %players_online% online!'
+    - '&2Minecraft Server \n&2Está aberto com players %players_online% online!'
+    - '&3Minecraft Server \n&3Está aberto com players %players_online% online!'
+    - '&4Minecraft Server \n&4Está aberto com players %players_online% online!'
 # Config das mensagens automáticas.
 announcements:
   # Se estiver ativado (true), as mensagens automáticas serão ativadas.

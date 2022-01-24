@@ -2,8 +2,8 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.OfflinePlayerData
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.data.dao.OfflinePlayerDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
@@ -33,7 +33,7 @@ class CommandDelHome : CommandCreator {
 
                 val pName = split[0].lowercase()
 
-                val otherPlayerInstance = OfflinePlayerData(pName)
+                val otherPlayerInstance = OfflinePlayerDAO(pName)
 
                 if (!otherPlayerInstance.checkSql()) {
                     s.sendMessage(GeneralLang.generalPlayerNotExist)
@@ -68,7 +68,7 @@ class CommandDelHome : CommandCreator {
 
         val nameHome = args[0].lowercase()
 
-        val playerInstance = PlayerDataV2[p] ?: return false
+        val playerInstance = PlayerDataDAO[p] ?: return false
 
         //check if home don't exist
         if (!playerInstance.homeCache.contains(nameHome)) {

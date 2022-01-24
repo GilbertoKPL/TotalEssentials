@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.tables
+package github.gilbertokpl.essentialsk.data.tables
 
 import org.jetbrains.exposed.sql.Table
 

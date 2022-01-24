@@ -3,8 +3,8 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.SpawnDataV2
-import github.gilbertokpl.essentialsk.data.start.PlayerDataLoader
+import github.gilbertokpl.essentialsk.data.dao.SpawnDataDAO
+import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
@@ -23,7 +23,7 @@ class PlayerRespawn : Listener {
 
     private fun playerData(e: PlayerRespawnEvent) {
         EssentialsK.instance.server.scheduler.runTaskLater(EssentialsK.instance, Runnable {
-            PlayerDataLoader.death(e.player)
+            PlayerDataDAOUtil.death(e.player)
 
             if (MainConfig.spawnSendToSpawnOnDeath) {
                 try {
@@ -38,7 +38,7 @@ class PlayerRespawn : Listener {
 
     private fun spawnRespawn(e: PlayerRespawnEvent) {
         val p = e.player
-        val loc = SpawnDataV2["spawn"] ?: run {
+        val loc = SpawnDataDAO["spawn"] ?: run {
             if (p.hasPermission("*")) {
                 p.sendMessage(GeneralLang.spawnSendNotSet)
             }

@@ -4,7 +4,8 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import org.bukkit.Location
 
 object LocationUtil {
-    fun locationSerializer(loc: Location): String {
+    fun locationSerializer(loc: Location?): String {
+        loc ?: return ""
         return loc.x.toString() + ";" +
                 loc.y.toString() + ";" +
                 loc.z.toString() + ";" +

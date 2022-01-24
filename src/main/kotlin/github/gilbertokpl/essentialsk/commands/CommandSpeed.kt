@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -30,7 +30,7 @@ class CommandSpeed : CommandCreator {
         //check if is 1
         if (args.size == 1 && s is Player) {
 
-            val playerCache = PlayerDataV2[s] ?: return false
+            val playerCache = PlayerDataDAO[s] ?: return false
 
             if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
                 playerCache.clearSpeed()
@@ -72,7 +72,7 @@ class CommandSpeed : CommandCreator {
             return false
         }
 
-        val playerCache = PlayerDataV2[p] ?: return false
+        val playerCache = PlayerDataDAO[p] ?: return false
 
         if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
             playerCache.clearSpeed()

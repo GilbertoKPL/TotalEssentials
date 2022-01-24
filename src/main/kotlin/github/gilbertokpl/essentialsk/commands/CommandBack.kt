@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -23,7 +23,7 @@ class CommandBack : CommandCreator {
 
         val p = s as Player
 
-        val playerCache = PlayerDataV2[p] ?: return false
+        val playerCache = PlayerDataDAO[p] ?: return false
 
         val loc = playerCache.backLocation ?: run {
             p.sendMessage(GeneralLang.backSendNotToBack)

@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.objects.KitDataV2
+import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
@@ -37,7 +37,7 @@ class ChatEventAsync : Listener {
             DataManager.editKitChat.remove(e.player)
             val split = it.split("-")
 
-            val dataInstance = KitDataV2[split[1]] ?: return false
+            val dataInstance = KitDataDAO[split[1]] ?: return false
 
             //time
             if (split[0] == "time") {

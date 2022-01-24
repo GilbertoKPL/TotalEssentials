@@ -1,6 +1,6 @@
-package github.gilbertokpl.essentialsk.data.sql
+package github.gilbertokpl.essentialsk.data.util
 
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.util.LocationUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
 import org.bukkit.Location
@@ -13,8 +13,8 @@ object PlayerDataSQLUtil {
     fun getHomeLocationSQL(home: String, playerID: String): Location? {
         lateinit var homesList: String
         transaction(SqlUtil.sql) {
-            PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also { query ->
-                homesList = query.single()[PlayerDataSQL.SavedHomes]
+            PlayerDataSQL.select { PlayerDataSQL.playerTable eq playerID }.also { query ->
+                homesList = query.single()[PlayerDataSQL.homeTable]
             }
         }
         for (h in homesList.split("|")) {
@@ -32,12 +32,12 @@ object PlayerDataSQLUtil {
         val cacheHomes = ArrayList<String>()
         var bol = false
         transaction(SqlUtil.sql) {
-            PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also { query ->
+            PlayerDataSQL.select { PlayerDataSQL.playerTable eq playerID }.also { query ->
                 if (query.empty()) {
                     bol = true
                     return@transaction
                 }
-                homesList = query.single()[PlayerDataSQL.SavedHomes]
+                homesList = query.single()[PlayerDataSQL.homeTable]
             }
         }
         if (bol) {
@@ -57,8 +57,8 @@ object PlayerDataSQLUtil {
         lateinit var homes: String
 
         transaction(SqlUtil.sql) {
-            PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also { query ->
-                homes = query.single()[PlayerDataSQL.SavedHomes]
+            PlayerDataSQL.select { PlayerDataSQL.playerTable eq playerID }.also { query ->
+                homes = query.single()[PlayerDataSQL.homeTable]
             }
         }
 
@@ -74,8 +74,8 @@ object PlayerDataSQLUtil {
         }
 
         transaction(SqlUtil.sql) {
-            PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq playerID }) {
-                it[SavedHomes] = newHome
+            PlayerDataSQL.update({ PlayerDataSQL.playerTable eq playerID }) {
+                it[homeTable] = newHome
             }
         }
 
@@ -86,15 +86,15 @@ object PlayerDataSQLUtil {
         val serializedHome = LocationUtil.locationSerializer(loc)
         var emptyQuery = false
         transaction(SqlUtil.sql) {
-            PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also { query ->
+            PlayerDataSQL.select { PlayerDataSQL.playerTable eq playerID }.also { query ->
                 emptyQuery = query.empty()
                 if (emptyQuery) {
-                    PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq playerID }) {
-                        it[SavedHomes] = "$name,$serializedHome"
+                    PlayerDataSQL.update({ PlayerDataSQL.playerTable eq playerID }) {
+                        it[homeTable] = "$name,$serializedHome"
                     }
                     return@transaction
                 }
-                homes = query.single()[PlayerDataSQL.SavedHomes]
+                homes = query.single()[PlayerDataSQL.homeTable]
             }
         }
 
@@ -108,8 +108,8 @@ object PlayerDataSQLUtil {
         }
 
         transaction(SqlUtil.sql) {
-            PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq playerID }) {
-                it[SavedHomes] = newHome
+            PlayerDataSQL.update({ PlayerDataSQL.playerTable eq playerID }) {
+                it[homeTable] = newHome
             }
         }
     }
@@ -119,16 +119,16 @@ object PlayerDataSQLUtil {
         lateinit var kitTime: String
 
         transaction(SqlUtil.sql) {
-            PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also {
+            PlayerDataSQL.select { PlayerDataSQL.playerTable eq playerID }.also {
                 query = it.empty()
-                kitTime = it.single()[PlayerDataSQL.KitsTime]
+                kitTime = it.single()[PlayerDataSQL.kitsTable]
             }
         }
 
         if (query || kitTime == "") {
             transaction(SqlUtil.sql) {
-                PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq playerID }) {
-                    it[KitsTime] = "$kit,$time"
+                PlayerDataSQL.update({ PlayerDataSQL.playerTable eq playerID }) {
+                    it[kitsTable] = "$kit,$time"
                 }
             }
             return
@@ -149,8 +149,8 @@ object PlayerDataSQLUtil {
             "|$kit,$time"
         }
         transaction(SqlUtil.sql) {
-            PlayerDataSQL.update({ PlayerDataSQL.PlayerInfo eq playerID }) {
-                it[KitsTime] = newPlace
+            PlayerDataSQL.update({ PlayerDataSQL.playerTable eq playerID }) {
+                it[kitsTable] = newPlace
             }
         }
     }

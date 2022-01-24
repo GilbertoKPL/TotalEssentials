@@ -5,9 +5,8 @@ import github.gilbertokpl.essentialsk.api.DiscordAPI
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
 import github.gilbertokpl.essentialsk.manager.EColor
-import github.gilbertokpl.essentialsk.util.DiscordUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.MainUtil
 import net.milkbowl.vault.chat.Chat
@@ -71,7 +70,7 @@ class PlayerPreCommand : Listener {
                 val to = it[split[0]]
                 if (split.size >= to!!) {
                     val p = EssentialsK.instance.server.getPlayer(split[to - 1]) ?: return
-                    if (PlayerDataV2[p]?.vanishCache ?: return) {
+                    if (PlayerDataDAO[p]?.vanishCache ?: return) {
                         e.isCancelled = true
                     }
                 }

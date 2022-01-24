@@ -3,8 +3,8 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.api.DiscordAPI
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
-import github.gilbertokpl.essentialsk.data.start.PlayerDataLoader
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
 import github.gilbertokpl.essentialsk.util.*
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
@@ -24,7 +24,7 @@ class PlayerLeave : Listener {
             }
         }
         try {
-            val playerData = PlayerDataV2[e.player] ?: return
+            val playerData = PlayerDataDAO[e.player] ?: return
             if (!playerData.vanishCache && !e.player.hasPermission("*")) {
                 if (MainConfig.messagesLeaveMessage) {
                     MainUtil.serverMessage(
@@ -40,7 +40,7 @@ class PlayerLeave : Listener {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
         try {
-            PlayerDataLoader.saveCache(e.player)
+            PlayerDataDAOUtil.saveCache(e.player)
         } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
@@ -51,7 +51,7 @@ class PlayerLeave : Listener {
                 e.player.world.name.lowercase()
             )
         ) return
-        PlayerDataV2[e.player]?.setBack(e.player.location) ?: return
+        PlayerDataDAO[e.player]?.setBack(e.player.location) ?: return
     }
 
     private fun sendLeaveEmbed(e: PlayerQuitEvent) {

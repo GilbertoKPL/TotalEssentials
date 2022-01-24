@@ -1,12 +1,19 @@
-package github.gilbertokpl.essentialsk.data.objects
+package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.sql.PlayerDataSQLUtil
-import github.gilbertokpl.essentialsk.data.start.PlayerDataLoader
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.FakeNick
+import github.gilbertokpl.essentialsk.data.util.PlayerDataSQLUtil
+import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.backTable
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.flyTable
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.gameModeTable
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.homeTable
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.kitsTable
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.lightTable
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.nickTable
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.speedTable
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.vanishTable
 import github.gilbertokpl.essentialsk.util.*
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -19,7 +26,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-data class PlayerDataV2(
+data class PlayerDataDAO(
     val playerID: String,
     var player: Player,
     val coolDownCommand: HashMap<String, Long>,
@@ -33,6 +40,7 @@ data class PlayerDataV2(
     var flyCache: Boolean,
     var backLocation: Location?,
     var speedCache: Int,
+    var inTeleport: Boolean
 ) {
     //coolDown
 
@@ -86,7 +94,7 @@ data class PlayerDataV2(
         if (!other) {
             var exist = false
             transaction(SqlUtil.sql) {
-                exist = PlayerDataSQL.select { FakeNick eq newNick }.empty()
+                exist = PlayerDataSQL.select { nickTable eq newNick }.empty()
             }
             if (!MainConfig.nicksCanPlayerHaveSameNick &&
                 !player.hasPermission("essentialsk.bypass.nickblockednicks") &&
@@ -101,7 +109,7 @@ data class PlayerDataV2(
             fakeNickCache = newNick
         }
         //sql
-        SqlUtil.helperUpdater(playerID, FakeNick, newNick)
+        SqlUtil.helperUpdater(playerID, nickTable, newNick)
         return false
     }
 
@@ -112,7 +120,7 @@ data class PlayerDataV2(
         player.setDisplayName(player.name)
 
         //sql
-        SqlUtil.helperUpdater(playerID, FakeNick, "")
+        SqlUtil.helperUpdater(playerID, nickTable, "")
     }
 
     //gamemode
@@ -224,9 +232,13 @@ data class PlayerDataV2(
 
     companion object : Listener {
 
-        private val playerCacheV2 = HashMap<String, PlayerDataV2>()
+        private val playerCacheV2 = HashMap<String, PlayerDataDAO>()
 
-        operator fun get(p: Player) = playerCacheV2[p.name.lowercase()]
+        operator fun get(p: Player) = playerCacheV2[PlayerUtil.getPlayerUUID(p)]
+
+        operator fun get(playerID: String) = playerCacheV2[playerID]
+
+        fun getValues() = playerCacheV2.values
 
         fun loadCache(e: PlayerJoinEvent): Boolean {
             val p = e.player
@@ -240,62 +252,62 @@ data class PlayerDataV2(
             val cache = get(p) ?: run {
                 val playerID = PlayerUtil.getPlayerUUID(p)
                 //values
-                var timeKits = ""
+                var kitsList = ""
                 var homesList = ""
-                var fakeNick = ""
+                var nick = ""
                 var gameMode = 0
                 var vanish = false
                 var light = false
                 var fly = false
-                var loc = ""
+                var location = ""
                 var speed = 1
 
                 TaskUtil.asyncExecutor {
                     transaction(SqlUtil.sql) {
-                        PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.also { query ->
-                            if (query.empty()) {
-                                PlayerDataSQL.insert {
-                                    it[PlayerInfo] = playerID
-                                }
-                                playerCacheV2[p.name.lowercase()] =
-                                    PlayerDataLoader.createEmptyCache(p, playerID, limitHome)
-                                return@transaction
+                        val query = PlayerDataSQL.select { PlayerDataSQL.playerTable eq playerID }
+
+                        if (query.empty()) {
+                            PlayerDataSQL.insert {
+                                it[playerTable] = playerID
                             }
-                            timeKits = query.single()[PlayerDataSQL.KitsTime]
-                            homesList = query.single()[PlayerDataSQL.SavedHomes]
-                            fakeNick = query.single()[PlayerDataSQL.FakeNick]
-                            gameMode = query.single()[PlayerDataSQL.GameMode]
-                            vanish = query.single()[PlayerDataSQL.Vanish]
-                            light = query.single()[PlayerDataSQL.Light]
-                            fly = query.single()[PlayerDataSQL.Fly]
-                            loc = query.single()[PlayerDataSQL.Back]
-                            speed = query.single()[PlayerDataSQL.Speed]
+                            playerCacheV2[p.name.lowercase()] =
+                                PlayerDataDAOUtil.createEmptyCache(p, playerID, limitHome)
+                            return@transaction
                         }
+
+                        val single = query.single()
+                        kitsList = single[kitsTable]
+                        homesList = single[homeTable]
+                        nick = single[nickTable]
+                        gameMode = single[gameModeTable]
+                        vanish = single[vanishTable]
+                        light = single[lightTable]
+                        fly = single[flyTable]
+                        location = single[backTable]
+                        speed = single[speedTable]
                     }
 
                     EssentialsK.instance.server.scheduler.runTaskLater(EssentialsK.instance, Runnable {
-                        playerCacheV2[p.name.lowercase()] = PlayerDataV2(
+
+                        playerCacheV2[p.name.lowercase()] = PlayerDataDAO(
                             playerID = playerID,
                             player = p,
                             coolDownCommand = HashMap(5),
-                            kitsCache = PlayerDataLoader.startKitCache(timeKits),
-                            homeCache = PlayerDataLoader.startHomeCache(homesList),
+                            kitsCache = PlayerDataDAOUtil.startKitCache(kitsList),
+                            homeCache = PlayerDataDAOUtil.startHomeCache(homesList),
                             homeLimitCache = limitHome,
-                            fakeNickCache = PlayerDataLoader.startNickCache(p, fakeNick),
-                            gameModeCache = PlayerDataLoader.startGamemodeCache(p, gameMode),
-                            vanishCache = PlayerDataLoader.startVanishCache(p, vanish),
-                            lightCache = PlayerDataLoader.startLightCache(p, light),
-                            flyCache = PlayerDataLoader.startFlyCache(p, fly),
-                            backLocation = PlayerDataLoader.startBackCache(loc),
-                            speedCache = PlayerDataLoader.startSpeedCache(p, speed)
+                            fakeNickCache = PlayerDataDAOUtil.startNickCache(p, nick),
+                            gameModeCache = PlayerDataDAOUtil.startGamemodeCache(p, gameMode),
+                            vanishCache = PlayerDataDAOUtil.startVanishCache(p, vanish),
+                            lightCache = PlayerDataDAOUtil.startLightCache(p, light),
+                            flyCache = PlayerDataDAOUtil.startFlyCache(p, fly),
+                            backLocation = PlayerDataDAOUtil.startBackCache(location),
+                            speedCache = PlayerDataDAOUtil.startSpeedCache(p, speed),
+                            inTeleport = false
                         )
 
-                        sendLoginMessage(vanish, p)
+                        PlayerUtil.finishLogin(p, vanish)
 
-                        val spawn = SpawnDataV2["spawn"]
-                        if (spawn != null) {
-                            p.teleport(spawn)
-                        }
                     }, 5L)
                 }
                 return false
@@ -304,50 +316,20 @@ data class PlayerDataV2(
             cache.homeLimitCache = limitHome
             cache.player = p
 
-            EssentialsK.instance.server.scheduler.runTaskLater(EssentialsK.instance, Runnable {
-                PlayerDataLoader.startNickCache(p, cache.fakeNickCache)
-                PlayerDataLoader.startGamemodeCache(p, cache.gameModeCache)
-                PlayerDataLoader.startVanishCache(p, cache.vanishCache)
-                PlayerDataLoader.startLightCache(p, cache.lightCache)
-                PlayerDataLoader.startFlyCache(p, cache.flyCache)
-                PlayerDataLoader.startSpeedCache(p, cache.speedCache)
-            }, 5L)
-
-            sendLoginMessage(cache.vanishCache, p)
-
-            val spawn = SpawnDataV2["spawn"]
-            if (spawn != null) {
-                p.teleport(spawn)
-            }
+            EssentialsK.instance.server.scheduler.runTaskLater(
+                EssentialsK.instance, Runnable
+                {
+                    PlayerUtil.finishLogin(p, cache.vanishCache)
+                    PlayerDataDAOUtil.startNickCache(p, cache.fakeNickCache)
+                    PlayerDataDAOUtil.startGamemodeCache(p, cache.gameModeCache)
+                    PlayerDataDAOUtil.startVanishCache(p, cache.vanishCache)
+                    PlayerDataDAOUtil.startLightCache(p, cache.lightCache)
+                    PlayerDataDAOUtil.startFlyCache(p, cache.flyCache)
+                    PlayerDataDAOUtil.startSpeedCache(p, cache.speedCache)
+                }, 5L
+            )
 
             return true
-        }
-
-        private fun spawnLogin(p: Player) {
-            if (MainConfig.spawnSendToSpawnOnLogin) {
-                val loc = SpawnDataV2["spawn"] ?: run {
-                    if (p.hasPermission("*")) {
-                        p.sendMessage(GeneralLang.spawnSendNotSet)
-                    }
-                    return
-                }
-                p.teleport(loc)
-            }
-        }
-
-        private fun sendLoginMessage(vanishCache: Boolean, p: Player) {
-            spawnLogin(p)
-            if (!vanishCache && !p.hasPermission("*")) {
-                if (MainConfig.messagesLoginMessage) {
-                    MainUtil.serverMessage(
-                        GeneralLang.messagesEnterMessage
-                            .replace("%player%", p.name)
-                    )
-                }
-                if (MainConfig.discordbotSendLoginMessage) {
-                    PlayerUtil.sendLoginEmbed(p)
-                }
-            }
         }
     }
 }

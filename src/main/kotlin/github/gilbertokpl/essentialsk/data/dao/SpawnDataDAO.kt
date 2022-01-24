@@ -1,8 +1,8 @@
-package github.gilbertokpl.essentialsk.data.objects
+package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.manager.EColor
-import github.gilbertokpl.essentialsk.tables.SpawnDataSQL
+import github.gilbertokpl.essentialsk.data.tables.SpawnDataSQL
 import github.gilbertokpl.essentialsk.util.LocationUtil
 import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-object SpawnDataV2 {
+object SpawnDataDAO {
     private val spawnCache = HashMap<String, Location>(2)
 
     operator fun get(warp: String) = spawnCache[warp.lowercase()]

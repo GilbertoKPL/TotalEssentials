@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.data.objects
+package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
@@ -9,13 +9,13 @@ import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-data class TpaData(
+data class TpaDataDAO(
     val p: Player,
     var otherPlayer: Player?,
     var wait: Boolean
 ) {
     companion object {
-        private val tpaData = HashMap<Player, TpaData>()
+        private val tpaData = HashMap<Player, TpaDataDAO>()
 
         operator fun get(p: Player) = tpaData[p]
 
@@ -47,7 +47,7 @@ data class TpaData(
 
         fun createNewTpa(pSender: Player, pReceived: Player, time: Int) {
 
-            tpaData[pSender] = TpaData(pSender, pReceived, true)
+            tpaData[pSender] = TpaDataDAO(pSender, pReceived, true)
 
             CompletableFuture.runAsync({
                 TimeUnit.SECONDS.sleep(time.toLong())

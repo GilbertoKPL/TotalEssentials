@@ -1,5 +1,7 @@
 package github.gilbertokpl.essentialsk
 
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.*
 import github.slimjar.app.builder.ApplicationBuilder
@@ -71,6 +73,8 @@ class EssentialsK : JavaPlugin() {
     }
 
     override fun onDisable() {
+
+        PlayerDataDAOUtil.saveAllCache()
 
         TaskUtil.disable()
 

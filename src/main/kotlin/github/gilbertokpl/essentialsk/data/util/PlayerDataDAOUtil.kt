@@ -1,9 +1,9 @@
-package github.gilbertokpl.essentialsk.data.start
+package github.gilbertokpl.essentialsk.data.util
 
-import github.gilbertokpl.essentialsk.data.objects.KitDataV2
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL.PlayerInfo
+import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.playerTable
 import github.gilbertokpl.essentialsk.util.*
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
@@ -13,10 +13,10 @@ import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-object PlayerDataLoader {
+object PlayerDataDAOUtil {
 
-    fun createEmptyCache(p: Player, playerID: String, limitHome: Int): PlayerDataV2 {
-        return PlayerDataV2(
+    fun createEmptyCache(p: Player, playerID: String, limitHome: Int): PlayerDataDAO {
+        return PlayerDataDAO(
             playerID,
             p,
             HashMap(5),
@@ -29,23 +29,24 @@ object PlayerDataLoader {
             lightCache = false,
             flyCache = false,
             backLocation = p.location,
-            speedCache = 1
+            speedCache = 1,
+            inTeleport = false
         )
     }
 
     //death
     fun death(p: Player) {
-        val cache = PlayerDataV2[p] ?: return
+        val cache = PlayerDataDAO[p] ?: return
         startGamemodeCache(p, cache.gameModeCache)
         startVanishCache(p, cache.vanishCache)
         startLightCache(p, cache.lightCache)
         startFlyCache(p, cache.flyCache)
     }
 
-
     //kits
     fun startKitCache(timeKits: String): HashMap<String, Long> {
         val cacheKits = HashMap<String, Long>(40)
+
         for (kits in timeKits.split("|")) {
             try {
                 if (kits != "") {
@@ -53,7 +54,7 @@ object PlayerDataLoader {
                     val timeKit = split[1].toLong()
                     val nameKit = split[0]
 
-                    val kitsCache = KitDataV2[nameKit]
+                    val kitsCache = KitDataDAO[nameKit]
 
                     if (kitsCache != null) {
                         val timeAll = kitsCache.time
@@ -70,7 +71,6 @@ object PlayerDataLoader {
         }
         return cacheKits
     }
-
 
     //home
     fun startHomeCache(homesList: String): HashMap<String, Location> {
@@ -106,7 +106,6 @@ object PlayerDataLoader {
         return gameMode
     }
 
-
     //vanish
     fun startVanishCache(p: Player, active: Boolean): Boolean {
         if (active) {
@@ -124,7 +123,6 @@ object PlayerDataLoader {
         return active
     }
 
-
     //light
     fun startLightCache(p: Player, active: Boolean): Boolean {
         if (active) {
@@ -132,7 +130,6 @@ object PlayerDataLoader {
         }
         return active
     }
-
 
     //fly
     fun startFlyCache(p: Player, active: Boolean): Boolean {
@@ -158,22 +155,34 @@ object PlayerDataLoader {
         return speed
     }
 
-
     //load
 
+    fun saveAllCache() {
+        transaction(SqlUtil.sql) {
+            for (i in PlayerDataDAO.getValues()) {
+                saveCache(i.playerID)
+            }
+        }
+    }
+
     fun saveCache(p: Player) {
+        val playerID = PlayerUtil.getPlayerUUID(p)
         TaskUtil.asyncExecutor {
-            transaction(SqlUtil.sql) {
-                val playerID = PlayerUtil.getPlayerUUID(p)
-                val cache = PlayerDataV2[p] ?: return@transaction
-                PlayerDataSQL.update({ PlayerInfo eq playerID }) {
-                    it[GameMode] = cache.gameModeCache
-                    it[Vanish] = cache.vanishCache
-                    it[Light] = cache.lightCache
-                    it[Fly] = cache.flyCache
-                    it[Back] =
-                        cache.backLocation?.let { it1 -> LocationUtil.locationSerializer(it1) } ?: ""
-                }
+            saveCache(playerID)
+        }
+    }
+
+    private fun saveCache(playerID: String) {
+        val cache = PlayerDataDAO[playerID] ?: return
+        val backLocation = LocationUtil.locationSerializer(cache.backLocation)
+
+        transaction(SqlUtil.sql) {
+            PlayerDataSQL.update({ playerTable eq playerID }) {
+                it[gameModeTable] = cache.gameModeCache
+                it[vanishTable] = cache.vanishCache
+                it[lightTable] = cache.lightCache
+                it[flyTable] = cache.flyCache
+                it[backTable] = backLocation
             }
         }
     }

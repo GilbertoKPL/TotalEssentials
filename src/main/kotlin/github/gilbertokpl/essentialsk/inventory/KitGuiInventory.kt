@@ -4,8 +4,8 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.objects.KitDataV2
-import github.gilbertokpl.essentialsk.data.objects.PlayerDataV2
+import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
 import github.gilbertokpl.essentialsk.util.HashUtil
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.MaterialUtil
@@ -27,7 +27,7 @@ object KitGuiInventory {
 
         val newHash = LinkedHashMap<String, Int>()
 
-        KitDataV2.getMap().forEach {
+        KitDataDAO.getMap().forEach {
             newHash[it.key] = it.value.weight
         }
 
@@ -35,7 +35,7 @@ object KitGuiInventory {
 
 
         for (kit in cache) {
-            val i = KitDataV2[kit.key]!!
+            val i = KitDataDAO[kit.key]!!
             val name = GeneralLang.kitsInventoryItemsName.replace("%kitrealname%", i.fakeName)
             val item = try {
                 ItemStack(i.items[0])
@@ -117,8 +117,8 @@ object KitGuiInventory {
         val inv = EssentialsK.instance.server.createInventory(null, 45, "§eKit $kit $guiNumber")
 
         //load caches
-        val kitCache = KitDataV2[kit] ?: return
-        val playerCache = PlayerDataV2[p]!!
+        val kitCache = KitDataDAO[kit] ?: return
+        val playerCache = PlayerDataDAO[p]!!
 
         //get all time of kits
         var timeAll = playerCache.kitsCache[kit] ?: 0L

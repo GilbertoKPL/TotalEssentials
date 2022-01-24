@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.WarpDataV2
+import github.gilbertokpl.essentialsk.data.dao.WarpDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.MainUtil
 import org.bukkit.Location
@@ -39,7 +39,7 @@ class CommandSetWarp : CommandCreator {
         }
 
         //check if exist
-        if (WarpDataV2[args[0]] != null) {
+        if (WarpDataDAO[args[0]] != null) {
             s.sendMessage(GeneralLang.warpsNameAlreadyExist)
             return false
         }
@@ -59,7 +59,7 @@ class CommandSetWarp : CommandCreator {
             }
 
             s.sendMessage(GeneralLang.generalSendingInfoToDb)
-            WarpDataV2.set(args[0], loc, s)
+            WarpDataDAO.set(args[0], loc, s)
 
 
             return false
@@ -67,7 +67,7 @@ class CommandSetWarp : CommandCreator {
 
         if (args.size == 1 && s is Player) {
             s.sendMessage(GeneralLang.generalSendingInfoToDb)
-            WarpDataV2.set(args[0], s.location, s)
+            WarpDataDAO.set(args[0], s.location, s)
             return false
         }
 

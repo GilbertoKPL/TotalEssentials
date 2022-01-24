@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.TpaData
+import github.gilbertokpl.essentialsk.data.dao.TpaDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -36,20 +36,20 @@ class CommandTpa : CommandCreator {
         }
 
         //check if player already send
-        if (TpaData.checkTpa(s as Player)) {
+        if (TpaDataDAO.checkTpa(s as Player)) {
             s.sendMessage(GeneralLang.tpaAlreadySend)
             return false
         }
 
         //check if player has telepot request
-        if (TpaData.checkOtherTpa(p)) {
+        if (TpaDataDAO.checkOtherTpa(p)) {
             s.sendMessage(GeneralLang.tpaAlreadyInAccept)
             return false
         }
 
         val time = MainConfig.tpaTimeToAccept
 
-        TpaData.createNewTpa(s, p, time)
+        TpaDataDAO.createNewTpa(s, p, time)
 
         s.sendMessage(GeneralLang.tpaSendSuccess.replace("%player%", p.name))
         p.sendMessage(

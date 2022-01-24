@@ -2,7 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.WarpDataV2
+import github.gilbertokpl.essentialsk.data.dao.WarpDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -24,13 +24,13 @@ class CommandDelWarp : CommandCreator {
             return false
         }
 
-        WarpDataV2[args[0]] ?: run {
+        WarpDataDAO[args[0]] ?: run {
             s.sendMessage(GeneralLang.warpsNameDontExist)
             return false
         }
 
         s.sendMessage(GeneralLang.generalSendingInfoToDb)
-        WarpDataV2.del(args[0])
+        WarpDataDAO.del(args[0])
 
         return false
     }

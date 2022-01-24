@@ -2,9 +2,9 @@ package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.objects.KitDataV2
-import github.gilbertokpl.essentialsk.data.objects.SpawnDataV2
-import github.gilbertokpl.essentialsk.data.objects.WarpDataV2
+import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
+import github.gilbertokpl.essentialsk.data.dao.SpawnDataDAO
+import github.gilbertokpl.essentialsk.data.dao.WarpDataDAO
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.manager.CommandCreator
@@ -60,17 +60,17 @@ object MainUtil {
     private fun loadCache(): Boolean {
         return CompletableFuture.supplyAsync({
             try {
-                KitDataV2.loadKitCache()
+                KitDataDAO.loadKitCache()
             } catch (ex: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }
             try {
-                WarpDataV2.loadWarpCache()
+                WarpDataDAO.loadWarpCache()
             } catch (ex: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }
             try {
-                SpawnDataV2.loadSpawnCache()
+                SpawnDataDAO.loadSpawnCache()
             } catch (ex: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
             }

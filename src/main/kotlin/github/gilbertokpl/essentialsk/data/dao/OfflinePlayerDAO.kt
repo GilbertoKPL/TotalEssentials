@@ -1,8 +1,8 @@
-package github.gilbertokpl.essentialsk.data.objects
+package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.data.sql.PlayerDataSQLUtil
-import github.gilbertokpl.essentialsk.tables.PlayerDataSQL
+import github.gilbertokpl.essentialsk.data.util.PlayerDataSQLUtil
+import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
@@ -11,7 +11,7 @@ import org.bukkit.Location
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class OfflinePlayerData(player: String) {
+class OfflinePlayerDAO(player: String) {
     private val p = EssentialsK.instance.server.getPlayerExact(player)
 
     private val online = p != null
@@ -24,7 +24,7 @@ class OfflinePlayerData(player: String) {
     }
 
     val data = if (online) {
-        PlayerDataV2[p!!]
+        PlayerDataDAO[p!!]
     } else {
         null
     }
@@ -36,7 +36,7 @@ class OfflinePlayerData(player: String) {
             try {
                 var check = false
                 transaction(SqlUtil.sql) {
-                    check = PlayerDataSQL.select { PlayerDataSQL.PlayerInfo eq playerID }.empty()
+                    check = PlayerDataSQL.select { PlayerDataSQL.playerTable eq playerID }.empty()
                 }
                 return !check
             } catch (ex: Exception) {

@@ -1,9 +1,9 @@
-package github.gilbertokpl.essentialsk.data.objects
+package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.manager.EColor
-import github.gilbertokpl.essentialsk.tables.WarpsDataSQL
-import github.gilbertokpl.essentialsk.tables.WarpsDataSQL.warpName
+import github.gilbertokpl.essentialsk.data.tables.WarpsDataSQL
+import github.gilbertokpl.essentialsk.data.tables.WarpsDataSQL.warpName
 import github.gilbertokpl.essentialsk.util.LocationUtil
 import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
@@ -17,7 +17,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-object WarpDataV2 {
+object WarpDataDAO {
     //warps
     private val warpsCache = mutableMapOf<String, Location>()
 
