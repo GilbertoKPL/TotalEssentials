@@ -1,12 +1,14 @@
 package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.data.tables.SpawnDataSQL
+import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.LocationUtil
 import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
-import github.gilbertokpl.essentialsk.util.TaskUtil
+import github.okkero.skedule.BukkitDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.bukkit.Location
 import org.bukkit.command.CommandSender
 import org.jetbrains.exposed.sql.insert
@@ -27,7 +29,7 @@ internal object SpawnDataDAO {
         val loc = LocationUtil.locationSerializer(location)
 
         //sql
-        TaskUtil.asyncExecutor {
+        CoroutineScope(BukkitDispatcher(async = true)).launch {
             transaction(SqlUtil.sql) {
                 if (SpawnDataSQL.select { SpawnDataSQL.spawnName eq spawn.lowercase() }.empty()) {
                     SpawnDataSQL.insert {

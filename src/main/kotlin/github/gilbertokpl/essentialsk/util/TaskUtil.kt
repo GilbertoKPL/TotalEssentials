@@ -1,12 +1,17 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.EssentialsK
+import github.okkero.skedule.SynchronizationContext
+import github.okkero.skedule.schedule
 import org.apache.commons.lang3.exception.ExceptionUtils
-import java.util.concurrent.*
+import org.bukkit.Bukkit
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 
 internal object TaskUtil {
 
-    internal val asyncExecutor = asyncFuture()
+    private val scheduler = Bukkit.getScheduler()
 
     private val poolExecutor = Executors.newCachedThreadPool()
 
@@ -51,27 +56,15 @@ internal object TaskUtil {
 
     fun teleportExecutor(time: Int): (() -> Unit) -> Unit {
         return {
-            CompletableFuture.runAsync({
-                TimeUnit.SECONDS.sleep(time.toLong())
+            scheduler.schedule(EssentialsK.instance, SynchronizationContext.ASYNC) {
+                waitFor(time.toLong() * 20)
                 try {
-                    EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable { it() })
-                } catch (ex: Throwable) {
-                    FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
-                }
-            }, poolExecutorTeleport)
-        }
-    }
-
-    private fun asyncFuture(): (() -> Unit) -> Unit {
-        return {
-            CompletableFuture.runAsync({
-                try {
+                    switchContext(SynchronizationContext.SYNC)
                     it()
                 } catch (ex: Throwable) {
                     FileLoggerUtil.logError(ExceptionUtils.getStackTrace(ex))
                 }
-            }, poolExecutor)
+            }
         }
     }
-
 }

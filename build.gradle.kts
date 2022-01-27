@@ -16,7 +16,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("com.github.GilbertoKPL.slimjar:github.slimjar.gradle.plugin:v1.2.8")
+        classpath("com.github.GilbertoKPL.slimjar:github.slimjar.gradle.plugin:v1.2.9")
     }
 }
 
@@ -39,13 +39,12 @@ allprojects {
     repositories {
         mavenCentral()
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-        maven("https://mvnrepository.com/artifact/")
         maven("https://jitpack.io")
     }
 }
 
 dependencies {
-    implementation("com.github.GilbertoKPL.slimjar:slimjar:v1.2.8")
+    implementation("com.github.GilbertoKPL.slimjar:slimjar:v1.2.9")
 
     compileOnly("org.spigotmc:spigot-api:$buildVersion-R0.1-SNAPSHOT") {
         exclude("commons-lang", "commons-lang")
@@ -88,7 +87,7 @@ dependencies {
 
     slim("org.bstats:bstats-bukkit:2.2.1")
 
-    slim("org.mariadb.jdbc:mariadb-java-client:2.7.4")
+    slim("org.mariadb.jdbc:mariadb-java-client:2.7.5")
 
     slim("org.slf4j:slf4j-nop:1.7.33")
 
@@ -150,6 +149,7 @@ tasks.shadowJar {
 }
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {

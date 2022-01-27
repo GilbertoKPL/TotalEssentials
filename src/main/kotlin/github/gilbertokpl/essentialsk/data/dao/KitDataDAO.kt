@@ -1,9 +1,9 @@
 package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.data.util.KitDataSQLUtil
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
-import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
 import org.bukkit.command.CommandSender

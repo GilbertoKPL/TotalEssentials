@@ -7,7 +7,9 @@ import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
-import github.gilbertokpl.essentialsk.util.TaskUtil
+import github.okkero.skedule.BukkitDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -67,10 +69,10 @@ class CommandNick : CommandCreator {
 
             val nick = PermissionUtil.colorPermission(s, args[0])
 
-            TaskUtil.asyncExecutor {
+            CoroutineScope(BukkitDispatcher(async = true)).launch {
                 if (playerCache.setNick(nick)) {
                     s.sendMessage(GeneralLang.nicksExist)
-                    return@asyncExecutor
+                    return@launch
                 }
 
                 s.sendMessage(GeneralLang.nicksNickSuccess.replace("%nick%", nick))

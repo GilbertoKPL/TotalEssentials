@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.data.util.PlayerDataSQLUtil
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
+import github.gilbertokpl.essentialsk.data.util.PlayerDataSQLUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil

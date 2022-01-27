@@ -32,7 +32,7 @@ internal object DiscordLoop {
                         .replace("%time%", TimeUtil.getCurrentDate())
                 )?.queue()
             } else {
-                TaskUtil.getDiscordExecutor().shutdown()
+                TaskUtil.restartDiscordExecutor()
                 start = false
             }
         }, 2, 10, TimeUnit.MINUTES)

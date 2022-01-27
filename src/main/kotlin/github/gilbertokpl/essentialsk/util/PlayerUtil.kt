@@ -101,8 +101,7 @@ internal object PlayerUtil {
         }
     }
 
-    fun finishLogin(p: Player, vanishCache: Boolean) {
-
+    fun sendToSpawn(p: Player) {
         if (MainConfig.spawnSendToSpawnOnLogin) {
             val loc = SpawnDataDAO["spawn"] ?: run {
                 if (p.hasPermission("*")) {
@@ -112,6 +111,11 @@ internal object PlayerUtil {
             }
             p.teleport(loc)
         }
+    }
+
+    fun finishLogin(p: Player, vanishCache: Boolean) {
+
+        sendToSpawn(p)
 
         if (!vanishCache && !p.hasPermission("*")) {
             if (MainConfig.messagesLoginMessage) {

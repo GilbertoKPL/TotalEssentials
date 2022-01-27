@@ -5,6 +5,9 @@ import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.playerTable
 import github.gilbertokpl.essentialsk.util.*
+import github.okkero.skedule.BukkitDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -158,16 +161,14 @@ internal object PlayerDataDAOUtil {
     //load
 
     fun saveAllCache() {
-        transaction(SqlUtil.sql) {
-            for (i in PlayerDataDAO.getValues()) {
-                saveCache(i.playerID)
-            }
+        for (i in PlayerDataDAO.getValues()) {
+            saveCache(i.playerID)
         }
     }
 
     fun saveCache(p: Player) {
         val playerID = PlayerUtil.getPlayerUUID(p)
-        TaskUtil.asyncExecutor {
+        CoroutineScope(BukkitDispatcher(async = true)).launch {
             saveCache(playerID)
         }
     }

@@ -1,6 +1,10 @@
 package github.gilbertokpl.essentialsk.util
 
+import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.okkero.skedule.SynchronizationContext
+import github.okkero.skedule.schedule
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import oshi.SystemInfo
 import oshi.hardware.CentralProcessor
@@ -23,17 +27,20 @@ internal object HostUtil {
     private const val MHZ_CONVERSOR = 1_000_000
 
     fun sendHostInfo(p: CommandSender) {
-        TaskUtil.asyncExecutor {
+
+        val ip = try {
+            InetAddress.getLocalHost().hostAddress
+        } catch (e: Throwable) {
+            "Unknow"
+        }
+
+        val file = Files.getFileStore(File("/").toPath())
+
+        Bukkit.getScheduler().schedule(EssentialsK.instance, SynchronizationContext.ASYNC) {
 
             val siProcessor = si.hardware.processor
 
             val siMemory = si.hardware.memory
-
-            val ip = try {
-                InetAddress.getLocalHost().hostAddress
-            } catch (e: Throwable) {
-                "Unknow"
-            }
 
             val os = System.getProperty("os.name") ?: "Unknown"
 
@@ -48,6 +55,7 @@ internal object HostUtil {
                     else -> "Unknown"
                 }
             } else {
+
                 name
             }
 
@@ -83,8 +91,6 @@ internal object HostUtil {
             } catch (e: Throwable) {
                 "Unknow"
             }
-
-            val file = Files.getFileStore(File("/").toPath())
 
             val totalHD = file.totalSpace / KB_CONVERSOR
 

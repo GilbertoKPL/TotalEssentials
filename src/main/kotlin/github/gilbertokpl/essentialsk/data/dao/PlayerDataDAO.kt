@@ -2,8 +2,6 @@ package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.util.PlayerDataSQLUtil
-import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.backTable
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.flyTable
@@ -14,11 +12,21 @@ import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.lightTable
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.nickTable
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.speedTable
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.vanishTable
-import github.gilbertokpl.essentialsk.util.*
+import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
+import github.gilbertokpl.essentialsk.data.util.PlayerDataSQLUtil
+import github.gilbertokpl.essentialsk.util.PermissionUtil
+import github.gilbertokpl.essentialsk.util.PlayerUtil
+import github.gilbertokpl.essentialsk.util.ReflectUtil
+import github.gilbertokpl.essentialsk.util.SqlUtil
+import github.okkero.skedule.BukkitDispatcher
+import github.okkero.skedule.SynchronizationContext
+import github.okkero.skedule.schedule
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -55,7 +63,7 @@ internal data class PlayerDataDAO(
     fun setKitTime(kit: String, time: Long) {
         kitsCache[kit] = time
 
-        TaskUtil.asyncExecutor {
+        CoroutineScope(BukkitDispatcher(async = true)).launch {
             PlayerDataSQLUtil.setKitTimeSQL(kit, time, playerID)
         }
     }
@@ -67,7 +75,7 @@ internal data class PlayerDataDAO(
     fun setHome(name: String, loc: Location) {
         homeCache[name] = loc
 
-        TaskUtil.asyncExecutor {
+        CoroutineScope(BukkitDispatcher(async = true)).launch {
             PlayerDataSQLUtil.setHomeSQL(name, loc, playerID)
         }
     }
@@ -75,7 +83,7 @@ internal data class PlayerDataDAO(
     fun delHome(name: String) {
         homeCache.remove(name)
 
-        TaskUtil.asyncExecutor {
+        CoroutineScope(BukkitDispatcher(async = true)).launch {
             PlayerDataSQLUtil.delHomeSQL(name, playerID)
         }
     }
@@ -230,7 +238,7 @@ internal data class PlayerDataDAO(
         speedCache = 1
     }
 
-    companion object : Listener {
+    companion object {
 
         private val playerCacheV2 = HashMap<String, PlayerDataDAO>()
 
@@ -240,7 +248,7 @@ internal data class PlayerDataDAO(
 
         fun getValues() = playerCacheV2.values
 
-        fun loadCache(e: PlayerJoinEvent): Boolean {
+        fun loadCache(e: PlayerJoinEvent) {
             val p = e.player
 
             val limitHome: Int = PermissionUtil.getNumberPermission(
@@ -249,20 +257,28 @@ internal data class PlayerDataDAO(
                 MainConfig.homesDefaultLimitHomes
             )
 
-            val cache = get(p) ?: run {
-                val playerID = PlayerUtil.getPlayerUUID(p)
-                //values
-                var kitsList = ""
-                var homesList = ""
-                var nick = ""
-                var gameMode = 0
-                var vanish = false
-                var light = false
-                var fly = false
-                var location = ""
-                var speed = 1
+            Bukkit.getScheduler().schedule(EssentialsK.instance) {
 
-                TaskUtil.asyncExecutor {
+                val cache = get(p)
+
+                if (cache == null) {
+
+                    PlayerUtil.sendToSpawn(p)
+
+                    val playerID = PlayerUtil.getPlayerUUID(p)
+                    //values
+                    var kitsList = ""
+                    var homesList = ""
+                    var nick = ""
+                    var gameMode = 0
+                    var vanish = false
+                    var light = false
+                    var fly = false
+                    var location = ""
+                    var speed = 1
+
+                    switchContext(SynchronizationContext.ASYNC)
+
                     transaction(SqlUtil.sql) {
                         val query = PlayerDataSQL.select { PlayerDataSQL.playerTable eq playerID }
 
@@ -285,51 +301,49 @@ internal data class PlayerDataDAO(
                         fly = single[flyTable]
                         location = single[backTable]
                         speed = single[speedTable]
+
                     }
 
-                    EssentialsK.instance.server.scheduler.runTaskLater(EssentialsK.instance, Runnable {
+                    switchContext(SynchronizationContext.SYNC)
+                    waitFor(10)
 
-                        playerCacheV2[p.name.lowercase()] = PlayerDataDAO(
-                            playerID = playerID,
-                            player = p,
-                            coolDownCommand = HashMap(5),
-                            kitsCache = PlayerDataDAOUtil.startKitCache(kitsList),
-                            homeCache = PlayerDataDAOUtil.startHomeCache(homesList),
-                            homeLimitCache = limitHome,
-                            fakeNickCache = PlayerDataDAOUtil.startNickCache(p, nick),
-                            gameModeCache = PlayerDataDAOUtil.startGamemodeCache(p, gameMode),
-                            vanishCache = PlayerDataDAOUtil.startVanishCache(p, vanish),
-                            lightCache = PlayerDataDAOUtil.startLightCache(p, light),
-                            flyCache = PlayerDataDAOUtil.startFlyCache(p, fly),
-                            backLocation = PlayerDataDAOUtil.startBackCache(location),
-                            speedCache = PlayerDataDAOUtil.startSpeedCache(p, speed),
-                            inTeleport = false
-                        )
+                    playerCacheV2[p.name.lowercase()] = PlayerDataDAO(
+                        playerID = playerID,
+                        player = p,
+                        coolDownCommand = HashMap(5),
+                        kitsCache = PlayerDataDAOUtil.startKitCache(kitsList),
+                        homeCache = PlayerDataDAOUtil.startHomeCache(homesList),
+                        homeLimitCache = limitHome,
+                        fakeNickCache = PlayerDataDAOUtil.startNickCache(p, nick),
+                        gameModeCache = PlayerDataDAOUtil.startGamemodeCache(p, gameMode),
+                        vanishCache = PlayerDataDAOUtil.startVanishCache(p, vanish),
+                        lightCache = PlayerDataDAOUtil.startLightCache(p, light),
+                        flyCache = PlayerDataDAOUtil.startFlyCache(p, fly),
+                        backLocation = PlayerDataDAOUtil.startBackCache(location),
+                        speedCache = PlayerDataDAOUtil.startSpeedCache(p, speed),
+                        inTeleport = false
+                    )
 
-                        PlayerUtil.finishLogin(p, vanish)
 
-                    }, 5L)
+                    PlayerUtil.finishLogin(p, vanish)
+
+                    return@schedule
                 }
-                return false
+
+                cache.homeLimitCache = limitHome
+                cache.player = p
+
+                PlayerUtil.finishLogin(p, cache.vanishCache)
+
+                waitFor(10)
+
+                PlayerDataDAOUtil.startNickCache(p, cache.fakeNickCache)
+                PlayerDataDAOUtil.startGamemodeCache(p, cache.gameModeCache)
+                PlayerDataDAOUtil.startVanishCache(p, cache.vanishCache)
+                PlayerDataDAOUtil.startLightCache(p, cache.lightCache)
+                PlayerDataDAOUtil.startFlyCache(p, cache.flyCache)
+                PlayerDataDAOUtil.startSpeedCache(p, cache.speedCache)
             }
-
-            cache.homeLimitCache = limitHome
-            cache.player = p
-
-            EssentialsK.instance.server.scheduler.runTaskLater(
-                EssentialsK.instance, Runnable
-                {
-                    PlayerUtil.finishLogin(p, cache.vanishCache)
-                    PlayerDataDAOUtil.startNickCache(p, cache.fakeNickCache)
-                    PlayerDataDAOUtil.startGamemodeCache(p, cache.gameModeCache)
-                    PlayerDataDAOUtil.startVanishCache(p, cache.vanishCache)
-                    PlayerDataDAOUtil.startLightCache(p, cache.lightCache)
-                    PlayerDataDAOUtil.startFlyCache(p, cache.flyCache)
-                    PlayerDataDAOUtil.startSpeedCache(p, cache.speedCache)
-                }, 5L
-            )
-
-            return true
         }
     }
 }

@@ -2,11 +2,13 @@ package github.gilbertokpl.essentialsk.data.util
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
-import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
+import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.SqlUtil
-import github.gilbertokpl.essentialsk.util.TaskUtil
+import github.okkero.skedule.BukkitDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.command.CommandSender
 import org.jetbrains.exposed.sql.Column
@@ -28,7 +30,7 @@ internal object KitDataSQLUtil {
         reloadGui()
 
         //sql
-        TaskUtil.asyncExecutor {
+        CoroutineScope(BukkitDispatcher(async = true)).launch {
             try {
                 transaction(SqlUtil.sql) {
                     KitsDataSQL.deleteWhere { KitsDataSQL.kitName eq name.lowercase() }
@@ -49,7 +51,7 @@ internal object KitDataSQLUtil {
         reloadGui()
 
         //sql
-        TaskUtil.asyncExecutor {
+        CoroutineScope(BukkitDispatcher(async = true)).launch {
             try {
                 transaction(SqlUtil.sql) {
                     KitsDataSQL.insert {
@@ -70,7 +72,7 @@ internal object KitDataSQLUtil {
     }
 
     fun <T> kitHelper(col: Column<T>, value: T, message: String, name: String, s: CommandSender? = null) {
-        TaskUtil.asyncExecutor {
+        CoroutineScope(BukkitDispatcher(async = true)).launch {
             try {
                 transaction(SqlUtil.sql) {
                     KitsDataSQL.update({ KitsDataSQL.kitName eq name }) {

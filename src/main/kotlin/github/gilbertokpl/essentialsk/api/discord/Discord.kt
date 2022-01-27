@@ -4,7 +4,12 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager.hashTextChannel
 import github.gilbertokpl.essentialsk.manager.EColor
-import github.gilbertokpl.essentialsk.util.*
+import github.gilbertokpl.essentialsk.util.ColorUtil
+import github.gilbertokpl.essentialsk.util.DiscordUtil
+import github.gilbertokpl.essentialsk.util.MainUtil
+import github.okkero.skedule.BukkitDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.EmbedBuilder
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -29,15 +34,15 @@ class Discord(pl: JavaPlugin) {
         }
 
         if (hashTextChannel[chatID] == null) {
-            TaskUtil.asyncExecutor {
-                val newChat = DiscordUtil.setupDiscordChat() ?: return@asyncExecutor
+            CoroutineScope(BukkitDispatcher(async = true)).launch {
+                val newChat = DiscordUtil.setupDiscordChat() ?: return@launch
 
                 hashTextChannel[chatID] = newChat
 
                 if (embed) {
                     val msg = EmbedBuilder().setDescription(message).setColor(ColorUtil.randomColor())
                     newChat.sendMessageEmbeds(msg.build()).queue()
-                    return@asyncExecutor
+                    return@launch
                 }
 
                 newChat.sendMessage(message).queue()

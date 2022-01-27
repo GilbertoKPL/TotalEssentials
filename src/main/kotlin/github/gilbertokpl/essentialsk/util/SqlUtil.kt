@@ -8,6 +8,9 @@ import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.data.tables.SpawnDataSQL
 import github.gilbertokpl.essentialsk.data.tables.WarpsDataSQL
+import github.okkero.skedule.BukkitDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Database
@@ -20,7 +23,7 @@ internal object SqlUtil {
     lateinit var sql: Database
 
     fun <T> helperUpdater(field: String, col: Column<T>, value: T) {
-        TaskUtil.asyncExecutor {
+        CoroutineScope(BukkitDispatcher(async = true)).launch {
             transaction(sql) {
                 PlayerDataSQL.update({ PlayerDataSQL.playerTable eq field }) {
                     it[col] = value

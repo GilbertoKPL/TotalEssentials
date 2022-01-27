@@ -5,7 +5,10 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.OfflinePlayerDAO
 import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
 import github.gilbertokpl.essentialsk.manager.CommandCreator
-import github.gilbertokpl.essentialsk.util.TaskUtil
+import github.okkero.skedule.BukkitDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.launch
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -24,11 +27,12 @@ class CommandDelHome : CommandCreator {
             "essentialsk.commands.delhome.other_/delhome <playername>:<homeName>"
         )
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         //admin
         if (args[0].contains(":") && s.hasPermission("essentialsk.commands.delhome.other")) {
-            TaskUtil.asyncExecutor {
+            CoroutineScope(BukkitDispatcher(async = true)).launch {
                 val split = args[0].split(":")
 
                 val pName = split[0].lowercase()
@@ -37,7 +41,7 @@ class CommandDelHome : CommandCreator {
 
                 if (!otherPlayerInstance.checkSql()) {
                     s.sendMessage(GeneralLang.generalPlayerNotExist)
-                    return@asyncExecutor
+                    return@launch
                 }
 
                 if (split.size < 2) {
@@ -45,12 +49,12 @@ class CommandDelHome : CommandCreator {
                         GeneralLang.homesHomeOtherList.replace("%player%", pName)
                             .replace("%list%", otherPlayerInstance.getHomeList().toString())
                     )
-                    return@asyncExecutor
+                    return@launch
                 }
 
                 if (!otherPlayerInstance.getHomeList().contains(split[1])) {
                     s.sendMessage(GeneralLang.homesNameDontExist)
-                    return@asyncExecutor
+                    return@launch
                 }
 
                 otherPlayerInstance.delHome(split[1])
