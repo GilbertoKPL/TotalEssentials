@@ -1,5 +1,7 @@
 # EssentialsK
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e7584330962a4a39aea8752108e3255e)](https://app.codacy.com/gh/GilbertoKPL/EssentialsK?utm_source=github.com&utm_medium=referral&utm_content=GilbertoKPL/EssentialsK&utm_campaign=Badge_Grade_Settings)
+
 * A core system for minecraft server that supports most versions (1.5.2 - 1.18.0), using only database as a storage
   medium and various built-in commands / systems, which can be disabled at any time.
 
