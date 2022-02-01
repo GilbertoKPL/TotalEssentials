@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.MainUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -50,7 +50,7 @@ class PlayerDeath : Listener {
                 e.entity.world.name.lowercase()
             ) && !e.entity.hasPermission("essentialsk.bypass.backblockedworlds")
         ) return
-        PlayerDataDAO[e.entity]?.setBack(e.entity.location) ?: return
+        PlayerData[e.entity]?.setBack(e.entity.location) ?: return
     }
 
     private fun deathMessage(e: PlayerDeathEvent) {

@@ -9,13 +9,13 @@ import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-internal data class TpaDataDAO(
+internal data class TpaData(
     val p: Player,
     var otherPlayer: Player?,
     var wait: Boolean
 ) {
     companion object {
-        private val tpaData = HashMap<Player, TpaDataDAO>()
+        private val tpaData = HashMap<Player, TpaData>()
 
         operator fun get(p: Player) = tpaData[p]
 
@@ -47,7 +47,7 @@ internal data class TpaDataDAO(
 
         fun createNewTpa(pSender: Player, pReceived: Player, time: Int) {
 
-            tpaData[pSender] = TpaDataDAO(pSender, pReceived, true)
+            tpaData[pSender] = TpaData(pSender, pReceived, true)
 
             CompletableFuture.runAsync({
                 TimeUnit.SECONDS.sleep(time.toLong())

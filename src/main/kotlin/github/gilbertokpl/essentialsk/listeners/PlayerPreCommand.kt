@@ -4,7 +4,7 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.MainUtil
@@ -69,7 +69,7 @@ class PlayerPreCommand : Listener {
                 val to = it[split[0]]
                 if (split.size >= to!!) {
                     val p = EssentialsK.instance.server.getPlayer(split[to - 1]) ?: return
-                    if (PlayerDataDAO[p]?.vanishCache ?: return) {
+                    if (PlayerData[p]?.vanishCache ?: return) {
                         e.isCancelled = true
                     }
                 }

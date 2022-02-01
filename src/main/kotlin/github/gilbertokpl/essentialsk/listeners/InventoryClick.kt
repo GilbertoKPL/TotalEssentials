@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
+import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGui
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGuiItems
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory.kitGui
@@ -116,14 +116,14 @@ class InventoryClick : Listener {
         val inventoryName = e.view.title.split(" ")
         if (inventoryName[0].equals("§eEditKit", true)) {
             e.isCancelled = true
-            val dataInstance = KitDataDAO[inventoryName[1]] ?: return false
+            val dataInstance = KitData[inventoryName[1]] ?: return false
             val number = e.slot
             val p = e.whoClicked as Player
 
             //items
             if (number == 10) {
                 p.closeInventory()
-                editKitGuiItems(p, inventoryName[1], dataInstance.items)
+                editKitGuiItems(p, inventoryName[1], dataInstance.itemsCache)
                 DataManager.editKit[p] = inventoryName[1]
             }
 

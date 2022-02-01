@@ -4,8 +4,8 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.KitData
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.util.HashUtil
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.MaterialUtil
@@ -27,18 +27,18 @@ internal object KitGuiInventory {
 
         val newHash = LinkedHashMap<String, Int>()
 
-        KitDataDAO.getMap().forEach {
-            newHash[it.key] = it.value.weight
+        KitData.getMap().forEach {
+            newHash[it.key] = it.value.weightCache
         }
 
         val cache = HashUtil.hashMapReverse(HashUtil.hashMapSortMap(newHash))
 
 
         for (kit in cache) {
-            val i = KitDataDAO[kit.key]!!
-            val name = GeneralLang.kitsInventoryItemsName.replace("%kitrealname%", i.fakeName)
+            val i = KitData[kit.key]!!
+            val name = GeneralLang.kitsInventoryItemsName.replace("%kitrealname%", i.fakeNameCache)
             val item = try {
-                ItemStack(i.items[0])
+                ItemStack(i.itemsCache[0])
             } catch (e: Throwable) {
                 ItemStack(Material.CHEST)
             }
@@ -117,16 +117,16 @@ internal object KitGuiInventory {
         val inv = EssentialsK.instance.server.createInventory(null, 45, "§eKit $kit $guiNumber")
 
         //load caches
-        val kitCache = KitDataDAO[kit] ?: return
-        val playerCache = PlayerDataDAO[p]!!
+        val kitCache = KitData[kit] ?: return
+        val playerCache = PlayerData[p]!!
 
         //get all time of kits
         var timeAll = playerCache.kitsCache[kit] ?: 0L
 
-        timeAll += kitCache.time
+        timeAll += kitCache.timeCache
 
         //all items
-        for (items in kitCache.items) {
+        for (items in kitCache.itemsCache) {
             inv.addItem(items)
         }
 

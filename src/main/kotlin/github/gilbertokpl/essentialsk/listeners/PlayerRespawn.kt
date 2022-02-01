@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.SpawnDataDAO
+import github.gilbertokpl.essentialsk.data.dao.SpawnData
 import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -38,7 +38,7 @@ class PlayerRespawn : Listener {
 
     private fun spawnRespawn(e: PlayerRespawnEvent) {
         val p = e.player
-        val loc = SpawnDataDAO["spawn"] ?: run {
+        val loc = SpawnData["spawn"] ?: run {
             if (p.hasPermission("*")) {
                 p.sendMessage(GeneralLang.spawnSendNotSet)
             }

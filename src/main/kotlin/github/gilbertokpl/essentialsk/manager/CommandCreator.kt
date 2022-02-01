@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.manager
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -64,7 +64,7 @@ internal interface CommandCreator : CommandExecutor {
                 return true
             }
             if (timeCoolDown != null && s is Player && !s.hasPermission("essentialsk.bypass.waitcommand")) {
-                val playerData = PlayerDataDAO[s] ?: return false
+                val playerData = PlayerData[s] ?: return false
                 val time = playerData.getCoolDown(commandName)
                 if (time != 0L && System.currentTimeMillis() < time) {
                     s.sendMessage(

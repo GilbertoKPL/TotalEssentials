@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.MainUtil
@@ -25,7 +25,7 @@ class PlayerLeave : Listener {
             }
         }
         try {
-            val playerData = PlayerDataDAO[e.player] ?: return
+            val playerData = PlayerData[e.player] ?: return
             if (!playerData.vanishCache && !e.player.hasPermission("*")) {
                 if (MainConfig.messagesLeaveMessage) {
                     MainUtil.serverMessage(
@@ -40,11 +40,6 @@ class PlayerLeave : Listener {
         } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
-        try {
-            PlayerDataDAOUtil.saveCache(e.player)
-        } catch (e: Throwable) {
-            FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
-        }
     }
 
     private fun setBackLocation(e: PlayerQuitEvent) {
@@ -52,7 +47,7 @@ class PlayerLeave : Listener {
                 e.player.world.name.lowercase()
             )
         ) return
-        PlayerDataDAO[e.player]?.setBack(e.player.location) ?: return
+        PlayerData[e.player]?.setBack(e.player.location) ?: return
     }
 
     private fun sendLeaveEmbed(e: PlayerQuitEvent) {

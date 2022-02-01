@@ -2,8 +2,8 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.OfflinePlayerDAO
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.OfflinePlayer
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.okkero.skedule.BukkitDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +37,7 @@ class CommandDelHome : CommandCreator {
 
                 val pName = split[0].lowercase()
 
-                val otherPlayerInstance = OfflinePlayerDAO(pName)
+                val otherPlayerInstance = OfflinePlayer(pName)
 
                 if (!otherPlayerInstance.checkSql()) {
                     s.sendMessage(GeneralLang.generalPlayerNotExist)
@@ -72,7 +72,7 @@ class CommandDelHome : CommandCreator {
 
         val nameHome = args[0].lowercase()
 
-        val playerInstance = PlayerDataDAO[p] ?: return false
+        val playerInstance = PlayerData[p] ?: return false
 
         //check if home don't exist
         if (!playerInstance.homeCache.contains(nameHome)) {

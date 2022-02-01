@@ -16,7 +16,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("com.github.GilbertoKPL.slimjar:github.slimjar.gradle.plugin:v1.2.9")
+        classpath("com.github.GilbertoKPL.slimjar:github.slimjar.gradle.plugin:v1.2.8")
     }
 }
 
@@ -44,7 +44,7 @@ allprojects {
 }
 
 dependencies {
-    implementation("com.github.GilbertoKPL.slimjar:slimjar:v1.2.9")
+    implementation("com.github.GilbertoKPL.slimjar:slimjar:v1.2.8")
 
     compileOnly("org.spigotmc:spigot-api:$buildVersion-R0.1-SNAPSHOT") {
         exclude("commons-lang", "commons-lang")

@@ -2,8 +2,7 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
-import github.gilbertokpl.essentialsk.data.util.KitDataSQLUtil
+import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -20,7 +19,7 @@ class CommandDelKit : CommandCreator {
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
-        val dataInstance = KitDataDAO[args[0]]
+        val dataInstance = KitData[args[0]]
 
         //check if not exist
         if (dataInstance == null) {
@@ -30,7 +29,7 @@ class CommandDelKit : CommandCreator {
 
         //delete cache and sql
         s.sendMessage(GeneralLang.generalSendingInfoToDb)
-        KitDataSQLUtil.delKitData(s, args[0].lowercase())
+        KitData.delKitData(s, args[0].lowercase())
 
         return false
     }

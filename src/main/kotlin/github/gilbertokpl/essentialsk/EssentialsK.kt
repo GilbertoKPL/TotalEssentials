@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk
 
 import github.gilbertokpl.essentialsk.api.EssentialsKAPI
-import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.*
 import github.slimjar.app.builder.ApplicationBuilder
@@ -19,7 +19,7 @@ internal class EssentialsK : JavaPlugin() {
         val startInstant = Instant.now()
         println(
             "${EColor.CYAN.color}[${name}]${EColor.RESET.color} " +
-                    "${EColor.YELLOW.color}Carregando Livrarias, porfavor aguarde, primeira vez pode demorar até 1 minuto...${EColor.RESET.color}"
+                    "${EColor.YELLOW.color}Carregando Livrarias, porfavor aguarde, primeira vez pode demorar até 30 segundos...${EColor.RESET.color}"
         )
 
         ApplicationBuilder.appending("essentialsK").downloadDirectoryPath(
@@ -49,9 +49,9 @@ internal class EssentialsK : JavaPlugin() {
 
         ConfigUtil.start()
 
-        SqlUtil.startSql()
+        DataManager.startSql()
 
-        SqlUtil.startTables()
+        DataManager.startTables()
 
         MainUtil.startCommands()
 
@@ -76,7 +76,7 @@ internal class EssentialsK : JavaPlugin() {
 
     override fun onDisable() {
 
-        PlayerDataDAOUtil.saveAllCache()
+        DataManager.save()
 
         TaskUtil.disable()
 

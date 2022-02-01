@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.WarpDataDAO
+import github.gilbertokpl.essentialsk.data.dao.WarpData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.MainUtil
 import org.bukkit.Location
@@ -39,7 +39,7 @@ class CommandSetWarp : CommandCreator {
         }
 
         //check if exist
-        if (WarpDataDAO[args[0]] != null) {
+        if (WarpData[args[0].lowercase()] != null) {
             s.sendMessage(GeneralLang.warpsNameAlreadyExist)
             return false
         }
@@ -58,16 +58,17 @@ class CommandSetWarp : CommandCreator {
                 return true
             }
 
-            s.sendMessage(GeneralLang.generalSendingInfoToDb)
-            WarpDataDAO.set(args[0], loc, s)
+            WarpData.set(args[0].lowercase(), loc)
 
+            s.sendMessage(GeneralLang.warpsWarpCreated.replace("%warp%", args[0].lowercase()))
 
             return false
         }
 
         if (args.size == 1 && s is Player) {
-            s.sendMessage(GeneralLang.generalSendingInfoToDb)
-            WarpDataDAO.set(args[0], s.location, s)
+            WarpData.set(args[0].lowercase(), s.location)
+
+            s.sendMessage(GeneralLang.warpsWarpCreated.replace("%warp%", args[0].lowercase()))
             return false
         }
 

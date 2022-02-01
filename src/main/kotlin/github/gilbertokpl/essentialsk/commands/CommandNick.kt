@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
@@ -46,11 +46,11 @@ class CommandNick : CommandCreator {
                 s.sendMessage(GeneralLang.nicksNameLength)
                 return false
             }
-            val playerCache = PlayerDataDAO[s] ?: return false
+            val playerCache = PlayerData[s] ?: return false
 
             if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
                 //check if is empty
-                if (playerCache.fakeNickCache == "") {
+                if (playerCache.nickCache == "") {
                     s.sendMessage(GeneralLang.nicksNickAlreadyOriginal)
                     return false
                 }
@@ -107,11 +107,11 @@ class CommandNick : CommandCreator {
             return false
         }
 
-        val playerCache = PlayerDataDAO[p] ?: return false
+        val playerCache = PlayerData[p] ?: return false
 
         if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
             //check if is empty
-            if (playerCache.fakeNickCache == "") {
+            if (playerCache.nickCache == "") {
                 s.sendMessage(GeneralLang.nicksNickAlreadyOriginalOther)
                 return false
             }

@@ -3,8 +3,8 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.OfflinePlayerDAO
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.OfflinePlayer
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import github.okkero.skedule.BukkitDispatcher
@@ -32,7 +32,7 @@ class CommandHome : CommandCreator {
 
         val p = s as Player
 
-        val playerCache = PlayerDataDAO[p] ?: return false
+        val playerCache = PlayerData[p] ?: return false
 
         if (args.isEmpty()) {
             p.sendMessage(
@@ -51,7 +51,7 @@ class CommandHome : CommandCreator {
 
                 val pName = split[0].lowercase()
 
-                val otherPlayerInstance = OfflinePlayerDAO(pName)
+                val otherPlayerInstance = OfflinePlayer(pName)
 
                 if (!otherPlayerInstance.checkSql()) {
                     p.sendMessage(GeneralLang.generalPlayerNotExist)

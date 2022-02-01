@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
+import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.bukkit.command.Command
@@ -28,7 +28,7 @@ class CommandGiveKit : CommandCreator {
             return false
         }
 
-        val dataInstance = KitDataDAO[args[1]]
+        val dataInstance = KitData[args[1]]
 
         //check if not exist
         if (dataInstance == null) {
@@ -43,11 +43,11 @@ class CommandGiveKit : CommandCreator {
         }
 
         //give kit
-        ItemUtil.giveKit(p, dataInstance.items, true, drop = true)
+        ItemUtil.giveKit(p, dataInstance.itemsCache, true, drop = true)
         s.sendMessage(
-            GeneralLang.kitsGiveKitMessageOther.replace("%kit%", dataInstance.fakeName).replace("%player%", p.name)
+            GeneralLang.kitsGiveKitMessageOther.replace("%kit%", dataInstance.fakeNameCache).replace("%player%", p.name)
         )
-        p.sendMessage(GeneralLang.kitsGiveKitMessage.replace("%kit%", dataInstance.fakeName))
+        p.sendMessage(GeneralLang.kitsGiveKitMessage.replace("%kit%", dataInstance.fakeNameCache))
         return false
     }
 }

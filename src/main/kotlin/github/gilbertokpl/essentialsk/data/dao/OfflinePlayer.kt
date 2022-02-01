@@ -2,16 +2,15 @@ package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
-import github.gilbertokpl.essentialsk.data.util.PlayerDataSQLUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PlayerUtil
-import github.gilbertokpl.essentialsk.util.SqlUtil
+import github.gilbertokpl.essentialsk.data.DataManager
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-internal class OfflinePlayerDAO(player: String) {
+internal class OfflinePlayer(player: String) {
     private val p = EssentialsK.instance.server.getPlayerExact(player)
 
     private val online = p != null
@@ -24,7 +23,7 @@ internal class OfflinePlayerDAO(player: String) {
     }
 
     val data = if (online) {
-        PlayerDataDAO[p!!]
+        PlayerData[p!!]
     } else {
         null
     }
@@ -35,7 +34,7 @@ internal class OfflinePlayerDAO(player: String) {
         } else {
             try {
                 var check = false
-                transaction(SqlUtil.sql) {
+                transaction(DataManager.sql) {
                     check = PlayerDataSQL.select { PlayerDataSQL.playerTable eq playerID }.empty()
                 }
                 return !check
@@ -50,7 +49,7 @@ internal class OfflinePlayerDAO(player: String) {
         return if (online) {
             data!!.getHomeLocation(home)
         } else {
-            PlayerDataSQLUtil.getHomeLocationSQL(home, playerID)
+            null
         }
     }
 
@@ -58,7 +57,7 @@ internal class OfflinePlayerDAO(player: String) {
         return if (online) {
             data!!.getHomeList()
         } else {
-            PlayerDataSQLUtil.getHomeListSQL(playerID)
+            emptyList()
         }
     }
 
@@ -66,7 +65,7 @@ internal class OfflinePlayerDAO(player: String) {
         if (online) {
             data!!.delHome(name)
         } else {
-            PlayerDataSQLUtil.delHomeSQL(name, playerID)
+            //
         }
     }
 
@@ -74,7 +73,7 @@ internal class OfflinePlayerDAO(player: String) {
         if (online) {
             data!!.setHome(name, loc)
         } else {
-            PlayerDataSQLUtil.setHomeSQL(name, loc, playerID)
+            //
         }
     }
 }

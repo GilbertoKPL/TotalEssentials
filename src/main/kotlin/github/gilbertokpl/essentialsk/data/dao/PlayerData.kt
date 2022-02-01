@@ -13,16 +13,15 @@ import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.nickTable
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.speedTable
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.vanishTable
 import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
-import github.gilbertokpl.essentialsk.data.util.PlayerDataSQLUtil
+import github.gilbertokpl.essentialsk.data.util.Serializator
+import github.gilbertokpl.essentialsk.util.LocationUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import github.gilbertokpl.essentialsk.util.ReflectUtil
-import github.gilbertokpl.essentialsk.util.SqlUtil
-import github.okkero.skedule.BukkitDispatcher
+import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.DataManager.put
 import github.okkero.skedule.SynchronizationContext
 import github.okkero.skedule.schedule
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -34,14 +33,14 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-internal data class PlayerDataDAO(
+internal data class PlayerData(
     val playerID: String,
     var player: Player,
     val coolDownCommand: HashMap<String, Long>,
-    var kitsCache: HashMap<String, Long>,
-    var homeCache: HashMap<String, Location>,
+    val kitsCache: HashMap<String, Long>,
+    val homeCache: HashMap<String, Location>,
     var homeLimitCache: Int,
-    var fakeNickCache: String,
+    var nickCache: String,
     var gameModeCache: Int,
     var vanishCache: Boolean,
     var lightCache: Boolean,
@@ -62,30 +61,17 @@ internal data class PlayerDataDAO(
 
     fun setKitTime(kit: String, time: Long) {
         kitsCache[kit] = time
-
-        CoroutineScope(BukkitDispatcher(async = true)).launch {
-            PlayerDataSQLUtil.setKitTimeSQL(kit, time, playerID)
-        }
-    }
-
-    fun delKitTime(kit: String) {
-        kitsCache.remove(kit)
+        PlayerDataSQL.put(playerID, hashMapOf(kitsTable to Serializator.playerDataKit(kitsCache)))
     }
 
     fun setHome(name: String, loc: Location) {
         homeCache[name] = loc
-
-        CoroutineScope(BukkitDispatcher(async = true)).launch {
-            PlayerDataSQLUtil.setHomeSQL(name, loc, playerID)
-        }
+        PlayerDataSQL.put(playerID, hashMapOf(homeTable to Serializator.playerDataHome(homeCache)))
     }
 
     fun delHome(name: String) {
         homeCache.remove(name)
-
-        CoroutineScope(BukkitDispatcher(async = true)).launch {
-            PlayerDataSQLUtil.delHomeSQL(name, playerID)
-        }
+        PlayerDataSQL.put(playerID, hashMapOf(homeTable to Serializator.playerDataHome(homeCache)))
     }
 
     fun getHomeList(): List<String> {
@@ -101,7 +87,7 @@ internal data class PlayerDataDAO(
     fun setNick(newNick: String, other: Boolean = false): Boolean {
         if (!other) {
             var exist = false
-            transaction(SqlUtil.sql) {
+            transaction(DataManager.sql) {
                 exist = PlayerDataSQL.select { nickTable eq newNick }.empty()
             }
             if (!MainConfig.nicksCanPlayerHaveSameNick &&
@@ -114,21 +100,16 @@ internal data class PlayerDataDAO(
         }
         if (other) {
             player.setDisplayName(newNick)
-            fakeNickCache = newNick
+            nickCache = newNick
         }
-        //sql
-        SqlUtil.helperUpdater(playerID, nickTable, newNick)
+        PlayerDataSQL.put(playerID, hashMapOf(nickTable to newNick))
         return false
     }
 
     fun delNick() {
-        //cache
-        fakeNickCache = ""
-
+        nickCache = ""
         player.setDisplayName(player.name)
-
-        //sql
-        SqlUtil.helperUpdater(playerID, nickTable, "")
+        PlayerDataSQL.put(playerID, hashMapOf(nickTable to ""))
     }
 
     //gamemode
@@ -136,7 +117,8 @@ internal data class PlayerDataDAO(
     fun setGamemode(gm: GameMode) {
         player.gameMode = gm
 
-        gameModeCache = PlayerUtil.getNumberGamemode(gm)
+        val gamemodeNumber = PlayerUtil.getNumberGamemode(gm)
+        gameModeCache = gamemodeNumber
 
         //desbug fly on set gamemode 0
         if (gm == GameMode.SURVIVAL && flyCache) {
@@ -144,6 +126,7 @@ internal data class PlayerDataDAO(
             player.isFlying = true
         }
 
+        PlayerDataSQL.put(playerID, hashMapOf(gameModeTable to gamemodeNumber))
     }
 
 
@@ -154,6 +137,8 @@ internal data class PlayerDataDAO(
         val newValue = vanishCache.not()
 
         vanishCache = newValue
+
+        PlayerDataSQL.put(playerID, hashMapOf(vanishTable to newValue))
 
         return if (newValue) {
             player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
@@ -184,6 +169,8 @@ internal data class PlayerDataDAO(
 
         lightCache = newValue
 
+        PlayerDataSQL.put(playerID, hashMapOf(lightTable to newValue))
+
         return if (newValue) {
             player.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 1))
             true
@@ -197,6 +184,8 @@ internal data class PlayerDataDAO(
 
     fun switchFly(): Boolean {
         val newValue = flyCache.not()
+
+        PlayerDataSQL.put(playerID, hashMapOf(flyTable to newValue))
 
         flyCache = newValue
 
@@ -218,10 +207,12 @@ internal data class PlayerDataDAO(
 
     fun setBack(loc: Location) {
         backLocation = loc
+        PlayerDataSQL.put(playerID, hashMapOf(backTable to LocationUtil.locationSerializer(loc)))
     }
 
     fun clearBack() {
         backLocation = null
+        PlayerDataSQL.put(playerID, hashMapOf(backTable to ""))
     }
 
     //speed
@@ -230,17 +221,19 @@ internal data class PlayerDataDAO(
         player.walkSpeed = (vel * 0.1).toFloat()
         player.flySpeed = (vel * 0.1).toFloat()
         speedCache = vel
+        PlayerDataSQL.put(playerID, hashMapOf(speedTable to vel))
     }
 
     fun clearSpeed() {
         player.walkSpeed = 0.2F
         player.flySpeed = 0.1F
         speedCache = 1
+        PlayerDataSQL.put(playerID, hashMapOf(speedTable to 1))
     }
 
     companion object {
 
-        private val playerCacheV2 = HashMap<String, PlayerDataDAO>()
+        private val playerCacheV2 = HashMap<String, PlayerData>()
 
         operator fun get(p: Player) = playerCacheV2[PlayerUtil.getPlayerUUID(p)]
 
@@ -279,8 +272,12 @@ internal data class PlayerDataDAO(
 
                     switchContext(SynchronizationContext.ASYNC)
 
-                    transaction(SqlUtil.sql) {
+                    var empty = false
+
+                    transaction(DataManager.sql) {
                         val query = PlayerDataSQL.select { PlayerDataSQL.playerTable eq playerID }
+
+                        empty = query.empty()
 
                         if (query.empty()) {
                             PlayerDataSQL.insert {
@@ -304,22 +301,24 @@ internal data class PlayerDataDAO(
 
                     }
 
+                    if (empty) return@schedule
+
                     switchContext(SynchronizationContext.SYNC)
                     waitFor(10)
 
-                    playerCacheV2[p.name.lowercase()] = PlayerDataDAO(
+                    playerCacheV2[p.name.lowercase()] = PlayerData(
                         playerID = playerID,
                         player = p,
                         coolDownCommand = HashMap(5),
-                        kitsCache = PlayerDataDAOUtil.startKitCache(kitsList),
-                        homeCache = PlayerDataDAOUtil.startHomeCache(homesList),
+                        kitsCache = Serializator.playerDataKit(kitsList),
+                        homeCache = Serializator.playerDataHome(homesList),
                         homeLimitCache = limitHome,
-                        fakeNickCache = PlayerDataDAOUtil.startNickCache(p, nick),
+                        nickCache = PlayerDataDAOUtil.startNickCache(p, nick),
                         gameModeCache = PlayerDataDAOUtil.startGamemodeCache(p, gameMode),
                         vanishCache = PlayerDataDAOUtil.startVanishCache(p, vanish),
                         lightCache = PlayerDataDAOUtil.startLightCache(p, light),
                         flyCache = PlayerDataDAOUtil.startFlyCache(p, fly),
-                        backLocation = PlayerDataDAOUtil.startBackCache(location),
+                        backLocation = LocationUtil.locationSerializer(location),
                         speedCache = PlayerDataDAOUtil.startSpeedCache(p, speed),
                         inTeleport = false
                     )
@@ -337,7 +336,7 @@ internal data class PlayerDataDAO(
 
                 waitFor(10)
 
-                PlayerDataDAOUtil.startNickCache(p, cache.fakeNickCache)
+                PlayerDataDAOUtil.startNickCache(p, cache.nickCache)
                 PlayerDataDAOUtil.startGamemodeCache(p, cache.gameModeCache)
                 PlayerDataDAOUtil.startVanishCache(p, cache.vanishCache)
                 PlayerDataDAOUtil.startLightCache(p, cache.lightCache)

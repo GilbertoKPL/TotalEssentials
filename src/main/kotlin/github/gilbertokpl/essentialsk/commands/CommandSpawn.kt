@@ -3,8 +3,8 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
-import github.gilbertokpl.essentialsk.data.dao.SpawnDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
+import github.gilbertokpl.essentialsk.data.dao.SpawnData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
@@ -31,7 +31,7 @@ class CommandSpawn : CommandCreator {
             return true
         }
 
-        val spawnCache = SpawnDataDAO["spawn"] ?: run {
+        val spawnCache = SpawnData["spawn"] ?: run {
             if ((s !is Player) || s.hasPermission("*")) {
                 s.sendMessage(GeneralLang.spawnSendNotSet)
             }
@@ -59,7 +59,7 @@ class CommandSpawn : CommandCreator {
             return false
         }
 
-        val playerCache = PlayerDataDAO[s] ?: return false
+        val playerCache = PlayerData[s] ?: return false
 
         if (playerCache.inTeleport) {
             s.sendMessage(GeneralLang.spawnSendInTeleport)

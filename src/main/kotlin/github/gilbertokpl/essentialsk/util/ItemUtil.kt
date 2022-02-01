@@ -2,8 +2,8 @@ package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.KitData
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.InternalBukkitObjectInputStream
 import github.gilbertokpl.essentialsk.manager.InternalBukkitObjectOutputStream
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -29,12 +29,12 @@ internal object ItemUtil {
         }
 
         //load caches
-        val kitCache = KitDataDAO[kit] ?: return
-        val playerCache = PlayerDataDAO[p] ?: return
+        val kitCache = KitData[kit] ?: return
+        val playerCache = PlayerData[p] ?: return
 
         //get all time of kit
         var timeAll = playerCache.kitsCache[kit] ?: 0L
-        timeAll += kitCache.time
+        timeAll += kitCache.timeCache
 
         // if time is remaining
         if (timeAll >= System.currentTimeMillis() && !p.hasPermission("essentialsk.bypass.kitcatch")) {
@@ -52,13 +52,13 @@ internal object ItemUtil {
         //send kit to player
         if (giveKit(
                 p,
-                kitCache.items,
+                kitCache.itemsCache,
                 MainConfig.kitsEquipArmorInCatch,
                 MainConfig.kitsDropItemsInCatch
             )
         ) {
             playerCache.setKitTime(kit, System.currentTimeMillis())
-            p.sendMessage(GeneralLang.kitsCatchSuccess.replace("%kit%", kitCache.fakeName))
+            p.sendMessage(GeneralLang.kitsCatchSuccess.replace("%kit%", kitCache.fakeNameCache))
         }
     }
 

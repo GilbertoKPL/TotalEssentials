@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
+import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import org.bukkit.command.Command
@@ -29,7 +29,7 @@ class CommandKit : CommandCreator {
             s.sendMessage(
                 GeneralLang.kitsList.replace(
                     "%kits%",
-                    KitDataDAO.getList().toString()
+                    KitData.getList().toString()
                 )
             )
             return false
@@ -48,14 +48,14 @@ class CommandKit : CommandCreator {
             return false
         }
 
-        val dataInstance = KitDataDAO[args[0]]
+        val dataInstance = KitData[args[0]]
 
         //check if not exist
         if (dataInstance == null) {
             s.sendMessage(
                 GeneralLang.kitsList.replace(
                     "%kits%",
-                    KitDataDAO.getList().toString()
+                    KitData.getList().toString()
                 )
             )
             return false

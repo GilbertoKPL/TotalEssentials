@@ -4,8 +4,8 @@ import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
-import github.gilbertokpl.essentialsk.data.dao.SpawnDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
+import github.gilbertokpl.essentialsk.data.dao.SpawnData
 import org.apache.commons.io.IOUtils
 import org.bukkit.GameMode
 import org.bukkit.OfflinePlayer
@@ -18,7 +18,7 @@ internal object PlayerUtil {
         var amount = ReflectUtil.getPlayers()
         if (!vanish) {
             amount = amount.filter {
-                PlayerDataDAO[it] != null && !PlayerDataDAO[it]!!.vanishCache
+                PlayerData[it] != null && !PlayerData[it]!!.vanishCache
             }
         }
         return amount.size
@@ -103,7 +103,7 @@ internal object PlayerUtil {
 
     fun sendToSpawn(p: Player) {
         if (MainConfig.spawnSendToSpawnOnLogin) {
-            val loc = SpawnDataDAO["spawn"] ?: run {
+            val loc = SpawnData["spawn"] ?: run {
                 if (p.hasPermission("*")) {
                     p.sendMessage(GeneralLang.spawnSendNotSet)
                 }
@@ -137,7 +137,7 @@ internal object PlayerUtil {
                 p.hasPermission("essentialsk.bypass.vanish")
             ) return
             for (it in ReflectUtil.getPlayers()) {
-                if (PlayerDataDAO[it]?.vanishCache ?: continue) {
+                if (PlayerData[it]?.vanishCache ?: continue) {
                     @Suppress("DEPRECATION")
                     p.hidePlayer(it)
                 }

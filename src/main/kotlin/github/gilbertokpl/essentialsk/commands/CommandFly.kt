@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -42,7 +42,7 @@ class CommandFly : CommandCreator {
                 return false
             }
 
-            if (PlayerDataDAO[p]?.switchFly() ?: return false) {
+            if (PlayerData[p]?.switchFly() ?: return false) {
                 p.sendMessage(GeneralLang.flySendOtherActive)
                 s.sendMessage(GeneralLang.flySendActivatedOther.replace("%player", p.name))
             } else {
@@ -58,7 +58,7 @@ class CommandFly : CommandCreator {
             return false
         }
 
-        if (PlayerDataDAO[s]?.switchFly() ?: return false) {
+        if (PlayerData[s]?.switchFly() ?: return false) {
             s.sendMessage(GeneralLang.flySendActive)
         } else {
             s.sendMessage(GeneralLang.flySendDisable)

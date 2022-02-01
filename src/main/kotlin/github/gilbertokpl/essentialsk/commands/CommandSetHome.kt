@@ -2,8 +2,8 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.OfflinePlayerDAO
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.OfflinePlayer
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
@@ -39,7 +39,7 @@ class CommandSetHome : CommandCreator {
 
                 val pName = split[0].lowercase()
 
-                val otherPlayerInstance = OfflinePlayerDAO(pName)
+                val otherPlayerInstance = OfflinePlayer(pName)
 
                 if (!otherPlayerInstance.checkSql()) {
                     s.sendMessage(GeneralLang.generalPlayerNotExist)
@@ -82,7 +82,7 @@ class CommandSetHome : CommandCreator {
             return false
         }
 
-        val playerCache = PlayerDataDAO[s as Player] ?: return false
+        val playerCache = PlayerData[s as Player] ?: return false
 
         //check if already exist
         if (playerCache.homeCache.contains(nameHome)) {

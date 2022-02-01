@@ -1,7 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.SpawnDataDAO
+import github.gilbertokpl.essentialsk.data.dao.SpawnData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -18,7 +19,8 @@ class CommandSetSpawn : CommandCreator {
     override val commandUsage = listOf("/setspawn")
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        SpawnDataDAO.set("spawn", (s as Player).location, s)
+        SpawnData.set("spawn", (s as Player).location)
+        s.sendMessage(GeneralLang.spawnSendSetMessage)
         return false
     }
 }

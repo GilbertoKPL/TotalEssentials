@@ -6,59 +6,35 @@ import github.gilbertokpl.essentialsk.data.tables.WarpsDataSQL.warpName
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.LocationUtil
 import github.gilbertokpl.essentialsk.util.MainUtil
-import github.gilbertokpl.essentialsk.util.SqlUtil
-import github.okkero.skedule.BukkitDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.DataManager.del
+import github.gilbertokpl.essentialsk.data.DataManager.put
 import org.bukkit.Location
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-internal object WarpDataDAO {
+internal object WarpData {
     //warps
     private val warpsCache = mutableMapOf<String, Location>()
 
     operator fun get(warp: String) = warpsCache[warp.lowercase()]
 
-    fun set(warp: String, location: Location, s: CommandSender? = null) {
+    fun set(warp: String, location: Location) {
         //cache
         warpsCache[warp.lowercase()] = location
 
         val loc = LocationUtil.locationSerializer(location)
 
-        //sql
-        CoroutineScope(BukkitDispatcher(async = true)).launch {
-            transaction(SqlUtil.sql) {
-                WarpsDataSQL.insert {
-                    it[warpName] = warp.lowercase()
-                    it[warpLocation] = loc
-                }
-            }
-            s?.sendMessage(GeneralLang.warpsWarpCreated.replace("%warp%", warp.lowercase()))
-        }
+        WarpsDataSQL.put(warp.lowercase(), hashMapOf(WarpsDataSQL.warpLocation to loc))
+
     }
 
-    fun del(warp: String, s: CommandSender? = null) {
+    fun del(warp: String) {
         //cache
         warpsCache.remove(warp.lowercase())
 
-        //sql
-        CoroutineScope(BukkitDispatcher(async = true)).launch {
-            transaction(SqlUtil.sql) {
-                WarpsDataSQL.select { warpName eq warp.lowercase() }.also { query ->
-                    if (!query.empty()) {
-                        WarpsDataSQL.deleteWhere { warpName eq warp.lowercase() }
-                        return@transaction
-                    }
-                }
-            }
-            s?.sendMessage(GeneralLang.warpsWarpRemoved.replace("%warp%", warp.lowercase()))
-        }
+        WarpsDataSQL.del(warp.lowercase())
     }
 
     fun getList(p: Player?): List<String> {
@@ -80,7 +56,7 @@ internal object WarpDataDAO {
 
         val hashWarp = HashMap<String, String>(40)
 
-        transaction(SqlUtil.sql) {
+        transaction(DataManager.sql) {
             for (values in WarpsDataSQL.selectAll()) {
                 hashWarp[values[warpName]] = values[WarpsDataSQL.warpLocation]
             }

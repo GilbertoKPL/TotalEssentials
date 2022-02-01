@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.dao.KitDataDAO
+import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
@@ -32,26 +32,28 @@ class ChatEventAsync : Listener {
     }
 
     private fun editKitChatEvent(e: AsyncPlayerChatEvent): Boolean {
-        DataManager.editKitChat[e.player].also {
+        val p = e.player
+
+        DataManager.editKitChat[p].also {
             if (it == null) return false
-            DataManager.editKitChat.remove(e.player)
+            DataManager.editKitChat.remove(p)
             val split = it.split("-")
 
-            val dataInstance = KitDataDAO[split[1]] ?: return false
+            val dataInstance = KitData[split[1]] ?: return false
 
             //time
             if (split[0] == "time") {
                 e.isCancelled = true
                 val time = TimeUtil.convertStringToMillis(e.message)
-                e.player.sendMessage(GeneralLang.generalSendingInfoToDb)
-                e.player.sendMessage(
+                p.sendMessage(
                     GeneralLang.kitsEditKitTime.replace(
                         "%time%",
                         TimeUtil
                             .convertMillisToString(time, MainConfig.kitsUseShortTime)
                     )
                 )
-                dataInstance.setTime(time, e.player)
+                dataInstance.setTime(time)
+                p.sendMessage(GeneralLang.kitsEditKitSuccess.replace("%kit%", dataInstance.kitNameCache))
 
                 return true
             }
@@ -60,13 +62,15 @@ class ChatEventAsync : Listener {
             if (split[0] == "name") {
                 e.isCancelled = true
                 //check message length
-                if (e.message.replace("&[0-9,a-f]".toRegex(), "").length > 16) {
-                    e.player.sendMessage(GeneralLang.kitsNameLength)
+                if (e.message.replace("&|§([0-9]|[a-f])".toRegex(), "").length > 16) {
+                    p.sendMessage(GeneralLang.kitsNameLength)
                     return true
                 }
 
-                e.player.sendMessage(GeneralLang.generalSendingInfoToDb)
-                dataInstance.setFakeName(e.message.replace("&", "§"), e.player)
+                val newName = e.message.replace("&", "§")
+
+                dataInstance.setFakeName(newName)
+                p.sendMessage(GeneralLang.kitsEditKitSuccess.replace("%kit%", dataInstance.kitNameCache))
             }
 
             //weight
@@ -79,8 +83,8 @@ class ChatEventAsync : Listener {
                     0
                 }
 
-                e.player.sendMessage(GeneralLang.generalSendingInfoToDb)
-                dataInstance.setWeight(integer, e.player)
+                dataInstance.setWeight(integer)
+                p.sendMessage(GeneralLang.kitsEditKitSuccess.replace("%kit%", dataInstance.kitNameCache))
             }
 
             return true

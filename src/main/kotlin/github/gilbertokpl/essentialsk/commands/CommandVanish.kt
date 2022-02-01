@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -43,7 +43,7 @@ class CommandVanish : CommandCreator {
                 return false
             }
 
-            if (PlayerDataDAO[p]?.switchVanish() ?: return false) {
+            if (PlayerData[p]?.switchVanish() ?: return false) {
                 p.sendMessage(GeneralLang.vanishSendOtherActive)
                 s.sendMessage(GeneralLang.vanishSendActivatedOther.replace("%player%", p.name))
             } else {
@@ -54,7 +54,7 @@ class CommandVanish : CommandCreator {
             return false
         }
 
-        if (PlayerDataDAO[s as Player]?.switchVanish() ?: return false) {
+        if (PlayerData[s as Player]?.switchVanish() ?: return false) {
             s.sendMessage(GeneralLang.vanishSendActive)
         } else {
             s.sendMessage(GeneralLang.vanishSendDisable)

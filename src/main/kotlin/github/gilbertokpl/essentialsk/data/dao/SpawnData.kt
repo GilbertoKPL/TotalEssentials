@@ -5,45 +5,24 @@ import github.gilbertokpl.essentialsk.data.tables.SpawnDataSQL
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.LocationUtil
 import github.gilbertokpl.essentialsk.util.MainUtil
-import github.gilbertokpl.essentialsk.util.SqlUtil
-import github.okkero.skedule.BukkitDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.DataManager.put
 import org.bukkit.Location
-import org.bukkit.command.CommandSender
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
-internal object SpawnDataDAO {
+internal object SpawnData {
     private val spawnCache = HashMap<String, Location>(2)
 
     operator fun get(warp: String) = spawnCache[warp.lowercase()]
 
-    fun set(spawn: String, location: Location, s: CommandSender? = null) {
+    fun set(spawn: String, location: Location) {
         //cache
         spawnCache[spawn.lowercase()] = location
 
         val loc = LocationUtil.locationSerializer(location)
 
-        //sql
-        CoroutineScope(BukkitDispatcher(async = true)).launch {
-            transaction(SqlUtil.sql) {
-                if (SpawnDataSQL.select { SpawnDataSQL.spawnName eq spawn.lowercase() }.empty()) {
-                    SpawnDataSQL.insert {
-                        it[spawnName] = spawn.lowercase()
-                        it[spawnLocation] = loc
-                    }
-                    return@transaction
-                }
-                SpawnDataSQL.update({ SpawnDataSQL.spawnName eq spawn.lowercase() }) {
-                    it[spawnLocation] = loc
-                }
-            }
-            s?.sendMessage(GeneralLang.spawnSendSetMessage)
-        }
+        SpawnDataSQL.put(spawn.lowercase(), hashMapOf(SpawnDataSQL.spawnLocation to loc))
     }
 
     fun loadSpawnCache() {
@@ -51,7 +30,7 @@ internal object SpawnDataDAO {
 
         val hashSpawn = HashMap<String, String>(2)
 
-        transaction(SqlUtil.sql) {
+        transaction(DataManager.sql) {
             for (values in SpawnDataSQL.selectAll()) {
                 hashSpawn[values[SpawnDataSQL.spawnName]] = values[SpawnDataSQL.spawnLocation]
             }

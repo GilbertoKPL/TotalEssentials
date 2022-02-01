@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerDataDAO
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -43,7 +43,7 @@ class CommandLight : CommandCreator {
                 return false
             }
 
-            if (PlayerDataDAO[p]?.switchLight() ?: return false) {
+            if (PlayerData[p]?.switchLight() ?: return false) {
                 p.sendMessage(GeneralLang.lightSendOtherActive)
                 s.sendMessage(
                     GeneralLang.lightSendActivatedOther
@@ -60,7 +60,7 @@ class CommandLight : CommandCreator {
             return false
         }
 
-        if (PlayerDataDAO[s as Player]?.switchLight() ?: return false) {
+        if (PlayerData[s as Player]?.switchLight() ?: return false) {
             s.sendMessage(GeneralLang.lightSendActive)
         } else {
             s.sendMessage(GeneralLang.lightSendDisable)
