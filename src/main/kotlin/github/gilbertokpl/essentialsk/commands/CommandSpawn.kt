@@ -6,23 +6,26 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.data.dao.SpawnData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandSpawn : CommandCreator {
-    override val active: Boolean = MainConfig.spawnActivated
-    override val consoleCanUse: Boolean = true
-    override val commandName = "spawn"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.spawn"
-    override val minimumSize = 0
-    override val maximumSize = 1
-    override val commandUsage =
-        listOf(
-            "P_/spawn",
-            "essentialsk.commands.spawn.other_/spawn <playerName>"
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.spawnActivated,
+            consoleCanUse = true,
+            commandName = "spawn",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.spawn",
+            minimumSize = 0,
+            maximumSize = 1,
+            commandUsage = listOf(
+                "P_/spawn",
+                "essentialsk.commands.spawn.other_/spawn <playerName>"
+            )
         )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {

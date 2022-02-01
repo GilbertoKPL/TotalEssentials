@@ -5,19 +5,23 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.TpaData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandTpdeny : CommandCreator {
-    override val active: Boolean = MainConfig.tpaActivated
-    override val consoleCanUse: Boolean = false
-    override val commandName = "tpdeny"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.tpa"
-    override val minimumSize = 0
-    override val maximumSize = 0
-    override val commandUsage = listOf("/tpdeny")
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.tpaActivated,
+            consoleCanUse = false,
+            commandName = "tpdeny",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.tpa",
+            minimumSize = 0,
+            maximumSize = 0,
+            commandUsage = listOf("/tpdeny")
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val p = TpaData.getTpa(s as Player) ?: run {

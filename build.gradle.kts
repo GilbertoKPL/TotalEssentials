@@ -7,7 +7,7 @@ version = "1.5.4-SNAPSHOT"
 val base = "libs"
 val exposedVersion = "0.37.3"
 val kotlin = "1.6.10"
-val buildVersion = "1.18.1"
+val buildVersion = "1.17.1"
 
 buildscript {
     repositories {
@@ -113,7 +113,7 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    slim("net.dv8tion:JDA:5.0.0-alpha.4") {
+    slim("net.dv8tion:JDA:5.0.0-alpha.5") {
         exclude("club.minnced", "opus-java")
         exclude("org.slf4j", "slf4j-api")
         exclude("org.jetbrains", "annotations")

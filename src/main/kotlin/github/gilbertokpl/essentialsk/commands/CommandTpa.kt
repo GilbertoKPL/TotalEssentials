@@ -5,21 +5,25 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.TpaData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandTpa : CommandCreator {
-    override val active: Boolean = MainConfig.tpaActivated
-    override val consoleCanUse: Boolean = false
-    override val commandName = "tpa"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.tpa"
-    override val minimumSize = 1
-    override val maximumSize = 1
-    override val commandUsage = listOf(
-        "/tpa <playerName>"
-    )
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.tpaActivated,
+            consoleCanUse = false,
+            commandName = "tpa",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.tpa",
+            minimumSize = 1,
+            maximumSize = 1,
+            commandUsage = listOf(
+                "/tpa <playerName>"
+            )
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

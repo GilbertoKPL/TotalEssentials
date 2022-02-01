@@ -5,19 +5,24 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGui
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandEditKit : CommandCreator {
-    override val active: Boolean = MainConfig.kitsActivated
-    override val consoleCanUse: Boolean = false
-    override val commandName = "editkit"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.editkit"
-    override val minimumSize = 1
-    override val maximumSize = 1
-    override val commandUsage = listOf("/editkit <kitName>")
+
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.kitsActivated,
+            consoleCanUse = false,
+            commandName = "editkit",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.editkit",
+            minimumSize = 1,
+            maximumSize = 1,
+            commandUsage = listOf("/editkit <kitName>")
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of kit name

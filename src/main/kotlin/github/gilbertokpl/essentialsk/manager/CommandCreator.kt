@@ -12,14 +12,8 @@ import org.bukkit.entity.Player
 
 internal interface CommandCreator : CommandExecutor {
 
-    val active: Boolean
-    val timeCoolDown: Long?
-    val commandName: String
-    val permission: String?
-    val consoleCanUse: Boolean
-    val commandUsage: List<String>
-    val minimumSize: Int?
-    val maximumSize: Int?
+    val commandData: CommandData
+
 
     fun funCommand(
         s: CommandSender,
@@ -34,17 +28,17 @@ internal interface CommandCreator : CommandExecutor {
         label: String,
         args: Array<out String>
     ): Boolean {
-        if (s !is Player && !consoleCanUse) {
+        if (s !is Player && !commandData.consoleCanUse) {
             s.sendMessage(GeneralLang.generalOnlyPlayerCommand)
             return true
         }
-        if (s is Player && !permission.isNullOrEmpty() && !s.hasPermission(permission!!)) {
+        if (s is Player && !commandData.permission.isNullOrEmpty() && !s.hasPermission(commandData.permission!!)) {
             s.sendMessage(GeneralLang.generalNotPerm)
             return true
         }
         fun errorMessage() {
             s.sendMessage(GeneralLang.generalCommandsUsage)
-            for (it in commandUsage) {
+            for (it in commandData.commandUsage) {
                 val to = it.split("_")
                 if (to.size == 1) {
                     s.sendMessage(GeneralLang.generalCommandsUsageList.replace("%command%", it))
@@ -59,13 +53,13 @@ internal interface CommandCreator : CommandExecutor {
             }
         }
         try {
-            if (maximumSize != null && args.size > maximumSize!! || minimumSize != null && args.size < minimumSize!!) {
+            if (commandData.maximumSize != null && args.size > commandData.maximumSize!! || commandData.minimumSize != null && args.size < commandData.minimumSize!!) {
                 errorMessage()
                 return true
             }
-            if (timeCoolDown != null && s is Player && !s.hasPermission("essentialsk.bypass.waitcommand")) {
+            if (commandData.timeCoolDown != null && s is Player && !s.hasPermission("essentialsk.bypass.waitcommand")) {
                 val playerData = PlayerData[s] ?: return false
-                val time = playerData.getCoolDown(commandName)
+                val time = playerData.getCoolDown(commandData.commandName)
                 if (time != 0L && System.currentTimeMillis() < time) {
                     s.sendMessage(
                         GeneralLang.generalCooldownMoreTime.replace(
@@ -80,8 +74,8 @@ internal interface CommandCreator : CommandExecutor {
                     return true
                 }
                 playerData.setCoolDown(
-                    commandName,
-                    System.currentTimeMillis() + (timeCoolDown!! * 1000)
+                    commandData.commandName,
+                    System.currentTimeMillis() + (commandData.timeCoolDown!! * 1000)
                 )
                 return true
             }

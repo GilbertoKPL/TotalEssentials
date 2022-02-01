@@ -4,19 +4,23 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandTphere : CommandCreator {
-    override val active: Boolean = MainConfig.tphereActivated
-    override val consoleCanUse: Boolean = false
-    override val commandName = "tphere"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.tphere"
-    override val minimumSize = 1
-    override val maximumSize = 1
-    override val commandUsage = listOf("/tphere <playerName>")
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.tphereActivated,
+            consoleCanUse = false,
+            commandName = "tphere",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.tphere",
+            minimumSize = 1,
+            maximumSize = 1,
+            commandUsage = listOf("/tphere <playerName>")
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         // check if player is online

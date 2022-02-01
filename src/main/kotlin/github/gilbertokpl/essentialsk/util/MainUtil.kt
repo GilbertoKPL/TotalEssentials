@@ -33,7 +33,6 @@ internal object MainUtil {
         return list[rand.nextInt(list.size)]
     }
 
-
     fun fileDownloader(url: String): InputStream? {
         val stream = URL(url).openConnection()
         stream.connect()
@@ -94,7 +93,7 @@ internal object MainUtil {
                 "github.gilbertokpl.essentialsk.commands.Command",
                 ""
             ).lowercase()
-            if (!c.active) {
+            if (!c.commandData.active) {
                 ReflectUtil.removeCommand(cmdName)
                 continue
             }

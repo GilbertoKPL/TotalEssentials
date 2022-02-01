@@ -4,19 +4,24 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.util.MainUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class CommandCreateKit : CommandCreator {
-    override val active: Boolean = MainConfig.kitsActivated
-    override val consoleCanUse = false
-    override val permission = "essentialsk.commands.createkit"
-    override val commandName = "createkit"
-    override val timeCoolDown: Long? = null
-    override val minimumSize = 1
-    override val maximumSize = 1
-    override val commandUsage = listOf("/createkit <kitName>")
+
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.kitsActivated,
+            consoleCanUse = false,
+            commandName = "createkit",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.createkit",
+            minimumSize = 1,
+            maximumSize = 1,
+            commandUsage = listOf("/createkit <kitName>")
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of kit name
@@ -31,7 +36,7 @@ class CommandCreateKit : CommandCreator {
             return false
         }
 
-        val dataInstance = KitData[args[0]]
+        val dataInstance = KitData[args[0].lowercase()]
 
         //check if exist
         if (dataInstance != null) {
@@ -40,7 +45,13 @@ class CommandCreateKit : CommandCreator {
         }
 
         //create cache and sql
-        KitData.createNewKitData(s, args[0].lowercase())
+        KitData.createNewKitData(args[0].lowercase())
+        s.sendMessage(
+            GeneralLang.kitsCreateKitSuccess.replace(
+                "%kit%",
+                args[0].lowercase()
+            )
+        )
         return false
     }
 }

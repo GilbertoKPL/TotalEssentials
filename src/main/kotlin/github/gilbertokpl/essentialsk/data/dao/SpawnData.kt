@@ -1,12 +1,12 @@
 package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.tables.SpawnDataSQL
-import github.gilbertokpl.essentialsk.manager.EColor
-import github.gilbertokpl.essentialsk.util.LocationUtil
-import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.DataManager.put
+import github.gilbertokpl.essentialsk.data.tables.SpawnDataSQL
+import github.gilbertokpl.essentialsk.data.util.Serializator
+import github.gilbertokpl.essentialsk.manager.EColor
+import github.gilbertokpl.essentialsk.util.MainUtil
 import org.bukkit.Location
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -20,7 +20,7 @@ internal object SpawnData {
         //cache
         spawnCache[spawn.lowercase()] = location
 
-        val loc = LocationUtil.locationSerializer(location)
+        val loc = Serializator.locationSerializer(location)
 
         SpawnDataSQL.put(spawn.lowercase(), hashMapOf(SpawnDataSQL.spawnLocation to loc))
     }
@@ -37,7 +37,7 @@ internal object SpawnData {
         }
 
         for (it in hashSpawn) {
-            val loc = LocationUtil.locationSerializer(it.value)
+            val loc = Serializator.locationSerializer(it.value)
             if (loc == null) {
                 MainUtil.consoleMessage(
                     EColor.YELLOW.color + GeneralLang.generalWorldNotExistSpawn + EColor.RESET.color

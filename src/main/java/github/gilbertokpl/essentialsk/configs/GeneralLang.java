@@ -46,6 +46,10 @@ public class GeneralLang {
 
     public static String generalPluginLoadProblems;
 
+    public static String generalSaveDataMessage;
+
+    public static String generalSaveDataSuccess;
+
     public static String kitsNotExist;
 
     public static String kitsExist;

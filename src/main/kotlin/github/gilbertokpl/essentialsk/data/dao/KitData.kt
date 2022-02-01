@@ -1,13 +1,11 @@
 package github.gilbertokpl.essentialsk.data.dao
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
-import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
-import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.DataManager.del
 import github.gilbertokpl.essentialsk.data.DataManager.put
-import org.bukkit.command.CommandSender
+import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
+import github.gilbertokpl.essentialsk.data.util.Serializator
+import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -39,7 +37,7 @@ internal data class KitData(
         itemsCache = i
         reloadGui()
 
-        val toSave = ItemUtil.itemSerializer(i)
+        val toSave = Serializator.itemSerializer(i)
 
         KitsDataSQL.put(kitNameCache, hashMapOf(KitsDataSQL.kitItems to toSave))
     }
@@ -74,33 +72,24 @@ internal data class KitData(
             KitGuiInventory.setup()
         }
 
-        fun delKitData(s: CommandSender? = null, name: String) {
+        fun delKitData(name: String) {
             //cache
-            KitData.remove(name.lowercase())
+            remove(name.lowercase())
 
             reloadGui()
 
             KitsDataSQL.del(name.lowercase())
-
-            s?.sendMessage(GeneralLang.kitsDelKitSuccess.replace("%kit%", name))
         }
 
-        fun createNewKitData(s: CommandSender? = null, name: String) {
+        fun createNewKitData(name: String) {
             //cache
-            KitData.put(
+            put(
                 name.lowercase(),
                 KitData(name.lowercase(), name, emptyList(), 0L, 0)
             )
             reloadGui()
 
             KitsDataSQL.put(name.lowercase(), hashMapOf(KitsDataSQL.kitFakeName to name))
-
-            s?.sendMessage(
-                GeneralLang.kitsCreateKitSuccess.replace(
-                    "%kit%",
-                    name.lowercase()
-                )
-            )
         }
 
         fun loadKitCache() {
@@ -114,7 +103,7 @@ internal data class KitData(
                     kitCacheV2[kit] = KitData(
                         kit,
                         kitFakeName,
-                        ItemUtil.itemSerializer(item),
+                        Serializator.itemSerializer(item),
                         kitTime,
                         weight
                     )

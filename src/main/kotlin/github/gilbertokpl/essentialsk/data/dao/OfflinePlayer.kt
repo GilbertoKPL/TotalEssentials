@@ -1,10 +1,10 @@
 package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.EssentialsK
+import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PlayerUtil
-import github.gilbertokpl.essentialsk.data.DataManager
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Location
 import org.jetbrains.exposed.sql.select

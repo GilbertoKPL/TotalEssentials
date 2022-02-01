@@ -6,6 +6,7 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.OfflinePlayer
 import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import github.okkero.skedule.BukkitDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -15,18 +16,21 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandHome : CommandCreator {
-    override val active: Boolean = MainConfig.homesActivated
-    override val consoleCanUse: Boolean = false
-    override val commandName = "home"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.home"
-    override val minimumSize = 0
-    override val maximumSize = 1
-    override val commandUsage = listOf(
-        "/home <homeName>",
-        "essentialsk.commands.home.other_/home <playername>:<homeName>",
-        "essentialsk.commands.home.other_/home <playername>:"
-    )
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.homesActivated,
+            consoleCanUse = false,
+            commandName = "home",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.home",
+            minimumSize = 0,
+            maximumSize = 1,
+            commandUsage = listOf(
+                "/home <homeName>",
+                "essentialsk.commands.home.other_/home <playername>:<homeName>",
+                "essentialsk.commands.home.other_/home <playername>:"
+            )
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

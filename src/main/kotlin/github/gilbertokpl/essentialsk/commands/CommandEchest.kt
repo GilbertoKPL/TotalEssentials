@@ -4,22 +4,27 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandEchest : CommandCreator {
-    override val active: Boolean = MainConfig.echestActivated
-    override val consoleCanUse: Boolean = false
-    override val commandName = "echest"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.ec"
-    override val minimumSize = 0
-    override val maximumSize = 1
-    override val commandUsage = listOf(
-        "/echest",
-        "essentialsk.commands.ec.other_/ec <PlayerName>"
-    )
+
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.echestActivated,
+            consoleCanUse = false,
+            commandName = "echest",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.ec",
+            minimumSize = 0,
+            maximumSize = 1,
+            commandUsage = listOf(
+                "/echest",
+                "essentialsk.commands.ec.other_/ec <PlayerName>"
+            )
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {

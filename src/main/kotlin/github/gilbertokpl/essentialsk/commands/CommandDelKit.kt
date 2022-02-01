@@ -4,18 +4,23 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class CommandDelKit : CommandCreator {
-    override val active: Boolean = MainConfig.kitsActivated
-    override val consoleCanUse: Boolean = true
-    override val commandName = "delkit"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.delkit"
-    override val minimumSize = 1
-    override val maximumSize = 1
-    override val commandUsage = listOf("/delkit <kitName>")
+
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.kitsActivated,
+            consoleCanUse = true,
+            commandName = "delkit",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.delkit",
+            minimumSize = 1,
+            maximumSize = 1,
+            commandUsage = listOf("/delkit <kitName>")
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
@@ -27,9 +32,8 @@ class CommandDelKit : CommandCreator {
             return false
         }
 
-        //delete cache and sql
-        s.sendMessage(GeneralLang.generalSendingInfoToDb)
-        KitData.delKitData(s, args[0].lowercase())
+        KitData.delKitData(args[0].lowercase())
+        s.sendMessage(GeneralLang.kitsDelKitSuccess.replace("%kit%", args[0].lowercase()))
 
         return false
     }

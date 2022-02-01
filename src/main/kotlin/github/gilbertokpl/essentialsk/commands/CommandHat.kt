@@ -3,22 +3,26 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandHat : CommandCreator {
-    override val active: Boolean = MainConfig.hatActivated
-    override val consoleCanUse: Boolean = false
-    override val commandName = "hat"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.hat"
-    override val minimumSize = 0
-    override val maximumSize = 0
-    override val commandUsage = listOf(
-        "/hat"
-    )
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.hatActivated,
+            consoleCanUse = false,
+            commandName = "hat",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.hat",
+            minimumSize = 0,
+            maximumSize = 0,
+            commandUsage = listOf(
+                "/hat"
+            )
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val p = s as Player

@@ -6,7 +6,7 @@ general:
 database:
   # Selecione a sua conexão, Disponiveis H2 (Local) e Mysql (Nuvem).
   type: H2
-  # Se você selecionou MYSQL coloque essas informações paar conexão.
+  # Se selecionou MYSQL coloque essas informações paar conexão.
   sql-ip: 'localhost'
   sql-port: '3306'
   sql-username: "!u0_essentialsk"
@@ -190,7 +190,7 @@ announcements:
   # Lista de anuncios para ser enviado;
   # Variaveis -> %players_online%.
   list-announce:
-    - '&eSeu servidor está usando EssentiasK, obrigado por utilizar.'
+    - '&eSeu servidor está utilizando EssentiasK, obrigado por utilizar.'
     - '&9Obrigado por utilizar meu plugin!'
     - '&3No servidor tem %players_online% players online!'
 # Neste local, existem as mensagens que podem ser ativadas.

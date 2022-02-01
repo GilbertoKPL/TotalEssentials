@@ -2,6 +2,8 @@ package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.data.DataManager.put
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.backTable
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.flyTable
@@ -14,12 +16,9 @@ import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.speedTable
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL.vanishTable
 import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
 import github.gilbertokpl.essentialsk.data.util.Serializator
-import github.gilbertokpl.essentialsk.util.LocationUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import github.gilbertokpl.essentialsk.util.ReflectUtil
-import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.DataManager.put
 import github.okkero.skedule.SynchronizationContext
 import github.okkero.skedule.schedule
 import org.bukkit.Bukkit
@@ -207,7 +206,7 @@ internal data class PlayerData(
 
     fun setBack(loc: Location) {
         backLocation = loc
-        PlayerDataSQL.put(playerID, hashMapOf(backTable to LocationUtil.locationSerializer(loc)))
+        PlayerDataSQL.put(playerID, hashMapOf(backTable to Serializator.locationSerializer(loc)))
     }
 
     fun clearBack() {
@@ -303,8 +302,8 @@ internal data class PlayerData(
 
                     if (empty) return@schedule
 
-                    switchContext(SynchronizationContext.SYNC)
                     waitFor(10)
+                    switchContext(SynchronizationContext.SYNC)
 
                     playerCacheV2[p.name.lowercase()] = PlayerData(
                         playerID = playerID,
@@ -318,7 +317,7 @@ internal data class PlayerData(
                         vanishCache = PlayerDataDAOUtil.startVanishCache(p, vanish),
                         lightCache = PlayerDataDAOUtil.startLightCache(p, light),
                         flyCache = PlayerDataDAOUtil.startFlyCache(p, fly),
-                        backLocation = LocationUtil.locationSerializer(location),
+                        backLocation = Serializator.locationSerializer(location),
                         speedCache = PlayerDataDAOUtil.startSpeedCache(p, speed),
                         inTeleport = false
                     )
@@ -331,6 +330,8 @@ internal data class PlayerData(
 
                 cache.homeLimitCache = limitHome
                 cache.player = p
+
+                PlayerUtil.sendToSpawn(p)
 
                 PlayerUtil.finishLogin(p, cache.vanishCache)
 

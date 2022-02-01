@@ -21,11 +21,14 @@ internal object TaskUtil {
 
     private var discordExecutor = Executors.newSingleThreadScheduledExecutor()
 
+    private var dataExecutor = Executors.newSingleThreadScheduledExecutor()
+
     fun disable() {
         poolExecutor.shutdown()
         poolExecutorTeleport.shutdown()
         announceExecutor.shutdown()
         discordExecutor.shutdown()
+        dataExecutor.shutdown()
     }
 
     fun getDiscordExecutor(): ScheduledExecutorService {
@@ -35,6 +38,15 @@ internal object TaskUtil {
     fun restartDiscordExecutor() {
         discordExecutor.shutdownNow()
         discordExecutor = Executors.newSingleThreadScheduledExecutor()
+    }
+
+    fun getDataExecutor(): ScheduledExecutorService {
+        return dataExecutor
+    }
+
+    fun restartDataExecutor() {
+        dataExecutor.shutdownNow()
+        dataExecutor = Executors.newSingleThreadScheduledExecutor()
     }
 
     fun getAnnounceExecutor(): ScheduledExecutorService {

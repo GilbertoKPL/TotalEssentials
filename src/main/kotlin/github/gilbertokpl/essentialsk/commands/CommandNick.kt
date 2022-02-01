@@ -5,6 +5,7 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.okkero.skedule.BukkitDispatcher
@@ -15,19 +16,21 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandNick : CommandCreator {
-    override val active: Boolean = MainConfig.nicksActivated
-    override val consoleCanUse: Boolean = true
-    override val commandName = "nick"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.nick"
-    override val minimumSize = 1
-    override val maximumSize = 2
-    override val commandUsage =
-        listOf(
-            "P_/nick <NickName>",
-            "P_/nick remove",
-            "essentialsk.commands.nick.other_/nick <player> <NickName>",
-            "essentialsk.commands.nick.other_/nick <player> remove"
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.nicksActivated,
+            consoleCanUse = true,
+            commandName = "nick",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.nick",
+            minimumSize = 1,
+            maximumSize = 2,
+            commandUsage = listOf(
+                "P_/nick <NickName>",
+                "P_/nick remove",
+                "essentialsk.commands.nick.other_/nick <player> <NickName>",
+                "essentialsk.commands.nick.other_/nick <player> remove"
+            )
         )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {

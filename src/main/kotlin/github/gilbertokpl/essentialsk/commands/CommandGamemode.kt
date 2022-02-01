@@ -5,23 +5,27 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandGamemode : CommandCreator {
-    override val active: Boolean = MainConfig.gamemodeActivated
-    override val consoleCanUse: Boolean = true
-    override val commandName = "gamemode"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.gamemode"
-    override val minimumSize = 1
-    override val maximumSize = 2
-    override val commandUsage = listOf(
-        "P_/gamemode <number>",
-        "essentialsk.commands.gamemode.other_/gamemode <number> <PlayerName>"
-    )
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.gamemodeActivated,
+            consoleCanUse = true,
+            commandName = "gamemode",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.gamemode",
+            minimumSize = 1,
+            maximumSize = 2,
+            commandUsage = listOf(
+                "P_/gamemode <number>",
+                "essentialsk.commands.gamemode.other_/gamemode <number> <PlayerName>"
+            )
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val playerGameMode = PlayerUtil.getGamemodeNumber(args[0])

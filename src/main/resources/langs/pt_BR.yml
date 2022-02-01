@@ -10,7 +10,6 @@ general:
   special-caracteres-disabled: '%prefix%&cCaracteres proibidos'
   commands-usage: '&9[EssentialsK Help]'
   commands-usage-list: '&9> &e%command%'
-  sending-info-to-db: '%prefix%&aMandando informação para seu Banco de dados...'
   vault-not-exist: '%prefix%&cAdicione Vault para funcionar tudo do plugin!'
   world-not-exist-spawn: '%prefix%&cMundo %world% não existe, spawn desativado.'
   world-not-exist-warp: '%prefix%&cMundo %world% não existe, warp %warp% desativado.'
@@ -33,6 +32,8 @@ general:
   plugin-unload-problems: '%prefix%&cPlugin descarregado com problemas.'
   plugin-load: '%prefix%&ePlugin carregado com sucesso.'
   plugin-load-problems: '%prefix%&cPlugin carregado com problemas.'
+  save-data-message: 'Salvando informações.'
+  save-data-success: 'Salvo com sucesso.'
 time:
   seconds: 'segundos'
   second: 'segundo'

@@ -1,7 +1,9 @@
 package github.gilbertokpl.essentialsk
 
 import github.gilbertokpl.essentialsk.api.EssentialsKAPI
+import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.loops.DataLoop
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.*
 import github.slimjar.app.builder.ApplicationBuilder
@@ -67,6 +69,8 @@ internal class EssentialsK : JavaPlugin() {
 
         TimeUtil.start()
 
+        DataLoop.start()
+
         CompletableFuture.runAsync {
             DiscordUtil.startBot()
         }
@@ -76,7 +80,9 @@ internal class EssentialsK : JavaPlugin() {
 
     override fun onDisable() {
 
+        MainUtil.consoleMessage(GeneralLang.generalSaveDataMessage)
         DataManager.save()
+        MainUtil.consoleMessage(GeneralLang.generalSaveDataSuccess)
 
         TaskUtil.disable()
 
@@ -87,7 +93,9 @@ internal class EssentialsK : JavaPlugin() {
 
     companion object {
         lateinit var instance: EssentialsK
+
         lateinit var api: EssentialsKAPI
+
         var lowVersion = false
     }
 }

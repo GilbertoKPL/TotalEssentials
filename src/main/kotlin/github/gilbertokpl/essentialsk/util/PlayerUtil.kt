@@ -115,8 +115,6 @@ internal object PlayerUtil {
 
     fun finishLogin(p: Player, vanishCache: Boolean) {
 
-        sendToSpawn(p)
-
         if (!vanishCache && !p.hasPermission("*")) {
             if (MainConfig.messagesLoginMessage) {
                 MainUtil.serverMessage(

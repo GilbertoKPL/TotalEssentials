@@ -5,6 +5,7 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.OfflinePlayer
 import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import github.okkero.skedule.BukkitDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -14,17 +15,20 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandDelHome : CommandCreator {
-    override val active: Boolean = MainConfig.homesActivated
-    override val consoleCanUse: Boolean = false
-    override val commandName = "delhome"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.delhome"
-    override val minimumSize = 1
-    override val maximumSize = 1
-    override val commandUsage =
-        listOf(
-            "/delhome <homeName>",
-            "essentialsk.commands.delhome.other_/delhome <playername>:<homeName>"
+
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.homesActivated,
+            consoleCanUse = false,
+            commandName = "delhome",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.delhome",
+            minimumSize = 1,
+            maximumSize = 1,
+            commandUsage = listOf(
+                "/delhome <homeName>",
+                "essentialsk.commands.delhome.other_/delhome <playername>:<homeName>"
+            )
         )
 
     @OptIn(DelicateCoroutinesApi::class)

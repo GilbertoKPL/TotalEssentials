@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.command.Command
@@ -11,23 +12,26 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandTp : CommandCreator {
-    override val active: Boolean = MainConfig.tpActivated
-    override val consoleCanUse: Boolean = true
-    override val commandName = "tp"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.tp"
-    override val minimumSize = 1
-    override val maximumSize = 4
-    override val commandUsage = listOf(
-        "P_/tp <world> <x> <y> <z>",
-        "P_/tp <x> <y> <z> <world>",
-        "P_/tp <x> <y> <z>",
-        "P_/tp <playerName>",
-        "/tp <playerName> <OtherPlayerName>",
-        "/tp <playerName> <world> <x> <y> <z>",
-        "/tp <playerName> <x> <y> <z> <world>",
-        "/tp <playerName> <x> <y> <z>",
-    )
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.tpActivated,
+            consoleCanUse = true,
+            commandName = "tp",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.tp",
+            minimumSize = 1,
+            maximumSize = 4,
+            commandUsage = listOf(
+                "P_/tp <world> <x> <y> <z>",
+                "P_/tp <x> <y> <z> <world>",
+                "P_/tp <x> <y> <z>",
+                "P_/tp <playerName>",
+                "/tp <playerName> <OtherPlayerName>",
+                "/tp <playerName> <world> <x> <y> <z>",
+                "/tp <playerName> <x> <y> <z> <world>",
+                "/tp <playerName> <x> <y> <z>",
+            )
+        )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 

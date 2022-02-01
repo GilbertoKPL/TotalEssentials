@@ -5,6 +5,7 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.OfflinePlayer
 import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.okkero.skedule.BukkitDispatcher
@@ -15,17 +16,19 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandSetHome : CommandCreator {
-    override val active: Boolean = MainConfig.homesActivated
-    override val consoleCanUse: Boolean = false
-    override val commandName = "sethome"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.sethome"
-    override val minimumSize = 1
-    override val maximumSize = 1
-    override val commandUsage =
-        listOf(
-            "/sethome <homeName>",
-            "essentialsk.commands.sethome.other_/sethome <playername>:<homeName>"
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.homesActivated,
+            consoleCanUse = false,
+            commandName = "sethome",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.sethome",
+            minimumSize = 1,
+            maximumSize = 1,
+            commandUsage = listOf(
+                "/sethome <homeName>",
+                "essentialsk.commands.sethome.other_/sethome <playername>:<homeName>"
+            )
         )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {

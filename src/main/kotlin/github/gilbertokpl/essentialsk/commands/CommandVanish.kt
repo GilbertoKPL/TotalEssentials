@@ -5,22 +5,25 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandVanish : CommandCreator {
-    override val active: Boolean = MainConfig.vanishActivated
-    override val consoleCanUse: Boolean = true
-    override val commandName = "vanish"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.vanish"
-    override val minimumSize = 0
-    override val maximumSize = 1
-    override val commandUsage =
-        listOf(
-            "P_/vanish",
-            "essentialsk.commands.vanish.other_/vanish <PlayerName>"
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.vanishActivated,
+            consoleCanUse = true,
+            commandName = "vanish",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.vanish",
+            minimumSize = 0,
+            maximumSize = 1,
+            commandUsage = listOf(
+                "P_/vanish",
+                "essentialsk.commands.vanish.other_/vanish <PlayerName>"
+            )
         )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {

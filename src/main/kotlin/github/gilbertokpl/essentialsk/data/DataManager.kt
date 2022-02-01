@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.data
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.StartLang
 import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
@@ -10,8 +11,11 @@ import github.gilbertokpl.essentialsk.data.tables.SpawnDataSQL
 import github.gilbertokpl.essentialsk.data.tables.WarpsDataSQL
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.MainUtil
+import github.okkero.skedule.SynchronizationContext
+import github.okkero.skedule.schedule
 import net.dv8tion.jda.api.entities.TextChannel
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
@@ -21,6 +25,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 internal object DataManager {
 
     lateinit var sql: Database
+
+    var update = false
 
     //editKitInv
     val editKitInventory = HashMap<Int, ItemStack>(50)
@@ -46,7 +52,7 @@ internal object DataManager {
     }
 
     internal data class Save(
-        val entity : String,
+        val entity: String,
         val table: Table
     )
 
@@ -65,41 +71,73 @@ internal object DataManager {
         }
     }
 
-    fun Table.del(entity: String) {
-        updateList[Save(entity, Table(tableName))] =
-            Sql(
-                TrasactionType.DELETE,
-                null
-            )
+    private fun putRow(runnable: Runnable) {
+        Bukkit.getScheduler().schedule(EssentialsK.instance, SynchronizationContext.ASYNC) {
+            for (i in 1..100) {
+                waitFor(20 * 5)
+                if (!update) {
+                    runnable.run()
+                    return@schedule
+                }
+            }
+        }
     }
 
-    fun Table.put(entity: String, set: HashMap<Column<*>, Any>) {
-        val table = Table(tableName)
-        val update = updateList[Save(entity, table)]
+    fun Table.del(entity: String) {
+        fun internalDel() {
+            updateList[Save(entity, Table(tableName))] =
+                Sql(
+                    TrasactionType.DELETE,
+                    null
+                )
+        }
 
-        if (update == null || update.type == TrasactionType.DELETE) {
-            updateList[Save(entity, table)] = Sql(
-                TrasactionType.SET,
-                set
-            )
+        if (update) {
+            putRow { internalDel() }
             return
         }
 
-        for (i in set) {
-            update.set!![i.key] = i.value
+        internalDel()
+    }
+
+    fun Table.put(entity: String, set: HashMap<Column<*>, Any>) {
+        fun internalPut() {
+            val table = Table(tableName)
+            val update = updateList[Save(entity, table)]
+
+            if (update == null || update.type == TrasactionType.DELETE) {
+                updateList[Save(entity, table)] = Sql(
+                    TrasactionType.SET,
+                    set
+                )
+                return
+            }
+
+            for (i in set) {
+                update.set!![i.key] = i.value
+            }
         }
+
+        if (update) {
+            putRow { internalPut() }
+            return
+        }
+
+        internalPut()
     }
 
     fun save() {
+        update = true
         transaction(sql) {
             for (i in updateList) {
-                val check = i.key.table.select{ checkColumn(i.key.table) eq i.key.entity }
                 when (i.value.type) {
                     TrasactionType.SET -> {
-                        if (check.empty()) {
+                        try {
                             i.key.table.insert {
                                 it[checkColumn(i.key.table)] = i.key.entity
                             }
+                        } catch (ignored: java.sql.SQLIntegrityConstraintViolationException) {
+                        } catch (ignored: org.jetbrains.exposed.exceptions.ExposedSQLException) {
                         }
 
                         if (i.value.set!!.isEmpty()) continue
@@ -116,18 +154,21 @@ internal object DataManager {
                                     is Long -> {
                                         it[set.key as Column<Long>] = set.value as Long
                                     }
+                                    is Boolean -> {
+                                        it[set.key as Column<Boolean>] = set.value as Boolean
+                                    }
                                 }
                             }
                         }
                     }
                     TrasactionType.DELETE -> {
-                        if (!check.empty()) {
-                            i.key.table.deleteWhere { checkColumn(i.key.table) eq i.key.entity }
-                        }
+                        i.key.table.deleteWhere { checkColumn(i.key.table) eq i.key.entity }
                     }
                 }
             }
         }
+        updateList.clear()
+        update = false
     }
 
     fun startSql() {

@@ -51,14 +51,14 @@ internal object ConfigUtil {
         MainUtil.consoleMessage(StartLang.completeVerification)
     }
 
-    internal fun getString(source: YamlFile, path: String, color: Boolean = true): String? {
+    fun getString(source: YamlFile, path: String, color: Boolean = true): String? {
         return if (color) {
             PermissionUtil.colorPermission(null, source.getString(path))
                 .replace("%prefix%", OtherConfig.serverPrefix)
         } else source.getString(path)
     }
 
-    internal fun getStringList(source: YamlFile, path: String, color: Boolean = true): List<String> {
+    fun getStringList(source: YamlFile, path: String, color: Boolean = true): List<String> {
         if (lowercaseValues.contains(path)) {
             return source.getStringList(path).stream().map { to -> to.lowercase() }.collect(Collectors.toList())
         }
@@ -69,9 +69,9 @@ internal object ConfigUtil {
         } else source.getStringList(path)
     }
 
-    internal fun getInt(source: YamlFile, path: String): Int = source.getInt(path)
+    fun getInt(source: YamlFile, path: String): Int = source.getInt(path)
 
-    internal fun getBoolean(source: YamlFile, path: String): Boolean = source.getBoolean(path)
+    fun getBoolean(source: YamlFile, path: String): Boolean = source.getBoolean(path)
 
     private fun internalReloadConfig() {
         ReflectUtil.setValuesFromClass(

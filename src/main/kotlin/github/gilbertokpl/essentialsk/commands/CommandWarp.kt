@@ -5,6 +5,7 @@ import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.data.dao.WarpData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -12,17 +13,19 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandWarp : CommandCreator {
-    override val active: Boolean = MainConfig.warpsActivated
-    override val consoleCanUse: Boolean = true
-    override val commandName = "warp"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.warp"
-    override val minimumSize = 0
-    override val maximumSize = 2
-    override val commandUsage =
-        listOf(
-            "P_/warp <warpName>",
-            "essentialsk.commands.warp.other_/warp <playerName> <warpName>"
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.warpsActivated,
+            consoleCanUse = true,
+            commandName = "warp",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.warp",
+            minimumSize = 0,
+            maximumSize = 2,
+            commandUsage = listOf(
+                "P_/warp <warpName>",
+                "essentialsk.commands.warp.other_/warp <playerName> <warpName>"
+            )
         )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {

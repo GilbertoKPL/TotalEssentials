@@ -5,24 +5,27 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
+import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandSpeed : CommandCreator {
-    override val active: Boolean = MainConfig.speedActivated
-    override val consoleCanUse: Boolean = true
-    override val commandName = "speed"
-    override val timeCoolDown: Long? = null
-    override val permission: String = "essentialsk.commands.speed"
-    override val minimumSize = 1
-    override val maximumSize = 2
-    override val commandUsage =
-        listOf(
-            "/speed <value>",
-            "/speed remove",
-            "essentialsk.commands.speed.other_/speed <player> <value>",
-            "essentialsk.commands.speed.other_/speed <player> remove"
+    override val commandData: CommandData
+        get() = CommandData(
+            active = MainConfig.speedActivated,
+            consoleCanUse = true,
+            commandName = "speed",
+            timeCoolDown = null,
+            permission = "essentialsk.commands.speed",
+            minimumSize = 1,
+            maximumSize = 2,
+            commandUsage = listOf(
+                "/speed <value>",
+                "/speed remove",
+                "essentialsk.commands.speed.other_/speed <player> <value>",
+                "essentialsk.commands.speed.other_/speed <player> remove"
+            )
         )
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
