@@ -51,6 +51,8 @@
 | /trash and /lixo                   | Open trash to player.                                                                           | essentialsk.commands.trash       |
 | /speed                             | set speed of player.                                                                            | essentialsk.commands.speed       |
 | /hat                               | set hat of player.                                                                              | essentialsk.commands.hat         |
+| /fly                               | set fly of player.                                                                              | essentialsk.commands.fly         |
+| /invsee                            | see inventory of other player.                                                                  | essentialsk.commands.invsee      |
 
 ## Permission Color
 
@@ -78,6 +80,7 @@ To use in chat, commands, signs etc.
 | Reset          | essentialsk.color.&r |
 | Trace          | essentialsk.color.&l |
 | Italic         | essentialsk.color.&n |
+| RGB            | essentialsk.color.*  |
 
 ## Other permissions
 
@@ -98,8 +101,9 @@ To use in chat, commands, signs etc.
 | essentialsk.commands.sethome.other             | Allow the player sethome for other players          |
 | essentialsk.commands.spawn.other               | Allow the player telepot to spawn for other players |
 | essentialsk.commands.speed.other               | Allow the player set player of other player         |
+| essentialsk.commands.invsee.admin              | Allow the player set player of other player         |
 | essentialsk.bypass.teleport                    | Bypass time to teleport                             |
-| essentialsk.bypass.homelimit                   | Bypass home limit                                   |
+| essentialsk.bypass.homelimit                   | Move itens of player.                               |
 | essentialsk.bypass.kitcatch                    | Bypass kit time limit                               |
 | essentialsk.bypass.vanish                      | Bypass the vanish                                   |
 | essentialsk.bypass.bed                         | Bypass the block bed                                |

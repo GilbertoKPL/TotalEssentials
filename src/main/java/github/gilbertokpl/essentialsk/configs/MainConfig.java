@@ -8,6 +8,8 @@ public class MainConfig {
 
     public static String generalServerName;
 
+    public static Boolean generalAutoUpdate;
+
     public static String databaseType;
 
     public static String databaseSqlIp;
@@ -85,6 +87,8 @@ public class MainConfig {
     public static Boolean spawnSendToSpawnOnLogin;
 
     public static Boolean spawnSendToSpawnOnDeath;
+
+    public static Boolean invseeActivated;
 
     public static int spawnTimeToTeleport;
 

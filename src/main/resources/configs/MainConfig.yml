@@ -3,6 +3,8 @@ general:
   selected-lang: pt_BR
   # Nome do seu servidor.
   server-name: unamed
+  # auto update
+  auto-update: true
 database:
   # Selecione a sua conexão, Disponiveis H2 (Local) e Mysql (Nuvem).
   type: H2
@@ -169,6 +171,9 @@ announce:
   activated: true
   # Tempo em segundos para executar o comando novamente.
   cooldown: 300
+invsee:
+  # Se estiver ativado (true), O comando será ativado.
+  activated: true
 # Config da MOTD.
 motd:
   # Se estiver ativado (true), O Motd será ativado.

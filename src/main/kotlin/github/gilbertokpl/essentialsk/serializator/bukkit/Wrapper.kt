@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.manager
+package github.gilbertokpl.essentialsk.serializator.bukkit
 
 import com.google.common.collect.ImmutableMap
 import org.bukkit.configuration.serialization.ConfigurationSerializable

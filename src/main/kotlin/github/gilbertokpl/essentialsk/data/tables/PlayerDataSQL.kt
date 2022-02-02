@@ -15,4 +15,3 @@ internal object PlayerDataSQL : Table() {
     val speedTable = integer("Speed").default(1)
     override val primaryKey = PrimaryKey(playerTable)
 }
-

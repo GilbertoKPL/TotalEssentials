@@ -391,4 +391,7 @@ public class GeneralLang {
     public static String hatSendSuccess;
 
     public static String hatSendNotFound;
+
+    public static String invseeSameName;
+    public static String invseePlayerLeave;
 }

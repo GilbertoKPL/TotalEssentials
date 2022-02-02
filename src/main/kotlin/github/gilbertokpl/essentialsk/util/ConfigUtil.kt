@@ -325,6 +325,4 @@ internal object ConfigUtil {
 
         checkerYaml.save(configFile)
     }
-
-
 }

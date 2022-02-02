@@ -5,7 +5,7 @@ import org.bukkit.entity.Player
 import java.awt.Color
 import java.util.regex.Pattern
 
-object ColorUtil {
+internal object ColorUtil {
     private val list = listOf(
         "&1", "&2", "&3", "&4", "&5", "&6", "&7",
         "&8", "&9", "&a", "&b", "&c", "&d", "&e",

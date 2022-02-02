@@ -287,6 +287,9 @@ bukkit {
         register("hat") {
             description = "This is a hat command!"
         }
+        register("invsee") {
+            description = "This is a hat command!"
+        }
     }
     permissions {
         register("essentialsk.*") {

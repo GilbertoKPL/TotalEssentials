@@ -3,9 +3,11 @@ package github.gilbertokpl.essentialsk.listeners
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.data.dao.SpawnData
-import github.gilbertokpl.essentialsk.data.util.PlayerDataDAOUtil
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
+import github.okkero.skedule.SynchronizationContext
+import github.okkero.skedule.schedule
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -22,8 +24,9 @@ class PlayerRespawn : Listener {
     }
 
     private fun playerData(e: PlayerRespawnEvent) {
-        EssentialsK.instance.server.scheduler.runTaskLater(EssentialsK.instance, Runnable {
-            PlayerDataDAOUtil.death(e.player)
+        EssentialsK.instance.server.scheduler.schedule(EssentialsK.instance, SynchronizationContext.SYNC) {
+            waitFor(20)
+            PlayerData.setValuesPlayer(PlayerData[e.player] ?: return@schedule)
 
             if (MainConfig.spawnSendToSpawnOnDeath) {
                 try {
@@ -33,7 +36,7 @@ class PlayerRespawn : Listener {
                 }
             }
 
-        }, 5L)
+        }
     }
 
     private fun spawnRespawn(e: PlayerRespawnEvent) {

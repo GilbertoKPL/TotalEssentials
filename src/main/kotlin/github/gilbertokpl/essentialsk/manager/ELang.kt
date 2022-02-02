@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.manager
 
-enum class ELang(val locale: String) {
+internal enum class ELang(val locale: String) {
     NORONHA("pt_BR"),
     BELEM("pt_BR"),
     FORTALEZA("pt_BR"),

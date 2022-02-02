@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.manager
+package github.gilbertokpl.essentialsk.serializator.bukkit
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 import java.io.ObjectOutputStream

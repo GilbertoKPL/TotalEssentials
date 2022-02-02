@@ -50,7 +50,6 @@ class PlayerLeave : Listener {
     }
 
     private fun sendLeaveEmbed(e: PlayerQuitEvent) {
-
         EssentialsK.api.getDiscordAPI().sendDiscordMessage(
             GeneralLang.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name),
             true

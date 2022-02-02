@@ -6,7 +6,7 @@ import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import java.util.concurrent.TimeUnit
 
-object DataLoop {
+internal object DataLoop {
     fun start() {
         TaskUtil.getDataExecutor().scheduleWithFixedDelay({
             MainUtil.consoleMessage(GeneralLang.generalSaveDataMessage)

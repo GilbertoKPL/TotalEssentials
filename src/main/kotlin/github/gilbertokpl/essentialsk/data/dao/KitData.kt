@@ -4,8 +4,8 @@ import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.DataManager.del
 import github.gilbertokpl.essentialsk.data.DataManager.put
 import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
-import github.gilbertokpl.essentialsk.data.util.Serializator
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
+import github.gilbertokpl.essentialsk.serializator.internal.ItemSerializer
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -13,9 +13,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 internal data class KitData(
     val kitNameCache: String,
     var fakeNameCache: String,
-    var itemsCache: List<ItemStack>,
-    var timeCache: Long,
-    var weightCache: Int
+    var itemsCache: List<ItemStack> = emptyList(),
+    var timeCache: Long = 0,
+    var weightCache: Int = 0
 ) {
 
     fun setWeight(w: Int) {
@@ -37,7 +37,7 @@ internal data class KitData(
         itemsCache = i
         reloadGui()
 
-        val toSave = Serializator.itemSerializer(i)
+        val toSave = ItemSerializer.serialize(i)
 
         KitsDataSQL.put(kitNameCache, hashMapOf(KitsDataSQL.kitItems to toSave))
     }
@@ -85,7 +85,7 @@ internal data class KitData(
             //cache
             put(
                 name.lowercase(),
-                KitData(name.lowercase(), name, emptyList(), 0L, 0)
+                KitData(name.lowercase(), name)
             )
             reloadGui()
 
@@ -103,7 +103,7 @@ internal data class KitData(
                     kitCacheV2[kit] = KitData(
                         kit,
                         kitFakeName,
-                        Serializator.itemSerializer(item),
+                        ItemSerializer.deserialize(item),
                         kitTime,
                         weight
                     )

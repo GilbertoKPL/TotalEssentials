@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.manager
 
-enum class EColor(val color: String) {
+internal enum class EColor(val color: String) {
     BLACK("\u001B[30m"),
     RED("\u001B[31m"),
     GREEN("\u001B[32m"),

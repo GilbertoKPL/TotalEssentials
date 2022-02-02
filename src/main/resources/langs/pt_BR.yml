@@ -232,6 +232,9 @@ speed:
 hat:
   send-success: '%prefix%&eVocê acaba de colocar um Chapéu.'
   send-not-found: '%prefix%&eFoi só encontrado ar em sua mão, coloque algum item!'
+invsee:
+  same-name: '%prefix%&cVocê não pode ver o seu próprio inventário.'
+  player-leave: '%prefix%&cO player Saiu e por isso foi fechado o inventário.'
 deathmessages:
   # Player mata outro player.
   player-kill-player: '%prefix%&cO %player% morreu para o(a) %killer%.'

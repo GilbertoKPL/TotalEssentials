@@ -4,6 +4,7 @@ import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.dao.KitData
+import github.gilbertokpl.essentialsk.data.dao.PlayerData
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGui
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGuiItems
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory.kitGui
@@ -46,6 +47,13 @@ class InventoryClick : Listener {
         if (MainConfig.addonsColorInAnvil) {
             try {
                 anvilColor(e)
+            } catch (e: Throwable) {
+                FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
+            }
+        }
+        if (MainConfig.invseeActivated) {
+            try {
+                invSeeEvent(e)
             } catch (e: Throwable) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
             }
@@ -190,6 +198,25 @@ class InventoryClick : Listener {
             meta.setDisplayName(PermissionUtil.colorPermission(e.whoClicked as Player, name))
             item.itemMeta = meta
             e.currentItem = item
+        }
+    }
+
+    private fun invSeeEvent(e: InventoryClickEvent) {
+        val p = e.whoClicked as Player
+        val playerIntance = PlayerData[p] ?: return
+        val otherPlayer = playerIntance.inInvsee
+        if (e.inventory.type == InventoryType.PLAYER && otherPlayer != null) {
+
+            if (!otherPlayer.isOnline) {
+                p.closeInventory()
+                p.sendMessage(GeneralLang.invseePlayerLeave)
+            }
+
+            if (p.hasPermission("essentialsk.commands.invsee")
+                && !p.hasPermission("essentialsk.commands.invsee.admin")
+            ) {
+                e.isCancelled = true
+            }
         }
     }
 }

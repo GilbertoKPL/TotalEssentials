@@ -2,6 +2,7 @@ package github.gilbertokpl.essentialsk.util
 
 import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
+import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.StartLang
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -12,6 +13,7 @@ import java.nio.file.StandardCopyOption
 
 internal object VersionUtil {
     fun check(): Boolean {
+        if (MainConfig.generalAutoUpdate) return false
         try {
             MainUtil
                 .consoleMessage(StartLang.startVerification.replace("%to%", "version of plugin"))

@@ -3,7 +3,7 @@ package github.gilbertokpl.essentialsk.manager
 import github.gilbertokpl.essentialsk.util.ConfigUtil
 import org.simpleyaml.configuration.file.YamlFile
 
-enum class EType {
+internal enum class EType {
     STRING {
         override fun getValueConfig(yml: YamlFile, value: String): String? {
             if (yml.get(value) == null) return null

@@ -15,7 +15,6 @@ import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
 
-
 internal object ReflectUtil {
 
     private var getPlayersList: Boolean? = null

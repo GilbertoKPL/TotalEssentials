@@ -6,8 +6,8 @@ import github.gilbertokpl.essentialsk.data.DataManager.del
 import github.gilbertokpl.essentialsk.data.DataManager.put
 import github.gilbertokpl.essentialsk.data.tables.WarpsDataSQL
 import github.gilbertokpl.essentialsk.data.tables.WarpsDataSQL.warpName
-import github.gilbertokpl.essentialsk.data.util.Serializator
 import github.gilbertokpl.essentialsk.manager.EColor
+import github.gilbertokpl.essentialsk.serializator.internal.LocationSerializer
 import github.gilbertokpl.essentialsk.util.MainUtil
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -24,7 +24,7 @@ internal object WarpData {
         //cache
         warpsCache[warp.lowercase()] = location
 
-        val loc = Serializator.locationSerializer(location)
+        val loc = LocationSerializer.serialize(location)
 
         WarpsDataSQL.put(warp.lowercase(), hashMapOf(WarpsDataSQL.warpLocation to loc))
 
@@ -63,7 +63,7 @@ internal object WarpData {
         }
 
         for (it in hashWarp) {
-            val loc = Serializator.locationSerializer(it.value)
+            val loc = LocationSerializer.deserialize(it.value)
             if (loc == null) {
                 MainUtil.consoleMessage(
                     EColor.YELLOW.color + GeneralLang.generalWorldNotExistWarp.replace(
