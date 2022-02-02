@@ -240,8 +240,6 @@ internal data class PlayerData(
 
         operator fun get(playerID: String) = playerCacheV2[playerID]
 
-        fun getValues() = playerCacheV2.values
-
         fun loadCache(e: PlayerJoinEvent) {
             val p = e.player
 

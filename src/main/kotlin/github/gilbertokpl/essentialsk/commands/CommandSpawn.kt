@@ -69,13 +69,13 @@ class CommandSpawn : CommandCreator {
             return false
         }
 
-        if (s.hasPermission("essentialsk.bypass.teleport")) {
+        val time = MainConfig.spawnTimeToTeleport
+
+        if (s.hasPermission("essentialsk.bypass.teleport") || time == 0) {
             s.teleport(spawnCache)
             s.sendMessage(GeneralLang.spawnSendMessage)
             return false
         }
-
-        val time = MainConfig.spawnTimeToTeleport
 
         s.sendMessage(GeneralLang.spawnSendTimeToTeleport.replace("%time%", time.toString()))
 

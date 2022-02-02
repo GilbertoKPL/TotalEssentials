@@ -101,7 +101,9 @@ class CommandWarp : CommandCreator {
             return false
         }
 
-        if (p.hasPermission("essentialsk.bypass.teleport")) {
+        val time = MainConfig.warpsTimeToTeleport
+
+        if (p.hasPermission("essentialsk.bypass.teleport") || time == 0) {
             p.teleport(warpInstance)
             p.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
             return false
@@ -111,8 +113,6 @@ class CommandWarp : CommandCreator {
             p.sendMessage(GeneralLang.warpsInTeleport)
             return false
         }
-
-        val time = MainConfig.warpsTimeToTeleport
 
         val exe = TaskUtil.teleportExecutor(time)
 

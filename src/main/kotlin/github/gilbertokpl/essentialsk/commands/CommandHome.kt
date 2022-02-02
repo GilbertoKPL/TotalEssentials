@@ -99,7 +99,9 @@ class CommandHome : CommandCreator {
             return false
         }
 
-        if (p.hasPermission("essentialsk.bypass.teleport")) {
+        val time = MainConfig.homesTimeToTeleport
+
+        if (p.hasPermission("essentialsk.bypass.teleport") || time == 0) {
             p.teleport(playerCache.homeCache[nameHome] ?: return false)
             p.sendMessage(GeneralLang.homesTeleported.replace("%home%", nameHome))
             return false
@@ -109,8 +111,6 @@ class CommandHome : CommandCreator {
             p.sendMessage(GeneralLang.homesInTeleport)
             return false
         }
-
-        val time = MainConfig.homesTimeToTeleport
 
         val exe = TaskUtil.teleportExecutor(time)
 

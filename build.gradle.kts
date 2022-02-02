@@ -85,7 +85,7 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    slim("org.bstats:bstats-bukkit:2.2.1")
+    slim("org.bstats:bstats-bukkit:3.0.0")
 
     slim("org.mariadb.jdbc:mariadb-java-client:2.7.5")
 

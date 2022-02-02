@@ -50,7 +50,6 @@ class CommandTpa : CommandCreator {
             s.sendMessage(GeneralLang.tpaAlreadyInAccept)
             return false
         }
-
         val time = MainConfig.tpaTimeToAccept
 
         TpaData.createNewTpa(s, p, time)

@@ -38,6 +38,8 @@ internal class EssentialsK : JavaPlugin() {
                     "${EColor.YELLOW.color}Livraria carregada em ${timeTakenMillis / 1000} segundos${EColor.RESET.color}"
         )
 
+        ConfigUtil.start()
+
         super.onLoad()
     }
 
@@ -48,8 +50,6 @@ internal class EssentialsK : JavaPlugin() {
         if (VersionUtil.check()) return
 
         MainUtil.startMetrics()
-
-        ConfigUtil.start()
 
         DataManager.startSql()
 
