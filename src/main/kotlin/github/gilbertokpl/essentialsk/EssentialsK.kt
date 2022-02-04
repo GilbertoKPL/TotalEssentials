@@ -2,9 +2,11 @@ package github.gilbertokpl.essentialsk
 
 import github.gilbertokpl.essentialsk.api.EssentialsKAPI
 import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.configs.StartLang
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.loops.DataLoop
 import github.gilbertokpl.essentialsk.manager.EColor
+import github.gilbertokpl.essentialsk.player.loader.DataLoader
 import github.gilbertokpl.essentialsk.util.*
 import github.slimjar.app.builder.ApplicationBuilder
 import org.bukkit.Bukkit
@@ -54,6 +56,12 @@ internal class EssentialsK : JavaPlugin() {
         DataManager.startSql()
 
         DataManager.startTables()
+
+        MainUtil.consoleMessage(StartLang.startLoadData)
+
+        val quant = DataLoader.loadCache()
+
+        MainUtil.consoleMessage(StartLang.finishLoadData.replace("%quant%", quant.toString()))
 
         MainUtil.startCommands()
 

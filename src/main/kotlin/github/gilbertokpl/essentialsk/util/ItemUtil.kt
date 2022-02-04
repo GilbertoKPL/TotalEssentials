@@ -3,7 +3,8 @@ package github.gilbertokpl.essentialsk.util
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.KitData
-import github.gilbertokpl.essentialsk.data.dao.PlayerData
+import github.gilbertokpl.essentialsk.player.PlayerData
+import github.gilbertokpl.essentialsk.player.modify.KitCache.setKitTime
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player

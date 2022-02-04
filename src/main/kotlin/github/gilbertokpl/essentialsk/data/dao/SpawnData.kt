@@ -5,7 +5,7 @@ import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.DataManager.put
 import github.gilbertokpl.essentialsk.data.tables.SpawnDataSQL
 import github.gilbertokpl.essentialsk.manager.EColor
-import github.gilbertokpl.essentialsk.serializator.internal.LocationSerializer
+import github.gilbertokpl.essentialsk.player.serializator.internal.LocationSerializer
 import github.gilbertokpl.essentialsk.util.MainUtil
 import org.bukkit.Location
 import org.jetbrains.exposed.sql.selectAll

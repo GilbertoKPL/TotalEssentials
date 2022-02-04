@@ -3,14 +3,12 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.OfflinePlayer
-import github.gilbertokpl.essentialsk.data.dao.PlayerData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.modify.HomeCache.getHomeList
+import github.gilbertokpl.essentialsk.player.modify.HomeCache.getHomeLocation
 import github.gilbertokpl.essentialsk.util.TaskUtil
-import github.okkero.skedule.BukkitDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -50,33 +48,32 @@ class CommandHome : CommandCreator {
 
         //admin
         if (args[0].contains(":") && p.hasPermission("essentialsk.commands.home.other")) {
-            CoroutineScope(BukkitDispatcher(async = true)).launch {
                 val split = args[0].split(":")
 
                 val pName = split[0].lowercase()
 
-                val otherPlayerInstance = OfflinePlayer(pName)
+            val playerData = PlayerData[pName]
 
-                if (!otherPlayerInstance.checkSql()) {
-                    p.sendMessage(GeneralLang.generalPlayerNotExist)
-                    return@launch
-                }
+            if (playerData == null) {
+                p.sendMessage(GeneralLang.generalPlayerNotExist)
+                return false
+            }
 
                 if (split.size < 2) {
                     p.sendMessage(
                         GeneralLang.homesHomeOtherList.replace("%player%", pName)
-                            .replace("%list%", otherPlayerInstance.getHomeList().toString())
+                            .replace("%list%", playerData.getHomeList().toString())
                     )
-                    return@launch
+                    return false
                 }
 
-                val loc = otherPlayerInstance.getHomeLocation(split[1]) ?: run {
-                    p.sendMessage(
-                        GeneralLang.homesHomeOtherList.replace("%player%", pName)
-                            .replace("%list%", otherPlayerInstance.getHomeList().toString())
-                    )
-                    return@launch
-                }
+            val loc = playerData.getHomeLocation(split[1]) ?: run {
+                p.sendMessage(
+                    GeneralLang.homesHomeOtherList.replace("%player%", pName)
+                        .replace("%list%", playerData.getHomeList().toString())
+                )
+                return false
+            }
 
                 EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
                     p.teleport(loc)
@@ -87,7 +84,6 @@ class CommandHome : CommandCreator {
                         .replace("%player%", split[0])
                 )
 
-            }
             return false
         }
 

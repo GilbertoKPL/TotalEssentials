@@ -3,9 +3,11 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.modify.SpeedCache.clearSpeed
+import github.gilbertokpl.essentialsk.player.modify.SpeedCache.setSpeed
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -36,7 +38,7 @@ class CommandSpeed : CommandCreator {
             val playerCache = PlayerData[s] ?: return false
 
             if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
-                playerCache.clearSpeed()
+                playerCache.clearSpeed(s)
                 s.sendMessage(GeneralLang.speedSendRemove)
                 return false
             }
@@ -54,7 +56,7 @@ class CommandSpeed : CommandCreator {
                 return false
             }
 
-            playerCache.setSpeed(args[0].toInt())
+            playerCache.setSpeed(args[0].toInt(), s)
             s.sendMessage(GeneralLang.speedSendSuccess.replace("%value%", args[0]))
 
 
@@ -78,7 +80,7 @@ class CommandSpeed : CommandCreator {
         val playerCache = PlayerData[p] ?: return false
 
         if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
-            playerCache.clearSpeed()
+            playerCache.clearSpeed(p)
             s.sendMessage(GeneralLang.speedSendRemoveOther.replace("%player%", p.name))
             p.sendMessage(GeneralLang.speedSendOtherRemove)
             return false
@@ -90,7 +92,7 @@ class CommandSpeed : CommandCreator {
             return false
         }
 
-        playerCache.setSpeed(args[1].toInt())
+        playerCache.setSpeed(args[1].toInt(), p)
 
         s.sendMessage(GeneralLang.speedSendSuccessOther.replace("%player%", p.name).replace("%value%", args[1]))
         p.sendMessage(GeneralLang.speedSendOtherSuccess.replace("%value%", args[1]))

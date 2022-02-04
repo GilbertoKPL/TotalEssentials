@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.serializator.internal
+package github.gilbertokpl.essentialsk.player.serializator.internal
 
 import github.gilbertokpl.essentialsk.EssentialsK
 import org.bukkit.Location

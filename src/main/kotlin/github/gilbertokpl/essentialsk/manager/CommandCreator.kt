@@ -1,7 +1,9 @@
 package github.gilbertokpl.essentialsk.manager
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.data.dao.PlayerData
+import github.gilbertokpl.essentialsk.player.PlayerData
+import github.gilbertokpl.essentialsk.player.modify.CoolDownCache.getCoolDown
+import github.gilbertokpl.essentialsk.player.modify.CoolDownCache.setCoolDown
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.TimeUtil
 import org.apache.commons.lang3.exception.ExceptionUtils

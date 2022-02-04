@@ -13,7 +13,7 @@ import java.nio.file.StandardCopyOption
 
 internal object VersionUtil {
     fun check(): Boolean {
-        if (MainConfig.generalAutoUpdate) return false
+        if (!MainConfig.generalAutoUpdate) return false
         try {
             MainUtil
                 .consoleMessage(StartLang.startVerification.replace("%to%", "version of plugin"))

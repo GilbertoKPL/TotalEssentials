@@ -1,7 +1,7 @@
-package github.gilbertokpl.essentialsk.serializator.internal
+package github.gilbertokpl.essentialsk.player.serializator.internal
 
-import github.gilbertokpl.essentialsk.serializator.bukkit.InternalBukkitObjectInputStream
-import github.gilbertokpl.essentialsk.serializator.bukkit.InternalBukkitObjectOutputStream
+import github.gilbertokpl.essentialsk.player.serializator.bukkit.InternalBukkitObjectInputStream
+import github.gilbertokpl.essentialsk.player.serializator.bukkit.InternalBukkitObjectOutputStream
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.inventory.ItemStack

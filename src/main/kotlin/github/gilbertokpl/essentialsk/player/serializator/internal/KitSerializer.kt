@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.serializator.internal
+package github.gilbertokpl.essentialsk.player.serializator.internal
 
 import github.gilbertokpl.essentialsk.data.dao.KitData
 

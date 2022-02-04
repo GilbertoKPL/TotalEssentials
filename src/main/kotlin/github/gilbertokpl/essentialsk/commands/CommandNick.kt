@@ -3,9 +3,11 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.modify.NickCache.delNick
+import github.gilbertokpl.essentialsk.player.modify.NickCache.setNick
 import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import github.okkero.skedule.BukkitDispatcher
@@ -58,7 +60,7 @@ class CommandNick : CommandCreator {
                     return false
                 }
 
-                playerCache.delNick()
+                playerCache.delNick(s)
                 s.sendMessage(GeneralLang.nicksNickRemovedSuccess)
                 return false
             }
@@ -73,7 +75,7 @@ class CommandNick : CommandCreator {
             val nick = PermissionUtil.colorPermission(s, args[0])
 
             CoroutineScope(BukkitDispatcher(async = true)).launch {
-                if (playerCache.setNick(nick)) {
+                if (playerCache.setNick(nick, s)) {
                     s.sendMessage(GeneralLang.nicksExist)
                     return@launch
                 }
@@ -118,7 +120,7 @@ class CommandNick : CommandCreator {
                 s.sendMessage(GeneralLang.nicksNickAlreadyOriginalOther)
                 return false
             }
-            playerCache.delNick()
+            playerCache.delNick(p)
             s.sendMessage(GeneralLang.nicksNickRemovedOtherSuccess)
             p.sendMessage(GeneralLang.nicksNickRemovedOtherPlayerSuccess)
             return false
@@ -126,7 +128,7 @@ class CommandNick : CommandCreator {
 
         val nick = args[1].replace("&", "§")
 
-        playerCache.setNick(nick, true)
+        playerCache.setNick(nick, p, true)
 
         s.sendMessage(GeneralLang.nicksNickOtherSuccess.replace("%nick%", nick))
         p.sendMessage(GeneralLang.nicksNickOtherPlayerSuccess.replace("%nick%", nick))

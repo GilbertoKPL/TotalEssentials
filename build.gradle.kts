@@ -89,7 +89,7 @@ dependencies {
 
     slim("org.mariadb.jdbc:mariadb-java-client:2.7.5")
 
-    slim("org.slf4j:slf4j-nop:1.7.33")
+    slim("org.slf4j:slf4j-nop:1.7.35")
 
     slim("com.google.code.gson:gson:2.8.9")
 

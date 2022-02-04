@@ -3,9 +3,10 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.modify.FlyCache.switchFly
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -32,6 +33,7 @@ class CommandFly : CommandCreator {
             return true
         }
 
+        //admin
         if (args.size == 1) {
 
             //check perms
@@ -46,7 +48,7 @@ class CommandFly : CommandCreator {
                 return false
             }
 
-            if (PlayerData[p]?.switchFly() ?: return false) {
+            if (PlayerData[p]?.switchFly(p) ?: return false) {
                 p.sendMessage(GeneralLang.flySendOtherActive)
                 s.sendMessage(GeneralLang.flySendActivatedOther.replace("%player", p.name))
             } else {
@@ -62,7 +64,7 @@ class CommandFly : CommandCreator {
             return false
         }
 
-        if (PlayerData[s]?.switchFly() ?: return false) {
+        if (PlayerData[s]?.switchFly(s) ?: return false) {
             s.sendMessage(GeneralLang.flySendActive)
         } else {
             s.sendMessage(GeneralLang.flySendDisable)

@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.data.dao.PlayerData
+import github.gilbertokpl.essentialsk.player.loader.DataLoader
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
@@ -14,7 +14,7 @@ class PlayerJoin : Listener {
         e.joinMessage = null
 
         try {
-            PlayerData.loadCache(e)
+            DataLoader.loginCache(e)
         } catch (e: Throwable) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }

@@ -2,15 +2,13 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.OfflinePlayer
-import github.gilbertokpl.essentialsk.data.dao.PlayerData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.modify.HomeCache.getHomeList
+import github.gilbertokpl.essentialsk.player.modify.HomeCache.setHome
 import github.gilbertokpl.essentialsk.util.MainUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
-import github.okkero.skedule.BukkitDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -37,38 +35,36 @@ class CommandSetHome : CommandCreator {
 
         //admin
         if (args[0].contains(":") && s.hasPermission("essentialsk.commands.sethome.other")) {
-            CoroutineScope(BukkitDispatcher(async = true)).launch {
                 val split = args[0].split(":")
 
                 val pName = split[0].lowercase()
 
-                val otherPlayerInstance = OfflinePlayer(pName)
+            val playerData = PlayerData[pName]
 
-                if (!otherPlayerInstance.checkSql()) {
-                    s.sendMessage(GeneralLang.generalPlayerNotExist)
-                    return@launch
-                }
+            if (playerData == null) {
+                s.sendMessage(GeneralLang.generalPlayerNotExist)
+                return false
+            }
 
                 if (split.size < 2) {
                     s.sendMessage(
                         GeneralLang.homesHomeOtherList.replace("%player%", pName)
-                            .replace("%list%", otherPlayerInstance.getHomeList().toString())
+                            .replace("%list%", playerData.getHomeList().toString())
                     )
-                    return@launch
+                    return false
                 }
 
-                if (otherPlayerInstance.getHomeList().contains(split[1])) {
-                    s.sendMessage(GeneralLang.homesNameAlreadyExist)
-                    return@launch
-                }
+            if (playerData.getHomeList().contains(split[1])) {
+                s.sendMessage(GeneralLang.homesNameAlreadyExist)
+                return false
+            }
 
-                otherPlayerInstance.setHome(split[1].lowercase(), (s as Player).location)
+            playerData.setHome(split[1].lowercase(), (s as Player).location)
 
                 s.sendMessage(
                     GeneralLang.homesHomeOtherCreated.replace("%player%", pName)
                         .replace("%home%", split[1])
                 )
-            }
 
             return false
         }

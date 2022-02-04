@@ -1,5 +1,7 @@
 package github.gilbertokpl.essentialsk.util
 
+import github.gilbertokpl.essentialsk.api.exceptions.BotIsNotActivated
+import github.gilbertokpl.essentialsk.api.exceptions.BotIsNotInitialized
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.listeners.discord.ChatDiscord
@@ -13,6 +15,23 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag
 internal object DiscordUtil {
 
     var jda: JDA? = null
+
+    fun getJdaCheck(): JDA {
+        val jda = DiscordUtil.jda
+
+        if (jda == null && MainConfig.discordbotConnectDiscordChat) {
+            MainUtil.consoleMessage(
+                EColor.YELLOW.color + GeneralLang.discordchatNoToken + EColor.RESET.color
+            )
+            throw BotIsNotInitialized()
+        }
+
+        if (jda == null) {
+            throw BotIsNotActivated()
+        }
+
+        return jda
+    }
 
     fun startBot() {
         jda = try {
@@ -31,8 +50,9 @@ internal object DiscordUtil {
     }
 
     fun setupDiscordChat(): TextChannel? {
+        val jda = getJdaCheck()
         val newChat =
-            jda!!.getTextChannelById(MainConfig.discordbotIdDiscordChat) ?: run {
+            jda.getTextChannelById(MainConfig.discordbotIdDiscordChat) ?: run {
                 MainUtil.consoleMessage(
                     EColor.YELLOW.color + GeneralLang.discordchatNoChatId + EColor.RESET.color
                 )

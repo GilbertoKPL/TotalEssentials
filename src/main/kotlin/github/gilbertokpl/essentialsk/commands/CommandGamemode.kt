@@ -3,9 +3,10 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.dao.PlayerData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.modify.GameModeCache.setGamemode
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -39,7 +40,7 @@ class CommandGamemode : CommandCreator {
             }
 
             (PlayerData[s] ?: return false).setGamemode(
-                playerGameMode
+                playerGameMode, s
             )
             s.sendMessage(
                 GeneralLang.gamemodeUseSuccess.replace(
@@ -71,7 +72,7 @@ class CommandGamemode : CommandCreator {
             }
 
             (PlayerData[p] ?: return false).setGamemode(
-                playerGameMode
+                playerGameMode, p
             )
 
             p.sendMessage(

@@ -5,7 +5,7 @@ import github.gilbertokpl.essentialsk.data.DataManager.del
 import github.gilbertokpl.essentialsk.data.DataManager.put
 import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
-import github.gilbertokpl.essentialsk.serializator.internal.ItemSerializer
+import github.gilbertokpl.essentialsk.player.serializator.internal.ItemSerializer
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
