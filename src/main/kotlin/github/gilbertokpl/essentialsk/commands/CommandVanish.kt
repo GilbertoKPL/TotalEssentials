@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -37,31 +37,31 @@ class CommandVanish : CommandCreator {
 
             //check perms
             if (s is Player && !s.hasPermission("essentialsk.commands.vanish.other")) {
-                s.sendMessage(GeneralLang.generalNotPerm)
+                s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
             //check if player is online
             val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-                s.sendMessage(GeneralLang.generalPlayerNotOnline)
+                s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             if (PlayerData[p]?.switchVanish(p) ?: return false) {
-                p.sendMessage(GeneralLang.vanishSendOtherActive)
-                s.sendMessage(GeneralLang.vanishSendActivatedOther.replace("%player%", p.name))
+                p.sendMessage(LangConfig.vanishSendOtherActive)
+                s.sendMessage(LangConfig.vanishSendActivatedOther.replace("%player%", p.name))
             } else {
-                p.sendMessage(GeneralLang.vanishSendOtherDisable)
-                s.sendMessage(GeneralLang.vanishSendDisabledOther.replace("%player%", p.name))
+                p.sendMessage(LangConfig.vanishSendOtherDisable)
+                s.sendMessage(LangConfig.vanishSendDisabledOther.replace("%player%", p.name))
             }
 
             return false
         }
 
         if (PlayerData[s as Player]?.switchVanish(s) ?: return false) {
-            s.sendMessage(GeneralLang.vanishSendActive)
+            s.sendMessage(LangConfig.vanishSendActive)
         } else {
-            s.sendMessage(GeneralLang.vanishSendDisable)
+            s.sendMessage(LangConfig.vanishSendDisable)
         }
         return false
     }

@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.Bukkit
@@ -38,32 +38,32 @@ class CommandTp : CommandCreator {
         //only player name
         if (args.size == 1 && s is Player) {
             val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-                s.sendMessage(GeneralLang.generalPlayerNotOnline)
+                s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             s.teleport(p.location)
-            s.sendMessage(GeneralLang.tpTeleportedSuccess)
+            s.sendMessage(LangConfig.tpTeleportedSuccess)
             return false
         }
 
         //player to other player
         if (args.size == 2) {
             val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-                s.sendMessage(GeneralLang.generalPlayerNotOnline)
+                s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             val p1 = EssentialsK.instance.server.getPlayer(args[1]) ?: run {
-                s.sendMessage(GeneralLang.generalPlayerNotOnline)
+                s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             p.teleport(p1.location)
 
-            p.sendMessage(GeneralLang.tpTeleportedOtherSuccess)
+            p.sendMessage(LangConfig.tpTeleportedOtherSuccess)
 
-            s.sendMessage(GeneralLang.tpTeleportedSuccess)
+            s.sendMessage(LangConfig.tpTeleportedSuccess)
             return false
         }
 
@@ -75,7 +75,7 @@ class CommandTp : CommandCreator {
                 return true
             }
             s.teleport(loc)
-            s.sendMessage(GeneralLang.tpTeleportedSuccess)
+            s.sendMessage(LangConfig.tpTeleportedSuccess)
             return false
         }
 
@@ -92,8 +92,8 @@ class CommandTp : CommandCreator {
                     return true
                 }
                 p.teleport(loc)
-                s.sendMessage(GeneralLang.tpTeleportedSuccess)
-                p.sendMessage(GeneralLang.tpTeleportedOtherSuccess)
+                s.sendMessage(LangConfig.tpTeleportedSuccess)
+                p.sendMessage(LangConfig.tpTeleportedOtherSuccess)
 
                 return false
             }
@@ -116,7 +116,7 @@ class CommandTp : CommandCreator {
                 }
 
                 s.teleport(loc)
-                s.sendMessage(GeneralLang.tpTeleportedSuccess)
+                s.sendMessage(LangConfig.tpTeleportedSuccess)
                 return false
             }
         }
@@ -142,8 +142,8 @@ class CommandTp : CommandCreator {
             }
 
             p.teleport(loc)
-            s.sendMessage(GeneralLang.tpTeleportedSuccess)
-            p.sendMessage(GeneralLang.tpTeleportedOtherSuccess)
+            s.sendMessage(LangConfig.tpTeleportedSuccess)
+            p.sendMessage(LangConfig.tpTeleportedOtherSuccess)
 
         }
 

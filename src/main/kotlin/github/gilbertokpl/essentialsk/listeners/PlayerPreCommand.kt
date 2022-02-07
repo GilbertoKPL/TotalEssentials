@@ -1,9 +1,9 @@
 package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.configs.OtherConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
+import github.gilbertokpl.essentialsk.config.otherConfigs.OtherConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -53,7 +53,7 @@ class PlayerPreCommand : Listener {
                     .toTypedArray()[1]) &&
                 !e.player.hasPermission("essentialsk.bypass.blockedcmd")
             ) {
-                e.player.sendMessage(GeneralLang.generalNotPerm)
+                e.player.sendMessage(LangConfig.generalNotPerm)
                 e.isCancelled = true
                 return
             }
@@ -81,7 +81,7 @@ class PlayerPreCommand : Listener {
         if (MainConfig.discordbotCommandChat.contains(split[0].lowercase())) {
             if (chat == null) {
                 MainUtil.consoleMessage(
-                    EColor.YELLOW.color + GeneralLang.generalVaultNotExist + EColor.RESET.color
+                    EColor.YELLOW.color + LangConfig.generalVaultNotExist + EColor.RESET.color
                 )
                 return
             }
@@ -93,7 +93,7 @@ class PlayerPreCommand : Listener {
 
             if (msg == "/g" || msg == "") return
 
-            val patternMessage = GeneralLang.discordchatMessageToDiscordPattern
+            val patternMessage = LangConfig.discordchatMessageToDiscordPattern
                 .replace("%group%", chat.getPlayerPrefix(e.player))
                 .replace("%message%", msg)
                 .replace("%player%", e.player.name).replace("&[0-9,a-z]".toRegex(), "")

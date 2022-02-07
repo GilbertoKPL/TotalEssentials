@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Material
@@ -26,7 +26,7 @@ class PlayerInteractEntity : Listener {
         if (e.player.itemInHand.type == Material.NAME_TAG &&
             !e.player.hasPermission("essentialsk.bypass.nametag")
         ) {
-            e.player.sendMessage(GeneralLang.generalNotPermAction)
+            e.player.sendMessage(LangConfig.generalNotPermAction)
             e.isCancelled = true
         }
     }

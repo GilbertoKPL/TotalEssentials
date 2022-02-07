@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.entity.Player
@@ -25,7 +25,7 @@ class EntityPortalCreate : Listener {
         e.isCancelled = true
         try {
             if (e.entity is Player) {
-                (e.entity as Player).sendMessage(GeneralLang.generalNotPermAction)
+                (e.entity as Player).sendMessage(LangConfig.generalNotPermAction)
             }
         } catch (ignored: NoSuchMethodError) {
         }

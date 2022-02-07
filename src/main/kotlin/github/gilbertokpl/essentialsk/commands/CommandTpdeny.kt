@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.TpaData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -25,16 +25,16 @@ class CommandTpdeny : CommandCreator {
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val p = TpaData.getTpa(s as Player) ?: run {
-            s.sendMessage(GeneralLang.tpaNotAnyRequestToDeny)
+            s.sendMessage(LangConfig.tpaNotAnyRequestToDeny)
             return false
         }
 
         TpaData.remove(p)
 
-        s.sendMessage(GeneralLang.tpaRequestDeny.replace("%player%", p.name))
+        s.sendMessage(LangConfig.tpaRequestDeny.replace("%player%", p.name))
 
         if (EssentialsK.instance.server.getPlayer(p.name) != null) {
-            p.sendMessage(GeneralLang.tpaRequestOtherDeny.replace("%player%", s.name))
+            p.sendMessage(LangConfig.tpaRequestOtherDeny.replace("%player%", s.name))
         }
         return false
     }

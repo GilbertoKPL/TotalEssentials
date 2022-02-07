@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.data.dao
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.DataManager.del
 import github.gilbertokpl.essentialsk.data.DataManager.put
@@ -66,7 +66,7 @@ internal object WarpData {
             val loc = LocationSerializer.deserialize(it.value)
             if (loc == null) {
                 MainUtil.consoleMessage(
-                    EColor.YELLOW.color + GeneralLang.generalWorldNotExistWarp.replace(
+                    EColor.YELLOW.color + LangConfig.generalWorldNotExistWarp.replace(
                         "%warp%",
                         it.key
                     ) + EColor.RESET.color

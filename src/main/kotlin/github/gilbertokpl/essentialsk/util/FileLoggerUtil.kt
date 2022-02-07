@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.util
 
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.manager.EColor
 import org.json.simple.JSONObject
 import java.io.File

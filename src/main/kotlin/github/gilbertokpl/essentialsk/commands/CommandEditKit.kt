@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGui
 import github.gilbertokpl.essentialsk.manager.CommandCreator
@@ -27,7 +27,7 @@ class CommandEditKit : CommandCreator {
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of kit name
         if (args[0].length > 16) {
-            s.sendMessage(GeneralLang.kitsNameLength)
+            s.sendMessage(LangConfig.kitsNameLength)
             return false
         }
 
@@ -35,7 +35,7 @@ class CommandEditKit : CommandCreator {
 
         //check if not exist
         if (dataInstance == null) {
-            s.sendMessage(GeneralLang.kitsNotExist)
+            s.sendMessage(LangConfig.kitsNotExist)
             return false
         }
 

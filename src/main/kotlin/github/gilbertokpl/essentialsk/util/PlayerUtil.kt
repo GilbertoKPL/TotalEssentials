@@ -2,8 +2,8 @@ package github.gilbertokpl.essentialsk.util
 
 import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.SpawnData
 import github.gilbertokpl.essentialsk.player.PlayerData
 import org.apache.commons.io.IOUtils
@@ -120,7 +120,7 @@ internal object PlayerUtil {
             if (MainConfig.spawnSendToSpawnOnLogin) {
                 val loc = SpawnData["spawn"] ?: run {
                     if (p.hasPermission("*")) {
-                        p.sendMessage(GeneralLang.spawnSendNotSet)
+                        p.sendMessage(LangConfig.spawnSendNotSet)
                     }
                     return
                 }
@@ -135,13 +135,13 @@ internal object PlayerUtil {
         if (!vanishCache && !p.hasPermission("*")) {
             if (MainConfig.messagesLoginMessage) {
                 MainUtil.serverMessage(
-                    GeneralLang.messagesEnterMessage
+                    LangConfig.messagesEnterMessage
                         .replace("%player%", p.name)
                 )
             }
             if (MainConfig.discordbotSendLoginMessage) {
                 EssentialsK.api.getDiscordAPI().sendDiscordMessage(
-                    GeneralLang.discordchatDiscordSendLoginMessage.replace("%player%", p.name),
+                    LangConfig.discordchatDiscordSendLoginMessage.replace("%player%", p.name),
                     true
                 )
             }

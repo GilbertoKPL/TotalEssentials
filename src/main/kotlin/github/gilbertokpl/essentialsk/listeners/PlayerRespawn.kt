@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.data.dao.SpawnData
 import github.gilbertokpl.essentialsk.player.loader.PlayerSet.values
@@ -44,7 +44,7 @@ class PlayerRespawn : Listener {
         val p = e.player
         val loc = SpawnData["spawn"] ?: run {
             if (p.hasPermission("*")) {
-                p.sendMessage(GeneralLang.spawnSendNotSet)
+                p.sendMessage(LangConfig.spawnSendNotSet)
             }
             return
         }

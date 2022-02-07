@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -26,13 +26,13 @@ class CommandCreateKit : CommandCreator {
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of kit name
         if (args[0].length > 16) {
-            s.sendMessage(GeneralLang.kitsNameLength)
+            s.sendMessage(LangConfig.kitsNameLength)
             return false
         }
 
         //check if kit name do not contain special
         if (MainUtil.checkSpecialCaracteres(args[0])) {
-            s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
+            s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
 
@@ -40,14 +40,14 @@ class CommandCreateKit : CommandCreator {
 
         //check if exist
         if (dataInstance != null) {
-            s.sendMessage(GeneralLang.kitsExist)
+            s.sendMessage(LangConfig.kitsExist)
             return false
         }
 
         //create cache and sql
         KitData.createNewKitData(args[0].lowercase())
         s.sendMessage(
-            GeneralLang.kitsCreateKitSuccess.replace(
+            LangConfig.kitsCreateKitSuccess.replace(
                 "%kit%",
                 args[0].lowercase()
             )

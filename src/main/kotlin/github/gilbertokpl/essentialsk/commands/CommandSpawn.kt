@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.data.dao.SpawnData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
@@ -36,7 +36,7 @@ class CommandSpawn : CommandCreator {
 
         val spawnCache = SpawnData["spawn"] ?: run {
             if ((s !is Player) || s.hasPermission("*")) {
-                s.sendMessage(GeneralLang.spawnSendNotSet)
+                s.sendMessage(LangConfig.spawnSendNotSet)
             }
             return false
         }
@@ -45,19 +45,19 @@ class CommandSpawn : CommandCreator {
 
             //check perms
             if (s is Player && !s.hasPermission("essentialsk.commands.spawn.other")) {
-                s.sendMessage(GeneralLang.generalNotPerm)
+                s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
             //check if player exist
             val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-                s.sendMessage(GeneralLang.generalPlayerNotOnline)
+                s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             p.teleport(spawnCache)
-            p.sendMessage(GeneralLang.spawnSendOtherMessage)
-            s.sendMessage(GeneralLang.spawnSendSuccessOtherMessage.replace("%player%", p.name))
+            p.sendMessage(LangConfig.spawnSendOtherMessage)
+            s.sendMessage(LangConfig.spawnSendSuccessOtherMessage.replace("%player%", p.name))
 
             return false
         }
@@ -65,7 +65,7 @@ class CommandSpawn : CommandCreator {
         val playerCache = PlayerData[s] ?: return false
 
         if (playerCache.inTeleport) {
-            s.sendMessage(GeneralLang.spawnSendInTeleport)
+            s.sendMessage(LangConfig.spawnSendInTeleport)
             return false
         }
 
@@ -73,11 +73,11 @@ class CommandSpawn : CommandCreator {
 
         if (s.hasPermission("essentialsk.bypass.teleport") || time == 0) {
             s.teleport(spawnCache)
-            s.sendMessage(GeneralLang.spawnSendMessage)
+            s.sendMessage(LangConfig.spawnSendMessage)
             return false
         }
 
-        s.sendMessage(GeneralLang.spawnSendTimeToTeleport.replace("%time%", time.toString()))
+        s.sendMessage(LangConfig.spawnSendTimeToTeleport.replace("%time%", time.toString()))
 
         val exe = TaskUtil.teleportExecutor(time)
 
@@ -86,7 +86,7 @@ class CommandSpawn : CommandCreator {
         exe {
             playerCache.inTeleport = false
             s.teleport(spawnCache)
-            s.sendMessage(GeneralLang.spawnSendMessage)
+            s.sendMessage(LangConfig.spawnSendMessage)
         }
 
         return false

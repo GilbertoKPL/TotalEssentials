@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.util.MainUtil
@@ -46,7 +46,7 @@ class CommandAnnounce : CommandCreator {
         val newMessage = PermissionUtil.colorPermission(p, msg.toString())
 
         MainUtil.serverMessage(
-            GeneralLang.announceSendAnnounce
+            LangConfig.announceSendAnnounce
                 .replace("%name%", name)
                 .replace("%message%", newMessage)
         )

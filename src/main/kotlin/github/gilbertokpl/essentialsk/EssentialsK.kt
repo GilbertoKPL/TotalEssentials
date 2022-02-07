@@ -2,8 +2,8 @@ package github.gilbertokpl.essentialsk
 
 import github.gilbertokpl.essentialsk.api.EssentialsKAPI
 import github.gilbertokpl.essentialsk.config.ConfigManager
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.StartLang
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.otherConfigs.StartLang
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.manager.loops.DataLoop
 import github.gilbertokpl.essentialsk.manager.EColor
@@ -41,6 +41,8 @@ internal class EssentialsK : JavaPlugin() {
                     "${EColor.YELLOW.color}Livraria carregada em ${timeTakenMillis / 1000} segundos${EColor.RESET.color}"
         )
 
+        MaterialUtil.startMaterials()
+
         ConfigManager.start()
 
         super.onLoad()
@@ -66,8 +68,6 @@ internal class EssentialsK : JavaPlugin() {
 
         MainUtil.startCommands()
 
-        MaterialUtil.startMaterials()
-
         MainUtil.startInventories()
 
         MainUtil.startEvents()
@@ -89,9 +89,9 @@ internal class EssentialsK : JavaPlugin() {
 
     override fun onDisable() {
 
-        MainUtil.consoleMessage(GeneralLang.generalSaveDataMessage)
+        MainUtil.consoleMessage(LangConfig.generalSaveDataMessage)
         DataManager.save()
-        MainUtil.consoleMessage(GeneralLang.generalSaveDataSuccess)
+        MainUtil.consoleMessage(LangConfig.generalSaveDataSuccess)
 
         TaskUtil.disable()
 

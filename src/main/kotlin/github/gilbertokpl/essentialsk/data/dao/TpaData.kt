@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.data.dao
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -55,7 +55,7 @@ internal data class TpaData(
                     val sender = tpaData[pSender] ?: return@runAsync
                     if (sender.wait) {
                         EssentialsK.instance.server.scheduler.runTask(EssentialsK.instance, Runnable {
-                            pSender.sendMessage(GeneralLang.tpaRequestOtherDenyTime.replace("%player%", pReceived.name))
+                            pSender.sendMessage(LangConfig.tpaRequestOtherDenyTime.replace("%player%", pReceived.name))
                         })
                         tpaData.remove(pSender)
                     }

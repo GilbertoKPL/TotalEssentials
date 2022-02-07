@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.manager.loops
 
-import github.gilbertokpl.essentialsk.configs.OtherConfig
+import github.gilbertokpl.essentialsk.config.otherConfigs.OtherConfig
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import github.gilbertokpl.essentialsk.util.ReflectUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil

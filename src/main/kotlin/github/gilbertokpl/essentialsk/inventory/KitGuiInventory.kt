@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.inventory
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.player.PlayerData
@@ -36,7 +36,7 @@ internal object KitGuiInventory {
 
         for (kit in cache) {
             val i = KitData[kit.key]!!
-            val name = GeneralLang.kitsInventoryItemsName.replace("%kitrealname%", i.fakeNameCache)
+            val name = LangConfig.kitsInventoryItemsName.replace("%kitrealname%", i.fakeNameCache)
             val item = try {
                 ItemStack(i.itemsCache[0])
             } catch (e: Throwable) {
@@ -48,7 +48,7 @@ internal object KitGuiInventory {
 
 
             val itemLore = ArrayList<String>()
-            GeneralLang.kitsInventoryItemsLore.forEach {
+            LangConfig.kitsInventoryItemsLore.forEach {
                 itemLore.add(it.replace("%realname%", kit.key))
             }
 
@@ -67,7 +67,7 @@ internal object KitGuiInventory {
                         inv.setItem(
                             to,
                             ItemUtil
-                                .item(Material.HOPPER, GeneralLang.kitsInventoryIconBackName, true)
+                                .item(Material.HOPPER, LangConfig.kitsInventoryIconBackName, true)
                         )
                         continue
                     }
@@ -75,7 +75,7 @@ internal object KitGuiInventory {
                         inv.setItem(
                             to,
                             ItemUtil
-                                .item(Material.ARROW, GeneralLang.kitsInventoryIconNextName, true)
+                                .item(Material.ARROW, LangConfig.kitsInventoryIconNextName, true)
                         )
                         continue
                     }
@@ -94,7 +94,7 @@ internal object KitGuiInventory {
             if (size != 1) {
                 inv.setItem(
                     27,
-                    ItemUtil.item(Material.HOPPER, GeneralLang.kitsInventoryIconBackName)
+                    ItemUtil.item(Material.HOPPER, LangConfig.kitsInventoryIconBackName)
                 )
             } else {
                 inv.setItem(
@@ -136,7 +136,7 @@ internal object KitGuiInventory {
                 inv.setItem(
                     to1,
                     ItemUtil
-                        .item(Material.HOPPER, GeneralLang.kitsInventoryIconBackName, true)
+                        .item(Material.HOPPER, LangConfig.kitsInventoryIconBackName, true)
                 )
                 continue
             }
@@ -144,7 +144,7 @@ internal object KitGuiInventory {
                 inv.setItem(
                     to1,
                     ItemUtil
-                        .item(Material.CHEST, GeneralLang.kitsInventoryIconEditKitName, true)
+                        .item(Material.CHEST, LangConfig.kitsInventoryIconEditKitName, true)
                 )
                 continue
             }
@@ -156,13 +156,13 @@ internal object KitGuiInventory {
                     ) {
                         inv.setItem(
                             to1,
-                            ItemUtil.item(Material.ARROW, GeneralLang.kitsCatchIcon, true)
+                            ItemUtil.item(Material.ARROW, LangConfig.kitsCatchIcon, true)
                         )
                         continue
                     }
                     val array = ArrayList<String>()
                     val remainingTime = timeAll - System.currentTimeMillis()
-                    for (i in GeneralLang.kitsCatchIconLoreTime) {
+                    for (i in LangConfig.kitsCatchIconLoreTime) {
                         array.add(
                             i.replace(
                                 "%time%",
@@ -174,7 +174,7 @@ internal object KitGuiInventory {
                     inv.setItem(
                         to1,
                         ItemUtil
-                            .item(Material.ARROW, GeneralLang.kitsCatchIconNotCatch, array, true)
+                            .item(Material.ARROW, LangConfig.kitsCatchIconNotCatch, array, true)
                     )
                     continue
                 }
@@ -182,8 +182,8 @@ internal object KitGuiInventory {
                     to1,
                     ItemUtil.item(
                         Material.ARROW,
-                        GeneralLang.kitsCatchIconNotCatch,
-                        GeneralLang.kitsCatchIconLoreNotPerm,
+                        LangConfig.kitsCatchIconNotCatch,
+                        LangConfig.kitsCatchIconLoreNotPerm,
                         true
                     )
                 )

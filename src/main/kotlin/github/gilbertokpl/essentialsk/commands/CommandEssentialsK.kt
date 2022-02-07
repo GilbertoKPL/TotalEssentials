@@ -1,12 +1,10 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.config.ConfigManager
+import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.data.DataManager.put
-import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
-import github.gilbertokpl.essentialsk.util.ConfigUtil
 import github.gilbertokpl.essentialsk.util.HostUtil
 import github.gilbertokpl.essentialsk.util.PluginUtil
 import github.okkero.skedule.BukkitDispatcher
@@ -38,9 +36,9 @@ class CommandEssentialsK : CommandCreator {
 
         if (args[0].lowercase() == "save") {
             CoroutineScope(BukkitDispatcher(async = true)).launch {
-                s.sendMessage(GeneralLang.generalSaveDataMessage)
+                s.sendMessage(LangConfig.generalSaveDataMessage)
                 DataManager.save()
-                s.sendMessage(GeneralLang.generalSaveDataSuccess)
+                s.sendMessage(LangConfig.generalSaveDataSuccess)
             }
             return false
         }
@@ -54,7 +52,7 @@ class CommandEssentialsK : CommandCreator {
             }
 
             val pl = PluginUtil.getPluginByName(args[2]) ?: run {
-                s.sendMessage(GeneralLang.generalPluginNotFound)
+                s.sendMessage(LangConfig.generalPluginNotFound)
                 return false
             }
 
@@ -67,16 +65,16 @@ class CommandEssentialsK : CommandCreator {
         }
 
         if (args[0].lowercase() == "reload") {
-            if (ConfigUtil.reloadConfig(true)) {
+            if (ConfigManager.reloadConfig()) {
                 s.sendMessage(
-                    GeneralLang.generalConfigReload
+                    LangConfig.generalConfigReload
                 )
             }
             return false
         }
 
         if (args[0].lowercase() == "host") {
-            s.sendMessage(GeneralLang.generalHostWait)
+            s.sendMessage(LangConfig.generalHostWait)
             HostUtil.sendHostInfo(s)
             return false
         }

@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -38,36 +38,36 @@ class CommandFly : CommandCreator {
 
             //check perms
             if (s is Player && !s.hasPermission("essentialsk.commands.fly.other")) {
-                s.sendMessage(GeneralLang.generalNotPerm)
+                s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
             //check if player is online
             val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-                s.sendMessage(GeneralLang.generalPlayerNotOnline)
+                s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             if (PlayerData[p]?.switchFly(p) ?: return false) {
-                p.sendMessage(GeneralLang.flySendOtherActive)
-                s.sendMessage(GeneralLang.flySendActivatedOther.replace("%player", p.name))
+                p.sendMessage(LangConfig.flySendOtherActive)
+                s.sendMessage(LangConfig.flySendActivatedOther.replace("%player", p.name))
             } else {
-                p.sendMessage(GeneralLang.flySendOtherDisable)
-                s.sendMessage(GeneralLang.flySendDisabledOther.replace("%player", p.name))
+                p.sendMessage(LangConfig.flySendOtherDisable)
+                s.sendMessage(LangConfig.flySendDisabledOther.replace("%player", p.name))
             }
 
             return false
         }
 
         if (MainConfig.flyDisabledWorlds.contains((s as Player).location.world!!.name.lowercase())) {
-            s.sendMessage(GeneralLang.flySendDisabledWorld)
+            s.sendMessage(LangConfig.flySendDisabledWorld)
             return false
         }
 
         if (PlayerData[s]?.switchFly(s) ?: return false) {
-            s.sendMessage(GeneralLang.flySendActive)
+            s.sendMessage(LangConfig.flySendActive)
         } else {
-            s.sendMessage(GeneralLang.flySendDisable)
+            s.sendMessage(LangConfig.flySendDisable)
         }
         return false
     }

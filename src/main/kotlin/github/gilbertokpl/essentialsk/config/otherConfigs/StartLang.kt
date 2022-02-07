@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.configs
+package github.gilbertokpl.essentialsk.config.otherConfigs
 
 import github.gilbertokpl.essentialsk.manager.EColor
 

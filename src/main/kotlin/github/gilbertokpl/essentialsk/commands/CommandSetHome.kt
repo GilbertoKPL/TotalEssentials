@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -42,27 +42,27 @@ class CommandSetHome : CommandCreator {
             val playerData = PlayerData[pName]
 
             if (playerData == null) {
-                s.sendMessage(GeneralLang.generalPlayerNotExist)
+                s.sendMessage(LangConfig.generalPlayerNotExist)
                 return false
             }
 
                 if (split.size < 2) {
                     s.sendMessage(
-                        GeneralLang.homesHomeOtherList.replace("%player%", pName)
+                        LangConfig.homesHomeOtherList.replace("%player%", pName)
                             .replace("%list%", playerData.getHomeList().toString())
                     )
                     return false
                 }
 
             if (playerData.getHomeList().contains(split[1])) {
-                s.sendMessage(GeneralLang.homesNameAlreadyExist)
+                s.sendMessage(LangConfig.homesNameAlreadyExist)
                 return false
             }
 
             playerData.setHome(split[1].lowercase(), (s as Player).location)
 
                 s.sendMessage(
-                    GeneralLang.homesHomeOtherCreated.replace("%player%", pName)
+                    LangConfig.homesHomeOtherCreated.replace("%player%", pName)
                         .replace("%home%", split[1])
                 )
 
@@ -71,13 +71,13 @@ class CommandSetHome : CommandCreator {
 
         //check if home name do not contain . or - to not bug
         if (MainUtil.checkSpecialCaracteres(nameHome)) {
-            s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
+            s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
 
         //check length of home name
         if (nameHome.length > 16) {
-            s.sendMessage(GeneralLang.homesNameLength)
+            s.sendMessage(LangConfig.homesNameLength)
             return false
         }
 
@@ -85,7 +85,7 @@ class CommandSetHome : CommandCreator {
 
         //check if already exist
         if (playerCache.homeCache.contains(nameHome)) {
-            s.sendMessage(GeneralLang.homesNameAlreadyExist)
+            s.sendMessage(LangConfig.homesNameAlreadyExist)
             return false
         }
 
@@ -103,7 +103,7 @@ class CommandSetHome : CommandCreator {
             !s.hasPermission("essentialsk.bypass.homelimit")
         ) {
             s.sendMessage(
-                GeneralLang.homesHomeLimitCreated.replace(
+                LangConfig.homesHomeLimitCreated.replace(
                     "%limit%",
                     playerCache.homeLimitCache.toString()
                 )
@@ -116,12 +116,12 @@ class CommandSetHome : CommandCreator {
                 "essentialsk.bypass.homeblockedworlds"
             )
         ) {
-            s.sendMessage(GeneralLang.homesHomeWorldBlocked)
+            s.sendMessage(LangConfig.homesHomeWorldBlocked)
             return false
         }
 
         playerCache.setHome(nameHome, s.location)
-        s.sendMessage(GeneralLang.homesHomeCreated.replace("%home%", nameHome))
+        s.sendMessage(LangConfig.homesHomeCreated.replace("%home%", nameHome))
 
         return false
     }

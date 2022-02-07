@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.manager
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.CoolDownCache.getCoolDown
 import github.gilbertokpl.essentialsk.player.modify.CoolDownCache.setCoolDown
@@ -31,26 +31,26 @@ internal interface CommandCreator : CommandExecutor {
         args: Array<out String>
     ): Boolean {
         if (s !is Player && !commandData.consoleCanUse) {
-            s.sendMessage(GeneralLang.generalOnlyPlayerCommand)
+            s.sendMessage(LangConfig.generalOnlyPlayerCommand)
             return true
         }
         if (s is Player && !commandData.permission.isNullOrEmpty() && !s.hasPermission(commandData.permission!!)) {
-            s.sendMessage(GeneralLang.generalNotPerm)
+            s.sendMessage(LangConfig.generalNotPerm)
             return true
         }
         fun errorMessage() {
-            s.sendMessage(GeneralLang.generalCommandsUsage)
+            s.sendMessage(LangConfig.generalCommandsUsage)
             for (it in commandData.commandUsage) {
                 val to = it.split("_")
                 if (to.size == 1) {
-                    s.sendMessage(GeneralLang.generalCommandsUsageList.replace("%command%", it))
+                    s.sendMessage(LangConfig.generalCommandsUsageList.replace("%command%", it))
                     continue
                 }
                 if (to[0] == "C" && s is Player || to[0] == "P" && s !is Player) {
                     continue
                 }
                 if (s !is Player || s.hasPermission(to[0])) {
-                    s.sendMessage(GeneralLang.generalCommandsUsageList.replace("%command%", to[1]))
+                    s.sendMessage(LangConfig.generalCommandsUsageList.replace("%command%", to[1]))
                 }
             }
         }
@@ -64,7 +64,7 @@ internal interface CommandCreator : CommandExecutor {
                 val time = playerData.getCoolDown(commandData.commandName)
                 if (time != 0L && System.currentTimeMillis() < time) {
                     s.sendMessage(
-                        GeneralLang.generalCooldownMoreTime.replace(
+                        LangConfig.generalCooldownMoreTime.replace(
                             "%time%",
                             TimeUtil.convertMillisToString(time - System.currentTimeMillis(), true)
                         )

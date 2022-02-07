@@ -2,8 +2,8 @@ package github.gilbertokpl.essentialsk.util
 
 import com.google.gson.JsonParser
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.configs.StartLang
+import github.gilbertokpl.essentialsk.config.files.MainConfig
+import github.gilbertokpl.essentialsk.config.otherConfigs.StartLang
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import java.io.File

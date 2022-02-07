@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.util.ReflectUtil
@@ -36,35 +36,35 @@ class CommandHeal : CommandCreator {
 
             //check perms
             if (s is Player && !s.hasPermission("essentialsk.commands.heal.other")) {
-                s.sendMessage(GeneralLang.generalNotPerm)
+                s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
             //check if player exist
             val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-                s.sendMessage(GeneralLang.generalPlayerNotOnline)
+                s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             if (MainConfig.healNeedHealBelow && ReflectUtil.getHealth(p) >= MAX_PLAYER_HEAL) {
-                s.sendMessage(GeneralLang.healSendOtherFullMessage)
+                s.sendMessage(LangConfig.healSendOtherFullMessage)
                 return false
             }
 
             ReflectUtil.setHealth(p, 20)
-            p.sendMessage(GeneralLang.healSendOtherMessage)
-            s.sendMessage(GeneralLang.healSendSuccessOtherMessage.replace("%player%", p.name))
+            p.sendMessage(LangConfig.healSendOtherMessage)
+            s.sendMessage(LangConfig.healSendSuccessOtherMessage.replace("%player%", p.name))
 
             return false
         }
 
         if (MainConfig.healNeedHealBelow && ReflectUtil.getHealth(s as Player) >= MAX_PLAYER_HEAL) {
-            s.sendMessage(GeneralLang.healSendFullMessage)
+            s.sendMessage(LangConfig.healSendFullMessage)
             return false
         }
 
         ReflectUtil.setHealth(s as Player, MAX_PLAYER_HEAL)
-        s.sendMessage(GeneralLang.healSendMessage)
+        s.sendMessage(LangConfig.healSendMessage)
         return false
     }
 

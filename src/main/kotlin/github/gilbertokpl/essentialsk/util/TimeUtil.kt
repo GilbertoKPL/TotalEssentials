@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.util
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.config.files.LangConfig
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
@@ -84,21 +84,21 @@ internal object TimeUtil {
         minutes %= SECOUNDS_TO_MINUTES
         hours %= HOURS_TO_DAYS
         val uniDays = if (days < 2) {
-            GeneralLang.timeDay
-        } else GeneralLang.timeDays
-        helper(days, "$days ${GeneralLang.timeDayShort}", "$days $uniDays")
+            LangConfig.timeDay
+        } else LangConfig.timeDays
+        helper(days, "$days ${LangConfig.timeDayShort}", "$days $uniDays")
         val uniHours = if (hours < 2) {
-            GeneralLang.timeHour
-        } else GeneralLang.timeHours
-        helper(hours, "$hours ${GeneralLang.timeHourShort}", "${hours % 24} $uniHours")
+            LangConfig.timeHour
+        } else LangConfig.timeHours
+        helper(hours, "$hours ${LangConfig.timeHourShort}", "${hours % 24} $uniHours")
         val uniMinutes = if (minutes < 2) {
-            GeneralLang.timeMinute
-        } else GeneralLang.timeMinutes
-        helper(minutes, "$minutes ${GeneralLang.timeMinuteShort}", "${minutes % 60} $uniMinutes")
+            LangConfig.timeMinute
+        } else LangConfig.timeMinutes
+        helper(minutes, "$minutes ${LangConfig.timeMinuteShort}", "${minutes % 60} $uniMinutes")
         val uniSeconds = if (seconds < 2) {
-            GeneralLang.timeSecond
-        } else GeneralLang.timeSeconds
-        helper(seconds, "$seconds ${GeneralLang.timeSecondShort}", "${seconds % 60} $uniSeconds")
+            LangConfig.timeSecond
+        } else LangConfig.timeSeconds
+        helper(seconds, "$seconds ${LangConfig.timeSecondShort}", "${seconds % 60} $uniSeconds")
         var toReturn = ""
         var quaint = 0
         for (values in toSend) {

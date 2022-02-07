@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.config.files.LangConfig
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.Bukkit
 import org.bukkit.command.*
@@ -38,7 +38,7 @@ internal object PluginUtil {
         val target: Plugin?
         val pluginDir = File("plugins")
         if (!pluginDir.isDirectory) {
-            return GeneralLang.generalPluginNotFound
+            return LangConfig.generalPluginNotFound
         }
         var pluginFile = File(pluginDir, "$name.jar")
         if (!pluginFile.isFile) {
@@ -51,7 +51,7 @@ internal object PluginUtil {
                     }
                 } catch (e: InvalidDescriptionException) {
                     FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
-                    return GeneralLang.generalPluginLoadProblems
+                    return LangConfig.generalPluginLoadProblems
                 }
             }
         }
@@ -59,14 +59,14 @@ internal object PluginUtil {
             Bukkit.getPluginManager().loadPlugin(pluginFile)
         } catch (e: InvalidDescriptionException) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
-            return GeneralLang.generalPluginLoadProblems
+            return LangConfig.generalPluginLoadProblems
         } catch (e: InvalidPluginException) {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
-            return GeneralLang.generalPluginLoadProblems
+            return LangConfig.generalPluginLoadProblems
         }
         target!!.onLoad()
         Bukkit.getPluginManager().enablePlugin(target)
-        return GeneralLang.generalPluginLoad
+        return LangConfig.generalPluginLoad
     }
 
     fun reload(plugin: Plugin?, s: CommandSender) {
@@ -109,10 +109,10 @@ internal object PluginUtil {
                 commands = knownCommandsField.get(commandMap) as MutableMap<String?, Command>
             } catch (e: NoSuchFieldException) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
-                return GeneralLang.generalPluginUnloadProblems
+                return LangConfig.generalPluginUnloadProblems
             } catch (e: IllegalAccessException) {
                 FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
-                return GeneralLang.generalPluginUnloadProblems
+                return LangConfig.generalPluginUnloadProblems
             }
         }
         pluginManager.disablePlugin(plugin)
@@ -160,6 +160,6 @@ internal object PluginUtil {
             }
         }
         System.gc()
-        return GeneralLang.generalPluginUnload
+        return LangConfig.generalPluginUnload
     }
 }

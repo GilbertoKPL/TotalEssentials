@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.okkero.skedule.SynchronizationContext
 import github.okkero.skedule.schedule
 import org.bukkit.Bukkit
@@ -98,7 +98,7 @@ internal object HostUtil {
 
             val cpuServerCores = Runtime.getRuntime().availableProcessors()
 
-            GeneralLang.generalHostConfigInfo.forEach {
+            LangConfig.generalHostConfigInfo.forEach {
                 p.sendMessage(
                     it.replace("%ip%", ip.toString())
                         .replace("%os%", os)

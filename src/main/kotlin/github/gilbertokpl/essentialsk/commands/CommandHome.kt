@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -38,7 +38,7 @@ class CommandHome : CommandCreator {
 
         if (args.isEmpty()) {
             p.sendMessage(
-                GeneralLang.homesHomeList.replace(
+                LangConfig.homesHomeList.replace(
                     "%list%",
                     playerCache.homeCache.map { it.key }.toString()
                 )
@@ -55,13 +55,13 @@ class CommandHome : CommandCreator {
             val playerData = PlayerData[pName]
 
             if (playerData == null) {
-                p.sendMessage(GeneralLang.generalPlayerNotExist)
+                p.sendMessage(LangConfig.generalPlayerNotExist)
                 return false
             }
 
                 if (split.size < 2) {
                     p.sendMessage(
-                        GeneralLang.homesHomeOtherList.replace("%player%", pName)
+                        LangConfig.homesHomeOtherList.replace("%player%", pName)
                             .replace("%list%", playerData.getHomeList().toString())
                     )
                     return false
@@ -69,7 +69,7 @@ class CommandHome : CommandCreator {
 
             val loc = playerData.getHomeLocation(split[1]) ?: run {
                 p.sendMessage(
-                    GeneralLang.homesHomeOtherList.replace("%player%", pName)
+                    LangConfig.homesHomeOtherList.replace("%player%", pName)
                         .replace("%list%", playerData.getHomeList().toString())
                 )
                 return false
@@ -80,7 +80,7 @@ class CommandHome : CommandCreator {
                 })
 
                 p.sendMessage(
-                    GeneralLang.homesTeleportedOther.replace("%home%", split[1].lowercase())
+                    LangConfig.homesTeleportedOther.replace("%home%", split[1].lowercase())
                         .replace("%player%", split[0])
                 )
 
@@ -91,7 +91,7 @@ class CommandHome : CommandCreator {
 
         //check if home don't exist
         if (!playerCache.homeCache.contains(nameHome)) {
-            p.sendMessage(GeneralLang.homesNameDontExist)
+            p.sendMessage(LangConfig.homesNameDontExist)
             return false
         }
 
@@ -99,12 +99,12 @@ class CommandHome : CommandCreator {
 
         if (p.hasPermission("essentialsk.bypass.teleport") || time == 0) {
             p.teleport(playerCache.homeCache[nameHome] ?: return false)
-            p.sendMessage(GeneralLang.homesTeleported.replace("%home%", nameHome))
+            p.sendMessage(LangConfig.homesTeleported.replace("%home%", nameHome))
             return false
         }
 
         if (playerCache.inTeleport) {
-            p.sendMessage(GeneralLang.homesInTeleport)
+            p.sendMessage(LangConfig.homesInTeleport)
             return false
         }
 
@@ -115,11 +115,11 @@ class CommandHome : CommandCreator {
         exe {
             playerCache.inTeleport = false
             p.teleport(playerCache.homeCache[nameHome] ?: return@exe)
-            p.sendMessage(GeneralLang.homesTeleported.replace("%home%", nameHome))
+            p.sendMessage(LangConfig.homesTeleported.replace("%home%", nameHome))
         }
 
         p.sendMessage(
-            GeneralLang.homesSendTimeToTeleport.replace("%home%", nameHome)
+            LangConfig.homesSendTimeToTeleport.replace("%home%", nameHome)
                 .replace("%time%", time.toString())
         )
         return false

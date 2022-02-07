@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.inventory
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.MaterialUtil
@@ -16,8 +16,8 @@ internal object EditKitInventory {
                 DataManager.editKitInventory[inventory] =
                     ItemUtil.item(
                         Material.CHEST,
-                        GeneralLang.kitsEditKitInventoryItemsName,
-                        GeneralLang.kitsEditKitInventoryItemsLore
+                        LangConfig.kitsEditKitInventoryItemsName,
+                        LangConfig.kitsEditKitInventoryItemsLore
                     )
                 continue
             }
@@ -25,8 +25,8 @@ internal object EditKitInventory {
                 DataManager.editKitInventory[inventory] =
                     ItemUtil.item(
                         MaterialUtil["clock"]!!,
-                        GeneralLang.kitsEditKitInventoryTimeName,
-                        GeneralLang.kitsEditKitInventoryTimeLore
+                        LangConfig.kitsEditKitInventoryTimeName,
+                        LangConfig.kitsEditKitInventoryTimeLore
                     )
                 continue
             }
@@ -34,8 +34,8 @@ internal object EditKitInventory {
                 DataManager.editKitInventory[inventory] =
                     ItemUtil.item(
                         Material.BOOK,
-                        GeneralLang.kitsEditKitInventoryNameName,
-                        GeneralLang.kitsEditKitInventoryNameLore
+                        LangConfig.kitsEditKitInventoryNameName,
+                        LangConfig.kitsEditKitInventoryNameLore
                     )
                 continue
             }
@@ -43,8 +43,8 @@ internal object EditKitInventory {
                 DataManager.editKitInventory[inventory] =
                     ItemUtil.item(
                         MaterialUtil["feather"]!!,
-                        GeneralLang.kitsEditKitInventoryWeightName,
-                        GeneralLang.kitsEditKitInventoryWeightLore
+                        LangConfig.kitsEditKitInventoryWeightName,
+                        LangConfig.kitsEditKitInventoryWeightLore
                     )
                 continue
             }

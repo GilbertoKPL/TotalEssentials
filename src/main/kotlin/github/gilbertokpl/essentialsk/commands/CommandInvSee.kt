@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -30,7 +30,7 @@ class CommandInvSee : CommandCreator {
 
         //check if player is same
         if (args[0].equals(s.name.lowercase(), ignoreCase = true)) {
-            s.sendMessage(GeneralLang.invseeSameName)
+            s.sendMessage(LangConfig.invseeSameName)
             return false
         }
 
@@ -38,7 +38,7 @@ class CommandInvSee : CommandCreator {
 
         //check if player is online and not op
         if (p == null || p.isOp && !(s as Player).isOp || p.gameMode != GameMode.SURVIVAL) {
-            s.sendMessage(GeneralLang.generalPlayerNotOnline)
+            s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 

@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.entity.Player
@@ -25,7 +25,7 @@ class EntityVehicleEnter : Listener {
         if (e.entered is Player &&
             !e.entered.hasPermission("essentialsk.bypass.vehicles")
         ) {
-            e.entered.sendMessage(GeneralLang.generalNotPermAction)
+            e.entered.sendMessage(LangConfig.generalNotPermAction)
             e.isCancelled = true
         }
     }

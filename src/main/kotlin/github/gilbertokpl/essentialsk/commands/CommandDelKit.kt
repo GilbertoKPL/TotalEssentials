@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -28,12 +28,12 @@ class CommandDelKit : CommandCreator {
 
         //check if not exist
         if (dataInstance == null) {
-            s.sendMessage(GeneralLang.kitsNotExist)
+            s.sendMessage(LangConfig.kitsNotExist)
             return false
         }
 
         KitData.delKitData(args[0].lowercase())
-        s.sendMessage(GeneralLang.kitsDelKitSuccess.replace("%kit%", args[0].lowercase()))
+        s.sendMessage(LangConfig.kitsDelKitSuccess.replace("%kit%", args[0].lowercase()))
 
         return false
     }

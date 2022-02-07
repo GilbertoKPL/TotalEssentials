@@ -1,37 +1,45 @@
-package github.gilbertokpl.essentialsk.util
+package github.gilbertokpl.essentialsk.config.otherConfigs
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.configs.OtherConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
+import github.gilbertokpl.essentialsk.inventory.EditKitInventory
+import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.manager.loops.AnnounceLoop
 import github.gilbertokpl.essentialsk.manager.loops.DiscordLoop
+import github.gilbertokpl.essentialsk.util.FileLoggerUtil
+import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 
-internal object OtherConfigUtil {
+
+internal object OtherConfig {
+
+    var vanishBlockedOtherCmds = HashMap<String, Int>(30)
+
+    var announcementsListAnnounce = HashMap<Int, String>(30)
+
+    var deathmessageListReplacer = HashMap<String, String>(60)
+
+    lateinit var serverPrefix: String
+
+    lateinit var vanish: List<String>
+
+    lateinit var announce: List<String>
+
+    lateinit var deathMessage: List<String>
+
+    lateinit var deathMessageEntity: List<String>
 
     fun start() {
 
         EssentialsK.api.getDiscordAPI().reloadDiscordChat()
 
-        val vanish = ConfigUtil
-            .getStringList(ConfigUtil.configYaml, "vanish.blocked-other-cmds", false)
-
-        val announce = ConfigUtil
-            .getStringList(ConfigUtil.configYaml, "announcements.list-announce", true)
-
-        val deathMessage = ConfigUtil
-            .getStringList(ConfigUtil.langYaml, "deathmessages.cause-replacer", true)
-
-        val deathMessageEntity = ConfigUtil
-            .getStringList(ConfigUtil.langYaml, "deathmessages.entity-replacer", true)
-
         try {
-            OtherConfig.deathmessageListReplacer.clear()
+            deathmessageListReplacer.clear()
 
             for (d in deathMessageEntity) {
                 val to = d.split("-")
                 try {
-                    OtherConfig.deathmessageListReplacer[to[0].lowercase()] = to[1]
+                    deathmessageListReplacer[to[0].lowercase()] = to[1]
                 } catch (ignored: Exception) {
                 }
             }
@@ -43,7 +51,7 @@ internal object OtherConfigUtil {
             for (d in deathMessage) {
                 val to = d.split("-")
                 try {
-                    OtherConfig.deathmessageListReplacer[to[0].lowercase()] = to[1]
+                    deathmessageListReplacer[to[0].lowercase()] = to[1]
                 } catch (ignored: Exception) {
                 }
             }
@@ -52,18 +60,18 @@ internal object OtherConfigUtil {
         }
 
         try {
-            OtherConfig.vanishBlockedOtherCmds.clear()
+            vanishBlockedOtherCmds.clear()
 
             for (v in vanish) {
                 val split = v.split(" ")
                 if (split.isEmpty()) {
-                    OtherConfig.vanishBlockedOtherCmds[v] = 0
+                    vanishBlockedOtherCmds[v] = 0
                     continue
                 }
                 var bol = false
                 for (i in 0..split.size) {
                     if (split[i] == "<player>") {
-                        OtherConfig.vanishBlockedOtherCmds[split[0]] = i
+                        vanishBlockedOtherCmds[split[0]] = i
                         bol = true
                         break
                     }
@@ -88,11 +96,11 @@ internal object OtherConfigUtil {
                 to += 1
             }
 
-            if (hash.size != OtherConfig.announcementsListAnnounce.size) {
+            if (hash.size != announcementsListAnnounce.size) {
                 dif = true
             } else {
                 for (i in hash) {
-                    if (OtherConfig.announcementsListAnnounce[i.key] != i.value) {
+                    if (announcementsListAnnounce[i.key] != i.value) {
                         dif = true
                         break
                     }
@@ -100,7 +108,7 @@ internal object OtherConfigUtil {
             }
 
             if (dif) {
-                OtherConfig.announcementsListAnnounce = hash
+                announcementsListAnnounce = hash
                 if (MainConfig.announcementsEnabled) {
                     TaskUtil.restartAnnounceExecutor()
                     AnnounceLoop.start(announce.size, MainConfig.announcementsTime)
@@ -118,5 +126,10 @@ internal object OtherConfigUtil {
         if (MainConfig.discordbotConnectDiscordChat && !DiscordLoop.start) {
             DiscordLoop.start()
         }
+
+        EditKitInventory.setup()
+
+        KitGuiInventory.setup()
     }
+
 }

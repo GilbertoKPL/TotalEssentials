@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.WarpData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -25,18 +25,18 @@ class CommandDelWarp : CommandCreator {
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of warp name
         if (args[0].length > 16) {
-            s.sendMessage(GeneralLang.warpsNameLength)
+            s.sendMessage(LangConfig.warpsNameLength)
             return false
         }
 
         WarpData[args[0].lowercase()] ?: run {
-            s.sendMessage(GeneralLang.warpsNameDontExist)
+            s.sendMessage(LangConfig.warpsNameDontExist)
             return false
         }
 
         WarpData.del(args[0].lowercase())
 
-        s.sendMessage(GeneralLang.warpsWarpRemoved.replace("%warp%", args[0].lowercase()))
+        s.sendMessage(LangConfig.warpsWarpRemoved.replace("%warp%", args[0].lowercase()))
 
         return false
     }

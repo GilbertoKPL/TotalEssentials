@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.command.Command
@@ -36,34 +36,34 @@ class CommandFeed : CommandCreator {
 
             //check perms
             if (s is Player && !s.hasPermission("essentialsk.commands.feed.other")) {
-                s.sendMessage(GeneralLang.generalNotPerm)
+                s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
             //check if player exist
             val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-                s.sendMessage(GeneralLang.generalPlayerNotOnline)
+                s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             if (p.foodLevel >= MAX_PLAYER_FOOD && MainConfig.feedNeedEatBelow) {
-                s.sendMessage(GeneralLang.feedSendOtherFullMessage)
+                s.sendMessage(LangConfig.feedSendOtherFullMessage)
                 return false
             }
 
             p.foodLevel = MAX_PLAYER_FOOD
-            p.sendMessage(GeneralLang.feedSendOtherMessage)
-            s.sendMessage(GeneralLang.feedSendSuccessOtherMessage.replace("%player%", p.name))
+            p.sendMessage(LangConfig.feedSendOtherMessage)
+            s.sendMessage(LangConfig.feedSendSuccessOtherMessage.replace("%player%", p.name))
 
             return false
         }
 
         if ((s as Player).foodLevel >= MAX_PLAYER_FOOD && MainConfig.feedNeedEatBelow) {
-            s.sendMessage(GeneralLang.feedSendFullMessage)
+            s.sendMessage(LangConfig.feedSendFullMessage)
             return false
         }
         s.foodLevel = MAX_PLAYER_FOOD
-        s.sendMessage(GeneralLang.feedSendMessage)
+        s.sendMessage(LangConfig.feedSendMessage)
         return false
     }
 

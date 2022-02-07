@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.player.PlayerData
@@ -40,7 +40,7 @@ class InventoryClose : Listener {
             val dataInstance = KitData[it] ?: return true
 
             dataInstance.setItems(e.inventory.contents.filterNotNull().toList())
-            e.player.sendMessage(GeneralLang.kitsEditKitSuccess.replace("%kit%", dataInstance.kitNameCache))
+            e.player.sendMessage(LangConfig.kitsEditKitSuccess.replace("%kit%", dataInstance.kitNameCache))
 
             return true
         }

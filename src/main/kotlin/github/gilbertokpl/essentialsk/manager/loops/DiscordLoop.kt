@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.manager.loops
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.util.*
 import java.util.concurrent.TimeUnit
@@ -18,7 +18,7 @@ internal object DiscordLoop {
             if (MainConfig.discordbotConnectDiscordChat) {
                 if (DiscordUtil.jda == null) {
                     MainUtil.consoleMessage(
-                        EColor.YELLOW.color + GeneralLang.discordchatNoToken + EColor.RESET.color
+                        EColor.YELLOW.color + LangConfig.discordchatNoToken + EColor.RESET.color
                     )
                     return@scheduleWithFixedDelay
                 }
@@ -26,7 +26,7 @@ internal object DiscordLoop {
                 start = true
 
                 DiscordUtil.jda?.getTextChannelById(MainConfig.discordbotIdDiscordChat)?.manager?.setTopic(
-                    GeneralLang.discordchatDiscordTopic
+                    LangConfig.discordchatDiscordTopic
                         .replace("%online%", PlayerUtil.getIntOnlinePlayers(false).toString())
                         .replace("%online_time%", TimeUtil.convertMillisToString(TimeUtil.getOnlineTime(), true))
                         .replace("%time%", TimeUtil.getCurrentDate())

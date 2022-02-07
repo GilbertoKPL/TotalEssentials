@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.api.apis
 
 import github.gilbertokpl.essentialsk.api.exceptions.*
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager.hashTextChannel
 import github.gilbertokpl.essentialsk.util.ColorUtil
 import github.gilbertokpl.essentialsk.util.DiscordUtil

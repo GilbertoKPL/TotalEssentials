@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -37,26 +37,26 @@ class CommandLight : CommandCreator {
 
             //check perms
             if (s is Player && !s.hasPermission("essentialsk.commands.light.other")) {
-                s.sendMessage(GeneralLang.generalNotPerm)
+                s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
             //check if player exist
             val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-                s.sendMessage(GeneralLang.generalPlayerNotOnline)
+                s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             if (PlayerData[p]?.switchLight(p) ?: return false) {
-                p.sendMessage(GeneralLang.lightSendOtherActive)
+                p.sendMessage(LangConfig.lightSendOtherActive)
                 s.sendMessage(
-                    GeneralLang.lightSendActivatedOther
+                    LangConfig.lightSendActivatedOther
                         .replace("%player%", p.name.lowercase())
                 )
             } else {
-                p.sendMessage(GeneralLang.lightSendOtherDisable)
+                p.sendMessage(LangConfig.lightSendOtherDisable)
                 s.sendMessage(
-                    GeneralLang.lightSendDisabledOther
+                    LangConfig.lightSendDisabledOther
                         .replace("%player%", p.name.lowercase())
                 )
             }
@@ -65,9 +65,9 @@ class CommandLight : CommandCreator {
         }
 
         if (PlayerData[s as Player]?.switchLight(s) ?: return false) {
-            s.sendMessage(GeneralLang.lightSendActive)
+            s.sendMessage(LangConfig.lightSendActive)
         } else {
-            s.sendMessage(GeneralLang.lightSendDisable)
+            s.sendMessage(LangConfig.lightSendDisable)
         }
 
         return false

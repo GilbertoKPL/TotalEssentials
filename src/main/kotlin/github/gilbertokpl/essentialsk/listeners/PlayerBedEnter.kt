@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bukkit.event.EventHandler
@@ -22,7 +22,7 @@ class PlayerBedEnter : Listener {
 
     private fun blockEnterInBed(e: PlayerBedEnterEvent) {
         if (!e.player.hasPermission("essentialsk.bypass.bed")) {
-            e.player.sendMessage(GeneralLang.generalNotPermAction)
+            e.player.sendMessage(LangConfig.generalNotPermAction)
             e.isCancelled = true
         }
     }

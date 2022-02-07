@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.TpaData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -29,34 +29,34 @@ class CommandTpa : CommandCreator {
 
         //check if player is same
         if (args[0].lowercase() == s.name.lowercase()) {
-            s.sendMessage(GeneralLang.tpaSameName)
+            s.sendMessage(LangConfig.tpaSameName)
             return false
         }
 
         //check if player is online
         val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-            s.sendMessage(GeneralLang.generalPlayerNotOnline)
+            s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
         //check if player already send
         if (TpaData.checkTpa(s as Player)) {
-            s.sendMessage(GeneralLang.tpaAlreadySend)
+            s.sendMessage(LangConfig.tpaAlreadySend)
             return false
         }
 
         //check if player has telepot request
         if (TpaData.checkOtherTpa(p)) {
-            s.sendMessage(GeneralLang.tpaAlreadyInAccept)
+            s.sendMessage(LangConfig.tpaAlreadyInAccept)
             return false
         }
         val time = MainConfig.tpaTimeToAccept
 
         TpaData.createNewTpa(s, p, time)
 
-        s.sendMessage(GeneralLang.tpaSendSuccess.replace("%player%", p.name))
+        s.sendMessage(LangConfig.tpaSendSuccess.replace("%player%", p.name))
         p.sendMessage(
-            GeneralLang.tpaOtherReceived.replace("%player%", s.name).replace("%time%", time.toString())
+            LangConfig.tpaOtherReceived.replace("%player%", s.name).replace("%time%", time.toString())
         )
         return false
     }

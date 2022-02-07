@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.util
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.KitCache.setKitTime
@@ -17,7 +17,7 @@ internal object ItemUtil {
 
         // check if player don't have permission
         if (!p.hasPermission("essentialsk.commands.kit.$kit")) {
-            p.sendMessage(GeneralLang.generalNotPerm)
+            p.sendMessage(LangConfig.generalNotPerm)
             return
         }
 
@@ -33,7 +33,7 @@ internal object ItemUtil {
         if (timeAll >= System.currentTimeMillis() && !p.hasPermission("essentialsk.bypass.kitcatch")) {
             val remainingTime = timeAll - System.currentTimeMillis()
             p.sendMessage(
-                GeneralLang.kitsCatchMessage.replace(
+                LangConfig.kitsCatchMessage.replace(
                     "%time%",
                     TimeUtil
                         .convertMillisToString(remainingTime, MainConfig.kitsUseShortTime)
@@ -51,7 +51,7 @@ internal object ItemUtil {
             )
         ) {
             playerCache.setKitTime(kit, System.currentTimeMillis())
-            p.sendMessage(GeneralLang.kitsCatchSuccess.replace("%kit%", kitCache.fakeNameCache))
+            p.sendMessage(LangConfig.kitsCatchSuccess.replace("%kit%", kitCache.fakeNameCache))
         }
     }
 
@@ -126,7 +126,7 @@ internal object ItemUtil {
             } else {
                 //send message if inventory is full
                 p.sendMessage(
-                    GeneralLang.kitsCatchNoSpace.replace(
+                    LangConfig.kitsCatchNoSpace.replace(
                         "%slots%",
                         (itemsInternal.size - inventorySpace).toString()
                     )

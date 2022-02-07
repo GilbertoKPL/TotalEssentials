@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
@@ -31,7 +31,7 @@ class CommandKit : CommandCreator {
 
         if (s !is Player || (args.isEmpty() && !MainConfig.kitsMenuKit)) {
             s.sendMessage(
-                GeneralLang.kitsList.replace(
+                LangConfig.kitsList.replace(
                     "%kits%",
                     KitData.getList().toString()
                 )
@@ -44,7 +44,7 @@ class CommandKit : CommandCreator {
 
             DataManager.kitGuiCache[1].also {
                 it ?: run {
-                    s.sendMessage(GeneralLang.kitsNotExistKits)
+                    s.sendMessage(LangConfig.kitsNotExistKits)
                     return false
                 }
                 s.openInventory(it)
@@ -57,7 +57,7 @@ class CommandKit : CommandCreator {
         //check if not exist
         if (dataInstance == null) {
             s.sendMessage(
-                GeneralLang.kitsList.replace(
+                LangConfig.kitsList.replace(
                     "%kits%",
                     KitData.getList().toString()
                 )

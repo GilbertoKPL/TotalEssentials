@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.BackCache.setBack
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -29,7 +29,7 @@ class PlayerLeave : Listener {
             if (!playerData.vanishCache && !e.player.hasPermission("*")) {
                 if (MainConfig.messagesLeaveMessage) {
                     MainUtil.serverMessage(
-                        GeneralLang.messagesLeaveMessage
+                        LangConfig.messagesLeaveMessage
                             .replace("%player%", e.player.name)
                     )
                 }
@@ -52,7 +52,7 @@ class PlayerLeave : Listener {
 
     private fun sendLeaveEmbed(e: PlayerQuitEvent) {
         EssentialsK.api.getDiscordAPI().sendDiscordMessage(
-            GeneralLang.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name),
+            LangConfig.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name),
             true
         )
     }

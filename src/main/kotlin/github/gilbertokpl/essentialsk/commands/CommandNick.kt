@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -42,13 +42,13 @@ class CommandNick : CommandCreator {
 
             //check if nickname do not contain special
             if (MainUtil.checkSpecialCaracteres(args[0])) {
-                s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
+                s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
                 return false
             }
 
             //check length of name
             if (args[0].length > 16) {
-                s.sendMessage(GeneralLang.nicksNameLength)
+                s.sendMessage(LangConfig.nicksNameLength)
                 return false
             }
             val playerCache = PlayerData[s] ?: return false
@@ -56,19 +56,19 @@ class CommandNick : CommandCreator {
             if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
                 //check if is empty
                 if (playerCache.nickCache == "") {
-                    s.sendMessage(GeneralLang.nicksNickAlreadyOriginal)
+                    s.sendMessage(LangConfig.nicksNickAlreadyOriginal)
                     return false
                 }
 
                 playerCache.delNick(s)
-                s.sendMessage(GeneralLang.nicksNickRemovedSuccess)
+                s.sendMessage(LangConfig.nicksNickRemovedSuccess)
                 return false
             }
 
             val toCheck = args[0].replace(Regex("&[0-9,a-f]"), "").lowercase()
 
             if (MainConfig.nicksBlockedNicks.contains(toCheck)) {
-                s.sendMessage(GeneralLang.nicksBlocked)
+                s.sendMessage(LangConfig.nicksBlocked)
                 return false
             }
 
@@ -76,11 +76,11 @@ class CommandNick : CommandCreator {
 
             CoroutineScope(BukkitDispatcher(async = true)).launch {
                 if (playerCache.setNick(nick, s)) {
-                    s.sendMessage(GeneralLang.nicksExist)
+                    s.sendMessage(LangConfig.nicksExist)
                     return@launch
                 }
 
-                s.sendMessage(GeneralLang.nicksNickSuccess.replace("%nick%", nick))
+                s.sendMessage(LangConfig.nicksNickSuccess.replace("%nick%", nick))
             }
 
             return false
@@ -90,25 +90,25 @@ class CommandNick : CommandCreator {
 
         //check if nickname do not contain . or - to not bug
         if (MainUtil.checkSpecialCaracteres(args[1])) {
-            s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
+            s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
 
         //check length of name
         if (args[1].length > 16) {
-            s.sendMessage(GeneralLang.kitsNameLength)
+            s.sendMessage(LangConfig.kitsNameLength)
             return false
         }
 
         //check perm
         if (s is Player && !s.hasPermission("essentialsk.commands.nick.other")) {
-            s.sendMessage(GeneralLang.generalNotPerm)
+            s.sendMessage(LangConfig.generalNotPerm)
             return false
         }
 
         //check if player exist
         val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-            s.sendMessage(GeneralLang.generalPlayerNotOnline)
+            s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
@@ -117,12 +117,12 @@ class CommandNick : CommandCreator {
         if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
             //check if is empty
             if (playerCache.nickCache == "") {
-                s.sendMessage(GeneralLang.nicksNickAlreadyOriginalOther)
+                s.sendMessage(LangConfig.nicksNickAlreadyOriginalOther)
                 return false
             }
             playerCache.delNick(p)
-            s.sendMessage(GeneralLang.nicksNickRemovedOtherSuccess)
-            p.sendMessage(GeneralLang.nicksNickRemovedOtherPlayerSuccess)
+            s.sendMessage(LangConfig.nicksNickRemovedOtherSuccess)
+            p.sendMessage(LangConfig.nicksNickRemovedOtherPlayerSuccess)
             return false
         }
 
@@ -130,8 +130,8 @@ class CommandNick : CommandCreator {
 
         playerCache.setNick(nick, p, true)
 
-        s.sendMessage(GeneralLang.nicksNickOtherSuccess.replace("%nick%", nick))
-        p.sendMessage(GeneralLang.nicksNickOtherPlayerSuccess.replace("%nick%", nick))
+        s.sendMessage(LangConfig.nicksNickOtherSuccess.replace("%nick%", nick))
+        p.sendMessage(LangConfig.nicksNickOtherPlayerSuccess.replace("%nick%", nick))
         return false
     }
 }

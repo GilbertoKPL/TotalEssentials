@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.data.dao.SpawnData
 import github.gilbertokpl.essentialsk.player.modify.BackCache.setBack
@@ -60,7 +60,7 @@ class PlayerTeleport : Listener {
             val to = e.to!!
             if (center.x + wB < to.x || center.x - wB > to.x || center.z + wB < to.z || center.z - wB > to.z) {
                 p.inventory.addItem(ItemStack(Material.ENDER_PEARL, 1))
-                e.player.sendMessage(GeneralLang.generalNotPermAction)
+                e.player.sendMessage(LangConfig.generalNotPermAction)
                 e.isCancelled = true
             }
         }
@@ -74,12 +74,12 @@ class PlayerTeleport : Listener {
         ) {
             val loc = SpawnData["spawn"] ?: run {
                 if (p.hasPermission("*")) {
-                    p.sendMessage(GeneralLang.spawnSendNotSet)
+                    p.sendMessage(LangConfig.spawnSendNotSet)
                 }
                 return
             }
             p.teleport(loc)
-            e.player.sendMessage(GeneralLang.generalNotPermAction)
+            e.player.sendMessage(LangConfig.generalNotPermAction)
         }
     }
 }

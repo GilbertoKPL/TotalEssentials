@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.player.PlayerData
@@ -73,19 +73,19 @@ class InventoryClick : Listener {
             if (number == 36) {
                 p.openInventory(DataManager.kitGuiCache[inventoryName[2].toInt()]!!)
             }
-            if (number == 40 && meta.displayName == GeneralLang.kitsInventoryIconEditKitName && p.hasPermission(
+            if (number == 40 && meta.displayName == LangConfig.kitsInventoryIconEditKitName && p.hasPermission(
                     "essentialsk.commands.editkit"
                 )
             ) {
                 editKitGui(p, inventoryName[1])
             }
             if (number == 44) {
-                if (meta.displayName == GeneralLang.kitsCatchIcon) {
+                if (meta.displayName == LangConfig.kitsCatchIcon) {
                     ItemUtil.pickupKit(p, inventoryName[1])
                     p.closeInventory()
                     return true
                 }
-                if (meta.displayName == GeneralLang.kitsCatchIconNotCatch) {
+                if (meta.displayName == LangConfig.kitsCatchIconNotCatch) {
                     kitGui(inventoryName[1], inventoryName[2], p)
                 }
             }
@@ -138,21 +138,21 @@ class InventoryClick : Listener {
             //time
             if (number == 12) {
                 p.closeInventory()
-                p.sendMessage(GeneralLang.kitsEditKitInventoryTimeMessage)
+                p.sendMessage(LangConfig.kitsEditKitInventoryTimeMessage)
                 DataManager.editKitChat[p] = "time-${inventoryName[1]}"
             }
 
             //name
             if (number == 14) {
                 p.closeInventory()
-                p.sendMessage(GeneralLang.kitsEditKitInventoryNameMessage)
+                p.sendMessage(LangConfig.kitsEditKitInventoryNameMessage)
                 DataManager.editKitChat[p] = "name-${inventoryName[1]}"
             }
 
             //weight
             if (number == 16) {
                 p.closeInventory()
-                p.sendMessage(GeneralLang.kitsEditKitInventoryWeightMessage)
+                p.sendMessage(LangConfig.kitsEditKitInventoryWeightMessage)
                 DataManager.editKitChat[p] = "weight-${inventoryName[1]}"
             }
 
@@ -168,7 +168,7 @@ class InventoryClick : Listener {
             MainConfig.containersBlockShift.contains(e.inventory.type.name.lowercase()) &&
             !e.whoClicked.hasPermission("essentialsk.bypass.shiftcontainer")
         ) {
-            e.whoClicked.sendMessage(GeneralLang.generalNotPermAction)
+            e.whoClicked.sendMessage(LangConfig.generalNotPermAction)
             e.isCancelled = true
             return
         }
@@ -209,7 +209,7 @@ class InventoryClick : Listener {
 
             if (!otherPlayer.isOnline) {
                 p.closeInventory()
-                p.sendMessage(GeneralLang.invseePlayerLeave)
+                p.sendMessage(LangConfig.invseePlayerLeave)
             }
 
             if (p.hasPermission("essentialsk.commands.invsee")

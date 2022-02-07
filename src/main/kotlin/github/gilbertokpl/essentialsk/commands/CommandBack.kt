@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.player.PlayerData
@@ -31,12 +31,12 @@ class CommandBack : CommandCreator {
         val playerCache = PlayerData[p] ?: return false
 
         val loc = playerCache.backLocation ?: run {
-            p.sendMessage(GeneralLang.backSendNotToBack)
+            p.sendMessage(LangConfig.backSendNotToBack)
             return false
         }
 
         if (MainConfig.backDisabledWorlds.contains(loc.world!!.name.lowercase())) {
-            p.sendMessage(GeneralLang.backSendNotToBack)
+            p.sendMessage(LangConfig.backSendNotToBack)
             playerCache.clearBack()
             return false
         }
@@ -45,7 +45,7 @@ class CommandBack : CommandCreator {
 
         playerCache.clearBack()
 
-        p.sendMessage(GeneralLang.backSendSuccess)
+        p.sendMessage(LangConfig.backSendSuccess)
         return false
     }
 }

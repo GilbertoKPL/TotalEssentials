@@ -1,13 +1,10 @@
 package github.gilbertokpl.essentialsk.player.modify
 
-import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.data.DataManager
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager.put
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.player.PlayerData
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.transaction
 
 object NickCache {
     fun PlayerData.setNick(newNick: String, player: Player?, other: Boolean = false): Boolean {

@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.player
 
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer

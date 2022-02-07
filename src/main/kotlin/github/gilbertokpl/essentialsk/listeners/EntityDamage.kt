@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.SpawnData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -30,7 +30,7 @@ class EntityDamage : Listener {
                 p.fallDistance = 1.0f
                 val loc = SpawnData["spawn"] ?: run {
                     if (p.hasPermission("*")) {
-                        p.sendMessage(GeneralLang.spawnSendNotSet)
+                        p.sendMessage(LangConfig.spawnSendNotSet)
                     }
                     return
                 }

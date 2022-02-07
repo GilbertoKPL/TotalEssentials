@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.TpaData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -27,17 +27,17 @@ class CommandTpaccept : CommandCreator {
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
 
         val p = TpaData.getTpa(s as Player) ?: run {
-            s.sendMessage(GeneralLang.tpaNotAnyRequest)
+            s.sendMessage(LangConfig.tpaNotAnyRequest)
             return false
         }
 
         //check if player is online
         if (EssentialsK.instance.server.getPlayer(p.name) == null) {
-            s.sendMessage(GeneralLang.generalPlayerNotOnline)
+            s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
-        s.sendMessage(GeneralLang.tpaRequestAccepted.replace("%player%", p.name))
+        s.sendMessage(LangConfig.tpaRequestAccepted.replace("%player%", p.name))
 
         val tpaCache = TpaData[p] ?: return false
 
@@ -46,7 +46,7 @@ class CommandTpaccept : CommandCreator {
 
         if (p.hasPermission("essentialsk.bypass.teleport")) {
             TpaData.remove(p)
-            p.sendMessage(GeneralLang.tpaRequestOtherNoDelayAccepted.replace("%player%", s.name))
+            p.sendMessage(LangConfig.tpaRequestOtherNoDelayAccepted.replace("%player%", s.name))
             p.teleport(s.location)
             return false
         }
@@ -54,7 +54,7 @@ class CommandTpaccept : CommandCreator {
         val time = MainConfig.tpaTimeToTeleport
 
         p.sendMessage(
-            GeneralLang.tpaRequestOtherAccepted.replace("%player%", s.name)
+            LangConfig.tpaRequestOtherAccepted.replace("%player%", s.name)
                 .replace("%time%", time.toString())
         )
 

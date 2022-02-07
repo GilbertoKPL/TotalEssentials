@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.WarpData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -31,19 +31,19 @@ class CommandSetWarp : CommandCreator {
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //check length of warp name
         if (args[0].length > 16) {
-            s.sendMessage(GeneralLang.warpsNameLength)
+            s.sendMessage(LangConfig.warpsNameLength)
             return false
         }
 
         //check if warp name do not contain special
         if (MainUtil.checkSpecialCaracteres(args[0])) {
-            s.sendMessage(GeneralLang.generalSpecialCaracteresDisabled)
+            s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
 
         //check if exist
         if (WarpData[args[0].lowercase()] != null) {
-            s.sendMessage(GeneralLang.warpsNameAlreadyExist)
+            s.sendMessage(LangConfig.warpsNameAlreadyExist)
             return false
         }
 
@@ -63,7 +63,7 @@ class CommandSetWarp : CommandCreator {
 
             WarpData.set(args[0].lowercase(), loc)
 
-            s.sendMessage(GeneralLang.warpsWarpCreated.replace("%warp%", args[0].lowercase()))
+            s.sendMessage(LangConfig.warpsWarpCreated.replace("%warp%", args[0].lowercase()))
 
             return false
         }
@@ -71,7 +71,7 @@ class CommandSetWarp : CommandCreator {
         if (args.size == 1 && s is Player) {
             WarpData.set(args[0].lowercase(), s.location)
 
-            s.sendMessage(GeneralLang.warpsWarpCreated.replace("%warp%", args[0].lowercase()))
+            s.sendMessage(LangConfig.warpsWarpCreated.replace("%warp%", args[0].lowercase()))
             return false
         }
 

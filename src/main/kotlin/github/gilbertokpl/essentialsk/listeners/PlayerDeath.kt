@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.configs.OtherConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
+import github.gilbertokpl.essentialsk.config.otherConfigs.OtherConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.BackCache.setBack
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -61,7 +61,7 @@ class PlayerDeath : Listener {
 
         val damageCause = e.entity.player!!.lastDamageCause ?: run {
             MainUtil.serverMessage(
-                GeneralLang.deathmessagesNothingKillPlayer
+                LangConfig.deathmessagesNothingKillPlayer
                     .replace("%player%", pName)
             )
             return
@@ -72,7 +72,7 @@ class PlayerDeath : Listener {
             val dmg = ent.damager
             if (dmg is Player) {
                 MainUtil.serverMessage(
-                    GeneralLang.deathmessagesPlayerKillPlayer
+                    LangConfig.deathmessagesPlayerKillPlayer
                         .replace("%player%", pName)
                         .replace("%killer%", dmg.name)
                 )
@@ -83,7 +83,7 @@ class PlayerDeath : Listener {
                     ent.damager.toString().lowercase()
                 }
             MainUtil.serverMessage(
-                GeneralLang.deathmessagesEntityKillPlayer
+                LangConfig.deathmessagesEntityKillPlayer
                     .replace("%player%", pName)
                     .replace("%entity%", causeMessage)
             )
@@ -93,11 +93,11 @@ class PlayerDeath : Listener {
         val causeMessage =
             OtherConfig.deathmessageListReplacer[damageCause.cause.name.lowercase()] ?: run {
                 MainUtil.consoleMessage(
-                    GeneralLang.deathmessagesCauseNotExist
+                    LangConfig.deathmessagesCauseNotExist
                         .replace("%cause%", damageCause.cause.name.lowercase())
                 )
                 MainUtil.serverMessage(
-                    GeneralLang.deathmessagesNothingKillPlayer
+                    LangConfig.deathmessagesNothingKillPlayer
                         .replace("%player%", pName)
                 )
                 return

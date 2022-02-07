@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -39,7 +39,7 @@ class CommandSpeed : CommandCreator {
 
             if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
                 playerCache.clearSpeed(s)
-                s.sendMessage(GeneralLang.speedSendRemove)
+                s.sendMessage(LangConfig.speedSendRemove)
                 return false
             }
 
@@ -52,12 +52,12 @@ class CommandSpeed : CommandCreator {
 
             //check if number is 0-10
             if (args[0].toInt() > 10 || args[0].toInt() < 0) {
-                s.sendMessage(GeneralLang.speedSendIncorrectValue)
+                s.sendMessage(LangConfig.speedSendIncorrectValue)
                 return false
             }
 
             playerCache.setSpeed(args[0].toInt(), s)
-            s.sendMessage(GeneralLang.speedSendSuccess.replace("%value%", args[0]))
+            s.sendMessage(LangConfig.speedSendSuccess.replace("%value%", args[0]))
 
 
             return false
@@ -67,13 +67,13 @@ class CommandSpeed : CommandCreator {
 
         //check perm
         if (s is Player && !s.hasPermission("essentialsk.commands.speed.other")) {
-            s.sendMessage(GeneralLang.generalNotPerm)
+            s.sendMessage(LangConfig.generalNotPerm)
             return false
         }
 
         //check if player exist
         val p = EssentialsK.instance.server.getPlayer(args[0]) ?: run {
-            s.sendMessage(GeneralLang.generalPlayerNotOnline)
+            s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
@@ -81,21 +81,21 @@ class CommandSpeed : CommandCreator {
 
         if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
             playerCache.clearSpeed(p)
-            s.sendMessage(GeneralLang.speedSendRemoveOther.replace("%player%", p.name))
-            p.sendMessage(GeneralLang.speedSendOtherRemove)
+            s.sendMessage(LangConfig.speedSendRemoveOther.replace("%player%", p.name))
+            p.sendMessage(LangConfig.speedSendOtherRemove)
             return false
         }
 
         //check if number is 0-10
         if (args[1].toInt() > 10 || args[1].toInt() < 0) {
-            s.sendMessage(GeneralLang.speedSendIncorrectValue)
+            s.sendMessage(LangConfig.speedSendIncorrectValue)
             return false
         }
 
         playerCache.setSpeed(args[1].toInt(), p)
 
-        s.sendMessage(GeneralLang.speedSendSuccessOther.replace("%player%", p.name).replace("%value%", args[1]))
-        p.sendMessage(GeneralLang.speedSendOtherSuccess.replace("%value%", args[1]))
+        s.sendMessage(LangConfig.speedSendSuccessOther.replace("%player%", p.name).replace("%value%", args[1]))
+        p.sendMessage(LangConfig.speedSendOtherSuccess.replace("%value%", args[1]))
         return false
     }
 }

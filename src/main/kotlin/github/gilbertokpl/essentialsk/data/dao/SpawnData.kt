@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.data.dao
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
+import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.DataManager.put
 import github.gilbertokpl.essentialsk.data.tables.SpawnDataSQL
@@ -40,7 +40,7 @@ internal object SpawnData {
             val loc = LocationSerializer.deserialize(it.value)
             if (loc == null) {
                 MainUtil.consoleMessage(
-                    EColor.YELLOW.color + GeneralLang.generalWorldNotExistSpawn + EColor.RESET.color
+                    EColor.YELLOW.color + LangConfig.generalWorldNotExistSpawn + EColor.RESET.color
                 )
                 continue
             }

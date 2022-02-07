@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
@@ -46,14 +46,14 @@ class ChatEventAsync : Listener {
                 e.isCancelled = true
                 val time = TimeUtil.convertStringToMillis(e.message)
                 p.sendMessage(
-                    GeneralLang.kitsEditKitTime.replace(
+                    LangConfig.kitsEditKitTime.replace(
                         "%time%",
                         TimeUtil
                             .convertMillisToString(time, MainConfig.kitsUseShortTime)
                     )
                 )
                 dataInstance.setTime(time)
-                p.sendMessage(GeneralLang.kitsEditKitSuccess.replace("%kit%", dataInstance.kitNameCache))
+                p.sendMessage(LangConfig.kitsEditKitSuccess.replace("%kit%", dataInstance.kitNameCache))
 
                 return true
             }
@@ -63,14 +63,14 @@ class ChatEventAsync : Listener {
                 e.isCancelled = true
                 //check message length
                 if (e.message.replace("&|§([0-9]|[a-f])".toRegex(), "").length > 16) {
-                    p.sendMessage(GeneralLang.kitsNameLength)
+                    p.sendMessage(LangConfig.kitsNameLength)
                     return true
                 }
 
                 val newName = e.message.replace("&", "§")
 
                 dataInstance.setFakeName(newName)
-                p.sendMessage(GeneralLang.kitsEditKitSuccess.replace("%kit%", dataInstance.kitNameCache))
+                p.sendMessage(LangConfig.kitsEditKitSuccess.replace("%kit%", dataInstance.kitNameCache))
             }
 
             //weight
@@ -84,7 +84,7 @@ class ChatEventAsync : Listener {
                 }
 
                 dataInstance.setWeight(integer)
-                p.sendMessage(GeneralLang.kitsEditKitSuccess.replace("%kit%", dataInstance.kitNameCache))
+                p.sendMessage(LangConfig.kitsEditKitSuccess.replace("%kit%", dataInstance.kitNameCache))
             }
 
             return true

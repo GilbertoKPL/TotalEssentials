@@ -1,6 +1,6 @@
 package github.gilbertokpl.essentialsk.config.get
 
-import github.gilbertokpl.essentialsk.configs.OtherConfig
+import github.gilbertokpl.essentialsk.config.otherConfigs.OtherConfig
 import github.gilbertokpl.essentialsk.util.PermissionUtil
 import org.simpleyaml.configuration.file.YamlFile
 import java.util.stream.Collectors

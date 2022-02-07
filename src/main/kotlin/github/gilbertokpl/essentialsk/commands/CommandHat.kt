@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
 import org.bukkit.Material
@@ -34,7 +34,7 @@ class CommandHat : CommandCreator {
         }
 
         if (itemHand.type == Material.AIR) {
-            p.sendMessage(GeneralLang.hatSendNotFound)
+            p.sendMessage(LangConfig.hatSendNotFound)
             return false
         }
 
@@ -49,7 +49,7 @@ class CommandHat : CommandCreator {
         }
 
 
-        p.sendMessage(GeneralLang.hatSendSuccess)
+        p.sendMessage(LangConfig.hatSendSuccess)
 
         return false
     }

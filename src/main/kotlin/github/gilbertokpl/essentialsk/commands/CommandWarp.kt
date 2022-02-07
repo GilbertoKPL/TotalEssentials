@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.data.dao.WarpData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
@@ -38,7 +38,7 @@ class CommandWarp : CommandCreator {
 
         if (args.isEmpty()) {
             s.sendMessage(
-                GeneralLang.warpsWarpList.replace(
+                LangConfig.warpsWarpList.replace(
                     "%list%",
                     WarpData.getList(p).toString()
                 )
@@ -56,7 +56,7 @@ class CommandWarp : CommandCreator {
             //check if not exist
             if (warpInstance == null) {
                 s.sendMessage(
-                    GeneralLang.warpsWarpList.replace(
+                    LangConfig.warpsWarpList.replace(
                         "%list%",
                         WarpData.getList(null).toString()
                     )
@@ -66,9 +66,9 @@ class CommandWarp : CommandCreator {
 
             newPlayer.teleport(warpInstance)
 
-            newPlayer.sendMessage(GeneralLang.warpsTeleportedOtherMessage.replace("%warp%", warpName))
+            newPlayer.sendMessage(LangConfig.warpsTeleportedOtherMessage.replace("%warp%", warpName))
             s.sendMessage(
-                GeneralLang.warpsTeleportedOtherSuccess
+                LangConfig.warpsTeleportedOtherSuccess
                     .replace("%warp%", warpName)
                     .replace("%player%", newPlayer.name.lowercase())
             )
@@ -78,7 +78,7 @@ class CommandWarp : CommandCreator {
 
         //check length of warp name
         if (args[0].length > 16) {
-            s.sendMessage(GeneralLang.warpsNameLength)
+            s.sendMessage(LangConfig.warpsNameLength)
             return false
         }
 
@@ -86,7 +86,7 @@ class CommandWarp : CommandCreator {
 
         val warpInstance = WarpData[warpName] ?: run {
             p.sendMessage(
-                GeneralLang.warpsWarpList.replace(
+                LangConfig.warpsWarpList.replace(
                     "%list%",
                     WarpData.getList(p).toString()
                 )
@@ -97,7 +97,7 @@ class CommandWarp : CommandCreator {
         val playerCache = PlayerData[p] ?: return false
 
         if (!p.hasPermission("essentialsk.commands.warp.$warpName")) {
-            p.sendMessage(GeneralLang.generalNotPerm)
+            p.sendMessage(LangConfig.generalNotPerm)
             return false
         }
 
@@ -105,12 +105,12 @@ class CommandWarp : CommandCreator {
 
         if (p.hasPermission("essentialsk.bypass.teleport") || time == 0) {
             p.teleport(warpInstance)
-            p.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
+            p.sendMessage(LangConfig.warpsTeleported.replace("%warp%", warpName))
             return false
         }
 
         if (playerCache.inTeleport) {
-            p.sendMessage(GeneralLang.warpsInTeleport)
+            p.sendMessage(LangConfig.warpsInTeleport)
             return false
         }
 
@@ -121,11 +121,11 @@ class CommandWarp : CommandCreator {
         exe {
             playerCache.inTeleport = false
             p.teleport(warpInstance)
-            s.sendMessage(GeneralLang.warpsTeleported.replace("%warp%", warpName))
+            s.sendMessage(LangConfig.warpsTeleported.replace("%warp%", warpName))
         }
 
         s.sendMessage(
-            GeneralLang.warpsSendTimeToTeleport.replace("%warp%", warpName)
+            LangConfig.warpsSendTimeToTeleport.replace("%warp%", warpName)
                 .replace("%time%", time.toString())
         )
 

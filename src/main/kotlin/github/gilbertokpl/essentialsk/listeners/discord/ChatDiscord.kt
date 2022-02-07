@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.listeners.discord
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.util.MainUtil
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
@@ -18,7 +18,7 @@ class ChatDiscord : ListenerAdapter() {
                 }
                 if (msg.length > MainConfig.discordbotMaxMessageLenght) {
                     e.channel.sendMessage(
-                        GeneralLang.discordchatMessageNotSendToServer
+                        LangConfig.discordchatMessageNotSendToServer
                             .replace("%lenght%", MainConfig.discordbotMaxMessageLenght.toString())
                             .replace("%author%", e.member?.asMention!!)
                     ).queue {
@@ -27,7 +27,7 @@ class ChatDiscord : ListenerAdapter() {
                     return
                 }
                 MainUtil.serverMessage(
-                    GeneralLang.discordchatDiscordToServerPattern
+                    LangConfig.discordchatDiscordToServerPattern
                         .replace("%player%", e.author.name)
                         .replace("%message%", msg)
                 )

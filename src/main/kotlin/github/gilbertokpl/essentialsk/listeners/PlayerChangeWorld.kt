@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.listeners
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.PlayerUtil
@@ -40,7 +40,7 @@ class PlayerChangeWorld : Listener {
                     e.player.isFlying = true
                     return@schedule
                 }
-                e.player.sendMessage(GeneralLang.flySendDisabledWorld)
+                e.player.sendMessage(LangConfig.flySendDisabledWorld)
                 e.player.allowFlight = false
                 e.player.isFlying = false
             }

@@ -1,7 +1,7 @@
 package github.gilbertokpl.essentialsk.commands
 
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.player.PlayerData
@@ -41,27 +41,27 @@ class CommandDelHome : CommandCreator {
             val playerData = PlayerData[pName]
 
             if (playerData == null) {
-                s.sendMessage(GeneralLang.generalPlayerNotExist)
+                s.sendMessage(LangConfig.generalPlayerNotExist)
                 return false
             }
 
             if (split.size < 2) {
                 s.sendMessage(
-                    GeneralLang.homesHomeOtherList.replace("%player%", pName)
+                    LangConfig.homesHomeOtherList.replace("%player%", pName)
                         .replace("%list%", playerData.getHomeList().toString())
                 )
                 return false
             }
 
             if (!playerData.getHomeList().contains(split[1])) {
-                s.sendMessage(GeneralLang.homesNameDontExist)
+                s.sendMessage(LangConfig.homesNameDontExist)
                 return false
             }
 
             playerData.delHome(split[1])
 
             s.sendMessage(
-                GeneralLang.homesHomeOtherRemoved.replace("%player%", pName)
+                LangConfig.homesHomeOtherRemoved.replace("%player%", pName)
                     .replace("%home%", split[1])
             )
             return false
@@ -75,13 +75,13 @@ class CommandDelHome : CommandCreator {
 
         //check if home don't exist
         if (!playerInstance.homeCache.contains(nameHome)) {
-            p.sendMessage(GeneralLang.homesNameDontExist)
+            p.sendMessage(LangConfig.homesNameDontExist)
             return false
         }
 
         playerInstance.delHome(nameHome)
 
-        p.sendMessage(GeneralLang.homesHomeRemoved.replace("%home%", nameHome))
+        p.sendMessage(LangConfig.homesHomeRemoved.replace("%home%", nameHome))
         return false
     }
 }

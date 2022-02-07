@@ -3,8 +3,8 @@ package github.gilbertokpl.essentialsk.data
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.MainConfig
-import github.gilbertokpl.essentialsk.configs.StartLang
+import github.gilbertokpl.essentialsk.config.files.MainConfig
+import github.gilbertokpl.essentialsk.config.otherConfigs.StartLang
 import github.gilbertokpl.essentialsk.data.tables.KitsDataSQL
 import github.gilbertokpl.essentialsk.data.tables.PlayerDataSQL
 import github.gilbertokpl.essentialsk.data.tables.SpawnDataSQL

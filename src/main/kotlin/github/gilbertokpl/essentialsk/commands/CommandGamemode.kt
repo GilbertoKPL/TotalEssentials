@@ -1,8 +1,8 @@
 package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.configs.GeneralLang
-import github.gilbertokpl.essentialsk.configs.MainConfig
+import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
@@ -35,7 +35,7 @@ class CommandGamemode : CommandCreator {
 
             //check if player is in same gamemode
             if (s.gameMode == playerGameMode) {
-                s.sendMessage(GeneralLang.gamemodeSameGamemode)
+                s.sendMessage(LangConfig.gamemodeSameGamemode)
                 return false
             }
 
@@ -43,7 +43,7 @@ class CommandGamemode : CommandCreator {
                 playerGameMode, s
             )
             s.sendMessage(
-                GeneralLang.gamemodeUseSuccess.replace(
+                LangConfig.gamemodeUseSuccess.replace(
                     "%gamemode%",
                     playerGameMode.name.lowercase()
                 )
@@ -55,19 +55,19 @@ class CommandGamemode : CommandCreator {
 
             //check perms
             if (s is Player && !s.hasPermission("essentialsk.commands.gamemode.other")) {
-                s.sendMessage(GeneralLang.generalNotPerm)
+                s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
             //check if player exist
             val p = EssentialsK.instance.server.getPlayer(args[1]) ?: run {
-                s.sendMessage(GeneralLang.generalPlayerNotOnline)
+                s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             //check if player is in same gamemode
             if (p.gameMode == playerGameMode) {
-                s.sendMessage(GeneralLang.gamemodeSameOtherGamemode)
+                s.sendMessage(LangConfig.gamemodeSameOtherGamemode)
                 return false
             }
 
@@ -76,13 +76,13 @@ class CommandGamemode : CommandCreator {
             )
 
             p.sendMessage(
-                GeneralLang.gamemodeUseOtherSuccess.replace(
+                LangConfig.gamemodeUseOtherSuccess.replace(
                     "%gamemode%",
                     playerGameMode.name.lowercase()
                 )
             )
             s.sendMessage(
-                GeneralLang.gamemodeSendSuccessOtherMessage.replace("%player%", p.name).replace(
+                LangConfig.gamemodeSendSuccessOtherMessage.replace("%player%", p.name).replace(
                     "%gamemode%",
                     playerGameMode.name.lowercase()
                 )
