@@ -1,5 +1,9 @@
 package github.gilbertokpl.essentialsk.economy
 
+import github.gilbertokpl.essentialsk.player.PlayerData
+import github.gilbertokpl.essentialsk.player.modify.MoneyCache.addMoney
+import github.gilbertokpl.essentialsk.player.modify.MoneyCache.getMoney
+import github.gilbertokpl.essentialsk.player.modify.MoneyCache.takeMoney
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.OfflinePlayer
@@ -33,76 +37,96 @@ class EconomyHolder : Economy {
         return "coin"
     }
 
-    override fun hasAccount(playerName: String?): Boolean {
-        TODO("Not yet implemented")
+    override fun hasAccount(playerName: String): Boolean {
+        return PlayerData[playerName] != null
     }
 
-    override fun hasAccount(player: OfflinePlayer?): Boolean {
-        TODO("Not yet implemented")
+    override fun hasAccount(player: OfflinePlayer): Boolean {
+        return PlayerData[player] != null
     }
 
-    override fun hasAccount(playerName: String?, worldName: String?): Boolean {
-        TODO("Not yet implemented")
+    override fun hasAccount(playerName: String, worldName: String): Boolean {
+        return hasAccount(playerName)
     }
 
-    override fun hasAccount(player: OfflinePlayer?, worldName: String?): Boolean {
-        TODO("Not yet implemented")
+    override fun hasAccount(player: OfflinePlayer, worldName: String): Boolean {
+        return hasAccount(player)
     }
 
-    override fun getBalance(playerName: String?): Double {
-        TODO("Not yet implemented")
+    override fun getBalance(playerName: String): Double {
+        return PlayerData[playerName]?.getMoney() ?: 0.0
     }
 
-    override fun getBalance(player: OfflinePlayer?): Double {
-        TODO("Not yet implemented")
+    override fun getBalance(player: OfflinePlayer): Double {
+        return PlayerData[player]?.getMoney() ?: 0.0
     }
 
-    override fun getBalance(playerName: String?, world: String?): Double {
-        TODO("Not yet implemented")
+    override fun getBalance(playerName: String, world: String?): Double {
+        return getBalance(playerName)
     }
 
-    override fun getBalance(player: OfflinePlayer?, world: String?): Double {
-        TODO("Not yet implemented")
+    override fun getBalance(player: OfflinePlayer, world: String?): Double {
+        return getBalance(player)
     }
 
-    override fun has(playerName: String?, amount: Double): Boolean {
-        TODO("Not yet implemented")
+    override fun has(playerName: String, amount: Double): Boolean {
+        return amount < (PlayerData[playerName]?.moneyCache ?: return false)
     }
 
-    override fun has(player: OfflinePlayer?, amount: Double): Boolean {
-        TODO("Not yet implemented")
+    override fun has(player: OfflinePlayer, amount: Double): Boolean {
+        return amount < (PlayerData[player]?.moneyCache ?: return false)
     }
 
-    override fun has(playerName: String?, worldName: String?, amount: Double): Boolean {
-        TODO("Not yet implemented")
+    override fun has(playerName: String, worldName: String?, amount: Double): Boolean {
+        return has(playerName, amount)
     }
 
-    override fun has(player: OfflinePlayer?, worldName: String?, amount: Double): Boolean {
-        TODO("Not yet implemented")
+    override fun has(player: OfflinePlayer, worldName: String?, amount: Double): Boolean {
+        return has(player, amount)
     }
 
-    override fun withdrawPlayer(playerName: String?, amount: Double): EconomyResponse {
-        TODO("Not yet implemented")
+    override fun withdrawPlayer(playerName: String, amount: Double): EconomyResponse {
+        val playerData = PlayerData[playerName]
+        return withdrawPlayer(playerData, amount)
     }
 
-    override fun withdrawPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-        TODO("Not yet implemented")
+    override fun withdrawPlayer(player: OfflinePlayer, amount: Double): EconomyResponse {
+        val playerData = PlayerData[player]
+        return withdrawPlayer(playerData, amount)
     }
 
-    override fun withdrawPlayer(playerName: String?, worldName: String?, amount: Double): EconomyResponse {
-        TODO("Not yet implemented")
+    private fun withdrawPlayer(playerData: PlayerData?, amount: Double) : EconomyResponse {
+        if (playerData != null && amount < playerData.moneyCache ) {
+            playerData.takeMoney(amount)
+            return EconomyResponse(amount, playerData.moneyCache, EconomyResponse.ResponseType.SUCCESS, "")
+        }
+        return EconomyResponse(amount, playerData?.moneyCache ?: 0.0, EconomyResponse.ResponseType.FAILURE, "player does not have a money")
     }
 
-    override fun withdrawPlayer(player: OfflinePlayer?, worldName: String?, amount: Double): EconomyResponse {
-        TODO("Not yet implemented")
+    override fun withdrawPlayer(playerName: String, worldName: String?, amount: Double): EconomyResponse {
+        return withdrawPlayer(playerName, amount)
     }
 
-    override fun depositPlayer(playerName: String?, amount: Double): EconomyResponse {
-        TODO("Not yet implemented")
+    override fun withdrawPlayer(player: OfflinePlayer, worldName: String?, amount: Double): EconomyResponse {
+       return withdrawPlayer(player, amount)
     }
 
-    override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-        TODO("Not yet implemented")
+    override fun depositPlayer(playerName: String, amount: Double): EconomyResponse {
+        val playerData = PlayerData[playerName]
+        return depositPlayer(playerData, amount)
+    }
+
+    override fun depositPlayer(player: OfflinePlayer, amount: Double): EconomyResponse {
+        val playerData = PlayerData[player]
+        return depositPlayer(playerData, amount)
+    }
+
+    private fun depositPlayer(playerData: PlayerData?, amount: Double) : EconomyResponse {
+        if (playerData != null) {
+            playerData.addMoney(amount)
+            return EconomyResponse(amount, playerData.moneyCache, EconomyResponse.ResponseType.SUCCESS, "")
+        }
+        return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "player does not have a money")
     }
 
     override fun depositPlayer(playerName: String?, worldName: String?, amount: Double): EconomyResponse {
@@ -162,18 +186,18 @@ class EconomyHolder : Economy {
     }
 
     override fun createPlayerAccount(playerName: String?): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun createPlayerAccount(player: OfflinePlayer?): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun createPlayerAccount(playerName: String?, worldName: String?): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun createPlayerAccount(player: OfflinePlayer?, worldName: String?): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 }

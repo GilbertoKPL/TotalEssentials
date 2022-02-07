@@ -1,7 +1,6 @@
 package github.gilbertokpl.essentialsk.util
 
 import github.gilbertokpl.essentialsk.EssentialsK
-import github.gilbertokpl.essentialsk.manager.EType
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandMap
@@ -10,7 +9,6 @@ import org.bukkit.entity.Player
 import org.simpleyaml.configuration.file.YamlFile
 import java.io.File
 import java.lang.reflect.Field
-import java.lang.reflect.Type
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -41,29 +39,6 @@ internal object ReflectUtil {
             commandMap.getCommand(cmd)?.unregister(commandMap)
         } catch (e: Throwable) {
             e.printStackTrace()
-        }
-    }
-
-    fun setValuesOfClass(cl: Class<*>, clInstance: Any, config: YamlFile) {
-        for (it in cl.declaredFields) {
-            val checkedValue = checkTypeField(it.genericType) ?: continue
-
-            val nameFieldComplete = nameFieldHelper(it.name)
-
-            val value = checkedValue.getValueConfig(config, nameFieldComplete) ?: continue
-            it.set(clInstance, value)
-        }
-    }
-
-    fun setValuesFromClass(cl: Class<*>, clInstance: Any, config: YamlFile) {
-        for (it in cl.declaredFields) {
-            val checkedValue = checkTypeField(it.genericType) ?: continue
-
-            val nameFieldComplete = nameFieldHelper(it.name)
-
-            val value = checkedValue.setValueConfig(config, nameFieldComplete) ?: continue
-            value.set(nameFieldComplete, it.get(clInstance))
-            value.save(File(config.filePath))
         }
     }
 
@@ -112,21 +87,6 @@ internal object ReflectUtil {
         return nameFieldComplete
     }
 
-
-    private fun checkTypeField(type: Type): EType? {
-        return when (type.typeName!!.lowercase()) {
-            "java.lang.string" -> EType.STRING
-            "java.util.list<java.lang.string>" -> EType.STRING_LIST
-            "java.lang.boolean" -> EType.BOOLEAN
-            "boolean" -> EType.BOOLEAN
-            "java.lang.integer" -> EType.INTEGER
-            "integer" -> EType.INTEGER
-            "int" -> EType.INTEGER
-            else -> {
-                null
-            }
-        }
-    }
 
     fun getHealth(p: Player): Double {
         return try {

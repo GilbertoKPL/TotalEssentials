@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.loops
+package github.gilbertokpl.essentialsk.manager.loops
 
 import github.gilbertokpl.essentialsk.configs.OtherConfig
 import github.gilbertokpl.essentialsk.util.PlayerUtil

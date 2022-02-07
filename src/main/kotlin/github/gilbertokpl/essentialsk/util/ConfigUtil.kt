@@ -313,6 +313,7 @@ internal object ConfigUtil {
         //comments
         for (FileKeys in checkerYaml.getValues(true)) {
             val comment = toCheckYaml.getComment(FileKeys.key)
+            println(comment)
             if (comment == null) {
                 checkerYaml.setComment(FileKeys.key, null)
                 continue

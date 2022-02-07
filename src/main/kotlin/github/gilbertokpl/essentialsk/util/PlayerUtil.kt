@@ -101,16 +101,33 @@ internal object PlayerUtil {
         }
     }
 
-    fun sendToSpawn(p: Player) {
-        if (MainConfig.spawnSendToSpawnOnLogin) {
-            val loc = SpawnData["spawn"] ?: run {
-                if (p.hasPermission("*")) {
-                    p.sendMessage(GeneralLang.spawnSendNotSet)
-                }
-                return
-            }
-            p.teleport(loc)
+    fun getPlayerUUID(playerName: String): String {
+        return if (EssentialsK.instance.server.onlineMode) {
+            val jsonPlayer = JsonParser.parseString(
+                IOUtils.toString(
+                    URL("https://api.mojang.com/users/profiles/minecraft/${playerName.lowercase()}"),
+                    "UTF-8"
+                )
+            ).asJsonObject
+            jsonPlayer.get("id").asString
+        } else {
+            playerName.lowercase()
         }
+    }
+
+    fun sendToSpawn(p: Player) {
+        try {
+            if (MainConfig.spawnSendToSpawnOnLogin) {
+                val loc = SpawnData["spawn"] ?: run {
+                    if (p.hasPermission("*")) {
+                        p.sendMessage(GeneralLang.spawnSendNotSet)
+                    }
+                    return
+                }
+                p.teleport(loc)
+            }
+        }
+        catch (ignored : Exception) { }
     }
 
     fun finishLogin(p: Player, vanishCache: Boolean) {

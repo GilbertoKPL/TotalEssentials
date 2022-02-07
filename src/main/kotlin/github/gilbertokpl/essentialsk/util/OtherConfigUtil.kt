@@ -3,8 +3,8 @@ package github.gilbertokpl.essentialsk.util
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.configs.OtherConfig
-import github.gilbertokpl.essentialsk.loops.AnnounceLoop
-import github.gilbertokpl.essentialsk.loops.DiscordLoop
+import github.gilbertokpl.essentialsk.manager.loops.AnnounceLoop
+import github.gilbertokpl.essentialsk.manager.loops.DiscordLoop
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 internal object OtherConfigUtil {

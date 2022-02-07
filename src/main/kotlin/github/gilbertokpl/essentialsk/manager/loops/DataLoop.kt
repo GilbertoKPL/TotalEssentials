@@ -1,4 +1,4 @@
-package github.gilbertokpl.essentialsk.loops
+package github.gilbertokpl.essentialsk.manager.loops
 
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.data.DataManager

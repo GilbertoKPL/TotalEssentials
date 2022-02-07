@@ -1,10 +1,11 @@
 package github.gilbertokpl.essentialsk
 
 import github.gilbertokpl.essentialsk.api.EssentialsKAPI
+import github.gilbertokpl.essentialsk.config.ConfigManager
 import github.gilbertokpl.essentialsk.configs.GeneralLang
 import github.gilbertokpl.essentialsk.configs.StartLang
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.loops.DataLoop
+import github.gilbertokpl.essentialsk.manager.loops.DataLoop
 import github.gilbertokpl.essentialsk.manager.EColor
 import github.gilbertokpl.essentialsk.player.loader.DataLoader
 import github.gilbertokpl.essentialsk.util.*
@@ -23,7 +24,7 @@ internal class EssentialsK : JavaPlugin() {
         val startInstant = Instant.now()
         println(
             "${EColor.CYAN.color}[${name}]${EColor.RESET.color} " +
-                    "${EColor.YELLOW.color}Carregando Livrarias, porfavor aguarde, primeira vez pode demorar até 30 segundos...${EColor.RESET.color}"
+                    "${EColor.YELLOW.color}Carregando Livrarias, porfavor aguarde, primeira vez pode demorar até 1 minuto...${EColor.RESET.color}"
         )
 
         ApplicationBuilder.appending("essentialsK").downloadDirectoryPath(
@@ -40,7 +41,7 @@ internal class EssentialsK : JavaPlugin() {
                     "${EColor.YELLOW.color}Livraria carregada em ${timeTakenMillis / 1000} segundos${EColor.RESET.color}"
         )
 
-        ConfigUtil.start()
+        ConfigManager.start()
 
         super.onLoad()
     }

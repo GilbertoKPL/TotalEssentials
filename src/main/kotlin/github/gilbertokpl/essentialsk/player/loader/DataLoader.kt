@@ -37,6 +37,7 @@ object DataLoader {
                     flyCache = i[PlayerDataSQL.flyTable],
                     backLocation = LocationSerializer.deserialize(i[PlayerDataSQL.backTable]),
                     speedCache = i[PlayerDataSQL.speedTable],
+                    moneyCache = i[PlayerDataSQL.moneyTable]
                 )
             }
         }

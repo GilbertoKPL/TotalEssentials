@@ -3,6 +3,7 @@ package github.gilbertokpl.essentialsk.player
 import github.gilbertokpl.essentialsk.configs.MainConfig
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import org.bukkit.Location
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 data class PlayerData(
@@ -18,7 +19,7 @@ data class PlayerData(
     var flyCache: Boolean = false,
     var backLocation: Location? = null,
     var speedCache: Int = 1,
-    var moneyCache: Long = 0,
+    var moneyCache: Double = 0.0,
     var inTeleport: Boolean = false,
     var inInvsee: Player? = null
 ) {
@@ -26,9 +27,11 @@ data class PlayerData(
 
         private val playerCacheV2 = HashMap<String, PlayerData>()
 
-        operator fun get(p: Player) = playerCacheV2[PlayerUtil.getPlayerUUID(p)]
+        operator fun get(player: Player) = playerCacheV2[PlayerUtil.getPlayerUUID(player)]
 
-        operator fun get(playerID: String) = playerCacheV2[playerID]
+        operator fun get(offlinePlayer: OfflinePlayer) = playerCacheV2[PlayerUtil.getPlayerUUID(offlinePlayer)]
+
+        operator fun get(PlayerName: String) = playerCacheV2[PlayerUtil.getPlayerUUID(PlayerName)]
 
         operator fun set(playerID: String, value: PlayerData) {
             playerCacheV2[playerID] = value

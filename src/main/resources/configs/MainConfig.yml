@@ -34,6 +34,10 @@ discordbot:
   send-leave-message: false
   # Mudar o assunto do canal a cada 10 minutos, com a mensagem setada na sua lang.
   send-topic-update: false
+# Config do economy integrado.
+money:
+  # Se estiver ativado (true), O recurso será ativado.
+  activated: false
 # Config dos comandos Kits.
 kits:
   # Se estiver ativado (true), O comando será ativado.
@@ -120,13 +124,13 @@ vanish:
 feed:
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Só vai executar se sua fome não estiver cheia, em versões antias pode bugar no true.
+  # Só vai executar se a sua fome não estiver cheia, em versões antias pode bugar no true.
   need-eat-below: false
 # Config dos comandos Heal.
 heal:
   # Se estiver ativado (true), O comando será ativado.
   activated: true
-  # Só vai executar se sua vida não estiver cheia, em versões antias pode bugar no true.
+  # Só vai executar se a sua vida não estiver cheia, em versões antias pode bugar no true.
   need-heal-below: false
 # Config dos comandos Light.
 light:

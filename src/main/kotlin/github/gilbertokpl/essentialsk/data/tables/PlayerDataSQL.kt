@@ -13,5 +13,6 @@ internal object PlayerDataSQL : Table() {
     val flyTable = bool("Fly").default(false)
     val backTable = text("Back").default("")
     val speedTable = integer("Speed").default(1)
+    val moneyTable = double("Money").default(0.0)
     override val primaryKey = PrimaryKey(playerTable)
 }

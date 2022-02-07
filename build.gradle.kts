@@ -62,8 +62,6 @@ dependencies {
         exclude("org.jetbrains", "annotations")
     }
 
-    slim("org.yaml:snakeyaml:1.30")
-
     slim("org.jetbrains:annotations:23.0.0")
 
     slim("org.jetbrains.exposed:exposed-core:$exposedVersion") {
@@ -103,9 +101,7 @@ dependencies {
 
     slim("commons-io:commons-io:2.11.0")
 
-    slim("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2") {
-        exclude("org.yaml", "snakeyaml")
-    }
+    slim("me.carleslc.Simple-YAML:Simple-Yaml:1.7.3")
 
     slim("org.apache.commons:commons-lang3:3.12.0")
 
@@ -385,6 +381,5 @@ bukkit {
         register("essentialsk.bypass.nickblockednicks")  {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.OP
         }
-
     }
 }

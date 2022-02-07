@@ -1,13 +1,13 @@
-package github.gilbertokpl.essentialsk.manager
+package github.gilbertokpl.essentialsk.config.types
 
-import github.gilbertokpl.essentialsk.util.ConfigUtil
+import github.gilbertokpl.essentialsk.config.get.GetValues
 import org.simpleyaml.configuration.file.YamlFile
 
-internal enum class EType {
+enum class Type {
     STRING {
         override fun getValueConfig(yml: YamlFile, value: String): String? {
             if (yml.get(value) == null) return null
-            return ConfigUtil.getString(yml, value)
+            return GetValues.getString(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {
@@ -18,7 +18,7 @@ internal enum class EType {
     STRING_LIST {
         override fun getValueConfig(yml: YamlFile, value: String): List<String>? {
             if (yml.get(value) == null) return null
-            return ConfigUtil.getStringList(yml, value)
+            return GetValues.getStringList(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {
@@ -29,7 +29,7 @@ internal enum class EType {
     BOOLEAN {
         override fun getValueConfig(yml: YamlFile, value: String): Boolean? {
             if (yml.get(value) == null) return null
-            return ConfigUtil.getBoolean(yml, value)
+            return GetValues.getBoolean(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {
@@ -40,7 +40,7 @@ internal enum class EType {
     INTEGER {
         override fun getValueConfig(yml: YamlFile, value: String): Int? {
             if (yml.get(value) == null) return null
-            return ConfigUtil.getInt(yml, value)
+            return GetValues.getInt(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {

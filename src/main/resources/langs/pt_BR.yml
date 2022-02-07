@@ -47,6 +47,9 @@ time:
   days: 'dias'
   day: 'dia'
   day-short: 'd'
+money:
+  money-single: 'coin'
+  money-plural: 'coins'
 kits:
   give-kit-message: '%prefix%&eAlguém do além deu o kit `%kit%&e` para você.'
   give-kit-message-other: '%prefix%&eVocê deu o %kit% &epara o(a) %player%.'
