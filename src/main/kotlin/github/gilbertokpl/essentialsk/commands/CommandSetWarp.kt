@@ -63,7 +63,7 @@ class CommandSetWarp : CommandCreator {
 
             WarpData.set(args[0].lowercase(), loc)
 
-            s.sendMessage(LangConfig.warpsWarpCreated.replace("%warp%", args[0].lowercase()))
+            s.sendMessage(LangConfig.warpsCreated.replace("%warp%", args[0].lowercase()))
 
             return false
         }
@@ -71,7 +71,7 @@ class CommandSetWarp : CommandCreator {
         if (args.size == 1 && s is Player) {
             WarpData.set(args[0].lowercase(), s.location)
 
-            s.sendMessage(LangConfig.warpsWarpCreated.replace("%warp%", args[0].lowercase()))
+            s.sendMessage(LangConfig.warpsCreated.replace("%warp%", args[0].lowercase()))
             return false
         }
 

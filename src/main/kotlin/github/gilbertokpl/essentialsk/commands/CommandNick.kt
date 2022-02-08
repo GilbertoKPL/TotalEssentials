@@ -3,9 +3,9 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.config.files.MainConfig
-import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.NickCache.delNick
 import github.gilbertokpl.essentialsk.player.modify.NickCache.setNick
 import github.gilbertokpl.essentialsk.util.MainUtil
@@ -56,12 +56,12 @@ class CommandNick : CommandCreator {
             if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
                 //check if is empty
                 if (playerCache.nickCache == "") {
-                    s.sendMessage(LangConfig.nicksNickAlreadyOriginal)
+                    s.sendMessage(LangConfig.nicksAlreadyOriginal)
                     return false
                 }
 
                 playerCache.delNick(s)
-                s.sendMessage(LangConfig.nicksNickRemovedSuccess)
+                s.sendMessage(LangConfig.nicksRemovedSuccess)
                 return false
             }
 
@@ -80,7 +80,7 @@ class CommandNick : CommandCreator {
                     return@launch
                 }
 
-                s.sendMessage(LangConfig.nicksNickSuccess.replace("%nick%", nick))
+                s.sendMessage(LangConfig.nicksSuccess.replace("%nick%", nick))
             }
 
             return false
@@ -117,12 +117,12 @@ class CommandNick : CommandCreator {
         if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
             //check if is empty
             if (playerCache.nickCache == "") {
-                s.sendMessage(LangConfig.nicksNickAlreadyOriginalOther)
+                s.sendMessage(LangConfig.nicksAlreadyOriginalOther)
                 return false
             }
             playerCache.delNick(p)
-            s.sendMessage(LangConfig.nicksNickRemovedOtherSuccess)
-            p.sendMessage(LangConfig.nicksNickRemovedOtherPlayerSuccess)
+            s.sendMessage(LangConfig.nicksRemovedOtherSuccess)
+            p.sendMessage(LangConfig.nicksRemovedOtherPlayerSuccess)
             return false
         }
 
@@ -130,8 +130,8 @@ class CommandNick : CommandCreator {
 
         playerCache.setNick(nick, p, true)
 
-        s.sendMessage(LangConfig.nicksNickOtherSuccess.replace("%nick%", nick))
-        p.sendMessage(LangConfig.nicksNickOtherPlayerSuccess.replace("%nick%", nick))
+        s.sendMessage(LangConfig.nickOtherSuccess.replace("%nick%", nick))
+        p.sendMessage(LangConfig.nicksOtherPlayerSuccess.replace("%nick%", nick))
         return false
     }
 }

@@ -33,7 +33,7 @@ internal object ItemUtil {
         if (timeAll >= System.currentTimeMillis() && !p.hasPermission("essentialsk.bypass.kitcatch")) {
             val remainingTime = timeAll - System.currentTimeMillis()
             p.sendMessage(
-                LangConfig.kitsCatchMessage.replace(
+                LangConfig.kitsGetMessage.replace(
                     "%time%",
                     TimeUtil
                         .convertMillisToString(remainingTime, MainConfig.kitsUseShortTime)
@@ -51,7 +51,7 @@ internal object ItemUtil {
             )
         ) {
             playerCache.setKitTime(kit, System.currentTimeMillis())
-            p.sendMessage(LangConfig.kitsCatchSuccess.replace("%kit%", kitCache.fakeNameCache))
+            p.sendMessage(LangConfig.kitsGetSuccess.replace("%kit%", kitCache.fakeNameCache))
         }
     }
 
@@ -126,7 +126,7 @@ internal object ItemUtil {
             } else {
                 //send message if inventory is full
                 p.sendMessage(
-                    LangConfig.kitsCatchNoSpace.replace(
+                    LangConfig.kitsGetNoSpace.replace(
                         "%slots%",
                         (itemsInternal.size - inventorySpace).toString()
                     )

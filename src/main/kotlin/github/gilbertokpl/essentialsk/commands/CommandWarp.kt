@@ -2,10 +2,10 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.config.files.MainConfig
-import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.data.dao.WarpData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -38,7 +38,7 @@ class CommandWarp : CommandCreator {
 
         if (args.isEmpty()) {
             s.sendMessage(
-                LangConfig.warpsWarpList.replace(
+                LangConfig.warpsList.replace(
                     "%list%",
                     WarpData.getList(p).toString()
                 )
@@ -56,7 +56,7 @@ class CommandWarp : CommandCreator {
             //check if not exist
             if (warpInstance == null) {
                 s.sendMessage(
-                    LangConfig.warpsWarpList.replace(
+                    LangConfig.warpsList.replace(
                         "%list%",
                         WarpData.getList(null).toString()
                     )
@@ -86,7 +86,7 @@ class CommandWarp : CommandCreator {
 
         val warpInstance = WarpData[warpName] ?: run {
             p.sendMessage(
-                LangConfig.warpsWarpList.replace(
+                LangConfig.warpsList.replace(
                     "%list%",
                     WarpData.getList(p).toString()
                 )
@@ -125,7 +125,7 @@ class CommandWarp : CommandCreator {
         }
 
         s.sendMessage(
-            LangConfig.warpsSendTimeToTeleport.replace("%warp%", warpName)
+            LangConfig.warpsTimeToTeleport.replace("%warp%", warpName)
                 .replace("%time%", time.toString())
         )
 

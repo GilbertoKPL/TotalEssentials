@@ -24,7 +24,7 @@ class CommandSetSpawn : CommandCreator {
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         SpawnData.set("spawn", (s as Player).location)
-        s.sendMessage(LangConfig.spawnSendSetMessage)
+        s.sendMessage(LangConfig.spawnSetMessage)
         return false
     }
 }

@@ -120,7 +120,7 @@ internal object PlayerUtil {
             if (MainConfig.spawnSendToSpawnOnLogin) {
                 val loc = SpawnData["spawn"] ?: run {
                     if (p.hasPermission("*")) {
-                        p.sendMessage(LangConfig.spawnSendNotSet)
+                        p.sendMessage(LangConfig.spawnNotSet)
                     }
                     return
                 }

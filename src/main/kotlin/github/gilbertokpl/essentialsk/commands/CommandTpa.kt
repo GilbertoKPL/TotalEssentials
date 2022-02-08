@@ -54,7 +54,7 @@ class CommandTpa : CommandCreator {
 
         TpaData.createNewTpa(s, p, time)
 
-        s.sendMessage(LangConfig.tpaSendSuccess.replace("%player%", p.name))
+        s.sendMessage(LangConfig.tpaSuccess.replace("%player%", p.name))
         p.sendMessage(
             LangConfig.tpaOtherReceived.replace("%player%", s.name).replace("%time%", time.toString())
         )

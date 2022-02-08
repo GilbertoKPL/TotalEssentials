@@ -40,7 +40,7 @@ class PlayerChangeWorld : Listener {
                     e.player.isFlying = true
                     return@schedule
                 }
-                e.player.sendMessage(LangConfig.flySendDisabledWorld)
+                e.player.sendMessage(LangConfig.flyDisabledWorld)
                 e.player.allowFlight = false
                 e.player.isFlying = false
             }

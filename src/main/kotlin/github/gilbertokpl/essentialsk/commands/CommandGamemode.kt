@@ -3,9 +3,9 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.config.files.MainConfig
-import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.GameModeCache.setGamemode
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import org.bukkit.command.Command
@@ -82,7 +82,7 @@ class CommandGamemode : CommandCreator {
                 )
             )
             s.sendMessage(
-                LangConfig.gamemodeSendSuccessOtherMessage.replace("%player%", p.name).replace(
+                LangConfig.gamemodeSuccessOtherMessage.replace("%player%", p.name).replace(
                     "%gamemode%",
                     playerGameMode.name.lowercase()
                 )

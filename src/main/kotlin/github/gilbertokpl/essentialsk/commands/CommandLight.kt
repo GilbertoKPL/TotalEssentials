@@ -3,9 +3,9 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.config.files.MainConfig
-import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.LightCache.switchLight
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -48,15 +48,15 @@ class CommandLight : CommandCreator {
             }
 
             if (PlayerData[p]?.switchLight(p) ?: return false) {
-                p.sendMessage(LangConfig.lightSendOtherActive)
+                p.sendMessage(LangConfig.lightOtherActive)
                 s.sendMessage(
-                    LangConfig.lightSendActivatedOther
+                    LangConfig.lightActivatedOther
                         .replace("%player%", p.name.lowercase())
                 )
             } else {
-                p.sendMessage(LangConfig.lightSendOtherDisable)
+                p.sendMessage(LangConfig.lightOtherDisable)
                 s.sendMessage(
-                    LangConfig.lightSendDisabledOther
+                    LangConfig.lightDisabledOther
                         .replace("%player%", p.name.lowercase())
                 )
             }
@@ -65,9 +65,9 @@ class CommandLight : CommandCreator {
         }
 
         if (PlayerData[s as Player]?.switchLight(s) ?: return false) {
-            s.sendMessage(LangConfig.lightSendActive)
+            s.sendMessage(LangConfig.lightActive)
         } else {
-            s.sendMessage(LangConfig.lightSendDisable)
+            s.sendMessage(LangConfig.lightDisable)
         }
 
         return false

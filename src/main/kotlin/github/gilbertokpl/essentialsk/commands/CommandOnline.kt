@@ -23,7 +23,7 @@ class CommandOnline : CommandCreator {
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         s.sendMessage(
-            LangConfig.onlineSendOnline.replace(
+            LangConfig.onlineMessage.replace(
                 "%amount%",
                 PlayerUtil.getIntOnlinePlayers(MainConfig.onlineCountRemoveVanish)
                     .toString()

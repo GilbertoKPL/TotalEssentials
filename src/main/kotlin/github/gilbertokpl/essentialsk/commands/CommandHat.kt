@@ -34,7 +34,7 @@ class CommandHat : CommandCreator {
         }
 
         if (itemHand.type == Material.AIR) {
-            p.sendMessage(LangConfig.hatSendNotFound)
+            p.sendMessage(LangConfig.hatNotFound)
             return false
         }
 
@@ -49,7 +49,7 @@ class CommandHat : CommandCreator {
         }
 
 
-        p.sendMessage(LangConfig.hatSendSuccess)
+        p.sendMessage(LangConfig.hatSuccess)
 
         return false
     }

@@ -11,6 +11,8 @@ val buildVersion = "1.17.1"
 
 buildscript {
     repositories {
+        google()
+        mavenCentral()
         maven {
             url = uri("https://jitpack.io")
         }
@@ -22,25 +24,17 @@ buildscript {
 
 plugins {
     kotlin("jvm") version "1.6.10"
-    id("io.gitlab.arturbosch.detekt") version "1.19.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1"
 }
 
 apply(plugin = "github.slimjar")
 
-detekt {
-    config = files("$projectDir/config/detekt.yml")
-    autoCorrect = true
-    ignoreFailures = true
-}
-
-allprojects {
-    repositories {
-        mavenCentral()
-        maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-        maven("https://jitpack.io")
-    }
+repositories {
+    google()
+    mavenCentral()
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -148,9 +142,6 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
 }
 
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-    jvmTarget = "1.8"
-}
 bukkit {
     main = "$group.EssentialsK"
     author = "Gilberto"

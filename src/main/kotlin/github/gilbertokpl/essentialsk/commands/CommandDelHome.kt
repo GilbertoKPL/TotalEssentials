@@ -47,7 +47,7 @@ class CommandDelHome : CommandCreator {
 
             if (split.size < 2) {
                 s.sendMessage(
-                    LangConfig.homesHomeOtherList.replace("%player%", pName)
+                    LangConfig.homesOtherList.replace("%player%", pName)
                         .replace("%list%", playerData.getHomeList().toString())
                 )
                 return false
@@ -61,7 +61,7 @@ class CommandDelHome : CommandCreator {
             playerData.delHome(split[1])
 
             s.sendMessage(
-                LangConfig.homesHomeOtherRemoved.replace("%player%", pName)
+                LangConfig.homesOtherRemoved.replace("%player%", pName)
                     .replace("%home%", split[1])
             )
             return false
@@ -81,7 +81,7 @@ class CommandDelHome : CommandCreator {
 
         playerInstance.delHome(nameHome)
 
-        p.sendMessage(LangConfig.homesHomeRemoved.replace("%home%", nameHome))
+        p.sendMessage(LangConfig.homesRemoved.replace("%home%", nameHome))
         return false
     }
 }

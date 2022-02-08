@@ -4,10 +4,10 @@ import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.DataManager
 import github.gilbertokpl.essentialsk.data.dao.KitData
-import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGui
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory.editKitGuiItems
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory.kitGui
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.ItemUtil
 import github.gilbertokpl.essentialsk.util.PermissionUtil
@@ -80,12 +80,12 @@ class InventoryClick : Listener {
                 editKitGui(p, inventoryName[1])
             }
             if (number == 44) {
-                if (meta.displayName == LangConfig.kitsCatchIcon) {
+                if (meta.displayName == LangConfig.kitsGetIcon) {
                     ItemUtil.pickupKit(p, inventoryName[1])
                     p.closeInventory()
                     return true
                 }
-                if (meta.displayName == LangConfig.kitsCatchIconNotCatch) {
+                if (meta.displayName == LangConfig.kitsGetIconNotCatch) {
                     kitGui(inventoryName[1], inventoryName[2], p)
                 }
             }

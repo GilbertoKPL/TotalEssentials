@@ -3,9 +3,9 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.config.files.MainConfig
-import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.FlyCache.switchFly
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -49,25 +49,25 @@ class CommandFly : CommandCreator {
             }
 
             if (PlayerData[p]?.switchFly(p) ?: return false) {
-                p.sendMessage(LangConfig.flySendOtherActive)
-                s.sendMessage(LangConfig.flySendActivatedOther.replace("%player", p.name))
+                p.sendMessage(LangConfig.flyOtherActive)
+                s.sendMessage(LangConfig.flyActivatedOther.replace("%player", p.name))
             } else {
-                p.sendMessage(LangConfig.flySendOtherDisable)
-                s.sendMessage(LangConfig.flySendDisabledOther.replace("%player", p.name))
+                p.sendMessage(LangConfig.flyOtherDisable)
+                s.sendMessage(LangConfig.flyDisabledOther.replace("%player", p.name))
             }
 
             return false
         }
 
         if (MainConfig.flyDisabledWorlds.contains((s as Player).location.world!!.name.lowercase())) {
-            s.sendMessage(LangConfig.flySendDisabledWorld)
+            s.sendMessage(LangConfig.flyDisabledWorld)
             return false
         }
 
         if (PlayerData[s]?.switchFly(s) ?: return false) {
-            s.sendMessage(LangConfig.flySendActive)
+            s.sendMessage(LangConfig.flyActive)
         } else {
-            s.sendMessage(LangConfig.flySendDisable)
+            s.sendMessage(LangConfig.flyDisable)
         }
         return false
     }

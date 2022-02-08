@@ -3,9 +3,9 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.config.files.MainConfig
-import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.VanishCache.switchVanish
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -48,20 +48,20 @@ class CommandVanish : CommandCreator {
             }
 
             if (PlayerData[p]?.switchVanish(p) ?: return false) {
-                p.sendMessage(LangConfig.vanishSendOtherActive)
-                s.sendMessage(LangConfig.vanishSendActivatedOther.replace("%player%", p.name))
+                p.sendMessage(LangConfig.vanishOtherActive)
+                s.sendMessage(LangConfig.vanishActivatedOther.replace("%player%", p.name))
             } else {
-                p.sendMessage(LangConfig.vanishSendOtherDisable)
-                s.sendMessage(LangConfig.vanishSendDisabledOther.replace("%player%", p.name))
+                p.sendMessage(LangConfig.vanishOtherDisable)
+                s.sendMessage(LangConfig.vanishDisabledOther.replace("%player%", p.name))
             }
 
             return false
         }
 
         if (PlayerData[s as Player]?.switchVanish(s) ?: return false) {
-            s.sendMessage(LangConfig.vanishSendActive)
+            s.sendMessage(LangConfig.vanishActive)
         } else {
-            s.sendMessage(LangConfig.vanishSendDisable)
+            s.sendMessage(LangConfig.vanishDisable)
         }
         return false
     }

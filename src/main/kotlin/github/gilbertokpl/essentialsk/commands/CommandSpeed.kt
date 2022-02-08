@@ -3,9 +3,9 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.config.files.MainConfig
-import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.SpeedCache.clearSpeed
 import github.gilbertokpl.essentialsk.player.modify.SpeedCache.setSpeed
 import org.bukkit.command.Command
@@ -39,7 +39,7 @@ class CommandSpeed : CommandCreator {
 
             if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
                 playerCache.clearSpeed(s)
-                s.sendMessage(LangConfig.speedSendRemove)
+                s.sendMessage(LangConfig.speedRemove)
                 return false
             }
 
@@ -52,12 +52,12 @@ class CommandSpeed : CommandCreator {
 
             //check if number is 0-10
             if (args[0].toInt() > 10 || args[0].toInt() < 0) {
-                s.sendMessage(LangConfig.speedSendIncorrectValue)
+                s.sendMessage(LangConfig.speedIncorrectValue)
                 return false
             }
 
             playerCache.setSpeed(args[0].toInt(), s)
-            s.sendMessage(LangConfig.speedSendSuccess.replace("%value%", args[0]))
+            s.sendMessage(LangConfig.speedSuccess.replace("%value%", args[0]))
 
 
             return false
@@ -81,21 +81,21 @@ class CommandSpeed : CommandCreator {
 
         if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
             playerCache.clearSpeed(p)
-            s.sendMessage(LangConfig.speedSendRemoveOther.replace("%player%", p.name))
-            p.sendMessage(LangConfig.speedSendOtherRemove)
+            s.sendMessage(LangConfig.speedRemoveOther.replace("%player%", p.name))
+            p.sendMessage(LangConfig.speedOtherRemove)
             return false
         }
 
         //check if number is 0-10
         if (args[1].toInt() > 10 || args[1].toInt() < 0) {
-            s.sendMessage(LangConfig.speedSendIncorrectValue)
+            s.sendMessage(LangConfig.speedIncorrectValue)
             return false
         }
 
         playerCache.setSpeed(args[1].toInt(), p)
 
-        s.sendMessage(LangConfig.speedSendSuccessOther.replace("%player%", p.name).replace("%value%", args[1]))
-        p.sendMessage(LangConfig.speedSendOtherSuccess.replace("%value%", args[1]))
+        s.sendMessage(LangConfig.speedSuccessOther.replace("%player%", p.name).replace("%value%", args[1]))
+        p.sendMessage(LangConfig.speedOtherSuccess.replace("%value%", args[1]))
         return false
     }
 }

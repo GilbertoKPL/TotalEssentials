@@ -15,7 +15,6 @@ public class LangConfig {
             }
     )
     public static String generalServerPrefix;
-
     @Values(
             {
                     @Value(value = "%prefix%&cEsse comando é somente para player!", lang = Lang.PT_BR),
@@ -23,7 +22,6 @@ public class LangConfig {
             }
     )
     public static String generalOnlyPlayerCommand;
-
     @Values(
             {
                     @Value(value = "%prefix%&cVocê não tem permissão para executar esse comando.", lang = Lang.PT_BR),
@@ -172,10 +170,96 @@ public class LangConfig {
     )
     public static String generalSaveDataSuccess;
 
+    //time
+    @Values(
+            {
+                    @Value(value = "segundos", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeSeconds;
+    @Values(
+            {
+                    @Value(value = "segundo", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeSecond;
+    @Values(
+            {
+                    @Value(value = "s", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeSecondShort;
+    @Values(
+            {
+                    @Value(value = "minutos", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeMinutes;
+    @Values(
+            {
+                    @Value(value = "minuto", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeMinute;
+    @Values(
+            {
+                    @Value(value = "m", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeMinuteShort;
+    @Values(
+            {
+                    @Value(value = "horas", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeHours;
+    @Values(
+            {
+                    @Value(value = "hora", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeHour;
+    @Values(
+            {
+                    @Value(value = "h", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeHourShort;
+    @Values(
+            {
+                    @Value(value = "dias", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeDays;
+    @Values(
+            {
+                    @Value(value = "dia", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeDay;
+    @Values(
+            {
+                    @Value(value = "d", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String timeDayShort;
+
     //kits
     @Values(
             {
-                    @Value(value = "%prefix%&eAlguém do além deu o kit `%kit%&e` para você.", lang = Lang.PT_BR),
+                    @Value(value = "%prefix%&cEsse kit não existe.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
@@ -210,11 +294,46 @@ public class LangConfig {
     public static String kitsEditKitSuccess;
     @Values(
             {
-                    @Value(value = "%prefix%&eTempo do kit setado para %time%.", lang = Lang.PT_BR),
+                    @Value(value = "%prefix%&cTamanho maximo do nome do kit 16 caracteres.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String kitsEditKitTime;
+    public static String kitsNameLength;
+    @Values(
+            {
+                    @Value(value = "&fNome do kit -> %realname%|&eClique para ver o kit", lang = Lang.PT_BR),
+                    @Value(value = "a|b", lang = Lang.EN_US)
+            }
+    )
+    public static List<String> kitsInventoryItemsLore;
+    @Values(
+            {
+                    @Value(value = "&eKit &f%kitrealname%", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String kitsInventoryItemsName;
+    @Values(
+            {
+                    @Value(value = "&eClique aqui para editar o kit", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String kitsInventoryIconEditKitName;
+    @Values(
+            {
+                    @Value(value = "&eVoltar página", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String kitsInventoryIconBackName;
+    @Values(
+            {
+                    @Value(value = "&ePróxima página", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String kitsInventoryIconNextName;
     @Values(
             {
                     @Value(value = "%prefix%&eEditKit - Items", lang = Lang.PT_BR),
@@ -229,6 +348,13 @@ public class LangConfig {
             }
     )
     public static List<String> kitsEditKitInventoryItemsLore;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eTempo do kit setado para %time%.'", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String kitsEditKitTime;
     @Values(
             {
                     @Value(value = "&eEditKit - Tempo", lang = Lang.PT_BR),
@@ -277,6 +403,8 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
+
+
     public static String kitsEditKitInventoryWeightName;
     @Values(
             {
@@ -294,111 +422,54 @@ public class LangConfig {
     public static String kitsEditKitInventoryWeightMessage;
     @Values(
             {
-                    @Value(value = "&eVoltar página", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String kitsInventoryIconBackName;
-    @Values(
-            {
-                    @Value(value = "&ePróxima página", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String kitsInventoryIconNextName;
-    @Values(
-            {
-                    @Value(value = "&eKit &f%kitrealname%", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String kitsInventoryItemsName;
-    @Values(
-            {
-                    @Value(value = "%prefix%&cTamanho maximo do nome do kit 16 caracteres.", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String kitsNameLength;
-    @Values(
-            {
-                    @Value(value = "&fNome do kit -> %realname%|&eClique para ver o kit", lang = Lang.PT_BR),
-                    @Value(value = "a|b", lang = Lang.EN_US)
-            }
-    )
-    public static List<String> kitsInventoryItemsLore;
-    @Values(
-            {
                     @Value(value = "&cFalta %time% para pegar seu kit novamente", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String kitsCatchMessage;
+    public static String kitsGetMessage;
     @Values(
             {
                     @Value(value = "&cClique aqui para pegar o seu kit", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String kitsCatchIcon;
+    public static String kitsGetIcon;
     @Values(
             {
                     @Value(value = "&cVocê não consegue pegar esse kit", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String kitsCatchIconNotCatch;
-    @Values(
-            {
-                    @Value(value = "&eClique aqui para editar o kit", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String kitsInventoryIconEditKitName;
-    @Values(
-            {
-                    @Value(value = "%prefix%&eCrie seu kit com /criarkit (nome do kit).", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String kitsNotExistKits;
-
+    public static String kitsGetIconNotCatch;
     @Values(
             {
                     @Value(value = "&cVocê não tem permissão|", lang = Lang.PT_BR),
                     @Value(value = "a|b", lang = Lang.EN_US)
             }
     )
-    public static List<String> kitsCatchIconLoreNotPerm;
-
+    public static List<String> kitsGetIconLoreNotPerm;
     @Values(
             {
                     @Value(value = "&fFalta|&f%time%|&fPara pegar seu kit", lang = Lang.PT_BR),
                     @Value(value = "a|b", lang = Lang.EN_US)
             }
     )
-    public static List<String> kitsCatchIconLoreTime;
-    @Values(
-            {
-                    @Value(value = "%prefix%&eLista de kits %kits%", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String kitsList;
+    public static List<String> kitsGetIconLoreTime;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê pegou o kit `%kit%&e` com sucesso", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String kitsCatchSuccess;
+    public static String kitsGetSuccess;
     @Values(
             {
                     @Value(value = "%prefix%&cLibere mais %slots% slots para pegar esse kit!", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String kitsCatchNoSpace;
+    public static String kitsGetNoSpace;
+
     @Values(
             {
                     @Value(value = "%prefix%&eVocê deu o %kit% &epara o(a) %player%.", lang = Lang.PT_BR),
@@ -413,92 +484,20 @@ public class LangConfig {
             }
     )
     public static String kitsGiveKitMessage;
-
-    //time
     @Values(
             {
-                    @Value(value = "segundos", lang = Lang.PT_BR),
+                    @Value(value = "%prefix%&eLista de kits %kits%", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String timeSeconds;
+    public static String kitsList;
     @Values(
             {
-                    @Value(value = "segundo", lang = Lang.PT_BR),
+                    @Value(value = "%prefix%&eCrie seu kit com /criarkit (nome do kit).", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String timeSecond;
-    @Values(
-            {
-                    @Value(value = "minutos", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String timeMinutes;
-    @Values(
-            {
-                    @Value(value = "minuto", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String timeMinute;
-    @Values(
-            {
-                    @Value(value = "horas", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String timeHours;
-    @Values(
-            {
-                    @Value(value = "hora", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String timeHour;
-    @Values(
-            {
-                    @Value(value = "dias", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String timeDays;
-    @Values(
-            {
-                    @Value(value = "dia", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String timeDay;
-    @Values(
-            {
-                    @Value(value = "s", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String timeSecondShort;
-    @Values(
-            {
-                    @Value(value = "m", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String timeMinuteShort;
-    @Values(
-            {
-                    @Value(value = "h", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String timeHourShort;
-    @Values(
-            {
-                    @Value(value = "d", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String timeDayShort;
+    public static String kitsNotExistKits;
 
     //nicks
     @Values(
@@ -528,56 +527,56 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String nicksNickSuccess;
+    public static String nicksSuccess;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê acaba de apagar seu nick.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String nicksNickRemovedSuccess;
+    public static String nicksRemovedSuccess;
     @Values(
             {
                     @Value(value = "prefix%&eVocê acaba de setar o nick do player para %nick%&e.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String nicksNickOtherSuccess;
+    public static String nickOtherSuccess;
     @Values(
             {
                     @Value(value = "%prefix%&eAlguém do além acaba de setar o seu nick de %nick%&e.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String nicksNickOtherPlayerSuccess;
+    public static String nicksOtherPlayerSuccess;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê acaba de apagar o nick do player.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String nicksNickRemovedOtherSuccess;
+    public static String nicksRemovedOtherSuccess;
     @Values(
             {
                     @Value(value = "%prefix%&eAlguém do além acaba de apagar seu nick.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String nicksNickRemovedOtherPlayerSuccess;
+    public static String nicksRemovedOtherPlayerSuccess;
     @Values(
             {
                     @Value(value = "%prefix%&cVocê não tem nick para remover.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String nicksNickAlreadyOriginal;
+    public static String nicksAlreadyOriginal;
     @Values(
             {
                     @Value(value = "%prefix%&cEle não tem nick para remover.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String nicksNickAlreadyOriginalOther;
+    public static String nicksAlreadyOriginalOther;
 
     //home
     @Values(
@@ -607,63 +606,63 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String homesSendTimeToTeleport;
+    public static String homesTimeToTeleport;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê acaba de apagar sua home %home%.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String homesHomeRemoved;
+    public static String homesRemoved;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê acaba de apagar uma home %home% do %player%.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String homesHomeOtherRemoved;
+    public static String homesOtherRemoved;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê acaba de criar sua home %home%.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String homesHomeCreated;
+    public static String homesCreated;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê acaba de criar uma home %home% do %player%.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String homesHomeOtherCreated;
+    public static String homesOtherCreated;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê não pode criar mais homes você já alcançou seu limite de %limit%", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String homesHomeLimitCreated;
+    public static String homesLimitMessage;
     @Values(
             {
                     @Value(value = "%prefix%&cEsse mundo está bloqueado de criar homes", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String homesHomeWorldBlocked;
+    public static String homesBlockedWorld;
     @Values(
             {
                     @Value(value = "%prefix%&eLista de homes -> %list%", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String homesHomeList;
+    public static String homesList;
     @Values(
             {
                     @Value(value = "%prefix%&eLista de homes do %player% -> %list%", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String homesHomeOtherList;
+    public static String homesOtherList;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê foi teleportado com sucesso para sua home %home%", lang = Lang.PT_BR),
@@ -714,7 +713,7 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String warpsSendTimeToTeleport;
+    public static String warpsTimeToTeleport;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê foi teleportado com sucesso para warp %warp%.", lang = Lang.PT_BR),
@@ -728,21 +727,21 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String warpsWarpList;
+    public static String warpsList;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê acaba de criar uma warp chamada %warp%.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String warpsWarpCreated;
+    public static String warpsCreated;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê acaba de deleter uma warp chamada %warp%.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String warpsWarpRemoved;
+    public static String warpsRemoved;
     @Values(
             {
                     @Value(value = "%prefix%&cVocê já está esperando um teleporte.", lang = Lang.PT_BR),
@@ -779,7 +778,6 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-
     public static String tpTeleportedOtherSuccess;
 
     //tpa
@@ -789,7 +787,7 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String tpaSendSuccess;
+    public static String tpaSuccess;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê acaba de receber um pedido de teleporte de %player%, você tem %time% segundos para aceita-lo com /tpaccept ou rejeita-lo com /tpdeny.", lang = Lang.PT_BR),
@@ -882,14 +880,14 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String echestSendSuccess;
+    public static String echestSuccess;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê acabou de abrir o enderChest de %player%.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String echestSendOtherSuccess;
+    public static String echestOtherSuccess;
 
     //gamemode
     @Values(
@@ -926,7 +924,7 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String gamemodeSendSuccessOtherMessage;
+    public static String gamemodeSuccessOtherMessage;
 
     //vanish
     @Values(
@@ -935,42 +933,42 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String vanishSendActive;
+    public static String vanishActive;
     @Values(
             {
                     @Value(value = "%prefix%&eSeu vanish foi desativado com sucesso.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String vanishSendDisable;
+    public static String vanishDisable;
     @Values(
             {
                     @Value(value = "%prefix%&eAlguém ativou seu vanish.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String vanishSendOtherActive;
+    public static String vanishOtherActive;
     @Values(
             {
                     @Value(value = "%prefix%&eAlguém desativou seu vanish.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String vanishSendOtherDisable;
+    public static String vanishOtherDisable;
     @Values(
             {
                     @Value(value = "%prefix%&eO Vanish do(a) %player% foi ativado.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String vanishSendActivatedOther;
+    public static String vanishActivatedOther;
     @Values(
             {
                     @Value(value = "%prefix%&eO Vanish do(a) %player% foi desativado.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String vanishSendDisabledOther;
+    public static String vanishDisabledOther;
 
     //feed
     @Values(
@@ -979,35 +977,35 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String feedSendMessage;
+    public static String feedMessage;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê já está cheio seu guloso.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String feedSendFullMessage;
+    public static String feedFullMessage;
     @Values(
             {
                     @Value(value = "%prefix%&eAlguém do além encheu sua barra de comida.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String feedSendOtherMessage;
+    public static String feedOtherMessage;
     @Values(
             {
                     @Value(value = "%prefix%&eO player já está com a barra de comida cheia.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String feedSendOtherFullMessage;
+    public static String feedOtherFullMessage;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê encheu com sucesso a barra de comida do %player%.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String feedSendSuccessOtherMessage;
+    public static String feedSuccessOtherMessage;
 
     //heal
     @Values(
@@ -1016,35 +1014,35 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String healSendMessage;
+    public static String healMessage;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê já está com vida cheia.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String healSendFullMessage;
+    public static String healFullMessage;
     @Values(
             {
                     @Value(value = "%prefix%&eAlguém do além encheu sua barra de vida.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String healSendOtherMessage;
+    public static String healOtherMessage;
     @Values(
             {
                     @Value(value = "%prefix%&eO player já está com vida cheio.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String healSendOtherFullMessage;
+    public static String healOtherFullMessage;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê encheu com sucesso a barra de vida do %player%.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String healSendSuccessOtherMessage;
+    public static String healSuccessOtherMessage;
 
     //light
     @Values(
@@ -1053,42 +1051,42 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String lightSendActive;
+    public static String lightActive;
     @Values(
             {
                     @Value(value = "%prefix%&eA Luz foi desativado com sucesso.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String lightSendDisable;
+    public static String lightDisable;
     @Values(
             {
                     @Value(value = "%prefix%&eAlguém ativou sua Luz.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String lightSendOtherActive;
+    public static String lightOtherActive;
     @Values(
             {
                     @Value(value = "%prefix%&eAlguém desativou sua Luz.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String lightSendOtherDisable;
+    public static String lightOtherDisable;
     @Values(
             {
                     @Value(value = "%prefix%&eA Luz do(a) %player% foi ativado.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String lightSendActivatedOther;
+    public static String lightActivatedOther;
     @Values(
             {
                     @Value(value = "%prefix%&eA Luz do(a) %player% foi desativado.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String lightSendDisabledOther;
+    public static String lightDisabledOther;
 
     //back
     @Values(
@@ -1097,14 +1095,14 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String backSendNotToBack;
+    public static String backNotToBack;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê voltou a sua ultima localização.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String backSendSuccess;
+    public static String backSuccess;
 
     //spawn
     @Values(
@@ -1113,49 +1111,49 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String spawnSendMessage;
+    public static String spawnMessage;
     @Values(
             {
                     @Value(value = "%prefix%&eAlguém teleportou você para o spawn.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String spawnSendOtherMessage;
+    public static String spawnOtherMessage;
     @Values(
             {
                     @Value(value = "%prefix%&eVocê teleportou com sucesso o(a) %player% para o spawn.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String spawnSendSuccessOtherMessage;
+    public static String spawnSuccessOtherMessage;
     @Values(
             {
                     @Value(value = "%prefix%&cO Spawn ainda não está setado, utilize /setspawn para setar.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String spawnSendNotSet;
+    public static String spawnNotSet;
     @Values(
             {
                     @Value(value = "%prefix%&eSpawn setado com sucesso.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String spawnSendSetMessage;
+    public static String spawnSetMessage;
     @Values(
             {
                     @Value(value = "%prefix%&eEm %time% segundos você será teleportado para o spawn.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String spawnSendTimeToTeleport;
+    public static String spawnTimeToTeleport;
     @Values(
             {
                     @Value(value = "prefix%&cVocê já está esperando um teleporte.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String spawnSendInTeleport;
+    public static String spawnInTeleport;
 
     //fly
     @Values(
@@ -1164,49 +1162,49 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String flySendActive;
+    public static String flyActive;
     @Values(
             {
                     @Value(value = "%prefix%&eSeu fly foi desativado com sucesso.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String flySendDisable;
+    public static String flyDisable;
     @Values(
             {
                     @Value(value = "%prefix%&eAlguém ativou seu fly.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String flySendOtherActive;
+    public static String flyOtherActive;
     @Values(
             {
                     @Value(value = "%prefix%&eAlguém desativou seu fly.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String flySendOtherDisable;
+    public static String flyOtherDisable;
     @Values(
             {
                     @Value(value = "%prefix%&eO fly do(a) %player% foi ativado.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String flySendActivatedOther;
+    public static String flyActivatedOther;
     @Values(
             {
                     @Value(value = "%prefix%&eO fly do(a) %player% foi desativado.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String flySendDisabledOther;
+    public static String flyDisabledOther;
     @Values(
             {
                     @Value(value = "%prefix%&cEste mundo está com fly desativado.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String flySendDisabledWorld;
+    public static String flyDisabledWorld;
 
     //online
     @Values(
@@ -1215,7 +1213,114 @@ public class LangConfig {
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
-    public static String onlineSendOnline;
+    public static String onlineMessage;
+
+    //tphere
+    @Values(
+            {
+                    @Value(value = "%prefix%&eVocê teleportou com sucesso o(a) %player% para você.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String tphereTeleportedSuccess;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eVocê foi teleportado do além.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String tphereTeleportedOtherSuccess;
+
+    //trash
+    @Values(
+            {
+                    @Value(value = "&cLixeira", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String trashMenuName;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&eSua velocidade foi setado para %value%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String speedSuccess;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eSua velocidade voltou para o padrão.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String speedRemove;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eAlguém setou sua velocidade para %value%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String speedOtherSuccess;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eAlguém setou sua velocidade para padrão.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String speedOtherRemove;
+    @Values(
+            {
+                    @Value(value = "prefix%&eA Velocidade do(a) %player% foi foi setado para %value%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String speedSuccessOther;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eA Velocidade do(a) %player% voltou para o padrão.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String speedRemoveOther;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eA Velocidade pode ser setado de 0 a 10.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String speedIncorrectValue;
+
+    //hat
+    @Values(
+            {
+                    @Value(value = "%prefix%&eVocê acaba de colocar um Chapéu.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String hatSuccess;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eFoi só encontrado ar em sua mão, coloque algum item!", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String hatNotFound;
+
+    //invsee
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê não pode ver o seu próprio inventário.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String invseeSameName;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cO player Saiu e por isso foi fechado o inventário.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String invseePlayerLeave;
 
     //death messages
     @Values(
@@ -1301,142 +1406,44 @@ public class LangConfig {
     public static String discordchatNoChatId;
     @Values(
             {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
+                    @Value(value = "**`%group% %player%`**: %message%", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
     public static String discordchatMessageToDiscordPattern;
     @Values(
             {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
+                    @Value(value = "&e[Disc] %player%: %message%", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
     public static String discordchatDiscordToServerPattern;
     @Values(
             {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
+                    @Value(value = "%author%, Sua mensagem não foi enviada ao servidor pois tinha mais que %lenght% caracteres", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
     public static String discordchatMessageNotSendToServer;
     @Values(
             {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
+                    @Value(value = "%player% Entrou no servidor.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
     public static String discordchatDiscordSendLoginMessage;
     @Values(
             {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
+                    @Value(value = "%player% Saiu do servidor.", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
     public static String discordchatDiscordSendLeaveMessage;
     @Values(
             {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
+                    @Value(value = "Online: %online% players, Tempo Online: %online_time%, Atualizado: %time%", lang = Lang.PT_BR),
                     @Value(value = "TEST", lang = Lang.EN_US)
             }
     )
     public static String discordchatDiscordTopic;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String tphereTeleportedSuccess;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String tphereTeleportedOtherSuccess;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String trashMenuName;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String speedSendSuccess;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String speedSendRemove;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String speedSendOtherSuccess;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String speedSendOtherRemove;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String speedSendSuccessOther;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String speedSendRemoveOther;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String speedSendIncorrectValue;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String hatSendSuccess;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String hatSendNotFound;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String invseeSameName;
-    @Values(
-            {
-                    @Value(value = "TESTE", lang = Lang.PT_BR),
-                    @Value(value = "TEST", lang = Lang.EN_US)
-            }
-    )
-    public static String invseePlayerLeave;
 }

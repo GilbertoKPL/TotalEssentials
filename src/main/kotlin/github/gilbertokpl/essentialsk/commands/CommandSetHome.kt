@@ -2,9 +2,9 @@ package github.gilbertokpl.essentialsk.commands
 
 import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.config.files.MainConfig
-import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.HomeCache.getHomeList
 import github.gilbertokpl.essentialsk.player.modify.HomeCache.setHome
 import github.gilbertokpl.essentialsk.util.MainUtil
@@ -48,7 +48,7 @@ class CommandSetHome : CommandCreator {
 
                 if (split.size < 2) {
                     s.sendMessage(
-                        LangConfig.homesHomeOtherList.replace("%player%", pName)
+                        LangConfig.homesOtherList.replace("%player%", pName)
                             .replace("%list%", playerData.getHomeList().toString())
                     )
                     return false
@@ -62,7 +62,7 @@ class CommandSetHome : CommandCreator {
             playerData.setHome(split[1].lowercase(), (s as Player).location)
 
                 s.sendMessage(
-                    LangConfig.homesHomeOtherCreated.replace("%player%", pName)
+                    LangConfig.homesOtherCreated.replace("%player%", pName)
                         .replace("%home%", split[1])
                 )
 
@@ -103,7 +103,7 @@ class CommandSetHome : CommandCreator {
             !s.hasPermission("essentialsk.bypass.homelimit")
         ) {
             s.sendMessage(
-                LangConfig.homesHomeLimitCreated.replace(
+                LangConfig.homesLimitMessage.replace(
                     "%limit%",
                     playerCache.homeLimitCache.toString()
                 )
@@ -116,12 +116,12 @@ class CommandSetHome : CommandCreator {
                 "essentialsk.bypass.homeblockedworlds"
             )
         ) {
-            s.sendMessage(LangConfig.homesHomeWorldBlocked)
+            s.sendMessage(LangConfig.homesBlockedWorld)
             return false
         }
 
         playerCache.setHome(nameHome, s.location)
-        s.sendMessage(LangConfig.homesHomeCreated.replace("%home%", nameHome))
+        s.sendMessage(LangConfig.homesCreated.replace("%home%", nameHome))
 
         return false
     }

@@ -47,24 +47,24 @@ class CommandHeal : CommandCreator {
             }
 
             if (MainConfig.healNeedHealBelow && ReflectUtil.getHealth(p) >= MAX_PLAYER_HEAL) {
-                s.sendMessage(LangConfig.healSendOtherFullMessage)
+                s.sendMessage(LangConfig.healOtherFullMessage)
                 return false
             }
 
             ReflectUtil.setHealth(p, 20)
-            p.sendMessage(LangConfig.healSendOtherMessage)
-            s.sendMessage(LangConfig.healSendSuccessOtherMessage.replace("%player%", p.name))
+            p.sendMessage(LangConfig.healOtherMessage)
+            s.sendMessage(LangConfig.healSuccessOtherMessage.replace("%player%", p.name))
 
             return false
         }
 
         if (MainConfig.healNeedHealBelow && ReflectUtil.getHealth(s as Player) >= MAX_PLAYER_HEAL) {
-            s.sendMessage(LangConfig.healSendFullMessage)
+            s.sendMessage(LangConfig.healFullMessage)
             return false
         }
 
         ReflectUtil.setHealth(s as Player, MAX_PLAYER_HEAL)
-        s.sendMessage(LangConfig.healSendMessage)
+        s.sendMessage(LangConfig.healMessage)
         return false
     }
 

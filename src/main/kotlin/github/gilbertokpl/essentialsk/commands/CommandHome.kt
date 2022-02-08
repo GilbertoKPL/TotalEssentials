@@ -3,9 +3,9 @@ package github.gilbertokpl.essentialsk.commands
 import github.gilbertokpl.essentialsk.EssentialsK
 import github.gilbertokpl.essentialsk.config.files.LangConfig
 import github.gilbertokpl.essentialsk.config.files.MainConfig
-import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
+import github.gilbertokpl.essentialsk.player.PlayerData
 import github.gilbertokpl.essentialsk.player.modify.HomeCache.getHomeList
 import github.gilbertokpl.essentialsk.player.modify.HomeCache.getHomeLocation
 import github.gilbertokpl.essentialsk.util.TaskUtil
@@ -38,7 +38,7 @@ class CommandHome : CommandCreator {
 
         if (args.isEmpty()) {
             p.sendMessage(
-                LangConfig.homesHomeList.replace(
+                LangConfig.homesList.replace(
                     "%list%",
                     playerCache.homeCache.map { it.key }.toString()
                 )
@@ -61,7 +61,7 @@ class CommandHome : CommandCreator {
 
                 if (split.size < 2) {
                     p.sendMessage(
-                        LangConfig.homesHomeOtherList.replace("%player%", pName)
+                        LangConfig.homesOtherList.replace("%player%", pName)
                             .replace("%list%", playerData.getHomeList().toString())
                     )
                     return false
@@ -69,7 +69,7 @@ class CommandHome : CommandCreator {
 
             val loc = playerData.getHomeLocation(split[1]) ?: run {
                 p.sendMessage(
-                    LangConfig.homesHomeOtherList.replace("%player%", pName)
+                    LangConfig.homesOtherList.replace("%player%", pName)
                         .replace("%list%", playerData.getHomeList().toString())
                 )
                 return false
@@ -119,7 +119,7 @@ class CommandHome : CommandCreator {
         }
 
         p.sendMessage(
-            LangConfig.homesSendTimeToTeleport.replace("%home%", nameHome)
+            LangConfig.homesTimeToTeleport.replace("%home%", nameHome)
                 .replace("%time%", time.toString())
         )
         return false

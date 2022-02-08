@@ -47,23 +47,23 @@ class CommandFeed : CommandCreator {
             }
 
             if (p.foodLevel >= MAX_PLAYER_FOOD && MainConfig.feedNeedEatBelow) {
-                s.sendMessage(LangConfig.feedSendOtherFullMessage)
+                s.sendMessage(LangConfig.feedOtherFullMessage)
                 return false
             }
 
             p.foodLevel = MAX_PLAYER_FOOD
-            p.sendMessage(LangConfig.feedSendOtherMessage)
-            s.sendMessage(LangConfig.feedSendSuccessOtherMessage.replace("%player%", p.name))
+            p.sendMessage(LangConfig.feedOtherMessage)
+            s.sendMessage(LangConfig.feedSuccessOtherMessage.replace("%player%", p.name))
 
             return false
         }
 
         if ((s as Player).foodLevel >= MAX_PLAYER_FOOD && MainConfig.feedNeedEatBelow) {
-            s.sendMessage(LangConfig.feedSendFullMessage)
+            s.sendMessage(LangConfig.feedFullMessage)
             return false
         }
         s.foodLevel = MAX_PLAYER_FOOD
-        s.sendMessage(LangConfig.feedSendMessage)
+        s.sendMessage(LangConfig.feedMessage)
         return false
     }
 

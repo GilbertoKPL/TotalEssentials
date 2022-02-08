@@ -30,7 +30,7 @@ class EntityDamage : Listener {
                 p.fallDistance = 1.0f
                 val loc = SpawnData["spawn"] ?: run {
                     if (p.hasPermission("*")) {
-                        p.sendMessage(LangConfig.spawnSendNotSet)
+                        p.sendMessage(LangConfig.spawnNotSet)
                     }
                     return
                 }

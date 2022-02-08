@@ -156,13 +156,13 @@ internal object KitGuiInventory {
                     ) {
                         inv.setItem(
                             to1,
-                            ItemUtil.item(Material.ARROW, LangConfig.kitsCatchIcon, true)
+                            ItemUtil.item(Material.ARROW, LangConfig.kitsGetIcon, true)
                         )
                         continue
                     }
                     val array = ArrayList<String>()
                     val remainingTime = timeAll - System.currentTimeMillis()
-                    for (i in LangConfig.kitsCatchIconLoreTime) {
+                    for (i in LangConfig.kitsGetIconLoreTime) {
                         array.add(
                             i.replace(
                                 "%time%",
@@ -174,7 +174,7 @@ internal object KitGuiInventory {
                     inv.setItem(
                         to1,
                         ItemUtil
-                            .item(Material.ARROW, LangConfig.kitsCatchIconNotCatch, array, true)
+                            .item(Material.ARROW, LangConfig.kitsGetIconNotCatch, array, true)
                     )
                     continue
                 }
@@ -182,8 +182,8 @@ internal object KitGuiInventory {
                     to1,
                     ItemUtil.item(
                         Material.ARROW,
-                        LangConfig.kitsCatchIconNotCatch,
-                        LangConfig.kitsCatchIconLoreNotPerm,
+                        LangConfig.kitsGetIconNotCatch,
+                        LangConfig.kitsGetIconLoreNotPerm,
                         true
                     )
                 )

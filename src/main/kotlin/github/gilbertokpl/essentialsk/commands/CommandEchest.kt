@@ -28,7 +28,7 @@ class CommandEchest : CommandCreator {
 
     override fun funCommand(s: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
-            s.sendMessage(LangConfig.echestSendSuccess)
+            s.sendMessage(LangConfig.echestSuccess)
             val inv = (s as Player).enderChest
             s.openInventory(inv)
             return false
@@ -41,7 +41,7 @@ class CommandEchest : CommandCreator {
                 return false
             }
 
-            s.sendMessage(LangConfig.echestSendOtherSuccess.replace("%player%", p.name))
+            s.sendMessage(LangConfig.echestOtherSuccess.replace("%player%", p.name))
             val inv = p.enderChest
             (s as Player).openInventory(inv)
             return false

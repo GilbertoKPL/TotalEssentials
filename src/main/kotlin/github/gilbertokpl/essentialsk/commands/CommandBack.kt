@@ -31,12 +31,12 @@ class CommandBack : CommandCreator {
         val playerCache = PlayerData[p] ?: return false
 
         val loc = playerCache.backLocation ?: run {
-            p.sendMessage(LangConfig.backSendNotToBack)
+            p.sendMessage(LangConfig.backNotToBack)
             return false
         }
 
         if (MainConfig.backDisabledWorlds.contains(loc.world!!.name.lowercase())) {
-            p.sendMessage(LangConfig.backSendNotToBack)
+            p.sendMessage(LangConfig.backNotToBack)
             playerCache.clearBack()
             return false
         }
@@ -45,7 +45,7 @@ class CommandBack : CommandCreator {
 
         playerCache.clearBack()
 
-        p.sendMessage(LangConfig.backSendSuccess)
+        p.sendMessage(LangConfig.backSuccess)
         return false
     }
 }

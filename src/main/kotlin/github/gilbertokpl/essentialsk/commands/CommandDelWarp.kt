@@ -36,7 +36,7 @@ class CommandDelWarp : CommandCreator {
 
         WarpData.del(args[0].lowercase())
 
-        s.sendMessage(LangConfig.warpsWarpRemoved.replace("%warp%", args[0].lowercase()))
+        s.sendMessage(LangConfig.warpsRemoved.replace("%warp%", args[0].lowercase()))
 
         return false
     }
