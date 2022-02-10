@@ -277,6 +277,10 @@ bukkit {
         register("invsee") {
             description = "This is a hat command!"
         }
+        register("money") {
+            description = "This is a money command!"
+            aliases = listOf("bal", "balance", "dinheiro", "coin", "coins")
+        }
     }
     permissions {
         register("essentialsk.*") {

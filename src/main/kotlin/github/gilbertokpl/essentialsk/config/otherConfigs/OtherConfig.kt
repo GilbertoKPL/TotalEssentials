@@ -19,7 +19,7 @@ internal object OtherConfig {
 
     var deathmessageListReplacer = HashMap<String, String>(60)
 
-    lateinit var serverPrefix: String
+    var serverPrefix = ""
 
     lateinit var vanish: List<String>
 

@@ -14,6 +14,11 @@ import java.net.URL
 
 internal object PlayerUtil {
 
+    fun sendMessage(player: String, message: String) {
+        val p = EssentialsK.instance.server.getPlayerExact(player.lowercase()) ?: return
+        p.sendMessage(message)
+    }
+
     fun getIntOnlinePlayers(vanish: Boolean): Int {
         var amount = ReflectUtil.getPlayers()
         if (!vanish) {

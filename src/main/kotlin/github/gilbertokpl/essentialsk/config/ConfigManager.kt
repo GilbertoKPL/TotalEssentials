@@ -73,6 +73,10 @@ object ConfigManager {
                 Lang.PT_BR
             }
         }
+        if (config.lang && config.file.name.replace(".yml", "").equals(lang.name, true)) {
+            OtherConfig.serverPrefix = try { currentConfig.getString("general.server-prefix").replace("&", "§") }
+            catch (_: IllegalArgumentException) { "" }
+        }
 
         val checkYaml = genYaml(config, lang)
 
@@ -147,10 +151,6 @@ object ConfigManager {
     }
 
     private fun otherLoad(yamlFile: YamlFile) {
-        try {
-            OtherConfig.serverPrefix = ""
-        } catch (ignored: Exception) {
-        }
         try {
             OtherConfig.vanish = GetValues.getStringList(yamlFile, "vanish.blocked-other-cmds", false)
         } catch (ignored: Exception) {

@@ -1306,6 +1306,99 @@ public class LangConfig {
     )
     public static String hatNotFound;
 
+    //money
+    @Values(
+            {
+                    @Value(value = "%prefix%&eVocê tem %money% %unity%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneyMessage;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eO %player% tem %money% %unity%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneyMessageOther;
+    @Values(
+            {
+                    @Value(value = "real", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneySingular;
+    @Values(
+            {
+                    @Value(value = "reais", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneyPlural;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê pagou %money% %unity% para %player%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneyPay;
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê recebeu %money% %unity% do %player%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneyPayOther;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eVocê setou o dinheiro do %player% para %money% %unity%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneySet;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cAlguém do além setou seu dinheiro para %money% %unity%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneySetOther;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê tirou %money% %unity% do %player%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneyTake;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cAlguém do além tirou do seu dinheiro %money% %unity%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneyTakeOther;
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê deu %money% %unity% ao %player%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneyAdd;
+    @Values(
+            {
+                    @Value(value = "%prefix%&aAlguém do além adicionou ao seu dinheiro %money% %unity%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneyAddOther;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê não tem dinheiro suficiente, falta %money% %unity%.", lang = Lang.PT_BR),
+                    @Value(value = "TEST", lang = Lang.EN_US)
+            }
+    )
+    public static String moneyMissing;
+
     //invsee
     @Values(
             {
