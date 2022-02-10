@@ -57,6 +57,8 @@ object ConfigManager {
 
             file.save(config.file)
 
+            MainUtil.consoleMessage(StartLang.createMessage.replace("%file%", config.file.nameWithoutExtension))
+
             if (config.lang == null || config.lang == lang) {
                 load(config, file)
                 return
@@ -73,6 +75,7 @@ object ConfigManager {
             } catch (il: IllegalArgumentException) {
                 Lang.PT_BR
             }
+            MainUtil.consoleMessage(StartLang.langSelectedMessage.replace("%lang%", lang.name))
         } else {
             if (lang == config.lang) {
                 OtherConfig.serverPrefix = try {

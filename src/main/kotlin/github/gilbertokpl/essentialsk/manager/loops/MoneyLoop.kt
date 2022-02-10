@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 object MoneyLoop {
 
     fun start() {
-        TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
+        TaskUtil.getMoneyExecutor().scheduleWithFixedDelay({
             MoneyUtil.refreashTycoon()
         }, 1, 1, TimeUnit.MINUTES)
     }

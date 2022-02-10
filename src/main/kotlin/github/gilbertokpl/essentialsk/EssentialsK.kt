@@ -25,7 +25,7 @@ internal class EssentialsK : JavaPlugin() {
         val startInstant = Instant.now()
         println(
             "${EColor.CYAN.color}[${name}]${EColor.RESET.color} " +
-                    "${EColor.YELLOW.color}Carregando Livrarias, porfavor aguarde, primeira vez pode demorar até 1 minuto...${EColor.RESET.color}"
+                    "${EColor.YELLOW.color}Loading Libary, please wait, first time may take up to 1 minute...${EColor.RESET.color}"
         )
 
         ApplicationBuilder.appending("essentialsK").downloadDirectoryPath(
@@ -39,7 +39,7 @@ internal class EssentialsK : JavaPlugin() {
         val timeTakenMillis = Duration.between(startInstant, Instant.now()).toMillis()
         println(
             "${EColor.CYAN.color}[${name}]${EColor.RESET.color} " +
-                    "${EColor.YELLOW.color}Livraria carregada em ${timeTakenMillis / 1000} segundos${EColor.RESET.color}"
+                    "${EColor.YELLOW.color}Libary loaded in ${timeTakenMillis / 1000} seconds${EColor.RESET.color}"
         )
 
         MaterialUtil.startMaterials()
@@ -96,9 +96,9 @@ internal class EssentialsK : JavaPlugin() {
 
     override fun onDisable() {
 
-        MainUtil.consoleMessage(LangConfig.generalSaveDataMessage)
+        MainUtil.consoleMessage(EColor.YELLOW.color + LangConfig.generalSaveDataMessage + EColor.RESET.color)
         DataManager.save()
-        MainUtil.consoleMessage(LangConfig.generalSaveDataSuccess)
+        MainUtil.consoleMessage(EColor.YELLOW.color + LangConfig.generalSaveDataSuccess + EColor.RESET.color)
 
         TaskUtil.disable()
 

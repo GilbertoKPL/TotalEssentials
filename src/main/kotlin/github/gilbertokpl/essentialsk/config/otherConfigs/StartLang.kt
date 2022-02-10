@@ -3,61 +3,58 @@ package github.gilbertokpl.essentialsk.config.otherConfigs
 import github.gilbertokpl.essentialsk.manager.EColor
 
 internal object StartLang {
+
     val startVerification = EColor.YELLOW.color +
-            "Iniciciando %to% verificação..." +
+            "Starting %to% verification..." +
             EColor.RESET.color
 
     val completeVerification = EColor.YELLOW.color +
-            "Verificação completa!" +
+            "Verification completed!" +
             EColor.RESET.color
 
     val updatePlugin = EColor.YELLOW.color +
-            "Atualizando o plugin para versão %version%..." +
+            "Updating plugin to version %version%..." +
             EColor.RESET.color
 
     val updatePluginMessage = EColor.YELLOW.color +
-            "Atualizado com sucesso, reninciando!" +
+            "Update finished, rebooting!" +
             EColor.RESET.color
 
     val langSelectedMessage = EColor.YELLOW.color +
-            "lang selecionada -> %lang%." +
-            EColor.RESET.color
-
-    val langError = EColor.RED.color +
-            "usando lang padrão por erro!" +
+            "Selected lang -> %lang%." +
             EColor.RESET.color
 
     val createMessage = EColor.YELLOW.color +
-            "Arquivo criado de %to%, %file%." +
+            "Created file %file%." +
             EColor.RESET.color
 
     val addMessage = EColor.YELLOW.color +
-            "Adicionado path %path% do arquivo %file%." +
+            "Added path %path% to file %file%." +
             EColor.RESET.color
 
     val removeMessage = EColor.RED.color +
-            "Removido path %path% do arquivo %file%." +
+            "Removed path %path% in file %file%." +
             EColor.RESET.color
 
     val connectDatabase = EColor.YELLOW.color +
-            "Iniciando conexão com a database!" +
+            "Starting the connection to the database!" +
             EColor.RESET.color
 
     val connectDatabaseSuccess =
         EColor.YELLOW.color +
-                "Conexão criada com sucesso, %db%!" +
+                "Successfully connected to the database %db%!" +
                 EColor.RESET.color
 
     val databaseValid =
         EColor.RED.color +
-                "Porfavor selecione uma database valida, " +
-                "validas -> H2 e MYSQL, " +
-                "H2 foi utilizado para iniciar." +
+                "Please select a valid database, " +
+                "valid -> h2 and mysql, " +
+                "h2 was used to start." +
                 EColor.RESET.color
     val startLoadData = EColor.YELLOW.color +
-            "Iniciado Carregamento dos players" +
+            "Started Load of Players." +
             EColor.RESET.color
     val finishLoadData = EColor.YELLOW.color +
-            "Carregado %quant% players no cache" +
+            "Loaded %quant% players in cache!" +
             EColor.RESET.color
 }

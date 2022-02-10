@@ -2,7 +2,7 @@ import github.slimjar.func.slim
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "github.gilbertokpl.essentialsk"
-version = "1.5.4-SNAPSHOT"
+version = "1.5.4"
 
 val base = "libs"
 val exposedVersion = "0.37.3"

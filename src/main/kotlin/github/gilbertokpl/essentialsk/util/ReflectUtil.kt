@@ -6,8 +6,6 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandMap
 import org.bukkit.command.SimpleCommandMap
 import org.bukkit.entity.Player
-import org.simpleyaml.configuration.file.YamlFile
-import java.io.File
 import java.lang.reflect.Field
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -63,30 +61,6 @@ internal object ReflectUtil {
             Bukkit.getOnlinePlayers().toList()
         }
     }
-
-    private fun nameFieldHelper(name: String): String {
-        val nameField = name.split("(?=\\p{Upper})".toRegex())
-
-        var nameFieldComplete = ""
-
-        var quanta = 0
-
-        for (value in nameField) {
-            quanta += 1
-            if (nameFieldComplete == "") {
-                nameFieldComplete = "${value.lowercase()}."
-                continue
-            }
-            if (quanta == 2) {
-                nameFieldComplete += value.lowercase()
-                continue
-            }
-            nameFieldComplete += "-${value.lowercase()}"
-        }
-
-        return nameFieldComplete
-    }
-
 
     fun getHealth(p: Player): Double {
         return try {
