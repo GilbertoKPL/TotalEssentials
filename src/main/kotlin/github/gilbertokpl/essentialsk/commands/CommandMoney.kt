@@ -5,11 +5,17 @@ import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.CommandData
 import github.gilbertokpl.essentialsk.player.PlayerData
+import github.gilbertokpl.essentialsk.player.modify.MoneyCache.addMoney
+import github.gilbertokpl.essentialsk.player.modify.MoneyCache.setMoney
+import github.gilbertokpl.essentialsk.player.modify.MoneyCache.takeMoney
 import github.gilbertokpl.essentialsk.util.MoneyUtil
 import github.gilbertokpl.essentialsk.util.PlayerUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+
+
+
 
 class CommandMoney : CommandCreator {
     override val commandData: CommandData
@@ -45,6 +51,18 @@ class CommandMoney : CommandCreator {
         }
 
         if (args[0] == "top") {
+            s.sendMessage(LangConfig.moneyTopMessage)
+            var position = 1
+            for (i in MoneyUtil.tycoonPlayer) {
+                s.sendMessage(
+                    MoneyUtil.coinReplacer(
+                        LangConfig.moneyTop, i.value.toDouble()
+                    )
+                        .replace("%player%", i.key)
+                        .replace("%position%", position.toString())
+                )
+                position += 1
+            }
             return false
         }
 
@@ -66,6 +84,11 @@ class CommandMoney : CommandCreator {
 
             if (value <= 0) return true
 
+            if (args[1].lowercase() == s.name.lowercase()) {
+                s.sendMessage(LangConfig.moneyPaySame)
+                return false
+            }
+
             val playerData = PlayerData[args[1].lowercase()] ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotExist)
                 return false
@@ -74,22 +97,29 @@ class CommandMoney : CommandCreator {
             val money = PlayerData[s] ?: return true
 
             if (money.moneyCache < value) {
-                s.sendMessage(MoneyUtil.coinReplacer(
-                    LangConfig.moneyMissing, value - money.moneyCache
-                ))
+                s.sendMessage(
+                    MoneyUtil.coinReplacer(
+                        LangConfig.moneyMissing, value - money.moneyCache
+                    )
+                )
                 return false
             }
 
-            money.moneyCache -= value
-            playerData.moneyCache += value
 
-            s.sendMessage(MoneyUtil.coinReplacer(
-                LangConfig.moneyPay, value
-            ).replace("%player%", args[1].lowercase()))
+            money.takeMoney(value)
+            playerData.addMoney(value)
 
-            PlayerUtil.sendMessage(args[1].lowercase(), MoneyUtil.coinReplacer(
-                LangConfig.moneyPayOther, value
-            ).replace("%player%", s.name))
+            s.sendMessage(
+                MoneyUtil.coinReplacer(
+                    LangConfig.moneyPay, value
+                ).replace("%player%", args[1].lowercase())
+            )
+
+            PlayerUtil.sendMessage(
+                args[1].lowercase(), MoneyUtil.coinReplacer(
+                    LangConfig.moneyPayOther, value
+                ).replace("%player%", s.name)
+            )
 
             return false
         }
@@ -99,7 +129,7 @@ class CommandMoney : CommandCreator {
 
             val value = args[2].toDoubleOrNull() ?: return true
 
-            if (value <= 0) return true
+            if (value < 0) return true
 
             val playerData = PlayerData[args[1].lowercase()] ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotExist)
@@ -107,7 +137,7 @@ class CommandMoney : CommandCreator {
             }
 
             if (args[0] == "set") {
-                playerData.moneyCache = value
+                playerData.setMoney(value)
 
                 s.sendMessage(MoneyUtil.coinReplacer(
                     LangConfig.moneySet, value
@@ -126,7 +156,7 @@ class CommandMoney : CommandCreator {
                     ))
                     return false
                 }
-                playerData.moneyCache -= value
+                playerData.takeMoney(value)
 
                 s.sendMessage(MoneyUtil.coinReplacer(
                     LangConfig.moneyTake, value
@@ -138,7 +168,7 @@ class CommandMoney : CommandCreator {
                 return false
             }
             if (args[0] == "add") {
-                playerData.moneyCache += value
+                playerData.addMoney(value)
 
                 s.sendMessage(MoneyUtil.coinReplacer(
                     LangConfig.moneyAdd, value

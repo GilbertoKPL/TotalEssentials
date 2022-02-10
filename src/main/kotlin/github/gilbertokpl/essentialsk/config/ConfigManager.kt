@@ -22,13 +22,13 @@ object ConfigManager {
         val javaClass: Class<*>,
         val classIntance: Any,
         val file: File,
-        val lang: Boolean
+        val lang: Lang?
     )
 
     private val listConfigs = listOf(
         NewConfig(
             MainConfig().javaClass,
-            MainConfig(), File(MainUtil.mainPath, "MainConfig.yml"), false
+            MainConfig(), File(MainUtil.mainPath, "MainConfig.yml"), null
         ),
     )
 
@@ -41,7 +41,7 @@ object ConfigManager {
             startClass(
                 NewConfig(
                     LangConfig().javaClass,
-                    LangConfig(), i.getFile(), true
+                    LangConfig(), i.getFile(), i
                 )
             )
         }
@@ -52,30 +52,35 @@ object ConfigManager {
     private fun startClass(config: NewConfig) {
 
         if (!config.file.exists()) {
-            val file = genYaml(config, Lang.PT_BR)
-            if (config.file.name.replace(".yml", "").equals(lang.name, true) && config.lang) {
+
+            val file = genYaml(config, config.lang ?: Lang.PT_BR)
+
+            file.save(config.file)
+
+            if (config.lang == null || config.lang == lang) {
                 load(config, file)
+                return
             }
 
-            if (!config.lang) {
-                load(config, file)
-            }
-            file.save(config.file)
             return
         }
 
         val currentConfig = loadYaml(config.file, false)
 
-        if (!config.lang) {
+        if (config.lang == null) {
             lang = try {
                 Lang.valueOf(currentConfig.getString("general.selected-lang").uppercase())
             } catch (il: IllegalArgumentException) {
                 Lang.PT_BR
             }
-        }
-        if (config.lang && config.file.name.replace(".yml", "").equals(lang.name, true)) {
-            OtherConfig.serverPrefix = try { currentConfig.getString("general.server-prefix").replace("&", "§") }
-            catch (_: IllegalArgumentException) { "" }
+        } else {
+            if (lang == config.lang) {
+                OtherConfig.serverPrefix = try {
+                    currentConfig.getString("general.server-prefix").replace("&", "§")
+                } catch (_: IllegalArgumentException) {
+                    ""
+                }
+            }
         }
 
         val checkYaml = genYaml(config, lang)
@@ -126,12 +131,9 @@ object ConfigManager {
 
         checkYaml.save(config.file)
 
-        if (config.file.name.replace(".yml", "").equals(lang.name, true) && config.lang) {
+        if (config.lang == null || config.lang == lang) {
             load(config, checkYaml)
-        }
-
-        if (!config.lang) {
-            load(config, checkYaml)
+            return
         }
 
     }
@@ -190,7 +192,7 @@ object ConfigManager {
         for (i in newConfig.javaClass.declaredFields) {
             val path = FieldHelper.nameFieldHelper(i)
 
-            if (!newConfig.lang) {
+            if (newConfig.lang == null) {
                 tempYamlFile.set(path, i.get(newConfig.classIntance))
             }
 

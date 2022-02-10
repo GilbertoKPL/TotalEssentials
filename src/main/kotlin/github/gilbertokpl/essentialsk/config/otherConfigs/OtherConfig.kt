@@ -6,6 +6,7 @@ import github.gilbertokpl.essentialsk.inventory.EditKitInventory
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.manager.loops.AnnounceLoop
 import github.gilbertokpl.essentialsk.manager.loops.DiscordLoop
+import github.gilbertokpl.essentialsk.manager.loops.MoneyLoop
 import github.gilbertokpl.essentialsk.util.FileLoggerUtil
 import github.gilbertokpl.essentialsk.util.TaskUtil
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -118,14 +119,16 @@ internal object OtherConfig {
             FileLoggerUtil.logError(ExceptionUtils.getStackTrace(e))
         }
 
-        if (!MainConfig.discordbotConnectDiscordChat && DiscordLoop.start) {
+        if (!MainConfig.discordbotConnectDiscordChat && !MainConfig.discordbotSendTopicUpdate && DiscordLoop.start) {
             TaskUtil.getDiscordExecutor().shutdown()
             DiscordLoop.start = false
         }
 
-        if (MainConfig.discordbotConnectDiscordChat && !DiscordLoop.start) {
+        if (MainConfig.discordbotConnectDiscordChat && MainConfig.discordbotSendTopicUpdate && !DiscordLoop.start) {
             DiscordLoop.start()
         }
+
+        MoneyLoop.start()
 
         EditKitInventory.setup()
 

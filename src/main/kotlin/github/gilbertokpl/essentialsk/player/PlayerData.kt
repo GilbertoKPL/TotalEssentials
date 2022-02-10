@@ -19,7 +19,7 @@ data class PlayerData(
     var flyCache: Boolean = false,
     var backLocation: Location? = null,
     var speedCache: Int = 1,
-    var moneyCache: Double = 0.0,
+    var moneyCache: Double = MainConfig.moneyDefault.toDouble(),
     var inTeleport: Boolean = false,
     var inInvsee: Player? = null
 ) {
@@ -42,6 +42,14 @@ data class PlayerData(
         }
 
         fun nickMap() = playerCacheV2.map { it.value.nickCache.lowercase() }
+
+        fun moneyMap(): HashMap<String, Int> {
+            val hash = HashMap<String, Int>()
+            for (i in playerCacheV2) {
+                hash[i.key] = i.value.moneyCache.toInt()
+            }
+            return hash
+        }
 
     }
 }

@@ -5,17 +5,22 @@ import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.data.dao.KitData
 import github.gilbertokpl.essentialsk.data.dao.SpawnData
 import github.gilbertokpl.essentialsk.data.dao.WarpData
+import github.gilbertokpl.essentialsk.economy.EconomyHolder
 import github.gilbertokpl.essentialsk.inventory.EditKitInventory
 import github.gilbertokpl.essentialsk.inventory.KitGuiInventory
 import github.gilbertokpl.essentialsk.manager.CommandCreator
 import github.gilbertokpl.essentialsk.manager.EColor
+import net.milkbowl.vault.economy.Economy
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.bstats.bukkit.Metrics
+import org.bukkit.Bukkit.getServer
 import org.bukkit.event.Listener
+import org.bukkit.plugin.ServicePriority
 import java.io.InputStream
 import java.net.URL
 import java.util.*
 import java.util.concurrent.CompletableFuture
+
 
 internal object MainUtil {
 
@@ -28,6 +33,18 @@ internal object MainUtil {
     val pluginPath: String = EssentialsK.instance.javaClass.protectionDomain.codeSource.location.path
 
     private val rand = Random()
+
+    fun setupEconomy() {
+        try {
+            getServer().servicesManager.register(
+                Economy::class.java,
+                EconomyHolder(),
+                EssentialsK.instance,
+                ServicePriority.Highest
+            )
+        } catch (_: Exception) {
+        }
+    }
 
     fun getRandom(list: List<String>): String {
         return list[rand.nextInt(list.size)]

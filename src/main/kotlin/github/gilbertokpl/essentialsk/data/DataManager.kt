@@ -26,7 +26,7 @@ internal object DataManager {
 
     lateinit var sql: Database
 
-    var update = false
+    private var update = false
 
     //editKitInv
     val editKitInventory = HashMap<Int, ItemStack>(50)
@@ -156,6 +156,9 @@ internal object DataManager {
                                     }
                                     is Boolean -> {
                                         it[set.key as Column<Boolean>] = set.value as Boolean
+                                    }
+                                    is Double -> {
+                                        it[set.key as Column<Double>] = set.value as Double
                                     }
                                 }
                             }

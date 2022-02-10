@@ -23,12 +23,19 @@ internal object TaskUtil {
 
     private var dataExecutor = Executors.newSingleThreadScheduledExecutor()
 
+    private var moneyExecutor = Executors.newSingleThreadScheduledExecutor()
+
     fun disable() {
         poolExecutor.shutdown()
         poolExecutorTeleport.shutdown()
         announceExecutor.shutdown()
         discordExecutor.shutdown()
         dataExecutor.shutdown()
+        moneyExecutor.shutdown()
+    }
+
+    fun getMoneyExecutor(): ScheduledExecutorService {
+        return moneyExecutor
     }
 
     fun getDiscordExecutor(): ScheduledExecutorService {

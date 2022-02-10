@@ -3,10 +3,11 @@ package github.gilbertokpl.essentialsk
 import github.gilbertokpl.essentialsk.api.EssentialsKAPI
 import github.gilbertokpl.essentialsk.config.ConfigManager
 import github.gilbertokpl.essentialsk.config.files.LangConfig
+import github.gilbertokpl.essentialsk.config.files.MainConfig
 import github.gilbertokpl.essentialsk.config.otherConfigs.StartLang
 import github.gilbertokpl.essentialsk.data.DataManager
-import github.gilbertokpl.essentialsk.manager.loops.DataLoop
 import github.gilbertokpl.essentialsk.manager.EColor
+import github.gilbertokpl.essentialsk.manager.loops.DataLoop
 import github.gilbertokpl.essentialsk.player.loader.DataLoader
 import github.gilbertokpl.essentialsk.util.*
 import github.slimjar.app.builder.ApplicationBuilder
@@ -45,6 +46,10 @@ internal class EssentialsK : JavaPlugin() {
 
         ConfigManager.start()
 
+        if (MainConfig.moneyActivated) {
+            MainUtil.setupEconomy()
+        }
+
         super.onLoad()
     }
 
@@ -79,6 +84,8 @@ internal class EssentialsK : JavaPlugin() {
         TimeUtil.start()
 
         DataLoop.start()
+
+        MoneyUtil.refreashTycoon()
 
         CompletableFuture.runAsync {
             DiscordUtil.startBot()
