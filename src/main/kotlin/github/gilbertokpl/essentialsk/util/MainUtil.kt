@@ -110,10 +110,11 @@ internal object MainUtil {
                 "github.gilbertokpl.essentialsk.commands.Command",
                 ""
             ).lowercase()
-            if (!c.commandData.active) {
-                ReflectUtil.removeCommand(cmdName)
+            
+            if (!c.commandData.active) {                
                 continue
             }
+
             EssentialsK.instance.getCommand(
                 cmdName
             )?.setExecutor(c)
