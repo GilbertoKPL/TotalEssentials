@@ -1,6 +1,6 @@
 # TotalEssentials
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d4feec74151f4822b74032c26216f6f0)](https://www.codacy.com/gh/GilbertoKPL/TotalEssentials/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=GilbertoKPL/TotalEssentials&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5113aa86f46b45caa40bdfd8508bcd3e)](https://www.codacy.com/gh/GilbertoKPL/TotalEssentials/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=GilbertoKPL/TotalEssentials&amp;utm_campaign=Badge_Grade)
 
 * A core system for minecraft server that supports most versions (1.5.2 - 1.18.0), using only database as a storage
   medium and various built-in commands / systems, which can be disabled at any time.
@@ -20,8 +20,8 @@
 
 ## Commands
 
-| Command                      | Description                                                                                     | Permission                       |
-|------------------------------|-------------------------------------------------------------------------------------------------|----------------------------------|
+| Command                      | Description                                                                                     | Permission                           |
+|------------------------------|-------------------------------------------------------------------------------------------------|--------------------------------------|
 | /total, /system, /essentials | Main command os plugin.                                                                         | totalessentials.commands.essentialsk |
 | /createkit and /criarkit     | Create a kit with an interface / GUI.                                                           | totalessentials.commands.createkit   |
 | /delkit                      | Delete kit with name.                                                                           | totalessentials.commands.delkit      |
@@ -58,8 +58,8 @@
 
 To use in chat, commands, signs etc.
 
-| Color          | Permission           |
-|----------------|----------------------|
+| Color          | Permission               |
+|----------------|--------------------------|
 | Black          | totalessentials.color.&0 |
 | DarkBlue       | totalessentials.color.&1 |
 | DarkGreen      | totalessentials.color.&2 |
