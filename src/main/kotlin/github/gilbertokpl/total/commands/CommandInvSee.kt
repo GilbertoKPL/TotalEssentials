@@ -17,7 +17,7 @@ class CommandInvSee : github.gilbertokpl.base.external.command.CommandCreator("i
             active = MainConfig.invseeActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.invsee",
+            permission = "totalessentials.commands.invsee",
             minimumSize = 1,
             maximumSize = 1,
             usage = listOf(

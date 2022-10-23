@@ -16,7 +16,7 @@ class CommandHat : github.gilbertokpl.base.external.command.CommandCreator("hat"
             active = MainConfig.hatActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.hat",
+            permission = "totalessentials.commands.hat",
             minimumSize = 0,
             maximumSize = 0,
             usage = listOf(

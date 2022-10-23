@@ -24,7 +24,7 @@ object WarpData : CacheBase {
         if (p != null) {
             val newList = ArrayList<String>()
             list.forEach {
-                if (p.hasPermission("essentialsk.commands.warp.$it")) {
+                if (p.hasPermission("totalessentials.commands.warp.$it")) {
                     newList.add(it)
                 }
             }

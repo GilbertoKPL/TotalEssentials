@@ -15,7 +15,7 @@ class CommandTrash : github.gilbertokpl.base.external.command.CommandCreator("tr
             active = MainConfig.trashActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.trash",
+            permission = "totalessentials.commands.trash",
             minimumSize = 0,
             maximumSize = 0,
             usage = listOf("/trash")

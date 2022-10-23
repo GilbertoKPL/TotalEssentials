@@ -15,7 +15,7 @@ class CommandDelWarp : github.gilbertokpl.base.external.command.CommandCreator("
             active = MainConfig.warpsActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.delwarp",
+            permission = "totalessentials.commands.delwarp",
             minimumSize = 1,
             maximumSize = 1,
             usage = listOf("/delwarp <warpName>")

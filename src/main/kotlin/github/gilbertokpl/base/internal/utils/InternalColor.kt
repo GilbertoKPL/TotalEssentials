@@ -53,7 +53,7 @@ internal class InternalColor(lf: BasePlugin) {
         }
         var newMessage = strv
         fun colorHelper(color: String) {
-            newMessage = if (p.hasPermission("essentialsk.color.$color")) {
+            newMessage = if (p.hasPermission("totalessentials.color.$color")) {
                 newMessage.replace(color, color.replace("&", "§"))
             } else {
                 newMessage.replace(color, "")

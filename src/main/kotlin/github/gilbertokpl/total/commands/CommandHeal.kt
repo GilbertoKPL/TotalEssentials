@@ -15,12 +15,12 @@ class CommandHeal : github.gilbertokpl.base.external.command.CommandCreator("hea
             active = MainConfig.healActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.heal",
+            permission = "totalessentials.commands.heal",
             minimumSize = 0,
             maximumSize = 1,
             usage = listOf(
                 "P_/heal",
-                "essentialsk.commands.heal.other_/heal <playerName>"
+                "totalessentials.commands.heal.other_/heal <playerName>"
             )
         )
     }
@@ -34,7 +34,7 @@ class CommandHeal : github.gilbertokpl.base.external.command.CommandCreator("hea
         if (args.size == 1) {
 
             //check perms
-            if (s is Player && !s.hasPermission("essentialsk.commands.heal.other")) {
+            if (s is Player && !s.hasPermission("totalessentials.commands.heal.other")) {
                 s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }

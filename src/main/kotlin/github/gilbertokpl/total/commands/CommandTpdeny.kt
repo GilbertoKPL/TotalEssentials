@@ -16,7 +16,7 @@ class CommandTpdeny : github.gilbertokpl.base.external.command.CommandCreator("t
             active = MainConfig.tpaActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.tpa",
+            permission = "totalessentials.commands.tpa",
             minimumSize = 0,
             maximumSize = 0,
             usage = listOf("/tpdeny")

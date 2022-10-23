@@ -18,14 +18,14 @@ class CommandNick : github.gilbertokpl.base.external.command.CommandCreator("nic
             active = MainConfig.nicksActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.nick",
+            permission = "totalessentials.commands.nick",
             minimumSize = 1,
             maximumSize = 2,
             usage = listOf(
                 "P_/nick <NickName>",
                 "P_/nick remove",
-                "essentialsk.commands.nick.other_/nick <player> <NickName>",
-                "essentialsk.commands.nick.other_/nick <player> remove"
+                "totalessentials.commands.nick.other_/nick <player> <NickName>",
+                "totalessentials.commands.nick.other_/nick <player> remove"
             )
         )
     }
@@ -97,7 +97,7 @@ class CommandNick : github.gilbertokpl.base.external.command.CommandCreator("nic
         }
 
         //check perm
-        if (s is Player && !s.hasPermission("essentialsk.commands.nick.other")) {
+        if (s is Player && !s.hasPermission("totalessentials.commands.nick.other")) {
             s.sendMessage(LangConfig.generalNotPerm)
             return false
         }
@@ -142,7 +142,7 @@ class CommandNick : github.gilbertokpl.base.external.command.CommandCreator("nic
             val exist = PlayerData.nickCache.getMap().map { it.value }.contains(newNick.lowercase())
 
             if (!MainConfig.nicksCanPlayerHaveSameNick &&
-                !player.hasPermission("essentialsk.bypass.nickblockednicks") &&
+                !player.hasPermission("totalessentials.bypass.nickblockednicks") &&
                 exist
             ) {
                 return true

@@ -22,7 +22,7 @@ class PlayerInteractEntity : Listener {
     private fun blockNameTag(e: PlayerInteractEntityEvent) {
         @Suppress("DEPRECATION")
         if (e.player.itemInHand.type == Material.NAME_TAG &&
-            !e.player.hasPermission("essentialsk.bypass.nametag")
+            !e.player.hasPermission("totalessentials.bypass.nametag")
         ) {
             e.player.sendMessage(LangConfig.generalNotPermAction)
             e.isCancelled = true

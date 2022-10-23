@@ -16,7 +16,7 @@ class CommandGiveKit : github.gilbertokpl.base.external.command.CommandCreator("
             active = MainConfig.kitsActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.givekit",
+            permission = "totalessentials.commands.givekit",
             minimumSize = 2,
             maximumSize = 2,
             usage = listOf(

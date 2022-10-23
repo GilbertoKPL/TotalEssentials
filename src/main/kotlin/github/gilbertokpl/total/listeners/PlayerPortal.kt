@@ -19,7 +19,7 @@ class PlayerPortal : Listener {
     }
 
     private fun blockPlayerTeleport(e: PlayerPortalEvent) {
-        if (!e.player.hasPermission("essentialsk.bypass.teleportportal")) {
+        if (!e.player.hasPermission("totalessentials.bypass.teleportportal")) {
             e.player.sendMessage(LangConfig.generalNotPermAction)
             e.isCancelled = true
         }

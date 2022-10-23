@@ -18,12 +18,12 @@ class CommandSpawn : github.gilbertokpl.base.external.command.CommandCreator("sp
             active = MainConfig.spawnActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.spawn",
+            permission = "totalessentials.commands.spawn",
             minimumSize = 0,
             maximumSize = 1,
             usage = listOf(
                 "P_/spawn",
-                "essentialsk.commands.spawn.other_/spawn <playerName>"
+                "totalessentials.commands.spawn.other_/spawn <playerName>"
             )
         )
     }
@@ -44,7 +44,7 @@ class CommandSpawn : github.gilbertokpl.base.external.command.CommandCreator("sp
         if (args.size == 1 || s !is Player) {
 
             //check perms
-            if (s is Player && !s.hasPermission("essentialsk.commands.spawn.other")) {
+            if (s is Player && !s.hasPermission("totalessentials.commands.spawn.other")) {
                 s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
@@ -75,7 +75,7 @@ class CommandSpawn : github.gilbertokpl.base.external.command.CommandCreator("sp
 
         val time = MainConfig.spawnTimeToTeleport
 
-        if (s.hasPermission("essentialsk.bypass.teleport") || time == 0) {
+        if (s.hasPermission("totalessentials.bypass.teleport") || time == 0) {
             s.teleport(spawnCache)
             s.sendMessage(LangConfig.spawnMessage)
             return false

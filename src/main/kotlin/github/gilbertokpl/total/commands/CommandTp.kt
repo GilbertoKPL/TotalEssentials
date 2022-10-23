@@ -17,7 +17,7 @@ class CommandTp : github.gilbertokpl.base.external.command.CommandCreator("tp") 
             active = MainConfig.tpActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.tp",
+            permission = "totalessentials.commands.tp",
             minimumSize = 1,
             maximumSize = 4,
             usage = listOf(

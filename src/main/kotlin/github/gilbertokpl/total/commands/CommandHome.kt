@@ -17,13 +17,13 @@ class CommandHome : github.gilbertokpl.base.external.command.CommandCreator("hom
             active = MainConfig.homesActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.home",
+            permission = "totalessentials.commands.home",
             minimumSize = 0,
             maximumSize = 1,
             usage = listOf(
                 "/home <homeName>",
-                "essentialsk.commands.home.other_/home <playername>:<homeName>",
-                "essentialsk.commands.home.other_/home <playername>:"
+                "totalessentials.commands.home.other_/home <playername>:<homeName>",
+                "totalessentials.commands.home.other_/home <playername>:"
             )
         )
     }
@@ -46,7 +46,7 @@ class CommandHome : github.gilbertokpl.base.external.command.CommandCreator("hom
         }
 
         //admin
-        if (args[0].contains(":") && p.hasPermission("essentialsk.commands.home.other")) {
+        if (args[0].contains(":") && p.hasPermission("totalessentials.commands.home.other")) {
             val split = args[0].split(":")
 
             val pName = split[0].lowercase()
@@ -103,7 +103,7 @@ class CommandHome : github.gilbertokpl.base.external.command.CommandCreator("hom
 
         val time = MainConfig.homesTimeToTeleport
 
-        if (p.hasPermission("essentialsk.bypass.teleport") || time == 0) {
+        if (p.hasPermission("totalessentials.bypass.teleport") || time == 0) {
             p.teleport(loc)
             p.sendMessage(
                 LangConfig.homesTeleported.replace(

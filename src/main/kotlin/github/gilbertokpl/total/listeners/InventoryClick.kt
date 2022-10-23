@@ -74,7 +74,7 @@ class InventoryClick : Listener {
                 p.openInventory(DataManager.kitGuiCache[inventoryName[2].toInt()]!!)
             }
             if (number == 40 && meta.displayName == LangConfig.kitsInventoryIconEditKitName && p.hasPermission(
-                    "essentialsk.commands.editkit"
+                    "totalessentials.commands.editkit"
                 )
             ) {
                 editKitGui(p, inventoryName[1])
@@ -165,7 +165,7 @@ class InventoryClick : Listener {
         if ((e.currentItem ?: return).type == Material.AIR) return
         if (e.click.isShiftClick &&
             MainConfig.containersBlockShift.contains(e.inventory.type.name.lowercase()) &&
-            !e.whoClicked.hasPermission("essentialsk.bypass.shiftcontainer")
+            !e.whoClicked.hasPermission("totalessentials.bypass.shiftcontainer")
         ) {
             e.whoClicked.sendMessage(LangConfig.generalNotPermAction)
             e.isCancelled = true
@@ -210,8 +210,8 @@ class InventoryClick : Listener {
                 p.sendMessage(LangConfig.invseePlayerLeave)
             }
 
-            if (p.hasPermission("essentialsk.commands.invsee")
-                && !p.hasPermission("essentialsk.commands.invsee.admin")
+            if (p.hasPermission("totalessentials.commands.invsee")
+                && !p.hasPermission("totalessentials.commands.invsee.admin")
             ) {
                 e.isCancelled = true
             }

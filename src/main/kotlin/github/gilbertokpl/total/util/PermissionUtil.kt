@@ -46,7 +46,7 @@ internal object PermissionUtil {
             return github.gilbertokpl.total.TotalEssentials.basePlugin.getColor().rgbHex(null, message)
         }
 
-        if (p.hasPermission("essentialsk.color.*")) {
+        if (p.hasPermission("totalessentials.color.*")) {
             return github.gilbertokpl.total.TotalEssentials.basePlugin.getColor().rgbHex(p, message)
         }
         return github.gilbertokpl.total.TotalEssentials.basePlugin.getColor().color(p, message)

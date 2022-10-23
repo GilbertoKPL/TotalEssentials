@@ -19,7 +19,7 @@ class PlayerBedEnter : Listener {
     }
 
     private fun blockEnterInBed(e: PlayerBedEnterEvent) {
-        if (!e.player.hasPermission("essentialsk.bypass.bed")) {
+        if (!e.player.hasPermission("totalessentials.bypass.bed")) {
             e.player.sendMessage(LangConfig.generalNotPermAction)
             e.isCancelled = true
         }

@@ -18,7 +18,7 @@ class CommandAnnounce : CommandCreator("announce") {
             active = MainConfig.announceActivated,
             target = CommandTarget.ALL,
             countdown = MainConfig.announceCooldown.toLong(),
-            permission = "essentialsk.commands.announce",
+            permission = "totalessentials.commands.announce",
             minimumSize = 1,
             maximumSize = null,
             usage = listOf("/announce <msg>", "/anunciar <msg>")

@@ -17,7 +17,7 @@ class CommandTpaccept : github.gilbertokpl.base.external.command.CommandCreator(
             active = MainConfig.tpaActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.tpa",
+            permission = "totalessentials.commands.tpa",
             minimumSize = 0,
             maximumSize = 0,
             usage = listOf("/tpaccept")
@@ -49,7 +49,7 @@ class CommandTpaccept : github.gilbertokpl.base.external.command.CommandCreator(
         tpaCache.otherPlayer = null
         tpaCache.wait = false
 
-        if (p.hasPermission("essentialsk.bypass.teleport")) {
+        if (p.hasPermission("totalessentials.bypass.teleport")) {
             TpaData.remove(p)
             p.sendMessage(
                 LangConfig.tpaRequestOtherNoDelayAccepted.replace(

@@ -15,7 +15,7 @@ internal object ItemUtil {
     fun pickupKit(p: Player, kit: String) {
 
         // check if player don't have permission
-        if (!p.hasPermission("essentialsk.commands.kit.$kit")) {
+        if (!p.hasPermission("totalessentials.commands.kit.$kit")) {
             p.sendMessage(LangConfig.generalNotPerm)
             return
         }
@@ -26,7 +26,7 @@ internal object ItemUtil {
         timeAll += KitsData.kitTime[kit]!!
 
         // if time is remaining
-        if (timeAll >= System.currentTimeMillis() && !p.hasPermission("essentialsk.bypass.kitcatch")) {
+        if (timeAll >= System.currentTimeMillis() && !p.hasPermission("totalessentials.bypass.kitcatch")) {
             val remainingTime = timeAll - System.currentTimeMillis()
             p.sendMessage(
                 LangConfig.kitsGetMessage.replace(

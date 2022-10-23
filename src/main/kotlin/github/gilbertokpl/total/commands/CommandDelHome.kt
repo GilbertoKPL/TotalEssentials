@@ -16,12 +16,12 @@ class CommandDelHome : github.gilbertokpl.base.external.command.CommandCreator("
             active = MainConfig.homesActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.delhome",
+            permission = "totalessentials.commands.delhome",
             minimumSize = 1,
             maximumSize = 1,
             usage = listOf(
                 "/delhome <homeName>",
-                "essentialsk.commands.delhome.other_/delhome <playername>:<homeName>"
+                "totalessentials.commands.delhome.other_/delhome <playername>:<homeName>"
             )
         )
     }
@@ -29,7 +29,7 @@ class CommandDelHome : github.gilbertokpl.base.external.command.CommandCreator("
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
         //admin
-        if (args[0].contains(":") && s.hasPermission("essentialsk.commands.delhome.other")) {
+        if (args[0].contains(":") && s.hasPermission("totalessentials.commands.delhome.other")) {
             val split = args[0].split(":")
 
             val pName = split[0].lowercase()

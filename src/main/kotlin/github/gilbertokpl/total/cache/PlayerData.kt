@@ -71,8 +71,8 @@ object PlayerData : CacheBase {
         if (vanishCache[p]!!) {
             p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
             for (it in github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().getPlayers()) {
-                if (it.player!!.hasPermission("essentialsk.commands.vanish")
-                    || it.player!!.hasPermission("essentialsk.bypass.vanish")
+                if (it.player!!.hasPermission("totalessentials.commands.vanish")
+                    || it.player!!.hasPermission("totalessentials.bypass.vanish")
                 ) {
                     continue
                 }

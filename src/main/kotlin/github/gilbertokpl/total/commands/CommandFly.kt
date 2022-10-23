@@ -16,12 +16,12 @@ class CommandFly : github.gilbertokpl.base.external.command.CommandCreator("fly"
             active = MainConfig.flyActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.fly",
+            permission = "totalessentials.commands.fly",
             minimumSize = 0,
             maximumSize = 1,
             usage = listOf(
                 "P_/fly",
-                "essentialsk.commands.fly.other_/fly <PlayerName>"
+                "totalessentials.commands.fly.other_/fly <PlayerName>"
             )
         )
     }
@@ -36,7 +36,7 @@ class CommandFly : github.gilbertokpl.base.external.command.CommandCreator("fly"
         if (args.size == 1) {
 
             //check perms
-            if (s is Player && !s.hasPermission("essentialsk.commands.fly.other")) {
+            if (s is Player && !s.hasPermission("totalessentials.commands.fly.other")) {
                 s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }

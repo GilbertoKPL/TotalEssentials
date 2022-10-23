@@ -14,7 +14,7 @@ class CommandCraft : github.gilbertokpl.base.external.command.CommandCreator("cr
             active = MainConfig.craftActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.craft",
+            permission = "totalessentials.commands.craft",
             minimumSize = 0,
             maximumSize = 0,
             usage = listOf("/craft")

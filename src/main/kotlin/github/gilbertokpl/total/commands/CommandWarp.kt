@@ -19,12 +19,12 @@ class CommandWarp : github.gilbertokpl.base.external.command.CommandCreator("war
             active = MainConfig.warpsActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.warp",
+            permission = "totalessentials.commands.warp",
             minimumSize = 0,
             maximumSize = 2,
             usage = listOf(
                 "P_/warp <warpName>",
-                "essentialsk.commands.warp.other_/warp <playerName> <warpName>"
+                "totalessentials.commands.warp.other_/warp <playerName> <warpName>"
             )
         )
     }
@@ -47,7 +47,7 @@ class CommandWarp : github.gilbertokpl.base.external.command.CommandCreator("war
             return false
         }
 
-        if (p == null || (args.size == 2 && p.hasPermission("essentialsk.commands.warp.other"))) {
+        if (p == null || (args.size == 2 && p.hasPermission("totalessentials.commands.warp.other"))) {
             val newPlayer = Bukkit.getPlayer(args[0].lowercase()) ?: return true
 
             val warpName = args[1].lowercase()
@@ -99,14 +99,14 @@ class CommandWarp : github.gilbertokpl.base.external.command.CommandCreator("war
         }
 
 
-        if (!p.hasPermission("essentialsk.commands.warp.$warpName")) {
+        if (!p.hasPermission("totalessentials.commands.warp.$warpName")) {
             p.sendMessage(LangConfig.generalNotPerm)
             return false
         }
 
         val time = MainConfig.warpsTimeToTeleport
 
-        if (p.hasPermission("essentialsk.bypass.teleport") || time == 0) {
+        if (p.hasPermission("totalessentials.bypass.teleport") || time == 0) {
             p.teleport(WarpData.warpLocation[warpName]!!)
             p.sendMessage(
                 LangConfig.warpsTeleported.replace(

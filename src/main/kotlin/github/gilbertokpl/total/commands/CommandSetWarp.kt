@@ -18,7 +18,7 @@ class CommandSetWarp : github.gilbertokpl.base.external.command.CommandCreator("
             active = MainConfig.warpsActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.setwarp",
+            permission = "totalessentials.commands.setwarp",
             minimumSize = 1,
             maximumSize = 1,
             usage = listOf(

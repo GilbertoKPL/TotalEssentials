@@ -16,7 +16,7 @@ class CommandDelKit : github.gilbertokpl.base.external.command.CommandCreator("d
             active = MainConfig.kitsActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.delkit",
+            permission = "totalessentials.commands.delkit",
             minimumSize = 1,
             maximumSize = 1,
             usage = listOf("/delkit <kitName>")

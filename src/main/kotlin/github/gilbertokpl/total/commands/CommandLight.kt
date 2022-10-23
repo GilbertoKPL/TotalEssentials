@@ -18,12 +18,12 @@ class CommandLight : github.gilbertokpl.base.external.command.CommandCreator("li
             active = MainConfig.lightActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.light",
+            permission = "totalessentials.commands.light",
             minimumSize = 0,
             maximumSize = 1,
             usage = listOf(
                 "P_/light",
-                "essentialsk.commands.light.other_/light <playerName>"
+                "totalessentials.commands.light.other_/light <playerName>"
             )
         )
     }
@@ -37,7 +37,7 @@ class CommandLight : github.gilbertokpl.base.external.command.CommandCreator("li
         if (args.size == 1) {
 
             //check perms
-            if (s is Player && !s.hasPermission("essentialsk.commands.light.other")) {
+            if (s is Player && !s.hasPermission("totalessentials.commands.light.other")) {
                 s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }

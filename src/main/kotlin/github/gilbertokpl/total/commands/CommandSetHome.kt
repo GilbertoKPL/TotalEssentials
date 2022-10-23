@@ -18,12 +18,12 @@ class CommandSetHome : github.gilbertokpl.base.external.command.CommandCreator("
             active = MainConfig.homesActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.sethome",
+            permission = "totalessentials.commands.sethome",
             minimumSize = 1,
             maximumSize = 1,
             usage = listOf(
                 "/sethome <homeName>",
-                "essentialsk.commands.sethome.other_/sethome <playername>:<homeName>"
+                "totalessentials.commands.sethome.other_/sethome <playername>:<homeName>"
             )
         )
     }
@@ -33,7 +33,7 @@ class CommandSetHome : github.gilbertokpl.base.external.command.CommandCreator("
         val nameHome = args[0].lowercase()
 
         //admin
-        if (args[0].contains(":") && s.hasPermission("essentialsk.commands.sethome.other")) {
+        if (args[0].contains(":") && s.hasPermission("totalessentials.commands.sethome.other")) {
             val split = args[0].split(":")
 
             val pName = split[0]
@@ -89,17 +89,17 @@ class CommandSetHome : github.gilbertokpl.base.external.command.CommandCreator("
         }
 
         //update limit
-        if (!s.hasPermission("essentialsk.commands.sethome." + PlayerData.homeLimitCache[s])) {
+        if (!s.hasPermission("totalessentials.commands.sethome." + PlayerData.homeLimitCache[s])) {
             PlayerData.homeLimitCache[s] = PermissionUtil.getNumberPermission(
                 s,
-                "essentialsk.commands.sethome.",
+                "totalessentials.commands.sethome.",
                 MainConfig.homesDefaultLimitHomes
             )
         }
 
         //check limit of homes
         if (PlayerData.homeCache[s]!!.size >= PlayerData.homeLimitCache[s]!! &&
-            !s.hasPermission("essentialsk.bypass.homelimit")
+            !s.hasPermission("totalessentials.bypass.homelimit")
         ) {
             s.sendMessage(
                 LangConfig.homesLimitMessage.replace(
@@ -112,7 +112,7 @@ class CommandSetHome : github.gilbertokpl.base.external.command.CommandCreator("
 
         //check if world is blocked
         if (MainConfig.homesBlockWorlds.contains(s.world.name.lowercase()) && !s.hasPermission(
-                "essentialsk.bypass.homeblockedworlds"
+                "totalessentials.bypass.homeblockedworlds"
             )
         ) {
             s.sendMessage(LangConfig.homesBlockedWorld)

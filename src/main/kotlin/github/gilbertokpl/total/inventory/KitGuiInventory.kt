@@ -157,7 +157,7 @@ internal object KitGuiInventory {
                 )
                 continue
             }
-            if (to1 == 40 && p.hasPermission("essentialsk.commands.editkit")) {
+            if (to1 == 40 && p.hasPermission("totalessentials.commands.editkit")) {
                 inv.setItem(
                     to1,
                     ItemUtil
@@ -170,10 +170,10 @@ internal object KitGuiInventory {
                 continue
             }
             if (to1 == 44) {
-                if (p.hasPermission("essentialsk.commands.kit.$kit")) {
+                if (p.hasPermission("totalessentials.commands.kit.$kit")) {
                     if (timeAll <= System.currentTimeMillis() ||
                         timeAll == 0L ||
-                        p.hasPermission("essentialsk.bypass.kitcatch")
+                        p.hasPermission("totalessentials.bypass.kitcatch")
                     ) {
                         inv.setItem(
                             to1,

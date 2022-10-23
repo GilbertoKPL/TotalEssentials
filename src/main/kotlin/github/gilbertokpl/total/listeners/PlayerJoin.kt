@@ -25,7 +25,7 @@ class PlayerJoin : Listener {
 
             val limitHome: Int = PermissionUtil.getNumberPermission(
                 p,
-                "essentialsk.commands.sethome.",
+                "totalessentials.commands.sethome.",
                 MainConfig.homesDefaultLimitHomes
             )
 

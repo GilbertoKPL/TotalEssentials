@@ -18,12 +18,12 @@ class CommandGamemode : github.gilbertokpl.base.external.command.CommandCreator(
             active = MainConfig.gamemodeActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.gamemode",
+            permission = "totalessentials.commands.gamemode",
             minimumSize = 1,
             maximumSize = 2,
             usage = listOf(
                 "P_/gamemode <number>",
-                "essentialsk.commands.gamemode.other_/gamemode <number> <PlayerName>"
+                "totalessentials.commands.gamemode.other_/gamemode <number> <PlayerName>"
             )
         )
     }
@@ -54,7 +54,7 @@ class CommandGamemode : github.gilbertokpl.base.external.command.CommandCreator(
         if (args.size == 2) {
 
             //check perms
-            if (s is Player && !s.hasPermission("essentialsk.commands.gamemode.other")) {
+            if (s is Player && !s.hasPermission("totalessentials.commands.gamemode.other")) {
                 s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }

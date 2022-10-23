@@ -16,7 +16,7 @@ class CommandSetSpawn : github.gilbertokpl.base.external.command.CommandCreator(
             active = MainConfig.spawnActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.setspawn",
+            permission = "totalessentials.commands.setspawn",
             minimumSize = 0,
             maximumSize = 0,
             usage = listOf("/setspawn")

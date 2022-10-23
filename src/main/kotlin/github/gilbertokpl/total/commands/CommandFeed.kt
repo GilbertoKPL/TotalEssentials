@@ -15,12 +15,12 @@ class CommandFeed : github.gilbertokpl.base.external.command.CommandCreator("fee
             active = MainConfig.feedActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.feed",
+            permission = "totalessentials.commands.feed",
             minimumSize = 0,
             maximumSize = 1,
             usage = listOf(
                 "P_/feed",
-                "essentialsk.commands.feed.other_/feed <playerName>"
+                "totalessentials.commands.feed.other_/feed <playerName>"
             )
         )
     }
@@ -34,7 +34,7 @@ class CommandFeed : github.gilbertokpl.base.external.command.CommandCreator("fee
         if (args.size == 1) {
 
             //check perms
-            if (s is Player && !s.hasPermission("essentialsk.commands.feed.other")) {
+            if (s is Player && !s.hasPermission("totalessentials.commands.feed.other")) {
                 s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }

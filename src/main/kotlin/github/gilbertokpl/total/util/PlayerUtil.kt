@@ -98,8 +98,8 @@ internal object PlayerUtil {
         }
 
         if (MainConfig.vanishActivated) {
-            if (p.hasPermission("essentialsk.commands.vanish") ||
-                p.hasPermission("essentialsk.bypass.vanish")
+            if (p.hasPermission("totalessentials.commands.vanish") ||
+                p.hasPermission("totalessentials.bypass.vanish")
             ) return
             for (it in github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().getPlayers()) {
                 if (PlayerData.vanishCache[it] ?: continue) {

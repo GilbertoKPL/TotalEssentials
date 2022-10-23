@@ -17,7 +17,7 @@ class CommandBack : CommandCreator("back") {
             active = MainConfig.backActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.back",
+            permission = "totalessentials.commands.back",
             minimumSize = 0,
             maximumSize = 0,
             usage = listOf("/back")

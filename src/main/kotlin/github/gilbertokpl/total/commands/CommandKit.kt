@@ -18,7 +18,7 @@ class CommandKit : github.gilbertokpl.base.external.command.CommandCreator("kit"
             active = MainConfig.kitsActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.kit",
+            permission = "totalessentials.commands.kit",
             minimumSize = 0,
             maximumSize = 1,
             usage = listOf(

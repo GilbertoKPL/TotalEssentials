@@ -17,7 +17,7 @@ class CommandCreateKit : github.gilbertokpl.base.external.command.CommandCreator
             active = MainConfig.kitsActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.createkit",
+            permission = "totalessentials.commands.createkit",
             minimumSize = 1,
             maximumSize = 1,
             usage = listOf("/createkit <kitName>")

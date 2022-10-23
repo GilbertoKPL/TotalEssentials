@@ -754,27 +754,27 @@ public class MainConfig implements DefaultConfig {
     @Comments(
             {
                     @Comment(annotations = "Neste recurso, o jogador é impedido de subir na cama;\n" +
-                            "Permissão Bypass -> essentialsk.bypass.bed", lang = LangTypes.PT_BR),
+                            "Permissão Bypass -> totalessentials.bypass.bed", lang = LangTypes.PT_BR),
                     @Comment(annotations = "In this feature, the player is prevented from getting on the bed;\n" +
-                            "Permission Bypass -> essentialsk.bypass.bed", lang = LangTypes.EN_US)
+                            "Permission Bypass -> totalessentials.bypass.bed", lang = LangTypes.EN_US)
             }
     )
     public static Boolean antibugsBlockBed = true;
     @Comments(
             {
                     @Comment(annotations = "Neste recurso, o jogador é impedido de subir nos veículos;\n" +
-                            "Permissão Bypass -> essentialsk.bypass.vehicles", lang = LangTypes.PT_BR),
+                            "Permissão Bypass -> totalessentials.bypass.vehicles", lang = LangTypes.PT_BR),
                     @Comment(annotations = "In this feature, the player is prevented from boarding vehicles;\n" +
-                            "Permission Bypass -> essentialsk.bypass.vehicles", lang = LangTypes.EN_US)
+                            "Permission Bypass -> totalessentials.bypass.vehicles", lang = LangTypes.EN_US)
             }
     )
     public static Boolean antibugsBlockClimbingOnVehicles = true;
     @Comments(
             {
                     @Comment(annotations = "Neste recurso, o jogador é impedido de usar NameTag em mobs;\n" +
-                            "Permissão Bypass -> essentialsk.bypass.nametag", lang = LangTypes.PT_BR),
+                            "Permissão Bypass -> totalessentials.bypass.nametag", lang = LangTypes.PT_BR),
                     @Comment(annotations = "In this feature, the player is prevented from using NameTag on mobs;\n" +
-                            "Permission Bypass -> essentialsk.bypass.nametag", lang = LangTypes.EN_US)
+                            "Permission Bypass -> totalessentials.bypass.nametag", lang = LangTypes.EN_US)
             }
     )
     public static Boolean antibugsBlockNametag = false;
@@ -795,16 +795,16 @@ public class MainConfig implements DefaultConfig {
     @Comments(
             {
                     @Comment(annotations = "Neste recurso, bloqueia o jogador de ir para o teto do Nether;\n" +
-                            "Permissão Bypass -> essentialsk.bypass.netherceiling", lang = LangTypes.PT_BR),
+                            "Permissão Bypass -> totalessentials.bypass.netherceiling", lang = LangTypes.PT_BR),
                     @Comment(annotations = "In this feature, blocks the player from going to the Nether ceiling;\n" +
-                            "Permission Bypass -> essentialsk.bypass.netherceiling", lang = LangTypes.EN_US)
+                            "Permission Bypass -> totalessentials.bypass.netherceiling", lang = LangTypes.EN_US)
             }
     )
     public static Boolean antibugsBlockPlayerGoToNetherCeiling = true;
     @Comments(
             {
                     @Comment(annotations = "Neste recurso, os blocos de jogadores se teletransportam em portais;\n" +
-                            "Permissão Bypass -> essentialsk.bypass.teleportportal", lang = LangTypes.PT_BR),
+                            "Permissão Bypass -> totalessentials.bypass.teleportportal", lang = LangTypes.PT_BR),
                     @Comment(annotations = "TEST" + "Permission Bypass ->", lang = LangTypes.EN_US)
             }
     )
@@ -819,9 +819,9 @@ public class MainConfig implements DefaultConfig {
     @Comments(
             {
                     @Comment(annotations = "Neste recurso, bloquear os player de utilizarem esses comandos;\n" +
-                            "Permissão Bypass -> essentialsk.bypass.blockedcmd", lang = LangTypes.PT_BR),
+                            "Permissão Bypass -> totalessentials.bypass.blockedcmd", lang = LangTypes.PT_BR),
                     @Comment(annotations = "In this feature, block players from using these commands;\n" +
-                            "Permission Bypass -> essentialsk.bypass.blockedcmd", lang = LangTypes.EN_US)
+                            "Permission Bypass -> totalessentials.bypass.blockedcmd", lang = LangTypes.EN_US)
             }
     )
     public static List<String> antibugsBlockCmds = Arrays.asList("/pl", "/plugins");
@@ -836,9 +836,9 @@ public class MainConfig implements DefaultConfig {
     @Comments(
             {
                     @Comment(annotations = "Cancelar o uso de shift nos contêineres da lista;\n" +
-                            "Permissão Bypass -> essentialsk.bypass.shiftcontainer", lang = LangTypes.PT_BR),
+                            "Permissão Bypass -> totalessentials.bypass.shiftcontainer", lang = LangTypes.PT_BR),
                     @Comment(annotations = "Override using shift in list containers;\n" +
-                            "Permission Bypass -> essentialsk.bypass.shiftcontainer", lang = LangTypes.EN_US)
+                            "Permission Bypass -> totalessentials.bypass.shiftcontainer", lang = LangTypes.EN_US)
             }
     )
     public static Boolean containersBlockShiftEnable = false;
@@ -852,9 +852,9 @@ public class MainConfig implements DefaultConfig {
     @Comments(
             {
                     @Comment(annotations = "Cancelar abrir os contêineres da lista;\n" +
-                            "Permissão Bypass -> essentialsk.bypass.opencontainer", lang = LangTypes.PT_BR),
+                            "Permissão Bypass -> totalessentials.bypass.opencontainer", lang = LangTypes.PT_BR),
                     @Comment(annotations = "Cancel open list containers;\n" +
-                            "Permission Bypass -> essentialsk.bypass.opencontainer", lang = LangTypes.EN_US)
+                            "Permission Bypass -> totalessentials.bypass.opencontainer", lang = LangTypes.EN_US)
             }
     )
     public static Boolean containersBlockOpenEnable = false;
@@ -911,27 +911,27 @@ public class MainConfig implements DefaultConfig {
     @Comments(
             {
                     @Comment(annotations = "Neste recurso, pode ser colocado & no nome do ‘item’, tem permissão para isso;\n" +
-                            "Permissão -> essentialsk.color.&0 (Exemplo).", lang = LangTypes.PT_BR),
+                            "Permissão -> totalessentials.color.&0 (Exemplo).", lang = LangTypes.PT_BR),
                     @Comment(annotations = "In this resource, you can put & in the 'item' name, have permission to do so;\n" +
-                            "Permission -> essentialsk.color.&0 (Ex).", lang = LangTypes.EN_US)
+                            "Permission -> totalessentials.color.&0 (Ex).", lang = LangTypes.EN_US)
             }
     )
     public static Boolean addonsColorInAnvil = true;
     @Comments(
             {
                     @Comment(annotations = "Neste recurso, pode ser colocado & no sinal, tem uma permissão para isso;\n" +
-                            "Permissão -> essentialsk.color.&0 (Exemplo).", lang = LangTypes.PT_BR),
+                            "Permissão -> totalessentials.color.&0 (Exemplo).", lang = LangTypes.PT_BR),
                     @Comment(annotations = "In this resource, you can put & in the sign, have a permission for that;\n" +
-                            "Permission -> essentialsk.color.&0 (Ex).", lang = LangTypes.EN_US)
+                            "Permission -> totalessentials.color.&0 (Ex).", lang = LangTypes.EN_US)
             }
     )
     public static Boolean addonsColorInSign = true;
     @Comments(
             {
                     @Comment(annotations = "Neste recurso, pode ser colocado & no bate-papo, tem permissão para isso.Neste recurso, pode ser colocado & no bate-papo, tem permissão para isso.\n" +
-                            "Permissão -> essentialsk.color.&0 (Exemplo).", lang = LangTypes.PT_BR),
+                            "Permissão -> totalessentials.color.&0 (Exemplo).", lang = LangTypes.PT_BR),
                     @Comment(annotations = "In this feature, can be placed & in chat, have permission to do so. In this feature, can be placed & in chat, have permission to do so.\n" +
-                            "Permission -> essentialsk.color.&0 (Ex).", lang = LangTypes.EN_US)
+                            "Permission -> totalessentials.color.&0 (Ex).", lang = LangTypes.EN_US)
             }
     )
     public static Boolean addonsColorInChat = true;

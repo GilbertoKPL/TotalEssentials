@@ -15,12 +15,12 @@ class CommandEchest : github.gilbertokpl.base.external.command.CommandCreator("e
             active = MainConfig.echestActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.ec",
+            permission = "totalessentials.commands.ec",
             minimumSize = 0,
             maximumSize = 1,
             usage = listOf(
                 "/echest",
-                "essentialsk.commands.ec.other_/ec <PlayerName>"
+                "totalessentials.commands.ec.other_/ec <PlayerName>"
             )
         )
     }
@@ -34,7 +34,7 @@ class CommandEchest : github.gilbertokpl.base.external.command.CommandCreator("e
         }
 
         //admin
-        if (s.hasPermission("essentialsk.commands.ec.other")) {
+        if (s.hasPermission("totalessentials.commands.ec.other")) {
             val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false

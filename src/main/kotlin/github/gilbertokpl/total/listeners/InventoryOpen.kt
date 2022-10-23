@@ -20,7 +20,7 @@ class InventoryOpen : Listener {
 
     //block open
     private fun blockOpenInventory(e: InventoryOpenEvent) {
-        if (!e.player.hasPermission("essentialsk.bypass.opencontainer") &&
+        if (!e.player.hasPermission("totalessentials.bypass.opencontainer") &&
             MainConfig.containersBlockOpen.contains(e.inventory.type.name.lowercase())
         ) {
             e.isCancelled = true

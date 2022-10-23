@@ -21,7 +21,7 @@ class EntityVehicleEnter : Listener {
 
     private fun blockEnterInVehicles(e: VehicleEnterEvent) {
         if (e.entered is Player &&
-            !(e.entered as Player).hasPermission("essentialsk.bypass.vehicles")
+            !(e.entered as Player).hasPermission("totalessentials.bypass.vehicles")
         ) {
             (e.entered as Player).sendMessage(LangConfig.generalNotPermAction)
             e.isCancelled = true

@@ -16,7 +16,7 @@ class CommandTpa : github.gilbertokpl.base.external.command.CommandCreator("tpa"
             active = MainConfig.tpaActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.tpa",
+            permission = "totalessentials.commands.tpa",
             minimumSize = 1,
             maximumSize = 1,
             usage = listOf(

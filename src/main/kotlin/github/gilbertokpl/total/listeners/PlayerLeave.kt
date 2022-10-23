@@ -40,7 +40,7 @@ class PlayerLeave : Listener {
     }
 
     private fun setBackLocation(e: PlayerQuitEvent) {
-        if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.backDisabledWorlds.contains(
+        if (!e.player.hasPermission("totalessentials.commands.back") || MainConfig.backDisabledWorlds.contains(
                 e.player.world.name.lowercase()
             )
         ) return

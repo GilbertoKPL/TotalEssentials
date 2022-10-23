@@ -15,7 +15,7 @@ class CommandTphere : github.gilbertokpl.base.external.command.CommandCreator("t
             active = MainConfig.tphereActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
-            permission = "essentialsk.commands.tphere",
+            permission = "totalessentials.commands.tphere",
             minimumSize = 1,
             maximumSize = 1,
             usage = listOf("/tphere <playerName>")

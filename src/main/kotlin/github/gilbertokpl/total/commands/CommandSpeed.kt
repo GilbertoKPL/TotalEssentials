@@ -16,14 +16,14 @@ class CommandSpeed : github.gilbertokpl.base.external.command.CommandCreator("sp
             active = MainConfig.speedActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.speed",
+            permission = "totalessentials.commands.speed",
             minimumSize = 1,
             maximumSize = 2,
             usage = listOf(
                 "/speed <value>",
                 "/speed remove",
-                "essentialsk.commands.speed.other_/speed <player> <value>",
-                "essentialsk.commands.speed.other_/speed <player> remove"
+                "totalessentials.commands.speed.other_/speed <player> <value>",
+                "totalessentials.commands.speed.other_/speed <player> remove"
             )
         )
     }
@@ -67,7 +67,7 @@ class CommandSpeed : github.gilbertokpl.base.external.command.CommandCreator("sp
         if (args.size != 2) return true
 
         //check perm
-        if (s is Player && !s.hasPermission("essentialsk.commands.speed.other")) {
+        if (s is Player && !s.hasPermission("totalessentials.commands.speed.other")) {
             s.sendMessage(LangConfig.generalNotPerm)
             return false
         }

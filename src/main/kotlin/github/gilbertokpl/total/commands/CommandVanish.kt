@@ -18,12 +18,12 @@ class CommandVanish : github.gilbertokpl.base.external.command.CommandCreator("v
             active = MainConfig.vanishActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.vanish",
+            permission = "totalessentials.commands.vanish",
             minimumSize = 0,
             maximumSize = 1,
             usage = listOf(
                 "P_/vanish",
-                "essentialsk.commands.vanish.other_/vanish <PlayerName>"
+                "totalessentials.commands.vanish.other_/vanish <PlayerName>"
             )
         )
     }
@@ -37,7 +37,7 @@ class CommandVanish : github.gilbertokpl.base.external.command.CommandCreator("v
         if (args.size == 1) {
 
             //check perms
-            if (s is Player && !s.hasPermission("essentialsk.commands.vanish.other")) {
+            if (s is Player && !s.hasPermission("totalessentials.commands.vanish.other")) {
                 s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
@@ -87,8 +87,8 @@ class CommandVanish : github.gilbertokpl.base.external.command.CommandCreator("v
             player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
             github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().getPlayers().forEach {
                 @Suppress("DEPRECATION")
-                if (!it.hasPermission("essentialsk.commands.vanish") &&
-                    !it.hasPermission("essentialsk.bypass.vanish")
+                if (!it.hasPermission("totalessentials.commands.vanish") &&
+                    !it.hasPermission("totalessentials.bypass.vanish")
                 ) {
                     it.hidePlayer(player)
                 }

@@ -40,9 +40,9 @@ class PlayerTeleport : Listener {
 
 
     private fun setBackLocation(e: PlayerTeleportEvent) {
-        if (!e.player.hasPermission("essentialsk.commands.back") || MainConfig.backDisabledWorlds.contains(
+        if (!e.player.hasPermission("totalessentials.commands.back") || MainConfig.backDisabledWorlds.contains(
                 e.player.world.name.lowercase()
-            ) && !e.player.hasPermission("essentialsk.bypass.backblockedworlds")
+            ) && !e.player.hasPermission("totalessentials.bypass.backblockedworlds")
         ) return
         PlayerData.backLocation[e.player] = e.player.location
     }
@@ -67,7 +67,7 @@ class PlayerTeleport : Listener {
     private fun blockPassNetherCeiling(e: PlayerTeleportEvent) {
         val p = e.player
         if (
-            !p.hasPermission("essentialsk.bypass.netherceiling") &&
+            !p.hasPermission("totalessentials.bypass.netherceiling") &&
             e.to != null && e.to!!.world!!.environment === World.Environment.NETHER && e.to!!.y > 124.0
         ) {
             SpawnData.teleport(p)

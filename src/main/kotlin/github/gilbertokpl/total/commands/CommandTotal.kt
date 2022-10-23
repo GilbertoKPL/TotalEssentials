@@ -15,7 +15,7 @@ class CommandTotal : github.gilbertokpl.base.external.command.CommandCreator("to
             active = true,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.essentialsk",
+            permission = "totalessentials.commands.total",
             minimumSize = 1,
             maximumSize = 3,
             usage = listOf(

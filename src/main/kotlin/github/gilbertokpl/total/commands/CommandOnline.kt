@@ -15,7 +15,7 @@ class CommandOnline : github.gilbertokpl.base.external.command.CommandCreator("o
             active = MainConfig.onlineActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "essentialsk.commands.online",
+            permission = "totalessentials.commands.online",
             minimumSize = 0,
             maximumSize = 0,
             usage = listOf("/online")

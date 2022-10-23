@@ -48,7 +48,7 @@ class PlayerPreCommand : Listener {
         for (blockedCmd in MainConfig.antibugsBlockCmds) {
             if ((blockedCmd == cmd || cmd.split(":").toTypedArray().size > 1 && blockedCmd == "/" + cmd.split(":")
                     .toTypedArray()[1]) &&
-                !e.player.hasPermission("essentialsk.bypass.blockedcmd")
+                !e.player.hasPermission("totalessentials.bypass.blockedcmd")
             ) {
                 e.player.sendMessage(LangConfig.generalNotPerm)
                 e.isCancelled = true
