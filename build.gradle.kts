@@ -5,12 +5,10 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
-val base: String by project
-val exposedVersion: String by project
-val projectVersion: String by project
+val base = "github.gilbertokpl.total"
+val exposedVersion = "0.40.1"
+val projectVersion = "1.0"
 
-group = base
-version = projectVersion
 
 repositories {
     mavenCentral()
