@@ -1,10 +1,10 @@
 package github.gilbertokpl.total.config.files;
 
 
-import github.gilbertokpl.base.external.config.annotations.Value;
-import github.gilbertokpl.base.external.config.annotations.Values;
-import github.gilbertokpl.base.external.config.def.DefaultLang;
-import github.gilbertokpl.base.external.config.types.LangTypes;
+import github.gilbertokpl.core.external.config.annotations.Value;
+import github.gilbertokpl.core.external.config.annotations.Values;
+import github.gilbertokpl.core.external.config.def.DefaultLang;
+import github.gilbertokpl.core.external.config.types.LangTypes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

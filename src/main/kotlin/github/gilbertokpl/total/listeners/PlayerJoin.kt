@@ -1,8 +1,10 @@
 package github.gilbertokpl.total.listeners
 
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.PlayerData
-import github.gilbertokpl.total.cache.SpawnData
+import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.total.cache.local.SpawnData
+import github.gilbertokpl.total.config.files.LangConfig
+import github.gilbertokpl.total.util.MainUtil
 import github.gilbertokpl.total.util.PermissionUtil
 import github.gilbertokpl.total.util.PlayerUtil
 
@@ -38,7 +40,17 @@ class PlayerJoin : Listener {
 
             PlayerData.values(e.player)
 
-            PlayerUtil.finishLogin(p, PlayerData.vanishCache[p]!!)
+            if (!p.hasPermission("*")) {
+                if (MainConfig.messagesLoginMessage) {
+                    MainUtil.serverMessage(
+                        LangConfig.messagesEnterMessage
+                            .replace("%player%", p.name)
+                    )
+                }
+                if (MainConfig.discordbotSendLoginMessage) {
+                    //discord
+                }
+            }
 
         }
     }

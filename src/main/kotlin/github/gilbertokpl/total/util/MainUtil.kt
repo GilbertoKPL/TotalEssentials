@@ -1,9 +1,8 @@
 package github.gilbertokpl.total.util
 
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.inventory.EditKitInventory
-import github.gilbertokpl.total.inventory.KitGuiInventory
-import github.gilbertokpl.total.manager.EColor
+import github.gilbertokpl.total.cache.internal.EditKitInventory
+import github.gilbertokpl.total.cache.internal.KitGuiInventory
 import java.io.InputStream
 import java.net.URL
 import java.util.*
@@ -33,7 +32,7 @@ internal object MainUtil {
     }
 
     fun consoleMessage(message: String) {
-        println("${EColor.CYAN.color}[${github.gilbertokpl.total.TotalEssentials.instance.name}]${EColor.RESET.color} $message")
+        println("${ColorUtil.CYAN.color}[${github.gilbertokpl.total.TotalEssentials.instance.name}]${ColorUtil.RESET.color} $message")
     }
 
     fun serverMessage(message: String) {

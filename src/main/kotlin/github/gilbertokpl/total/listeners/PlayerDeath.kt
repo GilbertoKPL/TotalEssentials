@@ -2,8 +2,8 @@ package github.gilbertokpl.total.listeners
 
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.PlayerData
-import github.gilbertokpl.total.data.OtherConfig
+import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.total.cache.internal.OtherConfig
 
 import github.gilbertokpl.total.util.MainUtil
 

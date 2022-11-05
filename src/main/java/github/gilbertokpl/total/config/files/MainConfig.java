@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.config.files;
 
-import github.gilbertokpl.base.external.config.annotations.*;
-import github.gilbertokpl.base.external.config.def.DefaultConfig;
-import github.gilbertokpl.base.external.config.types.LangTypes;
+import github.gilbertokpl.core.external.config.annotations.*;
+import github.gilbertokpl.core.external.config.def.DefaultConfig;
+import github.gilbertokpl.core.external.config.types.LangTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -61,6 +61,13 @@ public class MainConfig implements DefaultConfig {
     public static String databaseType = "H2";
     @Comments(
             {
+                    @Comment(annotations = "Mude o final do database para não entrar em conflito com outros servidores e usar o mesmo login.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "Rename the final of database to switch between servers and keep same login", lang = LangTypes.EN_US)
+            }
+    )
+    public static String databaseManager = "S1";
+    @Comments(
+            {
                     @Comment(annotations = "Se selecionou MYSQL coloque essas informações para conexão.", lang = LangTypes.PT_BR),
                     @Comment(annotations = "If you selected MYSQL, enter this information for connection.", lang = LangTypes.EN_US)
             }
@@ -70,6 +77,7 @@ public class MainConfig implements DefaultConfig {
     public static String databaseSqlUsername = "!u0_essentialsk";
     public static String databaseSqlDatabase = "!s0_essentialsk";
     public static String databaseSqlPassword = "!essentialsk123";
+
 
     //Commands
 

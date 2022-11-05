@@ -2,7 +2,7 @@ package github.gilbertokpl.total.listeners
 
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.manager.EColor
+import github.gilbertokpl.total.util.ColorUtil
 
 import net.milkbowl.vault.chat.Chat
 
@@ -67,7 +67,7 @@ class PlayerPreCommand : Listener {
         if (MainConfig.discordbotCommandChat.contains(split[0].lowercase())) {
             if (chat == null) {
                 Bukkit.getConsoleSender().sendMessage(
-                    EColor.YELLOW.color + LangConfig.generalVaultNotExist + EColor.RESET.color
+                    ColorUtil.YELLOW.color + LangConfig.generalVaultNotExist + ColorUtil.RESET.color
                 )
                 return
             }

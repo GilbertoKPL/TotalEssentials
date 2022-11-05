@@ -1,14 +1,14 @@
 package github.gilbertokpl.total
 
-import github.gilbertokpl.base.external.BasePlugin
+import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.data.OtherConfig
-import github.gilbertokpl.total.database.KitsDataSQL
-import github.gilbertokpl.total.database.PlayerDataSQL
-import github.gilbertokpl.total.database.SpawnDataSQL
-import github.gilbertokpl.total.database.WarpsDataSQL
-import github.gilbertokpl.total.manager.EColor
+import github.gilbertokpl.total.cache.internal.OtherConfig
+import github.gilbertokpl.total.cache.sql.KitsDataSQL
+import github.gilbertokpl.total.cache.sql.PlayerDataSQL
+import github.gilbertokpl.total.cache.sql.SpawnDataSQL
+import github.gilbertokpl.total.cache.sql.WarpsDataSQL
+import github.gilbertokpl.total.util.ColorUtil
 import github.gilbertokpl.total.util.MainUtil
 import github.gilbertokpl.total.util.MaterialUtil
 import github.gilbertokpl.total.util.TaskUtil
@@ -28,13 +28,13 @@ internal class TotalEssentials : JavaPlugin() {
 
     override fun onEnable() {
 
-        basePlugin = BasePlugin(this)
+        basePlugin = CorePlugin(this)
 
         basePlugin.start(
             "github.gilbertokpl.total.commands",
             "github.gilbertokpl.total.listeners",
             "github.gilbertokpl.total.config.files",
-            "github.gilbertokpl.total.cache",
+            "github.gilbertokpl.total.cache.local",
             listOf(KitsDataSQL, PlayerDataSQL, SpawnDataSQL, WarpsDataSQL)
         )
 
@@ -56,9 +56,9 @@ internal class TotalEssentials : JavaPlugin() {
 
     override fun onDisable() {
 
-        MainUtil.consoleMessage(EColor.YELLOW.color + LangConfig.generalSaveDataMessage + EColor.RESET.color)
+        MainUtil.consoleMessage(ColorUtil.YELLOW.color + LangConfig.generalSaveDataMessage + ColorUtil.RESET.color)
         basePlugin.stop()
-        MainUtil.consoleMessage(EColor.YELLOW.color + LangConfig.generalSaveDataSuccess + EColor.RESET.color)
+        MainUtil.consoleMessage(ColorUtil.YELLOW.color + LangConfig.generalSaveDataSuccess + ColorUtil.RESET.color)
 
         TaskUtil.disable()
 
@@ -68,7 +68,7 @@ internal class TotalEssentials : JavaPlugin() {
     companion object {
         lateinit var instance: TotalEssentials
 
-        lateinit var basePlugin: BasePlugin
+        lateinit var basePlugin: CorePlugin
 
         var lowVersion = false
     }

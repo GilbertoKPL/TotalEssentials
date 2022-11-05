@@ -2,12 +2,12 @@ package github.gilbertokpl.total.listeners
 
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.KitsData
-import github.gilbertokpl.total.cache.PlayerData
-import github.gilbertokpl.total.data.DataManager
-import github.gilbertokpl.total.inventory.EditKitInventory.editKitGui
-import github.gilbertokpl.total.inventory.EditKitInventory.editKitGuiItems
-import github.gilbertokpl.total.inventory.KitGuiInventory.kitGui
+import github.gilbertokpl.total.cache.local.KitsData
+import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.total.cache.internal.DataManager
+import github.gilbertokpl.total.cache.internal.EditKitInventory.editKitGui
+import github.gilbertokpl.total.cache.internal.EditKitInventory.editKitGuiItems
+import github.gilbertokpl.total.cache.internal.KitGuiInventory.kitGui
 
 import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.PermissionUtil

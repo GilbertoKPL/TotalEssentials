@@ -5,9 +5,9 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
-val base = "github.gilbertokpl.total"
-val exposedVersion = "0.40.1"
-val projectVersion = "1.0"
+val base = "github.gilbertokpl.total.lib"
+
+version = "1.0"
 
 
 repositories {
@@ -33,43 +33,49 @@ dependencies {
     }
 
     //exposed
-    implementation("org.jetbrains.exposed:exposed-core:0.40.1") {
+    compileOnly("org.jetbrains.exposed:exposed-core:0.40.1") {
         exclude("org.slf4j", "slf4j-api")
     }
-    implementation("org.jetbrains.exposed:exposed-dao:0.40.1") {
+    compileOnly("org.jetbrains.exposed:exposed-dao:0.40.1") {
         exclude("org.slf4j", "slf4j-api")
     }
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.40.1") {
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.40.1") {
         exclude("org.slf4j", "slf4j-api")
     }
 
     //H2 database
-    implementation("com.h2database:h2:2.1.214")
+    compileOnly("com.h2database:h2:2.1.214")
 
     //Mysql with MariaDB driver database
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.0.6")
+    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.0.6")
 
     //implementation to mysql - MariaDB
-    implementation("com.zaxxer:HikariCP:4.0.3") {
+    compileOnly("com.zaxxer:HikariCP:4.0.3") {
         exclude("org.slf4j", "slf4j-api")
     }
 
     //remove all connections of slf4
-    implementation("org.slf4j:slf4j-nop:2.0.3")
+    compileOnly("org.slf4j:slf4j-nop:2.0.3")
 
     //simple yaml to help in yaml
-    implementation("me.carleslc.Simple-YAML:Simple-Yaml:1.8.2")
+    compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.8.2")
 
     //host info
-    implementation("com.github.oshi:oshi-core:6.3.0") {
+    compileOnly("com.github.oshi:oshi-core:6.3.1") {
         exclude("org.slf4j", "slf4j-api")
+    }
+
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    compileOnly("net.dv8tion:JDA:5.0.0-alpha.22") {
+        exclude("club.minnced","opus-java")
     }
 
 }
 
 tasks.shadowJar {
     manifest {
-        attributes["Class-Path"] = "../plugins/LogicFrame/LogicFrame.jar"
+        attributes["Class-Path"] = "TotalEssentials/lib/TotalEssentials-1.0.jar"
     }
     archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
     destinationDirectory.set(File("$projectDir/jar"))
@@ -122,6 +128,10 @@ tasks.shadowJar {
     relocate("com.zaxxer.hikari", "$base.hikari")
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"

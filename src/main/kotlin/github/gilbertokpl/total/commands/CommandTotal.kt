@@ -1,13 +1,12 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.base.external.BasePlugin
-import github.gilbertokpl.base.external.command.CommandTarget
-import github.gilbertokpl.base.external.command.annotations.CommandPattern
+import github.gilbertokpl.core.external.command.CommandTarget
+import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.util.PluginUtil
 import org.bukkit.command.CommandSender
 
-class CommandTotal : github.gilbertokpl.base.external.command.CommandCreator("total") {
+class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("total") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(

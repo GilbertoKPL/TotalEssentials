@@ -2,7 +2,7 @@ package github.gilbertokpl.total.util
 
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.PlayerData
+import github.gilbertokpl.total.cache.local.PlayerData
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 
@@ -80,33 +80,6 @@ internal object PlayerUtil {
             }
 
             else -> GameMode.SURVIVAL
-        }
-    }
-
-    fun finishLogin(p: Player, vanishCache: Boolean) {
-
-        if (!vanishCache && !p.hasPermission("*")) {
-            if (MainConfig.messagesLoginMessage) {
-                MainUtil.serverMessage(
-                    LangConfig.messagesEnterMessage
-                        .replace("%player%", p.name)
-                )
-            }
-            if (MainConfig.discordbotSendLoginMessage) {
-                //discord
-            }
-        }
-
-        if (MainConfig.vanishActivated) {
-            if (p.hasPermission("totalessentials.commands.vanish") ||
-                p.hasPermission("totalessentials.bypass.vanish")
-            ) return
-            for (it in github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().getPlayers()) {
-                if (PlayerData.vanishCache[it] ?: continue) {
-                    @Suppress("DEPRECATION")
-                    p.hidePlayer(it)
-                }
-            }
         }
     }
 }

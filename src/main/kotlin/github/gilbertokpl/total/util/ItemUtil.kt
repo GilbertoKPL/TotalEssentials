@@ -2,8 +2,8 @@ package github.gilbertokpl.total.util
 
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.KitsData
-import github.gilbertokpl.total.cache.PlayerData
+import github.gilbertokpl.total.cache.local.KitsData
+import github.gilbertokpl.total.cache.local.PlayerData
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player

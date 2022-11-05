@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.listeners
 
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.SpawnData
+import github.gilbertokpl.total.cache.local.SpawnData
 
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

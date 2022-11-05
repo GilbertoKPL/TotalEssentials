@@ -2,8 +2,8 @@ package github.gilbertokpl.total.listeners
 
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.KitsData
-import github.gilbertokpl.total.data.DataManager
+import github.gilbertokpl.total.cache.local.KitsData
+import github.gilbertokpl.total.cache.internal.DataManager
 import github.gilbertokpl.total.util.PermissionUtil
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
