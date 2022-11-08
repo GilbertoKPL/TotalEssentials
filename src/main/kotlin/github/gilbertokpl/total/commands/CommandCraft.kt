@@ -10,7 +10,7 @@ class CommandCraft : github.gilbertokpl.core.external.command.CommandCreator("cr
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf(""),
+            aliases = listOf("craftar"),
             active = MainConfig.craftActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
