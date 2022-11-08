@@ -11,7 +11,7 @@ class CommandTphere : github.gilbertokpl.core.external.command.CommandCreator("t
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf(""),
+            aliases = listOf("puxar"),
             active = MainConfig.tphereActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
