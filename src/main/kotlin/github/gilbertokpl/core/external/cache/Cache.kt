@@ -6,10 +6,13 @@ import github.gilbertokpl.core.external.cache.interfaces.CacheBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
 import github.gilbertokpl.core.internal.cache.*
+import github.gilbertokpl.total.util.TaskUtil
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class Cache(lf: CorePlugin) {
     private val lunarFrame = lf
@@ -112,6 +115,11 @@ class Cache(lf: CorePlugin) {
                 i.load()
             }
         }
+        Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
+            for (i in toByteUpdate) {
+                i.update()
+            }
+        },5,5,TimeUnit.MINUTES)
     }
 
     private val toByteUpdate = ArrayList<CacheBuilder<*>>()

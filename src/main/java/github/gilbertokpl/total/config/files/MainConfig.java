@@ -81,6 +81,43 @@ public class MainConfig implements DefaultConfig {
 
     //Commands
 
+    //authCommand
+    @PrimaryComments(
+            {
+                    @PrimaryComment(primaryAnnotations = "Configurações dos comandos logar / registrar", lang = LangTypes.PT_BR),
+                    @PrimaryComment(primaryAnnotations = "login and register command settings", lang = LangTypes.EN_US)
+            }
+    )
+    @Comments(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), O comando será ativado.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "If enabled (true), The command will be enabled.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean authActivated = true;
+    @Comments(
+            {
+                    @Comment(annotations = "Quantidade máxima de tentativas de logar.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "Maximum number of login attempts.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Integer authMaxAttempts = 3;
+    @Comments(
+            {
+                    @Comment(annotations = "Quantidade máxima de registros por ip.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "Maximum number of records per ip.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Integer authMaxRegister = 1;
+
+    @Comments(
+            {
+                    @Comment(annotations = "Quantidade maxima de mensagens para o player logar ou registrar, entre cada é 10 segundos.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "Maximum number of messages for the player to log in or register, between each is 10 seconds.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Integer authSendMessage = 3;
+
     //announceCommand
     @PrimaryComments(
             {

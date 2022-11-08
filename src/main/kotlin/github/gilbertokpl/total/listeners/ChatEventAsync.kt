@@ -4,14 +4,22 @@ import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.internal.DataManager
+import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.util.PermissionUtil
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
 
 class ChatEventAsync : Listener {
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     fun event(e: AsyncPlayerChatEvent) {
+
+        if (!LoginData.checkIfPlayerIsLoggedIn(e.player)) {
+            e.isCancelled = true
+            return
+        }
+
         if (MainConfig.kitsActivated) {
             try {
                 if (editKitChatEvent(e)) return

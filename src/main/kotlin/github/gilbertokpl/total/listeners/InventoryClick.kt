@@ -8,6 +8,7 @@ import github.gilbertokpl.total.cache.internal.DataManager
 import github.gilbertokpl.total.cache.internal.EditKitInventory.editKitGui
 import github.gilbertokpl.total.cache.internal.EditKitInventory.editKitGuiItems
 import github.gilbertokpl.total.cache.internal.KitGuiInventory.kitGui
+import github.gilbertokpl.total.cache.local.LoginData
 
 import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.PermissionUtil
@@ -15,46 +16,53 @@ import github.gilbertokpl.total.util.PermissionUtil
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 
 class InventoryClick : Listener {
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     fun event(e: InventoryClickEvent) {
+
+        if (e.whoClicked is Player && !LoginData.checkIfPlayerIsLoggedIn(e.whoClicked as Player)) {
+            e.isCancelled = true
+            return
+        }
+
         if (e.slot == 45) {
             return
         }
         if (MainConfig.kitsActivated) {
             try {
                 if (editKitInventoryClickEvent(e)) return
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
 
             }
             try {
                 if (kitGuiEvent(e)) return
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
 
             }
         }
         if (MainConfig.containersBlockShiftEnable) {
             try {
                 blockShiftInInventory(e)
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
 
             }
         }
         if (MainConfig.addonsColorInAnvil) {
             try {
                 anvilColor(e)
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
 
             }
         }
         if (MainConfig.invseeActivated) {
             try {
                 invSeeEvent(e)
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
 
             }
         }

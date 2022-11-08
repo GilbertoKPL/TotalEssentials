@@ -1,13 +1,17 @@
 package github.gilbertokpl.total.listeners
 
+import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.discord.Discord
 import github.gilbertokpl.total.util.ColorUtil
 
 import net.milkbowl.vault.chat.Chat
 
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 
@@ -19,9 +23,15 @@ class PlayerPreCommand : Listener {
         null
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     fun event(e: PlayerCommandPreprocessEvent) {
         val split = e.message.split(" ")
+
+        if (!LoginData.checkIfPlayerIsLoggedIn(e.player) && split[0] != "/login" && split[0] != "/logar" && split[0] != "/register" && split[0] != "/registrar") {
+            e.isCancelled = true
+            return
+        }
+
         if (MainConfig.vanishActivated) {
             try {
                 vanishPreCommandEvent(e, split)
@@ -85,6 +95,7 @@ class PlayerPreCommand : Listener {
                     .replace("%message%", msg)
                     .replace("%player%", e.player.name).replace("&[0-9,a-z]".toRegex(), "")
 
+            Discord.sendDiscordMessage(patternMessage, false)
         }
     }
 }

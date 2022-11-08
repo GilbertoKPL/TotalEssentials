@@ -55,11 +55,11 @@ class InventoryClose : Listener {
                     if (name == null || name == "") it else name
                 )
             )
-
-            KitGuiInventory.setup()
-
-            return true
         }
+
+        KitGuiInventory.setup()
+
+        return true
     }
 
     private fun invseeInventoryCloseEvent(e: InventoryCloseEvent) {

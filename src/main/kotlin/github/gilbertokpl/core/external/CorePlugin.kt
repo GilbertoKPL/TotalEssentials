@@ -6,6 +6,7 @@ import github.gilbertokpl.core.external.config.values.Value
 import github.gilbertokpl.core.external.task.Task
 import github.gilbertokpl.core.external.utils.*
 import github.gilbertokpl.core.internal.events.Events
+import github.gilbertokpl.core.internal.serializator.AES
 import org.bukkit.plugin.Plugin
 import org.jetbrains.exposed.sql.Table
 
@@ -54,6 +55,9 @@ class CorePlugin(pl: Plugin) {
 
     //obf
     private val inventoryInstance = Inventory(this)
+
+    //obf
+    private val encryptInstance = Encrypt(this)
 
     fun start(
         commandPackage: String,
@@ -125,5 +129,10 @@ class CorePlugin(pl: Plugin) {
     fun getInventory(): Inventory {
         return inventoryInstance
     }
+
+    fun getEncrypt(): Encrypt {
+        return encryptInstance
+    }
+
 
 }

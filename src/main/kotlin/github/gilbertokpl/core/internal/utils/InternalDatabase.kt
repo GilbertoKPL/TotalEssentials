@@ -11,7 +11,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 internal class InternalDatabase(lf: CorePlugin) {
 
     private val lunarFrame = lf
-
     fun start(databaseTablePackage: List<Table>) {
 
         try {

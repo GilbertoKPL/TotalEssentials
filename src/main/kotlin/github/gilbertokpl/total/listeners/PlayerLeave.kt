@@ -1,20 +1,28 @@
 package github.gilbertokpl.total.listeners
 
+import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.total.discord.Discord
 
 import github.gilbertokpl.total.util.MainUtil
+import org.bukkit.entity.Player
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerKickEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
 class PlayerLeave : Listener {
+    
     @EventHandler(priority = EventPriority.HIGH)
     fun event(e: PlayerQuitEvent) {
         e.quitMessage = null
+
+        LoginData.loggedIn[e.player] = false
+
         if (MainConfig.backActivated) {
             try {
                 setBackLocation(e)
@@ -48,6 +56,11 @@ class PlayerLeave : Listener {
     }
 
     private fun sendLeaveEmbed(e: PlayerQuitEvent) {
-
+        if (MainConfig.discordbotSendLeaveMessage) {
+            Discord.sendDiscordMessage(
+                LangConfig.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name),
+                true
+            )
+        }
     }
 }

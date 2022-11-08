@@ -266,6 +266,95 @@ public class LangConfig implements DefaultLang {
     )
     public static String timeDayShort;
 
+    //auth
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê logou com sucesso!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aYou have successfully logged in!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authLoggedIn;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê foi registrado com sucesso", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aYou have been successfully registered!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authRegisterSuccess;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cSenha incorreta!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cIncorrect password!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authIncorrectPassword;
+    @Values(
+            {
+                    @Value(value = "&cVocê errou mais de %quant% vezes!", lang = LangTypes.PT_BR),
+                    @Value(value = "&cYou got it wrong more than %quant% times!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authKickMessage;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê escreveu duas senhas diferentes!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cYou wrote two different passwords!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authDifferentPasswords;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê já registrou o máximo de contas permitidas que é %max%!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cYou have already registered the maximum allowed accounts which is %max%!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authMaxRegister;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê ultrapassou o máximo de caracteres possiveis da senha que é de 16", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cYou have exceeded the maximum number of characters possible for the password, which is 16!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authPasswordLength;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aLogado pelo sistema de auto login!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aLogged in by automatic login system", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authAutoLogin;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aLogue com o comando /logar <senha>!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aLog in with the command /login <password>!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authLoginMessage;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aRegistre com o comando /registrar <senha> <senha>!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aRegister with the command /register <password> <password>!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authRegisterMessage;
+
+    @Values(
+            {
+                    @Value(value = "%&cVocê foi kickado por passar do tempo limite de login ou registro!", lang = LangTypes.PT_BR),
+                    @Value(value = "&cYou've been kicked for exceeding the login or registration timeout!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authKickMessageTime;
+
+
     //kits
     @Values(
             {
@@ -1570,6 +1659,20 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String discordchatDiscordTopic;
+    @Values(
+            {
+                    @Value(value = "Servidor Iniciado", lang = LangTypes.PT_BR),
+                    @Value(value = "Server started", lang = LangTypes.EN_US)
+            }
+    )
+    public static String discordchatServerStart;
+    @Values(
+            {
+                    @Value(value = "Servidor fechado", lang = LangTypes.PT_BR),
+                    @Value(value = "Server closed", lang = LangTypes.EN_US)
+            }
+    )
+    public static String discordchatServerClose;
 
     @Nullable
     @Override

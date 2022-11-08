@@ -5,6 +5,7 @@ import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.discord.Discord
 import github.gilbertokpl.total.util.MainUtil
 import github.gilbertokpl.total.util.PermissionUtil
 import org.bukkit.command.CommandSender
@@ -50,6 +51,12 @@ class CommandAnnounce : CommandCreator("announce") {
                 .replace("%name%", name)
                 .replace("%message%", newMessage)
         )
+
+        Discord.sendDiscordMessage(LangConfig.announceSendAnnounce
+            .replace("%name%", name)
+            .replace("%message%", newMessage)
+            .replace(Regex("§[0-9]|§[a-gA-G]"), "")
+        , true)
 
         return false
     }

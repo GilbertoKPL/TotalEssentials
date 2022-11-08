@@ -1,13 +1,12 @@
 package github.gilbertokpl.total
 
 import github.gilbertokpl.core.external.CorePlugin
+import github.gilbertokpl.total.cache.internal.OtherConfig
+import github.gilbertokpl.total.cache.sql.*
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.internal.OtherConfig
-import github.gilbertokpl.total.cache.sql.KitsDataSQL
-import github.gilbertokpl.total.cache.sql.PlayerDataSQL
-import github.gilbertokpl.total.cache.sql.SpawnDataSQL
-import github.gilbertokpl.total.cache.sql.WarpsDataSQL
+import github.gilbertokpl.total.discord.Discord
+import github.gilbertokpl.total.util.*
 import github.gilbertokpl.total.util.ColorUtil
 import github.gilbertokpl.total.util.MainUtil
 import github.gilbertokpl.total.util.MaterialUtil
@@ -35,7 +34,7 @@ internal class TotalEssentials : JavaPlugin() {
             "github.gilbertokpl.total.listeners",
             "github.gilbertokpl.total.config.files",
             "github.gilbertokpl.total.cache.local",
-            listOf(KitsDataSQL, PlayerDataSQL, SpawnDataSQL, WarpsDataSQL)
+            listOf(KitsDataSQL, PlayerDataSQL, SpawnDataSQL, WarpsDataSQL, LoginDataSQL)
         )
 
         OtherConfig.start(
@@ -50,6 +49,11 @@ internal class TotalEssentials : JavaPlugin() {
             lowVersion = true
         }
 
+        Discord.startBot()
+
+        Discord.sendDiscordMessage(LangConfig.discordchatServerStart, true)
+
+        this.server.logger.filter = Filter()
 
         super.onEnable()
     }
@@ -61,6 +65,8 @@ internal class TotalEssentials : JavaPlugin() {
         MainUtil.consoleMessage(ColorUtil.YELLOW.color + LangConfig.generalSaveDataSuccess + ColorUtil.RESET.color)
 
         TaskUtil.disable()
+
+        Discord.sendDiscordMessage(LangConfig.discordchatServerClose, true)
 
         super.onDisable()
     }
