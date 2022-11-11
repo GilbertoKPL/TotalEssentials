@@ -13,7 +13,7 @@ class CommandBack : CommandCreator("back") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf(""),
+            aliases = listOf("voltar"),
             active = MainConfig.backActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
