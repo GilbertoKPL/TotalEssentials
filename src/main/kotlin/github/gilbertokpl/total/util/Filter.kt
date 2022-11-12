@@ -5,7 +5,26 @@ import java.util.logging.LogRecord
 
 
 class Filter : Filter {
+
+    val list = listOf(
+        "issued server command: /mudarsenha",
+        "issued server command: /changepass",
+        "issued server command: /login",
+        "issued server command: /logar",
+        "issued server command: /register",
+        "issued server command: /registrar"
+
+    )
     override fun isLoggable(record: LogRecord): Boolean {
-        return !(record.message.contains("issued server command: /login") || !record.message.contains("issued server command: /register") || !record.message.contains("issued server command: /registrar") || !record.message.contains("issued server command: /logar"))
+        var recordable = true
+
+        for (i in list) {
+            if (record.message.contains(i)) {
+                recordable = false
+                break
+            }
+        }
+
+        return recordable
     }
 }

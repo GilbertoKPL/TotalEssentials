@@ -51,7 +51,9 @@ internal class TotalEssentials : JavaPlugin() {
 
         Discord.startBot()
 
-        Discord.sendDiscordMessage(LangConfig.discordchatServerStart, true)
+        if (MainConfig.discordbotConnectDiscordChat) {
+            Discord.sendDiscordMessage(LangConfig.discordchatServerStart, true)
+        }
 
         this.server.logger.filter = Filter()
 
@@ -66,7 +68,9 @@ internal class TotalEssentials : JavaPlugin() {
 
         TaskUtil.disable()
 
-        Discord.sendDiscordMessage(LangConfig.discordchatServerClose, true)
+        if (MainConfig.discordbotConnectDiscordChat) {
+            Discord.sendDiscordMessage(LangConfig.discordchatServerClose, true)
+        }
 
         super.onDisable()
     }

@@ -27,10 +27,12 @@ class PlayerJoin : Listener {
     fun event(e: PlayerJoinEvent) {
         e.joinMessage = null
 
+        val address = e.player.address?.address.toString()
+
         LoginData.attempts[e.player] = 0
         LoginData.values[e.player] = 0
 
-        if (LoginData.ip[e.player] == e.player.address?.address.toString()) {
+        if (LoginData.ip[e.player] == address) {
             e.player.sendMessage(LangConfig.authAutoLogin)
             LoginData.loggedIn[e.player] = true
         }
@@ -68,7 +70,7 @@ class PlayerJoin : Listener {
         }
 
 
-        github.gilbertokpl.total.TotalEssentials.basePlugin.getTask().async {
+        TotalEssentials.basePlugin.getTask().async {
             val p = e.player
 
             waitFor(5)
@@ -102,6 +104,12 @@ class PlayerJoin : Listener {
                         LangConfig.discordchatDiscordSendLoginMessage.replace("%player%", p.name),
                         true
                     )
+                }
+            }
+
+            if (MainConfig.generalAntiVPN) {
+                if (PlayerUtil.checkPlayer(address)[3] == "true") {
+                    println("bot entrou")
                 }
             }
 

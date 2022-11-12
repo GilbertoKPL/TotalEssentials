@@ -60,6 +60,14 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String generalPlayerNotExist;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEsse player já existe.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cThis player exist.", lang = LangTypes.EN_US)
+            }
+    )
+    public static String generalPlayerExist;
     @Values(
             {
                     @Value(value = "&9[EssentialsK Ajuda]", lang = LangTypes.PT_BR),
@@ -332,8 +340,8 @@ public class LangConfig implements DefaultLang {
 
     @Values(
             {
-                    @Value(value = "%prefix%&aLogue com o comando /logar <senha>!", lang = LangTypes.PT_BR),
-                    @Value(value = "%prefix%&aLog in with the command /login <password>!", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aLogue com o comando /logar <senha>", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aLog in with the command /login <password>", lang = LangTypes.EN_US)
             }
     )
     public static String authLoginMessage;
@@ -348,12 +356,51 @@ public class LangConfig implements DefaultLang {
 
     @Values(
             {
-                    @Value(value = "%&cVocê foi kickado por passar do tempo limite de login ou registro!", lang = LangTypes.PT_BR),
+                    @Value(value = "&cVocê foi kickado por passar do tempo limite de login ou registro!", lang = LangTypes.PT_BR),
                     @Value(value = "&cYou've been kicked for exceeding the login or registration timeout!", lang = LangTypes.EN_US)
             }
     )
     public static String authKickMessageTime;
 
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê logou o %player% com sucesso!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aYou have successfully logged in to %player!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authOtherLogin;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê registrou o %player% com sucesso!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aYou have successfully registered %player%!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authOtherRegister;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê alterou a senha com sucesso!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aYou have successfully changed your password.!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authChangePass;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê alterou a senha do %player% com sucesso!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aYou have successfully changed the %player% password!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authOtherChangePass;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cO %player% já está logado!", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&c%player% is already logged in!!", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authOtherAlreadyLogged;
 
     //kits
     @Values(

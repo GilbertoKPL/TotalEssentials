@@ -3,8 +3,11 @@ package github.gilbertokpl.total.util
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.local.PlayerData
+import org.apache.commons.io.IOUtils
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
+import org.json.JSONObject
+import java.net.URL
 
 
 internal object PlayerUtil {
@@ -82,4 +85,18 @@ internal object PlayerUtil {
             else -> GameMode.SURVIVAL
         }
     }
+
+    fun checkPlayer(address: String): Array<String> {
+        val result = JSONObject(IOUtils.toString(URL("http://ip-api.com/json$address?fields=status,country,regionName,city,hosting,query"), "UTF-8"))
+        if (!(result["status"]?.equals("fail"))!!) {
+            return arrayOf(
+                "País: ${result.get("country")}",
+                "Estado: ${result.get("regionName")}",
+                "Cidade: ${result.get("city")}",
+                "${result.get("hosting")}"
+            )
+        }
+        return arrayOf("Erro API")
+    }
+
 }

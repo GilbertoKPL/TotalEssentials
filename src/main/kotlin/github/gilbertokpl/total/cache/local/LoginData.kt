@@ -21,6 +21,9 @@ object LoginData : CacheBase {
     val password = ins.string(this, LoginDataSQL.password)
     val ip = ins.string(this, LoginDataSQL.ip)
 
+    fun checkIfPlayerIsLoggedIn(entity: String) : Boolean {
+        return loggedIn[entity.lowercase()] == true
+    }
     fun checkIfPlayerIsLoggedIn(p: Player) : Boolean {
         return loggedIn[p] == true
     }

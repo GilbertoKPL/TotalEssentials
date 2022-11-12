@@ -6,6 +6,7 @@ import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -60,8 +61,30 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
             LoginData.createNewLoginData(s.name.lowercase(), encrypt.encrypt(args[0]), playerAddress)
 
             s.sendMessage(LangConfig.authRegisterSuccess)
+            return false
 
         }
+
+        @Suppress("USELESS_IS_CHECK")
+        if (s is Player && LoginData.checkIfPlayerIsLoggedIn(s)  && s.hasPermission("totalessentials.commands.register.other") || s is CommandSender) {
+            if (LoginData.checkIfPlayerExist(args[0])) {
+                s.sendMessage(LangConfig.generalPlayerExist)
+                return false
+            }
+
+            LoginData.createNewLoginData(args[0].lowercase(), encrypt.encrypt(args[1]), "127.0.0.1")
+
+            s.sendMessage(LangConfig.authOtherRegister.replace("%player%", args[0].lowercase()))
+
+            val p  = Bukkit.getPlayer(args[0]) ?: return false
+
+            LoginData.loggedIn[p] = true
+
+            p.sendMessage(LangConfig.authLoggedIn)
+
+        }
+
+
         return false
     }
 }

@@ -5,7 +5,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
-val base = "github.gilbertokpl.total.lib"
+val base = "github.gilbertokpl.library"
 
 version = "1.0"
 
@@ -58,7 +58,7 @@ dependencies {
     }
 
     //remove all connections of slf4
-    compileOnly("org.slf4j:slf4j-nop:2.0.3")
+    implementation("org.slf4j:slf4j-nop:2.0.3")
 
     //simple yaml to help in yaml
     compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.8.2")
@@ -68,12 +68,16 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
 
     compileOnly("net.dv8tion:JDA:5.0.0-alpha.22") {
         exclude("club.minnced","opus-java")
         exclude("org.slf4j", "slf4j-api")
     }
+
+    compileOnly("commons-io:commons-io:2.11.0")
+
+    compileOnly("org.json:json:20220924")
 
 }
 

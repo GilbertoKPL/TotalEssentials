@@ -46,6 +46,14 @@ public class MainConfig implements DefaultConfig {
     )
     public static Boolean generalAutoUpdate = true;
 
+    @Comments(
+            {
+                    @Comment(annotations = "Anti-VPN", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "Anti-VPN", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean generalAntiVPN = true;
+
     @PrimaryComments(
             {
                     @PrimaryComment(primaryAnnotations = "Configurações do banco de dados.", lang = LangTypes.PT_BR),

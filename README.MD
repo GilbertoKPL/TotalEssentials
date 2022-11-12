@@ -2,7 +2,7 @@
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/5113aa86f46b45caa40bdfd8508bcd3e)](https://www.codacy.com/gh/GilbertoKPL/TotalEssentials/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=GilbertoKPL/TotalEssentials&amp;utm_campaign=Badge_Grade)
 
-* A core system for minecraft server that supports most versions (1.5.2 - 1.18.0), using only database as a storage
+* A core system for minecraft server that supports most versions (1.5.2 - 1.19.2), using only database as a storage
   medium and various built-in commands / systems, which can be disabled at any time.
 
 # Bstats
@@ -53,6 +53,8 @@
 | /hat                         | set hat of player.                                                                              | totalessentials.commands.hat         |
 | /fly                         | set fly of player.                                                                              | totalessentials.commands.fly         |
 | /invsee                      | see inventory of other player.                                                                  | totalessentials.commands.invsee      |
+| /login                       | log into your account.                                                                          | totalessentials.commands.login       |
+| /register                    | register account.                                                                               | totalessentials.commands.register    |
 
 ## Permission Color
 
@@ -100,8 +102,10 @@ To use in chat, commands, signs etc.
 | totalessentials.commands.delhome.other             | Allow the player delhome for other players          |
 | totalessentials.commands.sethome.other             | Allow the player sethome for other players          |
 | totalessentials.commands.spawn.other               | Allow the player telepot to spawn for other players |
-| totalessentials.commands.speed.other               | Allow the player set player of other player         |
-| totalessentials.commands.invsee.admin              | Allow the player set player of other player         |
+| totalessentials.commands.speed.other               | Allow the player set speed of other player          |
+| totalessentials.commands.login.other               | Allow the player login other player                 |
+| totalessentials.commands.register.other            | Allow the player register other player              |
+| totalessentials.commands.invsee.admin              | Allow the player see inventory of other player      |
 | totalessentials.bypass.teleport                    | Bypass time to teleport                             |
 | totalessentials.bypass.homelimit                   | Move itens of player.                               |
 | totalessentials.bypass.kitcatch                    | Bypass kit time limit                               |
@@ -119,15 +123,13 @@ To use in chat, commands, signs etc.
 
 ## Resources ( Internal )
 
-* UUID system:
-    - If Server is in online mode, automatically use UUID.
-
 * Own Lib using new features such as:
     - MariaDB latest version;
     - H2 V2 latest version;
     - HikariCP;
     - Kotlin;
-    - ExposedSQL.
+    - CacheSQL (created by me).
+  
 * Reload system.
     - system based on reload all configuration, besides being possible to change your lang.
 * Lang's and Config system and check;
@@ -139,7 +141,6 @@ To use in chat, commands, signs etc.
 ## TODO List
 
 - [ ] Add support of version Checker for a Windows.
-- [ ] Add support UUID to offline server.
 
 # Discord
 
