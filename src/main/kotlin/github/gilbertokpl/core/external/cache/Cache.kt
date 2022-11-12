@@ -6,6 +6,7 @@ import github.gilbertokpl.core.external.cache.interfaces.CacheBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
 import github.gilbertokpl.core.internal.cache.*
+import github.gilbertokpl.total.util.MoneyUtil.refreshTycoon
 import github.gilbertokpl.total.util.TaskUtil
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -116,8 +117,15 @@ class Cache(lf: CorePlugin) {
             }
         }
         Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
-            for (i in toByteUpdate) {
-                i.update()
+            try {
+                transaction(lunarFrame.sql) {
+                    for (i in toByteUpdate) {
+                        i.update()
+                    }
+                }
+                refreshTycoon()
+            } catch (e: Exception) {
+                println(e)
             }
         },5,5,TimeUnit.MINUTES)
     }

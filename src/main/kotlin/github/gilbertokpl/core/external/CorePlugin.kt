@@ -59,17 +59,18 @@ class CorePlugin(pl: Plugin) {
     //obf
     private val encryptInstance = Encrypt(this)
 
-    fun start(
-        commandPackage: String,
-        ListenerPackage: String,
-        configPackage: String,
-        cachePackage: String,
-        databaseTable: List<Table>
-    ) {
+    fun startConfig(configPackage: String) {
         mainPath = plugin.dataFolder.path
         langPath = plugin.dataFolder.path + "/lang/"
         configPackageReload = configPackage
         getConfig().start(configPackage)
+    }
+    fun start(
+        commandPackage: String,
+        ListenerPackage: String,
+        cachePackage: String,
+        databaseTable: List<Table>
+    ) {
         getDatabase().start(databaseTable)
         getReflection().registerCommandByPackage(commandPackage)
         Events(this).start(ListenerPackage)

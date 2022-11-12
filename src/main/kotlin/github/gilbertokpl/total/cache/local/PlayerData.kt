@@ -32,6 +32,7 @@ object PlayerData : CacheBase {
     val flyCache = ins.boolean(this, PlayerDataSQL.flyTable)
     val backLocation = ins.location(this, PlayerDataSQL.backTable, LocationSerializer())
     val speedCache = ins.integer(this, PlayerDataSQL.speedTable)
+    val moneyCache = ins.double(this, PlayerDataSQL.moneyTable)
     val inInvsee = ins.simplePlayer()
     val homeLimitCache = ins.simpleInteger()
     val inTeleport = ins.simpleBoolean()

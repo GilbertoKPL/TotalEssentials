@@ -7,10 +7,10 @@ import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.discord.Discord
+import github.gilbertokpl.total.util.*
 import github.gilbertokpl.total.util.MainUtil
 import github.gilbertokpl.total.util.PermissionUtil
 import github.gilbertokpl.total.util.PlayerUtil
-import github.gilbertokpl.total.util.TaskUtil
 import kotlinx.coroutines.awaitCancellation
 import org.bukkit.Bukkit
 
@@ -37,36 +37,7 @@ class PlayerJoin : Listener {
             LoginData.loggedIn[e.player] = true
         }
         else {
-            TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
-                if (!e.player.isOnline || LoginData.checkIfPlayerIsLoggedIn(e.player)) {
-                    Thread.currentThread().stop()
-                }
-                if ((MainConfig.authMaxAttempts + 1) == LoginData.values[e.player]) {
-                    Bukkit.getScheduler().runTask(TotalEssentials.instance, Runnable {
-                        e.player.kickPlayer(LangConfig.authKickMessageTime)
-                    })
-                    Thread.currentThread().stop()
-                }
-                if (LoginData.checkIfPlayerExist(e.player)) {
-                    e.player.sendMessage(LangConfig.authLoginMessage)
-                }
-                else {
-                    e.player.sendMessage(LangConfig.authRegisterMessage)
-                }
-                LoginData.values[e.player] = LoginData.values[e.player]?.plus(1)!!
-            }, 0, 10, TimeUnit.SECONDS)
-
-            TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
-                if (!e.player.isOnline) {
-                    Thread.currentThread().stop()
-                }
-                if (LoginData.checkIfPlayerIsLoggedIn(e.player)) {
-                    SpawnData.teleport(e.player)
-                    Thread.currentThread().stop()
-                }
-                SpawnData.teleport(e.player)
-            }, 100000, 100000, TimeUnit.MICROSECONDS)
-
+            LoginUtil.loginMessage(e.player)
         }
 
 

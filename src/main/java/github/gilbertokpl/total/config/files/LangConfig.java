@@ -328,7 +328,15 @@ public class LangConfig implements DefaultLang {
                     @Value(value = "%prefix%&cYou have exceeded the maximum number of characters possible for the password, which is 16!", lang = LangTypes.EN_US)
             }
     )
-    public static String authPasswordLength;
+    public static String authPasswordMaxLength;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cNo minimo a senha tem que ter 5 caracteres", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cAt least the password must be 5 characters long.", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authPasswordMinLength;
 
     @Values(
             {

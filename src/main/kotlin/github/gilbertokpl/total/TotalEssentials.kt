@@ -7,12 +7,11 @@ import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
 import github.gilbertokpl.total.util.*
-import github.gilbertokpl.total.util.ColorUtil
-import github.gilbertokpl.total.util.MainUtil
-import github.gilbertokpl.total.util.MaterialUtil
-import github.gilbertokpl.total.util.TaskUtil
+import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
+import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
+
 
 internal class TotalEssentials : JavaPlugin() {
 
@@ -20,19 +19,24 @@ internal class TotalEssentials : JavaPlugin() {
 
         instance = this
 
+        basePlugin = CorePlugin(this)
+
         MaterialUtil.startMaterials()
+
+        basePlugin.startConfig("github.gilbertokpl.total.config.files")
+
+        if (MainConfig.moneyActivated) {
+            Bukkit.getServicesManager().register(Economy::class.java, EconomyHolder(), this, ServicePriority.Highest)
+        }
 
         super.onLoad()
     }
 
     override fun onEnable() {
 
-        basePlugin = CorePlugin(this)
-
         basePlugin.start(
             "github.gilbertokpl.total.commands",
             "github.gilbertokpl.total.listeners",
-            "github.gilbertokpl.total.config.files",
             "github.gilbertokpl.total.cache.local",
             listOf(KitsDataSQL, PlayerDataSQL, SpawnDataSQL, WarpsDataSQL, LoginDataSQL)
         )
@@ -56,6 +60,8 @@ internal class TotalEssentials : JavaPlugin() {
         }
 
         this.server.logger.filter = Filter()
+
+        MoneyUtil.refreshTycoon()
 
         super.onEnable()
     }

@@ -6,10 +6,12 @@ import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.LoginUtil
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreator("login") {
+class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreator("changepass") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -45,8 +47,23 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
             }
 
             if (s.hasPermission("totalessentials.commands.changepass.other") && LoginData.checkIfPlayerExist(args[0])) {
-                LoginData.password[args[0]] = args[1]
+
+                LoginData.values[args[0]] = 0
+
+                LoginData.password[args[0]] = encrypt.encrypt(args[1])
+
+                LoginData.ip[args[0]] = "127.0.0.1"
+
+                LoginData.loggedIn[args[0]] = false
+
                 s.sendMessage(LangConfig.authOtherChangePass.replace("%player%", args[0]))
+
+                val p = Bukkit.getPlayer(args[0])
+
+                if (p != null) {
+                    LoginUtil.loginMessage(p)
+                }
+
                 return false
             }
 
@@ -60,7 +77,20 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
             return false
         }
 
-        LoginData.password[args[0]] = args[1]
+        LoginData.values[args[0]] = 0
+
+        LoginData.password[args[0]] = encrypt.encrypt(args[1])
+
+        LoginData.ip[args[0]] = "127.0.0.1"
+
+        LoginData.loggedIn[args[0]] = false
+
+        val p = Bukkit.getPlayer(args[0])
+
+        if (p != null) {
+            LoginUtil.loginMessage(p)
+        }
+
         s.sendMessage(LangConfig.authOtherChangePass.replace("%player%", args[0]))
 
         return false

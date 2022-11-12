@@ -39,7 +39,12 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
             }
 
             if (args[0].length >= 16) {
-                s.sendMessage(LangConfig.authPasswordLength)
+                s.sendMessage(LangConfig.authPasswordMaxLength)
+                return false
+            }
+
+            if (args[0].length < 5) {
+                s.sendMessage(LangConfig.authPasswordMinLength)
                 return false
             }
 
