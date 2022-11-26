@@ -4,6 +4,7 @@ import github.gilbertokpl.core.external.cache.interfaces.CacheBase
 import github.gilbertokpl.total.cache.serializer.HomeSerializer
 import github.gilbertokpl.total.cache.serializer.KitSerializer
 import github.gilbertokpl.total.cache.serializer.LocationSerializer
+import github.gilbertokpl.total.cache.serializer.VipSerializer
 import github.gilbertokpl.total.cache.sql.PlayerDataSQL
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -25,6 +26,7 @@ object PlayerData : CacheBase {
 
     val kitsCache = ins.stringHashMap(this, PlayerDataSQL.kitsTable, KitSerializer())
     val homeCache = ins.stringHashMap(this, PlayerDataSQL.homeTable, HomeSerializer())
+    val vipCache = ins.stringHashMap(this, PlayerDataSQL.vipTable, VipSerializer())
     val nickCache = ins.string(this, PlayerDataSQL.nickTable)
     val gameModeCache = ins.integer(this, PlayerDataSQL.gameModeTable)
     val vanishCache = ins.boolean(this, PlayerDataSQL.vanishTable)
@@ -48,6 +50,7 @@ object PlayerData : CacheBase {
     fun createNewPlayerData(entity: String) {
         kitsCache[entity] = HashMap()
         homeCache[entity] = HashMap()
+        vipCache[entity] = HashMap()
         nickCache[entity] = ""
         gameModeCache[entity] = 0
         vanishCache[entity] = false
@@ -56,6 +59,9 @@ object PlayerData : CacheBase {
         backLocation[entity] = SpawnData.spawnLocation["spawn"]
             ?: Location(github.gilbertokpl.total.TotalEssentials.instance.server.getWorld("world"), 1.0, 1.0, 1.0)
         speedCache[entity] = 1
+        moneyCache[entity] = 0.0
+
+
     }
 
     fun values(p: Player) {

@@ -9,6 +9,7 @@ import github.gilbertokpl.core.internal.events.Events
 import github.gilbertokpl.core.internal.serializator.AES
 import org.bukkit.plugin.Plugin
 import org.jetbrains.exposed.sql.Table
+import java.util.concurrent.Executors
 
 class CorePlugin(pl: Plugin) {
 

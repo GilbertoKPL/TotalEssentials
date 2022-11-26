@@ -225,4 +225,8 @@ class InventoryClick : Listener {
             }
         }
     }
+
+    private fun vipGuiEvent(e: InventoryClickEvent) {
+
+    }
 }

@@ -7,6 +7,7 @@ object PlayerDataSQL : Table("PlayerData" + MainConfig.databaseManager) {
     val playerTable = varchar("uuid", 64)
     val kitsTable = text("kitsTime").default("")
     val homeTable = text("savedHomes").default("")
+    val vipTable = text("Vip").default("")
     val nickTable = varchar("fakeNick", 32).default("")
     val gameModeTable = integer("Gamemode").default(0)
     val vanishTable = bool("Vanish").default(false)

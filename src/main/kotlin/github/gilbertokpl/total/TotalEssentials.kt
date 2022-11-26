@@ -8,6 +8,7 @@ import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
 import github.gilbertokpl.total.util.*
 import net.milkbowl.vault.economy.Economy
+import net.milkbowl.vault.permission.Permission
 import org.bukkit.Bukkit
 import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
@@ -38,8 +39,10 @@ internal class TotalEssentials : JavaPlugin() {
             "github.gilbertokpl.total.commands",
             "github.gilbertokpl.total.listeners",
             "github.gilbertokpl.total.cache.local",
-            listOf(KitsDataSQL, PlayerDataSQL, SpawnDataSQL, WarpsDataSQL, LoginDataSQL)
+            listOf(KitsDataSQL, PlayerDataSQL, SpawnDataSQL, WarpsDataSQL, LoginDataSQL, VipDataSQL, VipKeysSQL)
         )
+
+        permission = Bukkit.getServer().servicesManager.getRegistration(Permission::class.java)!!.provider
 
         OtherConfig.start(
             MainConfig.announcementsListAnnounce,
@@ -60,8 +63,6 @@ internal class TotalEssentials : JavaPlugin() {
         }
 
         this.server.logger.filter = Filter()
-
-        MoneyUtil.refreshTycoon()
 
         super.onEnable()
     }
@@ -85,6 +86,8 @@ internal class TotalEssentials : JavaPlugin() {
         lateinit var instance: TotalEssentials
 
         lateinit var basePlugin: CorePlugin
+
+        lateinit var permission : Permission
 
         var lowVersion = false
     }

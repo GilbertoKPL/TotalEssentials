@@ -89,7 +89,22 @@ public class MainConfig implements DefaultConfig {
 
     //Commands
 
+    @PrimaryComments(
+            {
+                    @PrimaryComment(primaryAnnotations = "Configurações do VIP", lang = LangTypes.PT_BR),
+                    @PrimaryComment(primaryAnnotations = "VIP settings", lang = LangTypes.EN_US)
+            }
+    )
+    @Comments(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), O VIP será ativado.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "If enabled (true), The VIP will be enabled.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean vipActivated = true;
+
     //authCommand
+
     @PrimaryComments(
             {
                     @PrimaryComment(primaryAnnotations = "Configurações dos comandos logar / registrar", lang = LangTypes.PT_BR),

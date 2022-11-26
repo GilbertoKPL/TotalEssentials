@@ -9,7 +9,8 @@ internal object DataManager {
 
     lateinit var sql: Database
 
-    private var update = false
+    //vipInventory
+    val VipInventory = HashMap<Int, ItemStack>(50)
 
     //editKitInv
     val editKitInventory = HashMap<Int, ItemStack>(50)

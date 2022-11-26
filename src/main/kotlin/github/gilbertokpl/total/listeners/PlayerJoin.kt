@@ -78,7 +78,10 @@ class PlayerJoin : Listener {
                 }
             }
 
+            VipUtil.checkVip(p.name.lowercase())
+
             if (MainConfig.generalAntiVPN) {
+                // fix
                 if (PlayerUtil.checkPlayer(address)[3] == "true") {
                     println("bot entrou")
                 }

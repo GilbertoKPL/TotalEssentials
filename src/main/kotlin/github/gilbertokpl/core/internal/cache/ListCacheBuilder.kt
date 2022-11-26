@@ -2,9 +2,11 @@ package github.gilbertokpl.core.internal.cache
 
 import github.gilbertokpl.core.external.cache.convert.SerializatorBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
+import github.gilbertokpl.core.external.utils.Executor
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
+import java.util.concurrent.TimeUnit
 
 internal class ListCacheBuilder<K, V>(
     t: Table,
@@ -50,13 +52,12 @@ internal class ListCacheBuilder<K, V>(
             if (!inUpdate) {
                 toUpdate.add(entity.lowercase())
             } else {
-                github.gilbertokpl.total.TotalEssentials.basePlugin.getTask().async {
-                    repeating(1)
+                Executor.executor.scheduleWithFixedDelay({
                     if (!inUpdate) {
                         toUpdate.add(entity.lowercase())
-                        this.currentTask?.cancel()
+                        Thread.currentThread().stop()
                     }
-                }
+                }, 1, 1, TimeUnit.SECONDS)
             }
             return
         }
@@ -67,13 +68,12 @@ internal class ListCacheBuilder<K, V>(
         if (!inUpdate) {
             toUpdate.add(entity.lowercase())
         } else {
-            github.gilbertokpl.total.TotalEssentials.basePlugin.getTask().async {
-                repeating(1)
+            Executor.executor.scheduleWithFixedDelay({
                 if (!inUpdate) {
                     toUpdate.add(entity.lowercase())
-                    this.currentTask?.cancel()
+                    Thread.currentThread().stop()
                 }
-            }
+            }, 1, 1, TimeUnit.SECONDS)
         }
     }
 

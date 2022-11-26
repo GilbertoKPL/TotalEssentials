@@ -2,9 +2,11 @@ package github.gilbertokpl.core.internal.cache
 
 import github.gilbertokpl.core.external.cache.convert.SerializatorBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
+import github.gilbertokpl.core.external.utils.Executor
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
+import java.util.concurrent.TimeUnit
 
 internal class HashMapCacheBuilder<T, V, K>(
     t: Table,
@@ -49,13 +51,12 @@ internal class HashMapCacheBuilder<T, V, K>(
             if (!inUpdate) {
                 toUpdate.add(entity.lowercase())
             } else {
-                github.gilbertokpl.total.TotalEssentials.basePlugin.getTask().async {
-                    repeating(1)
+                Executor.executor.scheduleWithFixedDelay({
                     if (!inUpdate) {
                         toUpdate.add(entity.lowercase())
-                        this.currentTask?.cancel()
+                        Thread.currentThread().stop()
                     }
-                }
+                }, 1, 1, TimeUnit.SECONDS)
             }
             return
         }
@@ -66,13 +67,12 @@ internal class HashMapCacheBuilder<T, V, K>(
         if (!inUpdate) {
             toUpdate.add(entity.lowercase())
         } else {
-            github.gilbertokpl.total.TotalEssentials.basePlugin.getTask().async {
-                repeating(1)
+            Executor.executor.scheduleWithFixedDelay({
                 if (!inUpdate) {
                     toUpdate.add(entity.lowercase())
-                    this.currentTask?.cancel()
+                    Thread.currentThread().stop()
                 }
-            }
+            }, 1, 1, TimeUnit.SECONDS)
         }
     }
 
@@ -86,8 +86,15 @@ internal class HashMapCacheBuilder<T, V, K>(
         }
         ent.remove(value)
         hashMap[entity.lowercase()] = ent
-        while (!inUpdate) {
+        if (!inUpdate) {
             toUpdate.add(entity.lowercase())
+        } else {
+            Executor.executor.scheduleWithFixedDelay({
+                if (!inUpdate) {
+                    toUpdate.add(entity.lowercase())
+                    Thread.currentThread().stop()
+                }
+            }, 1, 1, TimeUnit.SECONDS)
         }
     }
 

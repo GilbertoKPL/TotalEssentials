@@ -2,10 +2,12 @@ package github.gilbertokpl.core.internal.cache
 
 import github.gilbertokpl.core.external.cache.convert.SerializatorBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
+import github.gilbertokpl.core.external.utils.Executor
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import java.util.concurrent.TimeUnit
 
 internal class LocationCacheBuilder(
     t: Table,
@@ -49,13 +51,12 @@ internal class LocationCacheBuilder(
         if (!inUpdate) {
             toUpdate.add(entity.lowercase())
         } else {
-            github.gilbertokpl.total.TotalEssentials.basePlugin.getTask().async {
-                repeating(1)
+            Executor.executor.scheduleWithFixedDelay({
                 if (!inUpdate) {
                     toUpdate.add(entity.lowercase())
-                    this.currentTask?.cancel()
+                    Thread.currentThread().stop()
                 }
-            }
+            }, 1, 1, TimeUnit.SECONDS)
         }
     }
 

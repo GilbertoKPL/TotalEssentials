@@ -653,6 +653,43 @@ public class LangConfig implements DefaultLang {
     )
     public static String kitsNotExistKits;
 
+    //vips
+    @Values(
+            {
+                    @Value(value = "%prefix%&eVocê criou um novo vip! '%vip%'.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsCreateNew;
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê criou uma key vip! '%key%'.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsCreateNewKey;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEsse grupo não existe.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsGroupNotExist;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEssa key não existe, tente outra!", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsKeyNotExist;
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê ativou o %vip% de %days% dias com sucesso!", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsActivate;
+
     //nicks
     @Values(
             {
