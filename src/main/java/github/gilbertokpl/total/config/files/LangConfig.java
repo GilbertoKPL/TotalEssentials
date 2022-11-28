@@ -690,6 +690,38 @@ public class LangConfig implements DefaultLang {
     )
     public static String VipsActivate;
 
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEsse Vip já existe!", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsExist;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEsse Vip não existe!", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsNotExist;
+
+    @Values(
+            {
+                    @Value(value = "&9> VIP '&e%vipName%&9' - &e%vipTime%", lang = LangTypes.PT_BR),
+                    @Value(value = "&9> VIP '&e%vipName%' - %vipTime%", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsTimeMessage;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê trocou para o vip %vipName%!", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsSwitch;
+
     //nicks
     @Values(
             {

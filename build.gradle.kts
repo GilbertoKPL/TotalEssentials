@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.7.21"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -36,13 +36,13 @@ dependencies {
 
 
     //exposed
-    compileOnly("org.jetbrains.exposed:exposed-core:0.40.1") {
+    compileOnly("org.jetbrains.exposed:exposed-core:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
-    compileOnly("org.jetbrains.exposed:exposed-dao:0.40.1") {
+    compileOnly("org.jetbrains.exposed:exposed-dao:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.40.1") {
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
 
@@ -58,13 +58,13 @@ dependencies {
     }
 
     //remove all connections of slf4
-    implementation("org.slf4j:slf4j-nop:2.0.3")
+    compileOnly("org.slf4j:slf4j-nop:2.0.4")
 
     //simple yaml to help in yaml
     compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.8.2")
 
     //host info
-    compileOnly("com.github.oshi:oshi-core:6.3.1") {
+    compileOnly("com.github.oshi:oshi-core:6.3.2") {
         exclude("org.slf4j", "slf4j-api")
     }
 
@@ -99,6 +99,7 @@ tasks.shadowJar {
     relocate("com.google.gson", "$base.gson")
     relocate("org.simpleyaml", "$base.yaml")
     relocate("com.zaxxer.hikari", "$base.hikari")
+    relocate("com.sun.jna", "$base.jna")
 }
 
 tasks {

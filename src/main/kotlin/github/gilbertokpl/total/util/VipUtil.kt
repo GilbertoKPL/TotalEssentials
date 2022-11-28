@@ -13,8 +13,6 @@ object VipUtil {
     fun checkVip(entity: String) {
         val vips = PlayerData.vipCache[entity] ?: return
 
-        val size = vips.size
-
         val toExclude = ArrayList<String>()
 
         for (v in vips) {
@@ -25,10 +23,10 @@ object VipUtil {
 
         for (t in toExclude) {
             PlayerData.vipCache.remove(entity, t)
-            TotalEssentials.permission.playerRemoveGroup(world, entity, t)
+            TotalEssentials.permission.playerRemoveGroup(world, entity, VipData.vipGroup[t])
         }
 
-        if (size > toExclude.size) {
+        if (toExclude.isNotEmpty()) {
             updateCargo(entity)
         }
     }
@@ -50,7 +48,7 @@ object VipUtil {
         for (g in sequence) {
             val group = VipData.vipGroup[g] ?: continue
             if (TotalEssentials.permission.playerInGroup(world, entity, group)) {
-                currentGroup = group
+                currentGroup = g
                 break
             }
         }
@@ -62,7 +60,7 @@ object VipUtil {
             }
             if (size > 0) {
                 val newGroup = vips.keys.first()
-                TotalEssentials.permission.playerAddGroup(world,entity, newGroup)
+                TotalEssentials.permission.playerAddGroup(world,entity, VipData.vipGroup[newGroup])
                 return newGroup
             }
             return null
@@ -71,29 +69,30 @@ object VipUtil {
         var value = 0
 
         for (i in sequence) {
+            println(i)
+            value += 1
             if (i == currentGroup) {
                 break
             }
-            value += 1
         }
 
-        if (sequence.size < value + 1) {
-            value = 0
+        if (size < (value + 1)) {
+            value = 1
         }
         else {
             value += 1
         }
 
-        TotalEssentials.permission.playerRemoveGroup(world, entity , currentGroup)
+        TotalEssentials.permission.playerRemoveGroup(world, entity , VipData.vipGroup[currentGroup])
 
         if (newVip != null) {
             TotalEssentials.permission.playerAddGroup(world,entity, newVip)
             return null
         }
 
-        TotalEssentials.permission.playerAddGroup(world,entity, sequence[value])
+        TotalEssentials.permission.playerAddGroup(world,entity, VipData.vipGroup[sequence[value - 1]])
 
-        return sequence[value]
+        return sequence[value - 1]
 
     }
 

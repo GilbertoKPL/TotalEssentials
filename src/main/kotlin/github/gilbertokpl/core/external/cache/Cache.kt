@@ -120,7 +120,11 @@ class Cache(lf: CorePlugin) {
             try {
                 transaction(lunarFrame.sql) {
                     for (i in toByteUpdate) {
-                        i.update()
+                        try {
+                            i.update()
+                        } catch (e: Exception) {
+                            println(e)
+                        }
                     }
                 }
                 refreshTycoon()

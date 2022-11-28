@@ -9,7 +9,6 @@ import github.gilbertokpl.total.cache.local.VipData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.VipUtil
-import net.milkbowl.vault.permission.Permission
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -22,20 +21,27 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             target = CommandTarget.ALL,
             countdown = 0,
             permission = "totalessentials.commands.vip",
-            minimumSize = 2,
-            maximumSize = 3,
+            minimumSize = 1,
+            maximumSize = 4,
             usage = listOf(
-                "/vip criar <vipName> <vipGroup>",
-                "/vip gerarkey <vipName> <dias>",
+                "totalessentials.commands.vip.admin_/vip criar <vipName> <vipGroup>",
+                "totalessentials.commands.vip.admin_/vip gerarkey <vipName> <days>",
                 "/vip usarkey <key>",
-                "/vip darvip <key>"
+                "totalessentials.commands.vip.admin_/vip dar <player> <vipName> <days>",
+                "P_/vip tempo",
+                "P_/vip mudar",
+                "totalessentials.commands.vip.admin_/vip tempo <player>"
             )
         )
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        if (args[0] == "criar" && args.size == 3) {
+        if (args[0] == "criar" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin"))  {
+            if (VipData.checkIfVipExist(args[1])) {
+                s.sendMessage(LangConfig.VipsExist)
+                return false
+            }
             if (TotalEssentials.permission.groups.contains(args[2])) {
                 VipData.createNewVip(args[1], args[2])
                 s.sendMessage(LangConfig.VipsCreateNew.replace("%vip%", args[1]))
@@ -45,7 +51,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             return false
         }
 
-        if (args[0] == "gerarkey" && args.size == 3) {
+        if (args[0] == "gerarkey" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
             val time = args[2].toLongOrNull() ?: return true
 
             if (VipData.checkIfVipExist(args[1])) {
@@ -78,7 +84,49 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
         }
 
-        if (args[0] == "darvip" && args.size == 2) {
+        if (args[0] == "tempo" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")) {
+            for (i in PlayerData.vipCache[args[1]] ?: return false) {
+                s.sendMessage(LangConfig.VipsTimeMessage.replace("%vipName%", i.key).replace("%vipTime%", TotalEssentials.basePlugin.getTime().convertMillisToString(i.value - System.currentTimeMillis(), false)))
+            }
+            return false
+        }
+
+        if (args.size == 1 && args[0] == "tempo" && s is Player) {
+            for (i in PlayerData.vipCache[s] ?: return false) {
+                s.sendMessage(LangConfig.VipsTimeMessage.replace("%vipName%", i.key).replace("%vipTime%", TotalEssentials.basePlugin.getTime().convertMillisToString(i.value - System.currentTimeMillis(), false)))
+            }
+            return false
+        }
+
+        if (args[0] == "mudar" && args.size == 1 && s is Player) {
+            val vipName = VipUtil.updateCargo(s.name.lowercase()) ?: return false
+            s.sendMessage(LangConfig.VipsSwitch.replace("%vipName%", vipName))
+            return false
+        }
+
+        if (args[0] == "dar" && args.size == 4 && s.hasPermission("totalessentials.commands.vip.admin")) {
+
+            if (args[3].toLongOrNull() == null) {
+                return true
+            }
+
+            if (!PlayerData.checkIfPlayerExist(args[1])) {
+                s.sendMessage(LangConfig.generalPlayerNotExist)
+                return false
+            }
+
+            if (!VipData.checkIfVipExist(args[2])) {
+                s.sendMessage(LangConfig.VipsNotExist)
+                return false
+            }
+
+            val millisVipTime = (args[3].toLong() * 86400000) + System.currentTimeMillis()
+
+            PlayerData.vipCache[args[1]] = hashMapOf(args[2] to millisVipTime)
+
+            VipUtil.updateCargo(s.name.lowercase(), VipData.vipGroup[args[2]])
+
+            s.sendMessage(LangConfig.VipsActivate.replace("%vip%", args[2]).replace("%days%", args[3]))
             return false
         }
 
