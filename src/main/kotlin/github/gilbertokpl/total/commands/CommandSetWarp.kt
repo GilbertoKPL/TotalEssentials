@@ -36,7 +36,7 @@ class CommandSetWarp : github.gilbertokpl.core.external.command.CommandCreator("
         }
 
         //check if warp name do not contain special
-        if (MainUtil.checkSpecialCaracteres(args[0])) {
+        if (MainUtil.checkSpecialCharacters(args[0])) {
             s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }

@@ -69,6 +69,7 @@ internal class LocationCacheBuilder(
     }
 
     override fun update() {
+        if (inUpdate) return
         inUpdate = true
         for (i in toUpdate) {
             val tab = table.select { primaryColumn eq i }

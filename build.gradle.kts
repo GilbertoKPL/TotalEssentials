@@ -58,7 +58,7 @@ dependencies {
     }
 
     //remove all connections of slf4
-    compileOnly("org.slf4j:slf4j-nop:2.0.4")
+    compileOnly("org.slf4j:slf4j-nop:2.0.5")
 
     //simple yaml to help in yaml
     compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.8.2")
@@ -68,9 +68,9 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.21")
 
-    compileOnly("net.dv8tion:JDA:5.0.0-alpha.22") {
+    compileOnly("net.dv8tion:JDA:5.0.0-beta.1") {
         exclude("club.minnced","opus-java")
         exclude("org.slf4j", "slf4j-api")
     }
@@ -99,7 +99,6 @@ tasks.shadowJar {
     relocate("com.google.gson", "$base.gson")
     relocate("org.simpleyaml", "$base.yaml")
     relocate("com.zaxxer.hikari", "$base.hikari")
-    relocate("com.sun.jna", "$base.jna")
 }
 
 tasks {

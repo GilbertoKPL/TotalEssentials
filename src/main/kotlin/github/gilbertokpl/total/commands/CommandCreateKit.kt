@@ -32,7 +32,7 @@ class CommandCreateKit : github.gilbertokpl.core.external.command.CommandCreator
         }
 
         //check if kit name do not contain special
-        if (MainUtil.checkSpecialCaracteres(args[0])) {
+        if (MainUtil.checkSpecialCharacters(args[0])) {
             s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }

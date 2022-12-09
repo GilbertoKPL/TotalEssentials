@@ -60,6 +60,7 @@ internal class ByteCacheBuilder<T>(t: Table, pc: Column<String>, c: Column<T>) :
     }
 
     override fun update() {
+        if (inUpdate) return
         inUpdate = true
         for (i in toUpdate) {
             val tab = table.select { primaryColumn eq i }

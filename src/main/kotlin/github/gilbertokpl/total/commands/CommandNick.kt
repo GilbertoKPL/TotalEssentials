@@ -37,7 +37,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
         if (args.size == 1 && s is Player) {
 
             //check if nickname do not contain special
-            if (MainUtil.checkSpecialCaracteres(args[0])) {
+            if (MainUtil.checkSpecialCharacters(args[0])) {
                 s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
                 return false
             }
@@ -85,7 +85,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
         if (args.size != 2) return true
 
         //check if nickname do not contain . or - to not bug
-        if (MainUtil.checkSpecialCaracteres(args[1])) {
+        if (MainUtil.checkSpecialCharacters(args[1])) {
             s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }

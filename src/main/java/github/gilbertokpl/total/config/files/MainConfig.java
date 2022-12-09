@@ -200,6 +200,35 @@ public class MainConfig implements DefaultConfig {
     )
     public static Boolean craftActivated = true;
 
+    //clearItemsCommand
+    @PrimaryComments(
+            {
+                    @PrimaryComment(primaryAnnotations = "Configurações dos comandos kits", lang = LangTypes.PT_BR),
+                    @PrimaryComment(primaryAnnotations = "Kit command settings", lang = LangTypes.EN_US)
+            }
+    )
+    @Comments(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), O comando será ativado.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "If enabled (true), The command will be actived.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean ClearitemsActivated = true;
+    @Comments(
+            {
+                    @Comment(annotations = "Lista de mundos para limpar o chão.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static List<String> ClearitemsWorlds = Collections.singletonList("world");
+    @Comments(
+            {
+                    @Comment(annotations = "Lista de items para não excluir em material, para pegar o material > /material.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static List<String> ClearitemsItemsNotClear = Collections.singletonList("dirt");
+
     //kitCommand
     @PrimaryComments(
             {

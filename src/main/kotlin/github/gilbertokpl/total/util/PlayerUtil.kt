@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.util
 
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.local.PlayerData
@@ -11,6 +12,12 @@ import java.net.URL
 
 
 internal object PlayerUtil {
+
+    fun sendAllMessage(message: String) {
+        for (p in TotalEssentials.basePlugin.getReflection().getPlayers()) {
+            p.sendMessage(message)
+        }
+    }
 
     fun sendMessage(player: String, message: String) {
         val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayerExact(player.lowercase()) ?: return

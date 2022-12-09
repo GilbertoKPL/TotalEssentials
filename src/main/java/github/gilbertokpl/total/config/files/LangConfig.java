@@ -1,12 +1,15 @@
 package github.gilbertokpl.total.config.files;
 
 
+import github.gilbertokpl.core.external.config.annotations.Comment;
+import github.gilbertokpl.core.external.config.annotations.Comments;
 import github.gilbertokpl.core.external.config.annotations.Value;
 import github.gilbertokpl.core.external.config.annotations.Values;
 import github.gilbertokpl.core.external.config.def.DefaultLang;
 import github.gilbertokpl.core.external.config.types.LangTypes;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class LangConfig implements DefaultLang {
@@ -1528,6 +1531,16 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String hatNotFound;
+
+    //clearitems
+
+    @Values(
+            {
+                    @Value(value = "Limpando o chão em %time%", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String ClearitemsMessage;
 
     //money
     @Values(

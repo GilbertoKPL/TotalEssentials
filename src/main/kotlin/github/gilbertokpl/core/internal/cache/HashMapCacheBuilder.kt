@@ -107,6 +107,7 @@ internal class HashMapCacheBuilder<T, V, K>(
     }
 
     override fun update() {
+        if (inUpdate) return
         inUpdate = true
         for (i in toUpdate) {
             val tab = table.select { primaryColumn eq i }

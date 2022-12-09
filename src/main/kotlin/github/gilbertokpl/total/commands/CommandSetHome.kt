@@ -69,7 +69,7 @@ class CommandSetHome : github.gilbertokpl.core.external.command.CommandCreator("
         }
 
         //check if home name do not contain . or - to not bug
-        if (MainUtil.checkSpecialCaracteres(nameHome)) {
+        if (MainUtil.checkSpecialCharacters(nameHome)) {
             s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }

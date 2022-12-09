@@ -10,15 +10,6 @@ import java.util.*
 
 internal object MainUtil {
 
-    private const val METRICS_ID = 13_441
-
-    val mainPath: String = github.gilbertokpl.total.TotalEssentials.instance.dataFolder.path
-
-    val langPath: String = github.gilbertokpl.total.TotalEssentials.instance.dataFolder.path + "/lang/"
-
-    val pluginPath: String =
-        github.gilbertokpl.total.TotalEssentials.instance.javaClass.protectionDomain.codeSource.location.path
-
     private val rand = Random()
 
     fun getRandom(list: List<String>): String {
@@ -48,7 +39,7 @@ internal object MainUtil {
         }
     }
 
-    fun checkSpecialCaracteres(s: String?): Boolean {
+    fun checkSpecialCharacters(s: String?): Boolean {
         return s?.matches(Regex("[^A-Za-z0-9 ]")) ?: false
     }
 }

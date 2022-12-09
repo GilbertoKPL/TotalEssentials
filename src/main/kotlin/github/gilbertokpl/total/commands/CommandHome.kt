@@ -56,7 +56,7 @@ class CommandHome : github.gilbertokpl.core.external.command.CommandCreator("hom
                 return false
             }
 
-            val homes = PlayerData.homeCache[p]!!
+            val homes = PlayerData.homeCache[pName]!!
 
             if (split.size < 2) {
                 p.sendMessage(

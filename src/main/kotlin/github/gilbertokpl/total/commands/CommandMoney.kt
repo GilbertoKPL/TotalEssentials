@@ -15,7 +15,7 @@ class CommandMoney : github.gilbertokpl.core.external.command.CommandCreator("mo
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("dinheiro"),
-            active = MainConfig.authActivated,
+            active = MainConfig.moneyActivated,
             target = CommandTarget.ALL,
             countdown = 0,
             permission = "totalessentials.commands.money",

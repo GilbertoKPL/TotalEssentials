@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.listeners
 
+import github.gilbertokpl.core.external.task.SynchronizationContext
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.config.files.MainConfig
@@ -40,13 +41,13 @@ class PlayerJoin : Listener {
             LoginUtil.loginMessage(e.player)
         }
 
+        val p = e.player
+
+        SpawnData.teleport(p)
 
         TotalEssentials.basePlugin.getTask().async {
-            val p = e.player
 
             waitFor(5)
-
-            SpawnData.teleport(p)
 
             val limitHome: Int = PermissionUtil.getNumberPermission(
                 p,
@@ -60,8 +61,6 @@ class PlayerJoin : Listener {
             }
 
             PlayerData.homeLimitCache[p] = limitHome
-
-            PlayerData.values(e.player)
 
             if (!p.hasPermission("*")) {
                 if (MainConfig.messagesLoginMessage) {
@@ -86,6 +85,12 @@ class PlayerJoin : Listener {
                     println("bot entrou")
                 }
             }
+
+            switchContext(SynchronizationContext.SYNC)
+
+            PlayerData.values(e.player)
+
+            SpawnData.teleport(p)
 
         }
     }
