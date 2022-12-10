@@ -61,7 +61,7 @@ dependencies {
     compileOnly("org.slf4j:slf4j-nop:2.0.5")
 
     //simple yaml to help in yaml
-    compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.8.2")
+    compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.7.3")
 
     //host info
     compileOnly("com.github.oshi:oshi-core:6.3.2") {

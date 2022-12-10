@@ -6,9 +6,7 @@ import github.gilbertokpl.total.cache.serializer.KitSerializer
 import github.gilbertokpl.total.cache.serializer.LocationSerializer
 import github.gilbertokpl.total.cache.serializer.VipSerializer
 import github.gilbertokpl.total.cache.sql.PlayerDataSQL
-import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.MainUtil
 import github.gilbertokpl.total.util.PlayerUtil
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -35,9 +33,11 @@ object PlayerData : CacheBase {
     val backLocation = ins.location(this, PlayerDataSQL.backTable, LocationSerializer())
     val speedCache = ins.integer(this, PlayerDataSQL.speedTable)
     val moneyCache = ins.double(this, PlayerDataSQL.moneyTable)
-    val inInvsee = ins.simplePlayer()
+    val discordCache = ins.long(this, PlayerDataSQL.DiscordTable)
+    val inInvSee = ins.simplePlayer()
     val homeLimitCache = ins.simpleInteger()
     val inTeleport = ins.simpleBoolean()
+    val afk = ins.simpleInteger()
 
     fun checkIfPlayerExist(entity: String) : Boolean {
         return nickCache[entity.lowercase()] != null
@@ -60,11 +60,13 @@ object PlayerData : CacheBase {
             ?: Location(github.gilbertokpl.total.TotalEssentials.instance.server.getWorld("world"), 1.0, 1.0, 1.0)
         speedCache[entity] = 1
         moneyCache[entity] = 0.0
-
+        afk[entity] = 1
 
     }
 
     fun values(p: Player) {
+
+        afk[p] = 1
 
         val nick = nickCache[p]
 

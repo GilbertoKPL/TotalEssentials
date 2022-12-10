@@ -65,8 +65,8 @@ class InventoryClose : Listener {
     private fun invseeInventoryCloseEvent(e: InventoryCloseEvent) {
         val p = e.player as Player
 
-        if (PlayerData.inInvsee[p] != null && e.inventory.type == InventoryType.PLAYER) {
-            PlayerData.inInvsee[p] = null
+        if (PlayerData.inInvSee[p] != null && e.inventory.type == InventoryType.PLAYER) {
+            PlayerData.inInvSee[p] = null
         }
     }
 }

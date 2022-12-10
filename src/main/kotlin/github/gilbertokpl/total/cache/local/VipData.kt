@@ -17,7 +17,7 @@ object VipData : CacheBase  {
     val vipPrice = ins.integer(this, VipDataSQL.vipPrice)
     val vipQuantity = ins.integer(this, VipDataSQL.vipQuantity)
     val vipGroup = ins.string(this, VipDataSQL.vipGroup)
-    val vipDiscord = ins.integer(this, VipDataSQL.vipDiscord)
+    val vipDiscord = ins.long(this, VipDataSQL.vipDiscord)
 
     fun createNewVip(vipName: String, group: String) {
         vipItems[vipName] = ArrayList()

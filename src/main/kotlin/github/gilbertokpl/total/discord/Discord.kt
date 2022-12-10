@@ -13,14 +13,11 @@ import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.UserSnowflake
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
+import net.dv8tion.jda.api.exceptions.ContextException
+import net.dv8tion.jda.api.requests.ErrorResponse
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.cache.CacheFlag
-import okhttp3.internal.wait
-import org.bukkit.entity.Snowman
-import org.jetbrains.exposed.sql.wrapAsExpression
 import java.awt.Color
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 import javax.security.auth.login.LoginException
 
 internal object Discord {
@@ -84,6 +81,34 @@ internal object Discord {
                 hashTextChannel.remove(chatID)
             }
         }
+
+
+        fun sendDiscordMessage(userID: Long, message: String) : Boolean {
+            val jda = getJdaCheck()
+
+            try {
+                jda.retrieveUserById(userID).complete()?.openPrivateChannel()?.queue{ channel ->
+                    channel.sendMessage(message).queue()
+                } ?: return false
+            }
+            catch (e: ContextException ) {
+                return false
+            }
+            catch (e: Exception) {
+                return false
+            }
+
+            return true
+        }
+
+        fun checkIfRoleIdExist(roleId: Long) : Boolean {
+            val jda = getJdaCheck()
+
+            jda.getRoleById(roleId) ?: return false
+
+            return true
+        }
+
 
         /**
          * Add role to user.
@@ -163,8 +188,8 @@ internal object Discord {
         jda = try {
             JDABuilder.createLight(MainConfig.discordbotToken)
                 .setAutoReconnect(true)
-                .disableCache(CacheFlag.ACTIVITY)
                 .setLargeThreshold(50)
+                .disableCache(CacheFlag.ACTIVITY)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(ChatDiscord())
                 .build()

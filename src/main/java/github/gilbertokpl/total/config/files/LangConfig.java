@@ -1,15 +1,12 @@
 package github.gilbertokpl.total.config.files;
 
 
-import github.gilbertokpl.core.external.config.annotations.Comment;
-import github.gilbertokpl.core.external.config.annotations.Comments;
 import github.gilbertokpl.core.external.config.annotations.Value;
 import github.gilbertokpl.core.external.config.annotations.Values;
 import github.gilbertokpl.core.external.config.def.DefaultLang;
 import github.gilbertokpl.core.external.config.types.LangTypes;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 public class LangConfig implements DefaultLang {
@@ -413,6 +410,108 @@ public class LangConfig implements DefaultLang {
     )
     public static String authOtherAlreadyLogged;
 
+    //shop
+
+    @Values(
+            {
+                    @Value(value = "&aAberto.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopOpen;
+    @Values(
+            {
+                    @Value(value = "&cFechado.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopClosed;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEssa loja não existe.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopNotExist;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eSua loja foi criado com sucesso.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopCreateShopSuccess;
+    @Values(
+            {
+                    @Value(value = "%open%|&eVisitas -> %visits%|&eClique para ir a loja", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static List<String> shopInventoryItemsLore;
+    @Values(
+            {
+                    @Value(value = "&eLoja do &f%player%", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopInventoryItemsName;
+    @Values(
+            {
+                    @Value(value = "&eVoltar página", lang = LangTypes.PT_BR),
+                    @Value(value = "&eBack page", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopInventoryIconBackName;
+    @Values(
+            {
+                    @Value(value = "&ePróxima página", lang = LangTypes.PT_BR),
+                    @Value(value = "&eNext page", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopInventoryIconNextName;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eNenhuma loja criada ainda.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopNotExistShop;
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê foi teleportado para a loja do %player%.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopTeleport;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEssa loja se encontra fechada!.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopClosedMessage;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eVocê mudou o estado da para %open%&e.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopSwitchMessage;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê precisa criar uma loja primeiro!.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopNotCreated;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&eVocê será teleportado para a loja em %time% segundos!.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopTimeToTeleport;
+
     //kits
     @Values(
             {
@@ -724,6 +823,61 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String VipsSwitch;
+
+    @Values(
+            {
+                    @Value(value = "Utilize o comando '/vip token %value%' para ativar a integração com o discord do servidor", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsDiscordMessage;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eUtilize o comando '/vip token <token>' para ativar a integração, o token foi enviado ao seu discord.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsDiscordLocalMessage;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEsse token não existe.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsDiscordTokenError;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê ativou a integração com sucesso.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsDiscordTokenActivate;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEsse grupo não existe no discord.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsDiscordRoleError;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVocê acabou de setar o id do grupo do vip.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsDiscordRoleActivate;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEsse userid não existe.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsDiscordUserIdNotExist;
 
     //nicks
     @Values(
@@ -1532,15 +1686,44 @@ public class LangConfig implements DefaultLang {
     )
     public static String hatNotFound;
 
+    //antiafk
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê foi teleportado para o spawn por inatividade!", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String antiafkMessage;
+
     //clearitems
 
     @Values(
             {
-                    @Value(value = "Limpando o chão em %time%", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cLimpando o chão em %time%", lang = LangTypes.PT_BR),
                     @Value(value = "", lang = LangTypes.EN_US)
             }
     )
     public static String ClearitemsMessage;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cChão Limpo!", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String ClearitemsFinishMessage;
+
+    //material
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aNome do material: %material%", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String MaterialName;
+
 
     //money
     @Values(

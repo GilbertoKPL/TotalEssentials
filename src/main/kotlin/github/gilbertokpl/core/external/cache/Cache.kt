@@ -127,7 +127,6 @@ class Cache(lf: CorePlugin) {
                         }
                     }
                 }
-                refreshTycoon()
             } catch (e: Exception) {
                 println(e)
             }

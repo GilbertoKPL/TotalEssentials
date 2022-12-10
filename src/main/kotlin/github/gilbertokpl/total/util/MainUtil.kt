@@ -3,6 +3,8 @@ package github.gilbertokpl.total.util
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.internal.EditKitInventory
 import github.gilbertokpl.total.cache.internal.KitGuiInventory
+import github.gilbertokpl.total.cache.internal.ShopInventory
+import github.gilbertokpl.total.cache.loop.AntiAfkLoop
 import java.io.InputStream
 import java.net.URL
 import java.util.*
@@ -36,6 +38,12 @@ internal object MainUtil {
         if (MainConfig.kitsActivated) {
             EditKitInventory.setup()
             KitGuiInventory.setup()
+        }
+        if (MainConfig.shopEnabled) {
+            ShopInventory.setup()
+        }
+        if (MainConfig.antiafkEnabled) {
+            AntiAfkLoop.start()
         }
     }
 

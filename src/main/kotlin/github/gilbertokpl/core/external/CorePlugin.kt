@@ -6,10 +6,8 @@ import github.gilbertokpl.core.external.config.values.Value
 import github.gilbertokpl.core.external.task.Task
 import github.gilbertokpl.core.external.utils.*
 import github.gilbertokpl.core.internal.events.Events
-import github.gilbertokpl.core.internal.serializator.AES
 import org.bukkit.plugin.Plugin
 import org.jetbrains.exposed.sql.Table
-import java.util.concurrent.Executors
 
 class CorePlugin(pl: Plugin) {
 
@@ -68,13 +66,13 @@ class CorePlugin(pl: Plugin) {
     }
     fun start(
         commandPackage: String,
-        ListenerPackage: String,
+        listenerPackage: String,
         cachePackage: String,
         databaseTable: List<Table>
     ) {
         getDatabase().start(databaseTable)
         getReflection().registerCommandByPackage(commandPackage)
-        Events(this).start(ListenerPackage)
+        Events(this).start(listenerPackage)
         getCache().start(cachePackage)
         getHost().start()
     }

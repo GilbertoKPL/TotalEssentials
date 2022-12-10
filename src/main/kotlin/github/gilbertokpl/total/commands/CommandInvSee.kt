@@ -42,7 +42,7 @@ class CommandInvSee : github.gilbertokpl.core.external.command.CommandCreator("i
             return false
         }
 
-        PlayerData.inInvsee[s as Player] = p
+        PlayerData.inInvSee[s as Player] = p
         s.openInventory(p.inventory)
 
         return false

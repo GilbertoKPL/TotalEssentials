@@ -19,7 +19,7 @@ object KeyData : CacheBase {
         return vipName[entity] != null
     }
 
-    private fun getRandomString() : String {
+    fun getRandomString() : String {
         return Random().ints(97, 122 + 1)
             .limit(10)
             .collect({ StringBuilder() }, java.lang.StringBuilder::appendCodePoint, java.lang.StringBuilder::append)

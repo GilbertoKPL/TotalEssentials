@@ -4,7 +4,7 @@ import github.gilbertokpl.total.config.files.MainConfig
 import org.jetbrains.exposed.sql.Table
 
 object PlayerDataSQL : Table("PlayerData" + MainConfig.databaseManager) {
-    val playerTable = varchar("uuid", 64)
+    val playerTable = varchar("name", 64)
     val kitsTable = text("kitsTime").default("")
     val homeTable = text("savedHomes").default("")
     val vipTable = text("Vip").default("")
@@ -16,5 +16,6 @@ object PlayerDataSQL : Table("PlayerData" + MainConfig.databaseManager) {
     val backTable = text("Back").default("")
     val speedTable = integer("Speed").default(1)
     val moneyTable = double("Money").default(0.0)
+    val DiscordTable = long("DiscordID").default(0)
     override val primaryKey = PrimaryKey(playerTable)
 }

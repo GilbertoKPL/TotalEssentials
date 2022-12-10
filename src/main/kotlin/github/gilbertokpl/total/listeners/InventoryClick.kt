@@ -9,9 +9,11 @@ import github.gilbertokpl.total.cache.internal.EditKitInventory.editKitGui
 import github.gilbertokpl.total.cache.internal.EditKitInventory.editKitGuiItems
 import github.gilbertokpl.total.cache.internal.KitGuiInventory.kitGui
 import github.gilbertokpl.total.cache.local.LoginData
+import github.gilbertokpl.total.cache.local.ShopData
 
 import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.PermissionUtil
+import github.gilbertokpl.total.util.PlayerUtil
 
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -66,6 +68,49 @@ class InventoryClick : Listener {
 
             }
         }
+        if (MainConfig.shopEnabled) {
+            try {
+                shopGuiEvent(e)
+            } catch (_: Throwable) {
+
+            }
+        }
+    }
+
+    //shop event
+    private fun shopGuiEvent(e: InventoryClickEvent): Boolean {
+        e.currentItem ?: return false
+        val inventoryName = e.view.title.split(" ")
+        if (inventoryName[0] == "§eSHOP") {
+            val p = e.whoClicked as Player
+            e.isCancelled = true
+            val number = e.slot
+            if (number < 27) {
+                val loc = DataManager.ClickShopGuiCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
+                if (loc != null) {
+                    if (!ShopData.shopOpen[loc]!!) {
+                        p.sendMessage(LangConfig.shopClosedMessage)
+                        return false
+                    }
+                    PlayerUtil.shopTeleport(p, loc)
+                    if (loc.lowercase() != p.name.lowercase()) {
+                        ShopData.shopVisits[loc] = ShopData.shopVisits[loc]!!.plus(1)
+                    }
+                }
+                return true
+            }
+            if (number == 27 && inventoryName[1].toInt() > 1) {
+                p.openInventory(DataManager.shopGuiCache[inventoryName[1].toInt() - 1]!!)
+            }
+            if (number == 35) {
+                val check = DataManager.shopGuiCache[inventoryName[1].toInt() + 1]
+                if (check != null) {
+                    p.openInventory(check)
+                }
+            }
+            return true
+        }
+        return false
     }
 
     //kit event
@@ -105,7 +150,7 @@ class InventoryClick : Listener {
             val number = e.slot
             if (number < 27) {
                 val kit =
-                    DataManager.kitClickGuiCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
+                    DataManager.ClickKitGuiCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
                 if (kit != null) {
                     kitGui(kit, inventoryName[1], p)
                 }
@@ -210,7 +255,7 @@ class InventoryClick : Listener {
 
     private fun invSeeEvent(e: InventoryClickEvent) {
         val p = e.whoClicked as Player
-        val otherPlayer = PlayerData.inInvsee[p]
+        val otherPlayer = PlayerData.inInvSee[p]
         if (e.inventory.type == InventoryType.PLAYER && otherPlayer != null) {
 
             if (!otherPlayer.isOnline) {

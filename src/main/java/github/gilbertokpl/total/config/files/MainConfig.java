@@ -228,6 +228,13 @@ public class MainConfig implements DefaultConfig {
             }
     )
     public static List<String> ClearitemsItemsNotClear = Collections.singletonList("dirt");
+    @Comments(
+            {
+                    @Comment(annotations = "Tempo em minutos para executar um limpar chão", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static Integer ClearitemsTime = 10;
 
     //kitCommand
     @PrimaryComments(
@@ -840,6 +847,49 @@ public class MainConfig implements DefaultConfig {
             }
     )
     public static Boolean messagesLeaveMessage = true;
+
+    //shop
+    @Comments(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), O loja será ativado.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "If enabled (true), The shop will be actived.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean shopEnabled = true;
+
+    //antiafk
+
+    @Comments(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), O AntiAfk será ativado.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "If enabled (true), The AntiAFK will be actived.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean antiafkEnabled = true;
+
+    @Comments(
+            {
+                    @Comment(annotations = "Tempo de check do plugin", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static Integer antiafkTimeToCheck = 5;
+
+    @Comments(
+            {
+                    @Comment(annotations = "Tempo para kickar ou mandar para o spawn", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static Integer antiafkTimeToExecute = 15;
+
+    @Comments(
+            {
+                    @Comment(annotations = "Se ativado, vai mandar para o spawn avez de kickar", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean antiafkSendToSpawn = true;
 
     //antibugs
     @PrimaryComments(

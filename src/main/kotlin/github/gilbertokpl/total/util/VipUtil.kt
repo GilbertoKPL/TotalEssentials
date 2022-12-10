@@ -3,6 +3,7 @@ package github.gilbertokpl.total.util
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.VipData
+import github.gilbertokpl.total.discord.Discord
 import org.bukkit.World
 import org.bukkit.entity.Player
 
@@ -24,6 +25,7 @@ object VipUtil {
         for (t in toExclude) {
             PlayerData.vipCache.remove(entity, t)
             TotalEssentials.permission.playerRemoveGroup(world, entity, VipData.vipGroup[t])
+            Discord.removeUserRole(PlayerData.discordCache[entity] ?: continue, VipData.vipDiscord[t] ?: continue)
         }
 
         if (toExclude.isNotEmpty()) {

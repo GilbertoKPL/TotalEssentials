@@ -4,8 +4,10 @@ import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.total.cache.local.ShopData
 import org.apache.commons.io.IOUtils
 import org.bukkit.GameMode
+import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.json.JSONObject
 import java.net.URL
@@ -104,6 +106,39 @@ internal object PlayerUtil {
             )
         }
         return arrayOf("Erro API")
+    }
+
+    fun shopTeleport(p: Player, shop: String) {
+        //teleport
+
+        val time = MainConfig.homesTimeToTeleport
+
+        if (p.hasPermission("totalessentials.bypass.teleport") || time == 0) {
+            p.teleport(ShopData.shopLocation[shop]!!)
+            p.sendMessage(LangConfig.shopTeleport.replace("%player%", shop))
+            return
+        }
+
+        val inTeleport = PlayerData.inTeleport[p]
+
+        if (inTeleport != null && inTeleport) {
+            p.sendMessage(LangConfig.homesInTeleport)
+            return
+        }
+
+        val exe = TaskUtil.teleportExecutor(time)
+
+        PlayerData.inTeleport[p] = true
+
+        exe {
+            PlayerData.inTeleport[p] = false
+            p.teleport(ShopData.shopLocation[shop] ?: return@exe)
+            p.sendMessage(LangConfig.shopTeleport.replace("%player%", shop))
+        }
+
+        p.sendMessage(
+            LangConfig.shopTimeToTeleport.replace("%time%", time.toString())
+        )
     }
 
 }

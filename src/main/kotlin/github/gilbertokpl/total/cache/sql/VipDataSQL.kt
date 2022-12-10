@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.Table
 
 object VipDataSQL : Table("VipData" + MainConfig.databaseManager) {
     val vipName = varchar("vipName", 16)
-    val vipDiscord = integer("vipDiscord").default(0)
+    val vipDiscord = long("vipDiscord").default(0)
     val vipGroup = varchar("vipGroup", 16).default("")
     val vipItems = text("vipItems").default("")
     val vipPrice = integer("vipPrice").default(0)

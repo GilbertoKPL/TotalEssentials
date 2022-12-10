@@ -16,7 +16,7 @@ internal object KitGuiInventory {
     private val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§eKIT", true)
 
     fun setup() {
-        DataManager.kitClickGuiCache.clear()
+        DataManager.ClickKitGuiCache.clear()
         DataManager.kitGuiCache.clear()
         var size = 1
         var length = 0
@@ -59,7 +59,7 @@ internal object KitGuiInventory {
             meta?.lore = itemLore
             item.itemMeta = meta
             val cacheValue = (length + 1) + ((size - 1) * 27)
-            DataManager.kitClickGuiCache[cacheValue] = kit.key
+            DataManager.ClickKitGuiCache[cacheValue] = kit.key
 
             if (length < 26) {
                 inv.setItem(length, item)

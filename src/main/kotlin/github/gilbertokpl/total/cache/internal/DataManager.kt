@@ -9,20 +9,22 @@ internal object DataManager {
 
     lateinit var sql: Database
 
-    //vipInventory
-    val VipInventory = HashMap<Int, ItemStack>(50)
+    //vip
+    val tokenVip = HashMap<String, Long>(10)
 
-    //editKitInv
-    val editKitInventory = HashMap<Int, ItemStack>(50)
+
+    //ShopInv
+    val shopGuiCache = HashMap<Int, Inventory>(10)
+    val ClickShopGuiCache = HashMap<Int, String>(40)
 
     //kitInv
     val kitGuiCache = HashMap<Int, Inventory>(10)
-
-    //click kitInv
-    val kitClickGuiCache = HashMap<Int, String>(40)
+    val ClickKitGuiCache = HashMap<Int, String>(40)
 
     //editKit
     val editKit = HashMap<Player, String>(10)
+
+    val editKitInventory = HashMap<Int, ItemStack>(50)
 
     val editKitChat = HashMap<Player, String>(10)
 

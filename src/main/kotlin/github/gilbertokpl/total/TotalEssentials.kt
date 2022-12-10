@@ -2,6 +2,10 @@ package github.gilbertokpl.total
 
 import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.total.cache.internal.OtherConfig
+import github.gilbertokpl.total.cache.internal.ShopInventory
+import github.gilbertokpl.total.cache.loop.AntiAfkLoop
+import github.gilbertokpl.total.cache.loop.ClearItemsLoop
+import github.gilbertokpl.total.cache.loop.PluginLoop
 import github.gilbertokpl.total.cache.sql.*
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -39,7 +43,7 @@ internal class TotalEssentials : JavaPlugin() {
             "github.gilbertokpl.total.commands",
             "github.gilbertokpl.total.listeners",
             "github.gilbertokpl.total.cache.local",
-            listOf(KitsDataSQL, PlayerDataSQL, SpawnDataSQL, WarpsDataSQL, LoginDataSQL, VipDataSQL, VipKeysSQL)
+            listOf(KitsDataSQL, PlayerDataSQL, SpawnDataSQL, WarpsDataSQL, LoginDataSQL, VipDataSQL, VipKeysSQL, ShopDataSQL)
         )
 
         permission = Bukkit.getServer().servicesManager.getRegistration(Permission::class.java)!!.provider
@@ -61,6 +65,10 @@ internal class TotalEssentials : JavaPlugin() {
         if (MainConfig.discordbotConnectDiscordChat) {
             Discord.sendDiscordMessage(LangConfig.discordchatServerStart, true)
         }
+
+        ClearItemsLoop.start()
+
+        PluginLoop.start()
 
         this.server.logger.filter = Filter()
 
