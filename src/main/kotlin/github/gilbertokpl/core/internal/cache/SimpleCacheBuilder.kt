@@ -1,6 +1,7 @@
 package github.gilbertokpl.core.internal.cache
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
+import org.bukkit.Location
 import org.bukkit.entity.Player
 
 class SimpleCacheBuilder<T> : CacheBuilder<T> {
@@ -36,6 +37,10 @@ class SimpleCacheBuilder<T> : CacheBuilder<T> {
 
     override fun set(entity: Player, value: T) {
         set(entity.name, value)
+    }
+
+    override fun set(entity: String, value: T, override: Boolean) {
+        set(entity, value)
     }
 
     override fun set(entity: String, value: T) {

@@ -12,16 +12,11 @@ import github.gilbertokpl.total.util.*
 import github.gilbertokpl.total.util.MainUtil
 import github.gilbertokpl.total.util.PermissionUtil
 import github.gilbertokpl.total.util.PlayerUtil
-import kotlinx.coroutines.awaitCancellation
-import org.bukkit.Bukkit
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.scheduler.BukkitTask
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 
 class PlayerJoin : Listener {
     @EventHandler(priority = EventPriority.HIGH)
@@ -46,6 +41,10 @@ class PlayerJoin : Listener {
         SpawnData.teleport(p)
 
         TotalEssentials.basePlugin.getTask().async {
+
+            if (MainConfig.playtimeActivated) {
+                PlayerData.playtimeLocal[p] = System.currentTimeMillis()
+            }
 
             waitFor(5)
 

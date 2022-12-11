@@ -28,7 +28,7 @@ class CommandMoney : github.gilbertokpl.core.external.command.CommandCreator("mo
                 "/money top",
                 "totalessentials.commands.money.admin_/money set <player> <value>",
                 "totalessentials.commands.money.admin_/money take <player> <value>",
-                "totalessentials.commands.money.admin_/money add <player> <value>"
+                "totalessentials.commands.money.admin_/money give <player> <value>"
             )
         )
     }
@@ -167,8 +167,8 @@ class CommandMoney : github.gilbertokpl.core.external.command.CommandCreator("mo
 
                 return false
             }
-            if (args[0] == "add") {
-                val otherPlayer = PlayerData.moneyCache[args[1]] ?: return true
+            if (args[0] == "give") {
+                val otherPlayer = PlayerData.moneyCache[args[1]] ?: 0.0
                 PlayerData.moneyCache[args[1]] = otherPlayer + value
 
                 s.sendMessage(MoneyUtil.coinReplacer(

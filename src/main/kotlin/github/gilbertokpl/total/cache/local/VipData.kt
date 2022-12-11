@@ -1,6 +1,7 @@
 package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
+import github.gilbertokpl.total.cache.serializer.CommandsSerializer
 import github.gilbertokpl.total.cache.serializer.ItemSerializer
 import github.gilbertokpl.total.cache.sql.VipDataSQL
 import org.jetbrains.exposed.sql.Column
@@ -18,6 +19,7 @@ object VipData : CacheBase  {
     val vipQuantity = ins.integer(this, VipDataSQL.vipQuantity)
     val vipGroup = ins.string(this, VipDataSQL.vipGroup)
     val vipDiscord = ins.long(this, VipDataSQL.vipDiscord)
+    val vipCommands = ins.stringList(this, VipDataSQL.vipCommands, CommandsSerializer())
 
     fun createNewVip(vipName: String, group: String) {
         vipItems[vipName] = ArrayList()
@@ -25,6 +27,7 @@ object VipData : CacheBase  {
         vipQuantity[vipName] = 0
         vipDiscord[vipName] = 0
         vipGroup[vipName] = group
+        vipCommands[vipName] = ArrayList()
     }
 
     fun checkIfVipExist(entity: String) : Boolean {

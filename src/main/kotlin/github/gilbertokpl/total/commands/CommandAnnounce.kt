@@ -55,7 +55,7 @@ class CommandAnnounce : CommandCreator("announce") {
         Discord.sendDiscordMessage(LangConfig.announceSendAnnounce
             .replace("%name%", name)
             .replace("%message%", newMessage)
-            .replace(Regex("§[0-9]|§[a-gA-G]"), "")
+            .replace(Regex("§[0-9]|§[a-zA-Z]"), "")
         , true)
 
         return false

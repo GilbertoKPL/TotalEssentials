@@ -103,6 +103,16 @@ public class MainConfig implements DefaultConfig {
     )
     public static Boolean vipActivated = true;
 
+    //playtime
+
+    @Comments(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), O playtime será ativado.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "If enabled (true), The playtime will be enabled.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean playtimeActivated = true;
+
     //authCommand
 
     @PrimaryComments(
@@ -855,7 +865,7 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "If enabled (true), The shop will be actived.", lang = LangTypes.EN_US)
             }
     )
-    public static Boolean shopEnabled = true;
+    public static Boolean shopActivated = true;
 
     //antiafk
 

@@ -11,7 +11,7 @@ internal object DataManager {
 
     //vip
     val tokenVip = HashMap<String, Long>(10)
-
+    val vipEdit = HashMap<Player, String>(10)
 
     //ShopInv
     val shopGuiCache = HashMap<Int, Inventory>(10)
@@ -21,11 +21,12 @@ internal object DataManager {
     val kitGuiCache = HashMap<Int, Inventory>(10)
     val ClickKitGuiCache = HashMap<Int, String>(40)
 
+    //PlaytimeInv
+    val playTimeGuiCache = HashMap<Int, Inventory>(10)
+
     //editKit
     val editKit = HashMap<Player, String>(10)
-
     val editKitInventory = HashMap<Int, ItemStack>(50)
-
     val editKitChat = HashMap<Player, String>(10)
 
 }

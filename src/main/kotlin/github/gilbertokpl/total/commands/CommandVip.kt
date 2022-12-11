@@ -10,9 +10,11 @@ import github.gilbertokpl.total.cache.local.VipData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
+import github.gilbertokpl.total.util.PlayerUtil
 import github.gilbertokpl.total.util.VipUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip") {
 
@@ -24,14 +26,19 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             countdown = 0,
             permission = "totalessentials.commands.vip",
             minimumSize = 1,
-            maximumSize = 4,
+            maximumSize = null,
             usage = listOf(
                 "totalessentials.commands.vip.admin_/vip criar <vipName> <vipGroup>",
                 "totalessentials.commands.vip.admin_/vip discrole <vipName> <roleID>",
                 "totalessentials.commands.vip.admin_/vip gerarkey <vipName> <days>",
-                "/vip usarkey <key>",
                 "totalessentials.commands.vip.admin_/vip dar <player> <vipName> <days>",
                 "totalessentials.commands.vip.admin_/vip tempo <player>",
+                "totalessentials.commands.vip.admin_/vip items <vipName>",
+                "totalessentials.commands.vip.admin_/vip comando <vipName> list",
+                "totalessentials.commands.vip.admin_/vip comando <vipName> add <command>",
+                "totalessentials.commands.vip.admin_/vip comando <vipName> remove <command>",
+                "/vip usarkey <key>",
+                "/vip items",
                 "P_/vip tempo",
                 "P_/vip mudar",
                 "P_/vip discord <discordID>",
@@ -67,12 +74,21 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
         }
 
         if (s is Player && args[0].lowercase() == "usarkey" && args.size == 2) {
+
             if (!KeyData.checkIfKeyExist(args[1])) {
                 s.sendMessage(LangConfig.VipsKeyNotExist)
                 return false
             }
 
             val vipName = KeyData.vipName[args[1]] ?: return true
+
+            val vipItems = VipData.vipItems[vipName]!!
+
+            if ((54 - (PlayerData.vipItems[s]?.size ?: 0)) <= vipItems.size.toLong()) {
+                s.sendMessage(LangConfig.VipsClearItemsInventory)
+                return false
+            }
+
             val vipTime = KeyData.vipTime[args[1]] ?: return true
 
             val millisVipTime = vipTime * 86400000 + System.currentTimeMillis()
@@ -81,9 +97,25 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
             KeyData.delete(args[1])
 
-            VipUtil.updateCargo(s.name.lowercase(), VipData.vipGroup[vipName])
+            VipUtil.updateCargo(s.name.lowercase(), vipName)
+
+            PlayerData.vipItems[s] = vipItems
 
             s.sendMessage(LangConfig.VipsActivate.replace("%vip%", vipName).replace("%days%", vipTime.toString()))
+
+            Discord.sendDiscordMessage(
+                LangConfig.VipsDiscordActivateMessage
+                    .replace("%player%", args[1])
+                    .replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(vipTime * 86400000, false))
+                    .replace("%vip%", args[2]),
+                true
+            )
+
+            PlayerUtil.sendAllMessage( LangConfig.VipsActivateMessage
+                .replace("%player%", args[1])
+                .replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(vipTime * 86400000, false))
+                .replace("%vip%", args[2])
+            )
 
             return false
 
@@ -107,6 +139,78 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             s.sendMessage(LangConfig.VipsDiscordRoleActivate)
             return false
 
+        }
+
+        if (args[0].lowercase() == "comando" && args.size >= 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
+
+            if (!VipData.checkIfVipExist(args[1])) {
+                s.sendMessage(LangConfig.VipsNotExist)
+                return false
+            }
+
+            if (args[2].lowercase() == "add" && args.size > 3) {
+
+                val msg = StringBuilder()
+                for (arg in args) {
+                    msg.append(arg).append(" ")
+                }
+
+                VipData.vipCommands[args[1]] = arrayListOf(msg.split("add ")[1])
+                s.sendMessage(LangConfig.VipsCommandsAdd)
+                return false
+            }
+
+            if (args[2].lowercase() == "remove" && args.size > 3) {
+                val msg = StringBuilder()
+                for (arg in args) {
+                    msg.append(arg).append(" ")
+                }
+
+                VipData.vipCommands.remove(args[1], msg.split("remove ")[1])
+                s.sendMessage(LangConfig.VipsCommandsRemove)
+                return false
+            }
+
+            if (args[2].lowercase() == "list") {
+                s.sendMessage(LangConfig.VipsCommandsListMessage)
+                for (c in VipData.vipCommands[args[1]]!!) {
+                    s.sendMessage(LangConfig.VipsCommandsList.replace("%command%", c))
+                }
+                return false
+            }
+
+        }
+
+        if (s is Player && args[0].lowercase() == "items" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")) {
+
+            if (!VipData.checkIfVipExist(args[1])) {
+                s.sendMessage(LangConfig.VipsNotExist)
+                return false
+            }
+
+            val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipEditItems " + args[1])
+
+            for (i in VipData.vipItems[args[1]]!!) {
+                inv.addItem(i)
+            }
+
+            DataManager.vipEdit[s] = args[1]
+
+            s.openInventory(inv)
+            return false
+        }
+
+        if (s is Player && args[0].lowercase() == "items" && args.size == 1) {
+
+            val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipItems")
+
+            for (i in PlayerData.vipItems[s]!!) {
+                inv.addItem(i)
+            }
+
+            s.openInventory(inv)
+
+            return false
         }
 
         if (args[0].lowercase() == "tempo" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")) {
@@ -135,23 +239,46 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 return true
             }
 
-            if (!PlayerData.checkIfPlayerExist(args[1])) {
-                s.sendMessage(LangConfig.generalPlayerNotExist)
-                return false
-            }
-
             if (!VipData.checkIfVipExist(args[2])) {
                 s.sendMessage(LangConfig.VipsNotExist)
                 return false
             }
 
-            val millisVipTime = (args[3].toLong() * 86400000) + System.currentTimeMillis()
+            if ((54 - (PlayerData.vipItems[args[1]]?.size ?: 0)) <= (VipData.vipItems[args[2]]?.size?.toLong() ?: 0 )) {
+                s.sendMessage(LangConfig.VipsClearItemsInventory)
+                return false
+            }
+
+            val mv = PlayerData.vipCache[args[1]]?.get(args[2]) ?: 0L
+
+            val millisVipTime = if (mv == 0L) {
+                (args[3].toLong() * 86400000) + System.currentTimeMillis()
+            } else {
+                mv + args[3].toLong() * 86400000
+            }
 
             PlayerData.vipCache[args[1]] = hashMapOf(args[2] to millisVipTime)
 
-            VipUtil.updateCargo(s.name.lowercase(), VipData.vipGroup[args[2]])
+            VipUtil.updateCargo(args[1], args[2])
+
+            PlayerData.vipItems[args[1]] = VipData.vipItems[args[2]]!!
 
             s.sendMessage(LangConfig.VipsActivate.replace("%vip%", args[2]).replace("%days%", args[3]))
+
+            Discord.sendDiscordMessage(
+                LangConfig.VipsDiscordActivateMessage
+                    .replace("%player%", args[1])
+                    .replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(args[3].toLong() * 86400000, false))
+                    .replace("%vip%", args[2]),
+                true
+            )
+
+            PlayerUtil.sendAllMessage( LangConfig.VipsActivateMessage
+                .replace("%player%", args[1])
+                .replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(args[3].toLong() * 86400000, false))
+                .replace("%vip%", args[2])
+            )
+
             return false
         }
 
@@ -170,7 +297,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
         }
 
         if (args[0].lowercase() == "token" && args.size == 2 && s is Player) {
-            val token = DataManager.tokenVip[args[1]] ?: run {
+            val id = DataManager.tokenVip[args[1]] ?: run {
                 s.sendMessage(LangConfig.VipsDiscordTokenError)
                 return false
             }
@@ -182,15 +309,19 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 }
             }
 
-            PlayerData.discordCache[s] = token
+            PlayerData.discordCache[s] = id
 
             for (v in VipData.vipDiscord.getMap()) {
-                Discord.removeUserRole(token, v.value ?: continue)
+                Discord.removeUserRole(id, v.value ?: continue)
             }
 
             for (v in PlayerData.vipCache[s]!!) {
-                Discord.addUserRole(token, VipData.vipDiscord[v.key] ?: continue)
+                Discord.addUserRole(id, VipData.vipDiscord[v.key] ?: continue)
             }
+
+            DataManager.tokenVip.remove(args[1])
+
+            return false
         }
 
         return true

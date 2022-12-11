@@ -15,7 +15,7 @@ interface CacheBuilder<T> {
     operator fun get(entity: Player): T?
 
     operator fun set(entity: String, value: T)
-
+    operator fun set(entity: String, value: T, override: Boolean)
     operator fun set(entity: Player, value: T)
 
     fun delete(entity: String)

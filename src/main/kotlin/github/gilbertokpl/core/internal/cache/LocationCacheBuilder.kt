@@ -46,6 +46,10 @@ internal class LocationCacheBuilder(
         set(entity.name, value)
     }
 
+    override fun set(entity: String, value: Location?, override: Boolean) {
+        set(entity, value)
+    }
+
     override operator fun set(entity: String, value: Location?) {
         hashMap[entity.lowercase()] = value
         if (!inUpdate) {

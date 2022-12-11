@@ -1,11 +1,14 @@
 package github.gilbertokpl.total.listeners
 
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.internal.DataManager
 import github.gilbertokpl.total.cache.internal.KitGuiInventory
+import github.gilbertokpl.total.cache.local.VipData
+import github.gilbertokpl.total.util.PlayerUtil
 
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -31,8 +34,40 @@ class InventoryClose : Listener {
 
             }
         }
+        if (MainConfig.vipActivated) {
+            try {
+                vipInventoryCloseEvent(e)
+            } catch (e: Throwable) {
+
+            }
+        }
     }
 
+    //vips
+    private fun vipInventoryCloseEvent(e: InventoryCloseEvent): Boolean {
+        val p = e.player as Player
+        DataManager.vipEdit[p].also {
+
+            if (it == null) return false
+
+            val array = ArrayList<ItemStack>()
+
+            for (i in e.inventory.contents.filterNotNull()) {
+                array.add(i)
+            }
+
+            VipData.vipItems[it, array] = true
+
+            DataManager.vipEdit.remove(p)
+
+            PlayerUtil.sendMessage(e.player.name, LangConfig.VipsUpdateItems.replace("%vip%", it))
+
+        }
+
+        return true
+    }
+
+    //editkit
     private fun editKitInventoryCloseEvent(e: InventoryCloseEvent): Boolean {
         val p = e.player as Player
         DataManager.editKit[p].also {
@@ -45,11 +80,11 @@ class InventoryClose : Listener {
                 array.add(i)
             }
 
-            KitsData.kitItems[it] = array
+            KitsData.kitItems[it, array] = true
 
             val name =  KitsData.kitFakeName[it]
 
-            e.player.sendMessage(
+            PlayerUtil.sendMessage(e.player.name,
                 LangConfig.kitsEditKitSuccess.replace(
                     "%kit%",
                     if (name == null || name == "") it else name

@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.UserSnowflake
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.exceptions.ContextException
+import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.cache.CacheFlag
@@ -118,14 +119,29 @@ internal object Discord {
          * @throws UserDoesNotExist if user does not exist.
          * @throws RoleDoesNotExist if role does not exist.
          */
-        fun addUserRole(userID: Long, roleId: Long) {
+        fun addUserRole(userID: Long, roleId: Long) : Boolean {
             val jda = getJdaCheck()
 
-            val role = jda.getRoleById(roleId) ?: throw RoleDoesNotExist()
+            try {
+                val role = jda.getRoleById(roleId) ?: throw RoleDoesNotExist()
+                jda.retrieveUserById(userID).queue {
+                    jda.getGuildById(jda.guilds[0].id)?.addRoleToMember(it, role)?.queue()
+                }
+            }
+            catch (e: ContextException ) {
+                return false
+            }
+            catch (e: Exception) {
+                return false
+            }
+            catch (e: ErrorResponseException) {
+                return false
+            }
+            catch (e: Throwable) {
+                return false
+            }
 
-            jda.getUserById(userID) ?: throw UserDoesNotExist()
-
-            jda.getGuildById(jda.guilds[0].id)?.addRoleToMember(UserSnowflake.fromId(userID), role)
+            return true
         }
 
         /**
@@ -137,18 +153,23 @@ internal object Discord {
          * @throws RoleDoesNotExist if role does not exist.
          * @throws UserDoesNotHaveThisRole if user does not have this role.
          */
-        fun removeUserRole(userID: Long, roleId: Long) {
+        fun removeUserRole(userID: Long, roleId: Long) : Boolean {
             val jda = getJdaCheck()
 
-            val role = jda.getRoleById(roleId) ?: throw RoleDoesNotExist()
-
-            val user = jda.getUserById(userID) ?: throw UserDoesNotExist()
-
-            if (!(user as Member).roles.contains(role)) {
-                throw UserDoesNotHaveThisRole()
+            try {
+                val role = jda.getRoleById(roleId) ?: return false
+                jda.retrieveUserById(userID).queue {
+                    jda.getGuildById(jda.guilds[0].id)?.removeRoleFromMember(it, role)?.queue()
+                }
+            }
+            catch (e: ContextException ) {
+                return false
+            }
+            catch (e: Exception) {
+                return false
             }
 
-            jda.getGuildById(jda.guilds[0].id)?.removeRoleFromMember(UserSnowflake.fromId(userID), role)
+            return true
         }
 
         /**

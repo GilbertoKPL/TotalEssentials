@@ -8,6 +8,7 @@ object VipDataSQL : Table("VipData" + MainConfig.databaseManager) {
     val vipDiscord = long("vipDiscord").default(0)
     val vipGroup = varchar("vipGroup", 16).default("")
     val vipItems = text("vipItems").default("")
+    val vipCommands = text("vipCommands").default("")
     val vipPrice = integer("vipPrice").default(0)
     val vipQuantity = integer("vipQuantity").default(0)
     override val primaryKey = PrimaryKey(vipName)

@@ -34,6 +34,10 @@ class Cache(lf: CorePlugin) {
         return SimpleCacheBuilder()
     }
 
+    fun simpleLong(): CacheBuilder<Long> {
+        return SimpleCacheBuilder()
+    }
+
     fun simplePlayer(): CacheBuilder<Player?> {
         return SimpleCacheBuilder()
     }

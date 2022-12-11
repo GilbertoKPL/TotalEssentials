@@ -3,8 +3,10 @@ package github.gilbertokpl.total.util
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.VipData
+import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.discord.Discord
 import org.bukkit.World
+import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 
 object VipUtil {
@@ -25,6 +27,7 @@ object VipUtil {
         for (t in toExclude) {
             PlayerData.vipCache.remove(entity, t)
             TotalEssentials.permission.playerRemoveGroup(world, entity, VipData.vipGroup[t])
+            VipData.vipQuantity[t] = (VipData.vipQuantity[t] ?: 0) - 1
             Discord.removeUserRole(PlayerData.discordCache[entity] ?: continue, VipData.vipDiscord[t] ?: continue)
         }
 
@@ -57,7 +60,19 @@ object VipUtil {
 
         if (currentGroup == null) {
             if (newVip != null) {
-                TotalEssentials.permission.playerAddGroup(world, entity, newVip)
+                TotalEssentials.permission.playerAddGroup(world, entity, VipData.vipGroup[newVip])
+
+                for (c in (VipData.vipCommands[newVip] ?: ArrayList())) {
+                    TotalEssentials.instance.server.dispatchCommand(TotalEssentials.instance.server.consoleSender, c.replace("%player%", entity))
+                }
+
+                VipData.vipQuantity[newVip] = (VipData.vipQuantity[newVip] ?: 0) + 1
+
+                val token = PlayerData.discordCache[entity]
+                val roleID = VipData.vipDiscord[newVip]
+                if (token != null && roleID != null) {
+                    Discord.addUserRole(token, roleID)
+                }
                 return null
             }
             if (size > 0) {
@@ -88,7 +103,19 @@ object VipUtil {
         TotalEssentials.permission.playerRemoveGroup(world, entity , VipData.vipGroup[currentGroup])
 
         if (newVip != null) {
-            TotalEssentials.permission.playerAddGroup(world,entity, newVip)
+            TotalEssentials.permission.playerAddGroup(world,entity, VipData.vipGroup[newVip])
+
+            for (c in (VipData.vipCommands[newVip] ?: ArrayList())) {
+                TotalEssentials.instance.server.dispatchCommand(TotalEssentials.instance.server.consoleSender, c.replace("%player%", entity))
+            }
+
+            VipData.vipQuantity[newVip] = (VipData.vipQuantity[newVip] ?: 0) + 1
+
+            val token = PlayerData.discordCache[entity]
+            val roleID = VipData.vipDiscord[newVip]
+            if (token != null && roleID != null) {
+                Discord.addUserRole(token, roleID)
+            }
             return null
         }
 

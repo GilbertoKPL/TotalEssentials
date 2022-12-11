@@ -33,6 +33,10 @@ internal class ByteCacheBuilder<T>(t: Table, pc: Column<String>, c: Column<T>) :
         return hashMap[entity.name.lowercase()]
     }
 
+    override fun set(entity: String, value: T, override: Boolean) {
+        set(entity, value)
+    }
+
     override fun delete(entity: Player) {
         delete(entity.name)
     }

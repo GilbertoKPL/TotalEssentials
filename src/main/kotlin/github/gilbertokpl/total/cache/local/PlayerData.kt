@@ -1,10 +1,9 @@
 package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
+import github.gilbertokpl.total.cache.serializer.*
 import github.gilbertokpl.total.cache.serializer.HomeSerializer
 import github.gilbertokpl.total.cache.serializer.KitSerializer
-import github.gilbertokpl.total.cache.serializer.LocationSerializer
-import github.gilbertokpl.total.cache.serializer.VipSerializer
 import github.gilbertokpl.total.cache.sql.PlayerDataSQL
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil
@@ -25,6 +24,7 @@ object PlayerData : CacheBase {
     val kitsCache = ins.stringHashMap(this, PlayerDataSQL.kitsTable, KitSerializer())
     val homeCache = ins.stringHashMap(this, PlayerDataSQL.homeTable, HomeSerializer())
     val vipCache = ins.stringHashMap(this, PlayerDataSQL.vipTable, VipSerializer())
+    val vipItems = ins.stringList(this, PlayerDataSQL.vipItems, ItemSerializer())
     val nickCache = ins.string(this, PlayerDataSQL.nickTable)
     val gameModeCache = ins.integer(this, PlayerDataSQL.gameModeTable)
     val vanishCache = ins.boolean(this, PlayerDataSQL.vanishTable)
@@ -34,10 +34,12 @@ object PlayerData : CacheBase {
     val speedCache = ins.integer(this, PlayerDataSQL.speedTable)
     val moneyCache = ins.double(this, PlayerDataSQL.moneyTable)
     val discordCache = ins.long(this, PlayerDataSQL.DiscordTable)
+    val playTimeCache = ins.long(this, PlayerDataSQL.PlaytimeTable)
     val inInvSee = ins.simplePlayer()
     val homeLimitCache = ins.simpleInteger()
     val inTeleport = ins.simpleBoolean()
     val afk = ins.simpleInteger()
+    val playtimeLocal = ins.simpleLong()
 
     fun checkIfPlayerExist(entity: String) : Boolean {
         return nickCache[entity.lowercase()] != null
@@ -61,7 +63,8 @@ object PlayerData : CacheBase {
         speedCache[entity] = 1
         moneyCache[entity] = 0.0
         afk[entity] = 1
-
+        playTimeCache[entity] = 0
+        discordCache[entity] = 0
     }
 
     fun values(p: Player) {

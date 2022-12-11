@@ -8,6 +8,7 @@ object PlayerDataSQL : Table("PlayerData" + MainConfig.databaseManager) {
     val kitsTable = text("kitsTime").default("")
     val homeTable = text("savedHomes").default("")
     val vipTable = text("Vip").default("")
+    val vipItems = text("VipItems").default("")
     val nickTable = varchar("fakeNick", 32).default("")
     val gameModeTable = integer("Gamemode").default(0)
     val vanishTable = bool("Vanish").default(false)
@@ -15,7 +16,8 @@ object PlayerDataSQL : Table("PlayerData" + MainConfig.databaseManager) {
     val flyTable = bool("Fly").default(false)
     val backTable = text("Back").default("")
     val speedTable = integer("Speed").default(1)
-    val moneyTable = double("Money").default(0.0)
+    val moneyTable = double("Money").default(MainConfig.moneyDefault.toDouble())
     val DiscordTable = long("DiscordID").default(0)
+    val PlaytimeTable = long("Playtime").default(0)
     override val primaryKey = PrimaryKey(playerTable)
 }

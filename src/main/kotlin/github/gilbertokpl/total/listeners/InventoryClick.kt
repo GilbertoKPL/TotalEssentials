@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.listeners
 
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.local.KitsData
@@ -22,6 +23,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
+import org.bukkit.inventory.ItemStack
 
 class InventoryClick : Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
@@ -68,13 +70,94 @@ class InventoryClick : Listener {
 
             }
         }
-        if (MainConfig.shopEnabled) {
+        if (MainConfig.shopActivated) {
             try {
                 shopGuiEvent(e)
             } catch (_: Throwable) {
 
             }
         }
+        if(MainConfig.playtimeActivated) {
+            try {
+                playtimeGuiEvent(e)
+            } catch (_: Throwable) {
+
+            }
+        }
+        if (MainConfig.vipActivated) {
+            try {
+                vipGuiEvent(e)
+            } catch (_: Throwable) {
+
+            }
+        }
+    }
+
+    //vips event
+    private fun vipGuiEvent(e: InventoryClickEvent): Boolean {
+        e.currentItem ?: return false
+        val inventoryName = e.view.title.split(" ")
+        if (inventoryName[0] == "§eVipItems") {
+            val p = e.whoClicked as Player
+            e.isCancelled = true
+            if (e.click.isLeftClick) {
+
+                var inventorySpace = 0
+
+                for (i in 0..35) {
+                    if (p.inventory.getItem(i) == null) {
+                        inventorySpace += 1
+                    }
+                }
+
+                if (inventorySpace == 0) {
+                    return false
+                }
+
+                p.inventory.addItem(e.currentItem)
+
+                e.currentItem = ItemStack(Material.AIR)
+
+
+                val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipItems")
+
+                val list = ArrayList<ItemStack>()
+
+                for (i in e.inventory.contents) {
+                    if (i == null || i == ItemStack(Material.AIR)) continue
+                    inv.addItem(i)
+                    list.add(i)
+                }
+
+                PlayerData.vipItems[p.name, list] = true
+
+                p.openInventory(inv)
+            }
+            return true
+        }
+        return false
+    }
+
+    //playtime event
+    private fun playtimeGuiEvent(e: InventoryClickEvent): Boolean {
+        e.currentItem ?: return false
+        val inventoryName = e.view.title.split(" ")
+        if (inventoryName[0] == "§ePLAYTIME") {
+            val p = e.whoClicked as Player
+            e.isCancelled = true
+            val number = e.slot
+            if (number == 27 && inventoryName[1].toInt() > 1) {
+                p.openInventory(DataManager.playTimeGuiCache[inventoryName[1].toInt() - 1]!!)
+            }
+            if (number == 35) {
+                val check = DataManager.playTimeGuiCache[inventoryName[1].toInt() + 1]
+                if (check != null) {
+                    p.openInventory(check)
+                }
+            }
+            return true
+        }
+        return false
     }
 
     //shop event
@@ -269,9 +352,5 @@ class InventoryClick : Listener {
                 e.isCancelled = true
             }
         }
-    }
-
-    private fun vipGuiEvent(e: InventoryClickEvent) {
-
     }
 }

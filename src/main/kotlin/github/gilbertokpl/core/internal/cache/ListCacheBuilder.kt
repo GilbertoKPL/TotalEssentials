@@ -46,6 +46,25 @@ internal class ListCacheBuilder<K, V>(
         set(entity.name, value)
     }
 
+    override operator fun set(entity: String, value: ArrayList<V>, override: Boolean) {
+        if (override) {
+            hashMap[entity.lowercase()] = value
+            if (!inUpdate) {
+                toUpdate.add(entity.lowercase())
+            } else {
+                Executor.executor.scheduleWithFixedDelay({
+                    if (!inUpdate) {
+                        toUpdate.add(entity.lowercase())
+                        Thread.currentThread().stop()
+                    }
+                }, 1, 1, TimeUnit.SECONDS)
+            }
+        }
+        else {
+            set(entity, value)
+        }
+    }
+
     override operator fun set(entity: String, value: ArrayList<V>) {
         val ent = hashMap[entity.lowercase()] ?: run {
             hashMap[entity.lowercase()] = value
@@ -87,8 +106,15 @@ internal class ListCacheBuilder<K, V>(
         }
         ent.remove(value)
         hashMap[entity.lowercase()] = ent
-        while (!inUpdate) {
+        if (!inUpdate) {
             toUpdate.add(entity.lowercase())
+        } else {
+            Executor.executor.scheduleWithFixedDelay({
+                if (!inUpdate) {
+                    toUpdate.add(entity.lowercase())
+                    Thread.currentThread().stop()
+                }
+            }, 1, 1, TimeUnit.SECONDS)
         }
     }
 

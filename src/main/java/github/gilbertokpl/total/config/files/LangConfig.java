@@ -410,6 +410,46 @@ public class LangConfig implements DefaultLang {
     )
     public static String authOtherAlreadyLogged;
 
+    //PLAYTIME
+
+
+    @Values(
+            {
+                    @Value(value = "&eTempo Jogado:|&e%time%", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static List<String> playtimeInventoryItemsLore;
+    @Values(
+            {
+                    @Value(value = "&ePlayer: &f%player%", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String playtimeInventoryItemsName;
+    @Values(
+            {
+                    @Value(value = "&eVoltar página", lang = LangTypes.PT_BR),
+                    @Value(value = "&eBack page", lang = LangTypes.EN_US)
+            }
+    )
+    public static String playtimeInventoryIconBackName;
+    @Values(
+            {
+                    @Value(value = "&ePróxima página", lang = LangTypes.PT_BR),
+                    @Value(value = "&eNext page", lang = LangTypes.EN_US)
+            }
+    )
+    public static String playtimeInventoryIconNextName;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&e%player% jogou por %time%", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String playtimeMessage;
+
     //shop
 
     @Values(
@@ -878,6 +918,78 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String VipsDiscordUserIdNotExist;
+
+    @Values(
+            {
+                    @Value(value = "O %player% acabou de ativar o vip %vip% por %time%!", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsDiscordActivateMessage;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aO %player% acabou de ativar o vip %vip% por %time%!", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsActivateMessage;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aItems do vip %vip% atualizados com sucesso!", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsUpdateItems;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cTire todos items do inventario '/vip items' para pegar esse vip.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsClearItemsInventory;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEsse player já tem items no '/vip items' por isso ele não pode receber esse vip.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsClearItemsOtherInventory;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&eLista de comandos:", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsCommandsListMessage;
+    @Values(
+            {
+                    @Value(value = "&9> '&e%command%&9'", lang = LangTypes.PT_BR),
+                    @Value(value = "&9> '&e%command%'", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsCommandsList;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aComando adicionado!", lang = LangTypes.PT_BR),
+                    @Value(value = "&9> '&e%command%'", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsCommandsAdd;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aComando retirado!", lang = LangTypes.PT_BR),
+                    @Value(value = "&9> '&e%command%'", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsCommandsRemove;
+
 
     //nicks
     @Values(

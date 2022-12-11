@@ -68,7 +68,7 @@ internal object ItemUtil {
 
         var inventorySpace = 0
 
-        for (i in 0..36) {
+        for (i in 0..35) {
             if (inv.getItem(i) == null) {
                 inventorySpace += 1
             }

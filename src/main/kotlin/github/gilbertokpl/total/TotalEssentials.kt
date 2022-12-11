@@ -3,6 +3,7 @@ package github.gilbertokpl.total
 import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.total.cache.internal.OtherConfig
 import github.gilbertokpl.total.cache.internal.ShopInventory
+import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.loop.AntiAfkLoop
 import github.gilbertokpl.total.cache.loop.ClearItemsLoop
 import github.gilbertokpl.total.cache.loop.PluginLoop
@@ -70,12 +71,21 @@ internal class TotalEssentials : JavaPlugin() {
 
         PluginLoop.start()
 
+        onlineTime = System.currentTimeMillis()
+
         this.server.logger.filter = Filter()
 
         super.onEnable()
     }
 
     override fun onDisable() {
+
+        for (p in basePlugin.getReflection().getPlayers()) {
+            if (MainConfig.playtimeActivated) {
+                PlayerData.playTimeCache[p] = (PlayerData.playTimeCache[p]?: 0L) + System.currentTimeMillis() - (PlayerData.playtimeLocal[p] ?: 0L)
+                PlayerData.playtimeLocal[p] = 0L
+            }
+        }
 
         MainUtil.consoleMessage(ColorUtil.YELLOW.color + LangConfig.generalSaveDataMessage + ColorUtil.RESET.color)
         basePlugin.stop()
@@ -96,6 +106,8 @@ internal class TotalEssentials : JavaPlugin() {
         lateinit var basePlugin: CorePlugin
 
         lateinit var permission : Permission
+
+        var onlineTime = 0L
 
         var lowVersion = false
     }

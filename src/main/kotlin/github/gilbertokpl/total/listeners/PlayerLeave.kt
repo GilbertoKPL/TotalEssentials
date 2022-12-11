@@ -7,12 +7,10 @@ import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.discord.Discord
 
 import github.gilbertokpl.total.util.MainUtil
-import org.bukkit.entity.Player
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerKickEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
 class PlayerLeave : Listener {
@@ -45,6 +43,15 @@ class PlayerLeave : Listener {
         } catch (e: Throwable) {
 
         }
+        try {
+            if (MainConfig.playtimeActivated) {
+                PlayerData.playTimeCache[e.player] = (PlayerData.playTimeCache[e.player]?: 0L) + System.currentTimeMillis() - (PlayerData.playtimeLocal[e.player] ?: 0L)
+                PlayerData.playtimeLocal[e.player] = 0L
+            }
+        } catch (e: Throwable) {
+
+        }
+
     }
 
     private fun setBackLocation(e: PlayerQuitEvent) {
