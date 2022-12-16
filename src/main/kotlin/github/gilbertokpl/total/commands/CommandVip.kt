@@ -39,10 +39,10 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 "totalessentials.commands.vip.admin_/vip comando <vipName> remove <command>",
                 "/vip usarkey <key>",
                 "/vip items",
-                "P_/vip tempo",
-                "P_/vip mudar",
-                "P_/vip discord <discordID>",
-                "P_/vip token <token>"
+                "/vip tempo",
+                "/vip mudar",
+                "/vip discord <discordID>",
+                "/vip token <token>"
             )
         )
     }
@@ -204,7 +204,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
             val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipItems")
 
-            for (i in PlayerData.vipItems[s]!!) {
+            for (i in PlayerData.vipItems[s] ?: emptyList()) {
                 inv.addItem(i)
             }
 
@@ -214,14 +214,36 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
         }
 
         if (args[0].lowercase() == "tempo" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")) {
-            for (i in PlayerData.vipCache[args[1]] ?: return false) {
+
+            if( !PlayerData.checkIfPlayerExist(args[1])) {
+                s.sendMessage(LangConfig.generalPlayerNotExist)
+                return false
+            }
+
+            val cache = PlayerData.vipCache[args[1]]
+
+            if (cache.isNullOrEmpty()) {
+                s.sendMessage(LangConfig.VipsTimeNoVip)
+                return false
+            }
+            s.sendMessage(LangConfig.VipsTimeFirstOtherMessage.replace("%player%", args[1]))
+            for (i in cache) {
                 s.sendMessage(LangConfig.VipsTimeMessage.replace("%vipName%", i.key).replace("%vipTime%", TotalEssentials.basePlugin.getTime().convertMillisToString(i.value - System.currentTimeMillis(), false)))
             }
             return false
         }
 
         if (args.size == 1 && args[0].lowercase() == "tempo" && s is Player) {
-            for (i in PlayerData.vipCache[s] ?: return false) {
+            val cache = PlayerData.vipCache[s]
+
+            if (cache.isNullOrEmpty()) {
+                s.sendMessage(LangConfig.VipsTimeNoVip)
+                return false
+            }
+
+            s.sendMessage(LangConfig.VipsTimeFirstMessage)
+
+            for (i in cache) {
                 s.sendMessage(LangConfig.VipsTimeMessage.replace("%vipName%", i.key).replace("%vipTime%", TotalEssentials.basePlugin.getTime().convertMillisToString(i.value - System.currentTimeMillis(), false)))
             }
             return false
@@ -244,6 +266,10 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 return false
             }
 
+            if (!PlayerData.checkIfPlayerExist(args[1])) {
+                PlayerData.createNewPlayerData(args[1].lowercase())
+            }
+
             if ((54 - (PlayerData.vipItems[args[1]]?.size ?: 0)) <= (VipData.vipItems[args[2]]?.size?.toLong() ?: 0 )) {
                 s.sendMessage(LangConfig.VipsClearItemsInventory)
                 return false
@@ -259,11 +285,17 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
             PlayerData.vipCache[args[1]] = hashMapOf(args[2] to millisVipTime)
 
-            VipUtil.updateCargo(args[1], args[2])
-
             PlayerData.vipItems[args[1]] = VipData.vipItems[args[2]]!!
 
             s.sendMessage(LangConfig.VipsActivate.replace("%vip%", args[2]).replace("%days%", args[3]))
+
+            PlayerUtil.sendAllMessage( LangConfig.VipsActivateMessage
+                .replace("%player%", args[1])
+                .replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(args[3].toLong() * 86400000, false))
+                .replace("%vip%", args[2])
+            )
+
+            VipUtil.updateCargo(args[1], args[2])
 
             Discord.sendDiscordMessage(
                 LangConfig.VipsDiscordActivateMessage
@@ -271,12 +303,6 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                     .replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(args[3].toLong() * 86400000, false))
                     .replace("%vip%", args[2]),
                 true
-            )
-
-            PlayerUtil.sendAllMessage( LangConfig.VipsActivateMessage
-                .replace("%player%", args[1])
-                .replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(args[3].toLong() * 86400000, false))
-                .replace("%vip%", args[2])
             )
 
             return false

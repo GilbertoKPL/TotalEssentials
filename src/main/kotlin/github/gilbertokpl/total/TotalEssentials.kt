@@ -71,8 +71,6 @@ internal class TotalEssentials : JavaPlugin() {
 
         PluginLoop.start()
 
-        onlineTime = System.currentTimeMillis()
-
         this.server.logger.filter = Filter()
 
         super.onEnable()
@@ -106,8 +104,6 @@ internal class TotalEssentials : JavaPlugin() {
         lateinit var basePlugin: CorePlugin
 
         lateinit var permission : Permission
-
-        var onlineTime = 0L
 
         var lowVersion = false
     }

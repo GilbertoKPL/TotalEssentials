@@ -15,15 +15,19 @@ class LocationSerializer : SerializatorBase<Location?, String> {
     }
 
     override fun convertToCache(value: String): Location? {
+
+        if (value == "") return null
+
         return try {
             val parts = value.split(";").toTypedArray()
-            val x = parts[0].toDouble()
-            val y = parts[1].toDouble()
-            val z = parts[2].toDouble()
+            val x = if (parts[0].isEmpty()) 0.0 else parts[0].toDouble()
+            val y = if (parts[1].isEmpty()) 0.0 else parts[1].toDouble()
+            val z = if (parts[2].isEmpty()) 0.0 else parts[2].toDouble()
             val w = try {
                 github.gilbertokpl.total.TotalEssentials.instance.server.getWorld(parts[3])
             } catch (e: Throwable) {
-                null
+                e.printStackTrace()
+                github.gilbertokpl.total.TotalEssentials.instance.server.getWorld("world")
             }
             Location(
                 w, x, y, z, try {
@@ -37,6 +41,7 @@ class LocationSerializer : SerializatorBase<Location?, String> {
                 }
             )
         } catch (e: Throwable) {
+            e.printStackTrace()
             null
         }
     }

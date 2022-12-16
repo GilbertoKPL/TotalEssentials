@@ -49,6 +49,9 @@ internal object MainUtil {
         if (MainConfig.playtimeActivated) {
             PlaytimeInventory.setup()
         }
+        if (MainConfig.moneyActivated) {
+            MoneyUtil.refreshTycoon()
+        }
     }
 
     fun checkSpecialCharacters(s: String?): Boolean {

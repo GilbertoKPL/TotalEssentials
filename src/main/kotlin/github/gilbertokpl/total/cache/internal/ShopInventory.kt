@@ -2,13 +2,11 @@ package github.gilbertokpl.total.cache.internal
 
 import github.gilbertokpl.total.cache.local.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
-import github.gilbertokpl.total.util.HashUtil
 import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.MaterialUtil
 import org.bukkit.Material
 import org.bukkit.SkullType
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.SkullMeta
 
 object ShopInventory {
     private val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§eSHOP", true)
@@ -29,7 +27,7 @@ object ShopInventory {
             }
         }
 
-        val cache = HashUtil.hashMapReverse(HashUtil.hashMapSortMap(newHash))
+        val cache = newHash.entries.sortedBy { it.value }.associate { it.toPair() }.asIterable().reversed()
 
 
         for (shop in cache) {

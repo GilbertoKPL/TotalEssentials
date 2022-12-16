@@ -3,7 +3,6 @@ package github.gilbertokpl.total.cache.internal
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
-import github.gilbertokpl.total.util.HashUtil
 import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.MaterialUtil
 import org.bukkit.Material
@@ -28,7 +27,7 @@ object PlaytimeInventory {
             }
         }
 
-        val cache = HashUtil.hashMapReverseLong(HashUtil.hashMapSortMapLong(newHash))
+        val cache = newHash.entries.sortedBy { it.value }.associate { it.toPair() }.asIterable().reversed()
 
         for (time in cache) {
             val name = LangConfig.playtimeInventoryItemsName.replace(

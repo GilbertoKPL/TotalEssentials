@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.util
 
+import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -31,7 +32,7 @@ object MoneyUtil {
 
     fun withdrawPlayer(player: String, amount: Double): EconomyResponse {
         val money = PlayerData.moneyCache[player]
-        if (money != null && amount < money) {
+        if ((money != null) && (amount <= money)) {
             PlayerData.moneyCache[player] = money - amount
             return EconomyResponse(amount, money - amount, EconomyResponse.ResponseType.SUCCESS, "")
         }
@@ -56,7 +57,17 @@ object MoneyUtil {
         if (MainConfig.moneyActivated) {
             tycoonPlayer.clear()
             var max = 0
-            for (i in HashUtil.hashMapReversDouble(HashUtil.hashMapSortMapDouble(PlayerData.moneyCache.getMap()))) {
+
+            val newHash = LinkedHashMap<String, Double>()
+
+            PlayerData.moneyCache.getMap().forEach {
+                val value = it.value
+                if (value != null) {
+                    newHash[it.key] = value
+                }
+            }
+
+            for (i in newHash.entries.sortedBy { it.value }.associate { it.toPair() }.asIterable().reversed()) {
                 if (max == 10) break
                 max += 1
                 tycoonPlayer[i.key] = i.value.toInt()

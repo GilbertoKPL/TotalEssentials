@@ -15,6 +15,10 @@ class SimpleCacheBuilder<T> : CacheBuilder<T> {
         TODO("Not yet implemented")
     }
 
+    override fun unload() {
+        TODO("Not yet implemented")
+    }
+
     override fun getMap(): HashMap<String, T?> {
         return hashMap
     }

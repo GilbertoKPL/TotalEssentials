@@ -70,7 +70,7 @@ object VipUtil {
 
                 val token = PlayerData.discordCache[entity]
                 val roleID = VipData.vipDiscord[newVip]
-                if (token != null && roleID != null) {
+                if (token != null && roleID != null && token != 0L) {
                     Discord.addUserRole(token, roleID)
                 }
                 return null
@@ -113,7 +113,7 @@ object VipUtil {
 
             val token = PlayerData.discordCache[entity]
             val roleID = VipData.vipDiscord[newVip]
-            if (token != null && roleID != null) {
+            if (token != null && roleID != null && token != 0L) {
                 Discord.addUserRole(token, roleID)
             }
             return null

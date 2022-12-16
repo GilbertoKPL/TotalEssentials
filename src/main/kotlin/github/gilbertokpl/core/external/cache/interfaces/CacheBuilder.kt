@@ -8,7 +8,9 @@ interface CacheBuilder<T> {
 
     fun load()
 
-    fun getMap(): HashMap<String, T?>
+    fun unload()
+
+    fun getMap(): Map<String, T?>
 
     operator fun get(entity: String): T?
 

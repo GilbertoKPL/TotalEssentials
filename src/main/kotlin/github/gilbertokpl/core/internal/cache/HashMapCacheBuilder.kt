@@ -3,6 +3,8 @@ package github.gilbertokpl.core.internal.cache
 import github.gilbertokpl.core.external.cache.convert.SerializatorBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
 import github.gilbertokpl.core.external.utils.Executor
+import okhttp3.internal.toImmutableList
+import okhttp3.internal.toImmutableMap
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
@@ -25,13 +27,13 @@ internal class HashMapCacheBuilder<T, V, K>(
     private val primaryColumn = pc
 
     private val hashMap = HashMap<String, HashMap<V, K>?>()
-    override fun getMap(): HashMap<String, HashMap<V, K>?> {
-        return hashMap
+    override fun getMap(): Map<String, HashMap<V, K>?> {
+        return hashMap.toImmutableMap()
     }
 
     private val toUpdate = ArrayList<String>()
 
-    private var inUpdate = false
+    private val toUnload = ArrayList<String>()
 
     override operator fun get(entity: String): HashMap<V, K>? {
         return hashMap[entity.lowercase()]
@@ -53,32 +55,16 @@ internal class HashMapCacheBuilder<T, V, K>(
     override operator fun set(entity: String, value: HashMap<V, K>) {
         val ent = hashMap[entity.lowercase()] ?: run {
             hashMap[entity.lowercase()] = value
-            if (!inUpdate) {
-                toUpdate.add(entity.lowercase())
-            } else {
-                Executor.executor.scheduleWithFixedDelay({
-                    if (!inUpdate) {
-                        toUpdate.add(entity.lowercase())
-                        Thread.currentThread().stop()
-                    }
-                }, 1, 1, TimeUnit.SECONDS)
-            }
+            toUpdate.add(entity.lowercase())
+            toUnload.add(entity.lowercase())
             return
         }
         for (i in value) {
             ent[i.key] = i.value
         }
         hashMap[entity.lowercase()] = ent
-        if (!inUpdate) {
-            toUpdate.add(entity.lowercase())
-        } else {
-            Executor.executor.scheduleWithFixedDelay({
-                if (!inUpdate) {
-                    toUpdate.add(entity.lowercase())
-                    Thread.currentThread().stop()
-                }
-            }, 1, 1, TimeUnit.SECONDS)
-        }
+        toUpdate.add(entity.lowercase())
+        toUnload.add(entity.lowercase())
     }
 
     override fun remove(entity: Player, value: V) {
@@ -91,40 +77,35 @@ internal class HashMapCacheBuilder<T, V, K>(
         }
         ent.remove(value)
         hashMap[entity.lowercase()] = ent
-        if (!inUpdate) {
-            toUpdate.add(entity.lowercase())
-        } else {
-            Executor.executor.scheduleWithFixedDelay({
-                if (!inUpdate) {
-                    toUpdate.add(entity.lowercase())
-                    Thread.currentThread().stop()
-                }
-            }, 1, 1, TimeUnit.SECONDS)
-        }
+        toUpdate.add(entity.lowercase())
+        toUnload.add(entity.lowercase())
     }
 
     override fun delete(entity: Player) {
-        delete(entity.name)
+        delete(entity.name.lowercase())
     }
 
     override fun delete(entity: String) {
         hashMap[entity.lowercase()] = null
+        toUpdate.add(entity)
+        toUnload.add(entity)
     }
 
-    override fun update() {
-        if (inUpdate) return
-        inUpdate = true
-        for (i in toUpdate) {
+    private fun save(list: List<String>) {
+        val currentHash = hashMap.toImmutableMap()
+
+        for (i in list) {
+            toUpdate.remove(i)
             val tab = table.select { primaryColumn eq i }
 
-            val value = hashMap[i]
+            val value = currentHash[i]
 
             if (tab.empty()) {
                 if (value == null) continue
 
                 table.insert {
                     it[primaryColumn] = i
-                    it[column] = conv.convertToDatabase(hashMap[i]!!)
+                    it[column] = conv.convertToDatabase(value)
                 }
             } else {
                 if (value == null) {
@@ -132,19 +113,26 @@ internal class HashMapCacheBuilder<T, V, K>(
                     continue
                 }
                 table.update({ primaryColumn eq i }) {
-                    it[column] = conv.convertToDatabase(hashMap[i]!!)
+                    it[column] = conv.convertToDatabase(value)
                 }
 
             }
         }
-        toUpdate.clear()
-        inUpdate = false
+    }
+
+
+    override fun update() {
+        save(toUpdate.toImmutableList())
     }
 
     override fun load() {
         for (i in table.selectAll()) {
             hashMap[i[primaryColumn]] = conv.convertToCache(i[column])
         }
+    }
+
+    override fun unload() {
+        save(toUnload.toImmutableList())
     }
 
 }

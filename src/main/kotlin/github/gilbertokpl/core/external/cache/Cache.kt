@@ -6,8 +6,6 @@ import github.gilbertokpl.core.external.cache.interfaces.CacheBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
 import github.gilbertokpl.core.internal.cache.*
-import github.gilbertokpl.total.util.MoneyUtil.refreshTycoon
-import github.gilbertokpl.total.util.TaskUtil
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.Column
@@ -21,7 +19,7 @@ class Cache(lf: CorePlugin) {
     fun stop() {
         transaction(lunarFrame.sql) {
             for (i in toByteUpdate) {
-                i.update()
+                i.unload()
             }
         }
     }

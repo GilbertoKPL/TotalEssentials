@@ -3,8 +3,6 @@ package github.gilbertokpl.total.cache.serializer
 import github.gilbertokpl.core.external.cache.convert.SerializatorBase
 
 class VipSerializer : SerializatorBase<HashMap<String, Long>, String> {
-
-    private val locationSerializer = LocationSerializer()
     override fun convertToDatabase(hash: HashMap<String, Long>): String {
         var string = ""
         for (i in hash) {

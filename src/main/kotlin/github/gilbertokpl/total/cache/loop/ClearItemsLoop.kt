@@ -9,6 +9,6 @@ object ClearItemsLoop {
     fun start() {
         TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
             WorldUtil.clearItems()
-        }, MainConfig.ClearitemsTime.toLong(), MainConfig.ClearitemsTime.toLong(), TimeUnit.MINUTES)
+        }, MainConfig.clearitemsTime.toLong(), MainConfig.clearitemsTime.toLong(), TimeUnit.MINUTES)
     }
 }

@@ -34,7 +34,7 @@ class CommandGiveKit : github.gilbertokpl.core.external.command.CommandCreator("
 
 
         //check if not exist
-        if (!KitsData.checkIfExist(args[0])) {
+        if (!KitsData.checkIfExist(args[1])) {
             s.sendMessage(LangConfig.kitsNotExist)
             return false
         }

@@ -28,6 +28,6 @@ object DiscordLoop {
                         .replace("%time%", TotalEssentials.basePlugin.getTime().getCurrentDate())
                 )?.queue()
             }
-        }, 2, 10, TimeUnit.MINUTES)
+        }, 2, 15, TimeUnit.MINUTES)
     }
 }

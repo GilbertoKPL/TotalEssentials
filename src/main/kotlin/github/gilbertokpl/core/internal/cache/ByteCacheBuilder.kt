@@ -1,7 +1,10 @@
 package github.gilbertokpl.core.internal.cache
 
+import com.google.common.collect.ImmutableMap
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import github.gilbertokpl.core.external.utils.Executor
+import okhttp3.internal.toImmutableList
+import okhttp3.internal.toImmutableMap
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -19,10 +22,10 @@ internal class ByteCacheBuilder<T>(t: Table, pc: Column<String>, c: Column<T>) :
 
     private val toUpdate = ArrayList<String>()
 
-    private var inUpdate = false
+    private val toUnload = ArrayList<String>()
 
-    override fun getMap(): HashMap<String, T?> {
-        return hashMap
+    override fun getMap(): Map<String, T?> {
+        return hashMap.toImmutableMap()
     }
 
     override operator fun get(entity: String): T? {
@@ -43,6 +46,8 @@ internal class ByteCacheBuilder<T>(t: Table, pc: Column<String>, c: Column<T>) :
 
     override fun delete(entity: String) {
         hashMap[entity.lowercase()] = null
+        toUpdate.add(entity.lowercase())
+        toUnload.add(entity.lowercase())
     }
 
     override operator fun set(entity: Player, value: T) {
@@ -51,29 +56,21 @@ internal class ByteCacheBuilder<T>(t: Table, pc: Column<String>, c: Column<T>) :
 
     override operator fun set(entity: String, value: T) {
         hashMap[entity.lowercase()] = value
-        if (!inUpdate) {
-            toUpdate.add(entity.lowercase())
-        } else {
-           Executor.executor.scheduleWithFixedDelay({
-                if (!inUpdate) {
-                    toUpdate.add(entity.lowercase())
-                    Thread.currentThread().stop()
-                }
-           }, 1, 1, TimeUnit.SECONDS)
-        }
+        toUpdate.add(entity.lowercase())
+        toUnload.add(entity.lowercase())
     }
 
-    override fun update() {
-        if (inUpdate) return
-        inUpdate = true
-        for (i in toUpdate) {
+    private fun save(list: List<String>) {
+        val currentHash = hashMap.toImmutableMap()
+        for (i in list) {
+            toUpdate.remove(i)
             val tab = table.select { primaryColumn eq i }
-            val value = hashMap[i]
+            val value = currentHash[i]
             if (tab.empty()) {
                 if (value == null) continue
                 table.insert {
                     it[primaryColumn] = i
-                    it[column] = hashMap[i]!!
+                    it[column] = value
                 }
             } else {
                 if (value == null) {
@@ -81,18 +78,24 @@ internal class ByteCacheBuilder<T>(t: Table, pc: Column<String>, c: Column<T>) :
                     continue
                 }
                 table.update({ primaryColumn eq i }) {
-                    it[column] = hashMap[i]!!
+                    it[column] = value
                 }
             }
         }
-        toUpdate.clear()
-        inUpdate = false
+    }
+
+    override fun update() {
+        save(toUpdate.toImmutableList())
     }
 
     override fun load() {
         for (i in table.selectAll()) {
             hashMap[i[primaryColumn]] = i[column]
         }
+    }
+
+    override fun unload() {
+        save(toUnload.toImmutableList())
     }
 
 }

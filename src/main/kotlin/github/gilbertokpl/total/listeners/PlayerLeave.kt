@@ -45,7 +45,12 @@ class PlayerLeave : Listener {
         }
         try {
             if (MainConfig.playtimeActivated) {
-                PlayerData.playTimeCache[e.player] = (PlayerData.playTimeCache[e.player]?: 0L) + System.currentTimeMillis() - (PlayerData.playtimeLocal[e.player] ?: 0L)
+                if (PlayerData.playTimeCache[e.player] != null) {
+                    PlayerData.playTimeCache[e.player] = PlayerData.playTimeCache[e.player]!! + System.currentTimeMillis() - (PlayerData.playtimeLocal[e.player]!!)
+                }
+                else {
+                    PlayerData.playTimeCache[e.player] = 0L
+                }
                 PlayerData.playtimeLocal[e.player] = 0L
             }
         } catch (e: Throwable) {

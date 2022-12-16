@@ -223,28 +223,28 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "If enabled (true), The command will be actived.", lang = LangTypes.EN_US)
             }
     )
-    public static Boolean ClearitemsActivated = true;
+    public static Boolean clearitemsActivated = true;
     @Comments(
             {
                     @Comment(annotations = "Lista de mundos para limpar o chão.", lang = LangTypes.PT_BR),
                     @Comment(annotations = "", lang = LangTypes.EN_US)
             }
     )
-    public static List<String> ClearitemsWorlds = Collections.singletonList("world");
+    public static List<String> clearitemsWorlds = Collections.singletonList("world");
     @Comments(
             {
                     @Comment(annotations = "Lista de items para não excluir em material, para pegar o material > /material.", lang = LangTypes.PT_BR),
                     @Comment(annotations = "", lang = LangTypes.EN_US)
             }
     )
-    public static List<String> ClearitemsItemsNotClear = Collections.singletonList("dirt");
+    public static List<String> clearitemsItemsNotClear = Collections.singletonList("dirt");
     @Comments(
             {
                     @Comment(annotations = "Tempo em minutos para executar um limpar chão", lang = LangTypes.PT_BR),
                     @Comment(annotations = "", lang = LangTypes.EN_US)
             }
     )
-    public static Integer ClearitemsTime = 10;
+    public static Integer clearitemsTime = 10;
 
     //kitCommand
     @PrimaryComments(

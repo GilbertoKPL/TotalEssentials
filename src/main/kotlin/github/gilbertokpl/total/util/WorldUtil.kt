@@ -14,7 +14,7 @@ object WorldUtil {
         val waitTime = ((time / 3) / 1000)
 
         TotalEssentials.basePlugin.getTask().async {
-            for (i in 0..(time / 10000)) {
+            for (a in 0..(time / 10000)) {
 
                 if (time >= 10000) {
                     PlayerUtil.sendAllMessage(
@@ -30,7 +30,7 @@ object WorldUtil {
                 switchContext(SynchronizationContext.SYNC)
                 PlayerUtil.sendAllMessage(LangConfig.ClearitemsFinishMessage)
 
-                for (w in MainConfig.ClearitemsWorlds) {
+                for (w in MainConfig.clearitemsWorlds) {
                     val world: World
                     try {
                         world = TotalEssentials.instance.server.getWorld(w)!!
@@ -40,7 +40,7 @@ object WorldUtil {
                     val t = world.entities
                     for (e in 0 until t.size) {
                         val i = t[e]
-                        if (i is Item && !MainConfig.ClearitemsItemsNotClear.contains(i.itemStack.type.name.lowercase())) {
+                        if (i is Item && !MainConfig.clearitemsItemsNotClear.contains(i.itemStack.type.name.lowercase())) {
                             i.remove()
                         }
                     }

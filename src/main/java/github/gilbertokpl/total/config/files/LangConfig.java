@@ -985,10 +985,33 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&aComando retirado!", lang = LangTypes.PT_BR),
-                    @Value(value = "&9> '&e%command%'", lang = LangTypes.EN_US)
+                    @Value(value = "", lang = LangTypes.EN_US)
             }
     )
     public static String VipsCommandsRemove;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&eTempo dos vips:!", lang = LangTypes.PT_BR),
+                    @Value(value = "'", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsTimeFirstMessage;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eTempo dos vips do %player%:!", lang = LangTypes.PT_BR),
+                    @Value(value = "'", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsTimeFirstOtherMessage;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê atualmente não tem nenhum vip ativo!", lang = LangTypes.PT_BR),
+                    @Value(value = "'", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsTimeNoVip;
 
 
     //nicks

@@ -88,7 +88,7 @@ class CommandMoney : github.gilbertokpl.core.external.command.CommandCreator("mo
                 return false
             }
 
-            if (PlayerData.checkIfPlayerExist(args[1])) {
+            if (!PlayerData.checkIfPlayerExist(args[1])) {
                 s.sendMessage(LangConfig.generalPlayerNotExist)
                 return false
             }

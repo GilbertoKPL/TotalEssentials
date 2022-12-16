@@ -4,7 +4,6 @@ import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.HashUtil
 import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.MaterialUtil
 import org.bukkit.Material
@@ -31,7 +30,7 @@ internal object KitGuiInventory {
             }
         }
 
-        val cache = HashUtil.hashMapReverse(HashUtil.hashMapSortMap(newHash))
+        val cache = newHash.entries.sortedBy { it.value }.associate { it.toPair() }.asIterable().reversed()
 
 
         for (kit in cache) {

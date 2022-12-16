@@ -3,6 +3,8 @@ package github.gilbertokpl.core.internal.cache
 import github.gilbertokpl.core.external.cache.convert.SerializatorBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
 import github.gilbertokpl.core.external.utils.Executor
+import okhttp3.internal.toImmutableList
+import okhttp3.internal.toImmutableMap
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
@@ -26,13 +28,13 @@ internal class ListCacheBuilder<K, V>(
 
     private val hashMap = HashMap<String, ArrayList<V>?>()
 
-    override fun getMap(): HashMap<String, ArrayList<V>?> {
-        return hashMap
+    override fun getMap(): Map<String, ArrayList<V>?> {
+        return hashMap.toImmutableMap()
     }
 
     private val toUpdate = ArrayList<String>()
 
-    private var inUpdate = false
+    private val toUnload = ArrayList<String>()
 
     override operator fun get(entity: String): ArrayList<V>? {
         return hashMap[entity.lowercase()]
@@ -49,16 +51,8 @@ internal class ListCacheBuilder<K, V>(
     override operator fun set(entity: String, value: ArrayList<V>, override: Boolean) {
         if (override) {
             hashMap[entity.lowercase()] = value
-            if (!inUpdate) {
-                toUpdate.add(entity.lowercase())
-            } else {
-                Executor.executor.scheduleWithFixedDelay({
-                    if (!inUpdate) {
-                        toUpdate.add(entity.lowercase())
-                        Thread.currentThread().stop()
-                    }
-                }, 1, 1, TimeUnit.SECONDS)
-            }
+            toUpdate.add(entity.lowercase())
+            toUnload.add(entity.lowercase())
         }
         else {
             set(entity, value)
@@ -68,32 +62,16 @@ internal class ListCacheBuilder<K, V>(
     override operator fun set(entity: String, value: ArrayList<V>) {
         val ent = hashMap[entity.lowercase()] ?: run {
             hashMap[entity.lowercase()] = value
-            if (!inUpdate) {
-                toUpdate.add(entity.lowercase())
-            } else {
-                Executor.executor.scheduleWithFixedDelay({
-                    if (!inUpdate) {
-                        toUpdate.add(entity.lowercase())
-                        Thread.currentThread().stop()
-                    }
-                }, 1, 1, TimeUnit.SECONDS)
-            }
+            toUpdate.add(entity.lowercase())
+            toUnload.add(entity.lowercase())
             return
         }
         for (i in value) {
             ent.add(i)
         }
         hashMap[entity.lowercase()] = ent
-        if (!inUpdate) {
-            toUpdate.add(entity.lowercase())
-        } else {
-            Executor.executor.scheduleWithFixedDelay({
-                if (!inUpdate) {
-                    toUpdate.add(entity.lowercase())
-                    Thread.currentThread().stop()
-                }
-            }, 1, 1, TimeUnit.SECONDS)
-        }
+        toUpdate.add(entity.lowercase())
+        toUnload.add(entity.lowercase())
     }
 
     override fun remove(entity: Player, value: V) {
@@ -106,16 +84,8 @@ internal class ListCacheBuilder<K, V>(
         }
         ent.remove(value)
         hashMap[entity.lowercase()] = ent
-        if (!inUpdate) {
-            toUpdate.add(entity.lowercase())
-        } else {
-            Executor.executor.scheduleWithFixedDelay({
-                if (!inUpdate) {
-                    toUpdate.add(entity.lowercase())
-                    Thread.currentThread().stop()
-                }
-            }, 1, 1, TimeUnit.SECONDS)
-        }
+        toUpdate.add(entity.lowercase())
+        toUnload.add(entity.lowercase())
     }
 
     override fun delete(entity: Player) {
@@ -124,40 +94,52 @@ internal class ListCacheBuilder<K, V>(
 
     override fun delete(entity: String) {
         hashMap[entity.lowercase()] = null
+        toUpdate.add(entity.lowercase())
+        toUnload.add(entity.lowercase())
     }
 
     override fun update() {
-        if (inUpdate) return
-        inUpdate = true
-        for (i in toUpdate) {
+        save(toUpdate.toImmutableList())
+    }
+
+    private fun save(list: List<String>) {
+
+        val currentHash = hashMap.toImmutableMap()
+
+        for (i in list) {
             val tab = table.select { primaryColumn eq i }
 
-            val value = hashMap[i]
+            toUpdate.remove(i)
+
+            val value = currentHash[i]
 
             if (tab.empty()) {
-                if (value == null) return
+                if (value == null) continue
                 table.insert {
                     it[primaryColumn] = i
-                    it[column] = conv.convertToDatabase(hashMap[i]!!)
+                    it[column] = conv.convertToDatabase(value)
                 }
             } else {
                 if (value == null) {
                     table.deleteWhere { primaryColumn eq i }
+                    continue
                 }
                 table.update({ primaryColumn eq i }) {
-                    it[column] = conv.convertToDatabase(hashMap[i]!!)
+                    it[column] = conv.convertToDatabase(value)
                 }
 
             }
         }
-        toUpdate.clear()
-        inUpdate = false
     }
 
     override fun load() {
         for (i in table.selectAll()) {
             hashMap[i[primaryColumn]] = conv.convertToCache(i[column])
         }
+    }
+
+    override fun unload() {
+        save(toUnload.toImmutableList())
     }
 
 }

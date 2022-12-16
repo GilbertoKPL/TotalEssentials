@@ -12,7 +12,7 @@ object PluginLoop {
         Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
             try {
                 if (MainConfig.moneyActivated) {
-
+                    MoneyUtil.refreshTycoon()
                 }
             } catch (e: Exception) {
                 println(e)
