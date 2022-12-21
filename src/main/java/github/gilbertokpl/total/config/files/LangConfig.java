@@ -278,6 +278,14 @@ public class LangConfig implements DefaultLang {
 
     @Values(
             {
+                    @Value(value = "%prefix%&cVocê logou com VPN, por favor desative!", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authVpn;
+
+    @Values(
+            {
                     @Value(value = "%prefix%&aVocê logou com sucesso!", lang = LangTypes.PT_BR),
                     @Value(value = "%prefix%&aYou have successfully logged in!", lang = LangTypes.EN_US)
             }

@@ -36,7 +36,7 @@ object VipUtil {
         }
     }
 
-    fun updateCargo(entity: String, newVip: String? = null) : String? {
+    fun updateCargo(entity: String, newVip: String? = null, execute: Boolean = true) : String? {
 
         val vips = PlayerData.vipCache[entity] ?: return null
 
@@ -62,8 +62,13 @@ object VipUtil {
             if (newVip != null) {
                 TotalEssentials.permission.playerAddGroup(world, entity, VipData.vipGroup[newVip])
 
-                for (c in (VipData.vipCommands[newVip] ?: ArrayList())) {
-                    TotalEssentials.instance.server.dispatchCommand(TotalEssentials.instance.server.consoleSender, c.replace("%player%", entity))
+                if (execute) {
+                    for (c in (VipData.vipCommands[newVip] ?: ArrayList())) {
+                        TotalEssentials.instance.server.dispatchCommand(
+                            TotalEssentials.instance.server.consoleSender,
+                            c.replace("%player%", entity)
+                        )
+                    }
                 }
 
                 VipData.vipQuantity[newVip] = (VipData.vipQuantity[newVip] ?: 0) + 1
@@ -105,8 +110,13 @@ object VipUtil {
         if (newVip != null) {
             TotalEssentials.permission.playerAddGroup(world,entity, VipData.vipGroup[newVip])
 
-            for (c in (VipData.vipCommands[newVip] ?: ArrayList())) {
-                TotalEssentials.instance.server.dispatchCommand(TotalEssentials.instance.server.consoleSender, c.replace("%player%", entity))
+            if (execute) {
+                for (c in (VipData.vipCommands[newVip] ?: ArrayList())) {
+                    TotalEssentials.instance.server.dispatchCommand(
+                        TotalEssentials.instance.server.consoleSender,
+                        c.replace("%player%", entity)
+                    )
+                }
             }
 
             VipData.vipQuantity[newVip] = (VipData.vipQuantity[newVip] ?: 0) + 1

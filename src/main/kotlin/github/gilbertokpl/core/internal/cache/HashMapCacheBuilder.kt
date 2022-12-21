@@ -1,20 +1,18 @@
 package github.gilbertokpl.core.internal.cache
 
-import github.gilbertokpl.core.external.cache.convert.SerializatorBase
+import github.gilbertokpl.core.external.cache.convert.SerializerBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
-import github.gilbertokpl.core.external.utils.Executor
 import okhttp3.internal.toImmutableList
 import okhttp3.internal.toImmutableMap
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
-import java.util.concurrent.TimeUnit
 
 internal class HashMapCacheBuilder<T, V, K>(
     t: Table,
     pc: Column<String>,
     c: Column<T>,
-    classConverter: SerializatorBase<HashMap<V, K>, T>
+    classConverter: SerializerBase<HashMap<V, K>, T>
 ) :
     CacheBuilderV2<HashMap<V, K>, V> {
 
@@ -33,7 +31,6 @@ internal class HashMapCacheBuilder<T, V, K>(
 
     private val toUpdate = ArrayList<String>()
 
-    private val toUnload = ArrayList<String>()
 
     override operator fun get(entity: String): HashMap<V, K>? {
         return hashMap[entity.lowercase()]
@@ -56,7 +53,6 @@ internal class HashMapCacheBuilder<T, V, K>(
         val ent = hashMap[entity.lowercase()] ?: run {
             hashMap[entity.lowercase()] = value
             toUpdate.add(entity.lowercase())
-            toUnload.add(entity.lowercase())
             return
         }
         for (i in value) {
@@ -64,7 +60,6 @@ internal class HashMapCacheBuilder<T, V, K>(
         }
         hashMap[entity.lowercase()] = ent
         toUpdate.add(entity.lowercase())
-        toUnload.add(entity.lowercase())
     }
 
     override fun remove(entity: Player, value: V) {
@@ -78,7 +73,6 @@ internal class HashMapCacheBuilder<T, V, K>(
         ent.remove(value)
         hashMap[entity.lowercase()] = ent
         toUpdate.add(entity.lowercase())
-        toUnload.add(entity.lowercase())
     }
 
     override fun delete(entity: Player) {
@@ -88,7 +82,6 @@ internal class HashMapCacheBuilder<T, V, K>(
     override fun delete(entity: String) {
         hashMap[entity.lowercase()] = null
         toUpdate.add(entity)
-        toUnload.add(entity)
     }
 
     private fun save(list: List<String>) {
@@ -127,12 +120,12 @@ internal class HashMapCacheBuilder<T, V, K>(
 
     override fun load() {
         for (i in table.selectAll()) {
-            hashMap[i[primaryColumn]] = conv.convertToCache(i[column])
+            hashMap[i[primaryColumn]] = conv.convertToCache(i[column]) ?: HashMap()
         }
     }
 
     override fun unload() {
-        save(toUnload.toImmutableList())
+        save(toUpdate.toImmutableList())
     }
 
 }

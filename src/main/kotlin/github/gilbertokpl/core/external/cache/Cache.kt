@@ -1,7 +1,7 @@
 package github.gilbertokpl.core.external.cache
 
 import github.gilbertokpl.core.external.CorePlugin
-import github.gilbertokpl.core.external.cache.convert.SerializatorBase
+import github.gilbertokpl.core.external.cache.convert.SerializerBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
@@ -73,7 +73,7 @@ class Cache(lf: CorePlugin) {
     fun location(
         cacheBase: CacheBase,
         column: Column<String>,
-        base: SerializatorBase<Location?, String>
+        base: SerializerBase<Location?, String>
     ): CacheBuilder<Location?> {
         val instance = LocationCacheBuilder(cacheBase.table, cacheBase.primaryColumn, column, base)
         toByteUpdate.add(instance)
@@ -83,7 +83,7 @@ class Cache(lf: CorePlugin) {
     fun <V> stringList(
         cacheBase: CacheBase,
         column: Column<String>,
-        base: SerializatorBase<ArrayList<V>, String>
+        base: SerializerBase<ArrayList<V>, String>
     ): CacheBuilderV2<ArrayList<V>, V> {
         val instance = ListCacheBuilder(cacheBase.table, cacheBase.primaryColumn, column, base)
         toByteUpdate.add(instance)
@@ -93,7 +93,7 @@ class Cache(lf: CorePlugin) {
     fun <V, K> stringHashMap(
         cacheBase: CacheBase,
         column: Column<String>,
-        base: SerializatorBase<HashMap<V, K>, String>
+        base: SerializerBase<HashMap<V, K>, String>
     ): CacheBuilderV2<HashMap<V, K>, V> {
         val instance = HashMapCacheBuilder(cacheBase.table, cacheBase.primaryColumn, column, base)
         toByteUpdate.add(instance)
@@ -103,7 +103,7 @@ class Cache(lf: CorePlugin) {
     fun <V, K> integerHashMap(
         cacheBase: CacheBase,
         column: Column<Int>,
-        base: SerializatorBase<HashMap<V, K>, Int>
+        base: SerializerBase<HashMap<V, K>, Int>
     ): CacheBuilderV2<HashMap<V, K>, V> {
         val instance = HashMapCacheBuilder(cacheBase.table, cacheBase.primaryColumn, column, base)
         toByteUpdate.add(instance)

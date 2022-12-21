@@ -14,7 +14,6 @@ import github.gilbertokpl.total.util.PlayerUtil
 import github.gilbertokpl.total.util.VipUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip") {
 
@@ -31,7 +30,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 "totalessentials.commands.vip.admin_/vip criar <vipName> <vipGroup>",
                 "totalessentials.commands.vip.admin_/vip discrole <vipName> <roleID>",
                 "totalessentials.commands.vip.admin_/vip gerarkey <vipName> <days>",
-                "totalessentials.commands.vip.admin_/vip dar <player> <vipName> <days>",
+                "totalessentials.commands.vip.admin_/vip dar <player> <vipName> <days> <items,true/false>",
                 "totalessentials.commands.vip.admin_/vip tempo <player>",
                 "totalessentials.commands.vip.admin_/vip items <vipName>",
                 "totalessentials.commands.vip.admin_/vip comando <vipName> list",
@@ -255,7 +254,11 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             return false
         }
 
-        if (args[0].lowercase() == "dar" && args.size == 4 && s.hasPermission("totalessentials.commands.vip.admin")) {
+        if (args[0].lowercase() == "dar" && args.size == 5 && s.hasPermission("totalessentials.commands.vip.admin")) {
+
+            if (args[4].toBooleanStrictOrNull() == null) {
+                return true
+            }
 
             if (args[3].toLongOrNull() == null) {
                 return true
@@ -285,7 +288,9 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
             PlayerData.vipCache[args[1]] = hashMapOf(args[2] to millisVipTime)
 
-            PlayerData.vipItems[args[1]] = VipData.vipItems[args[2]]!!
+            if (args[4].toBoolean()) {
+                PlayerData.vipItems[args[1]] = VipData.vipItems[args[2]]!!
+            }
 
             s.sendMessage(LangConfig.VipsActivate.replace("%vip%", args[2]).replace("%days%", args[3]))
 
@@ -295,7 +300,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 .replace("%vip%", args[2])
             )
 
-            VipUtil.updateCargo(args[1], args[2])
+            VipUtil.updateCargo(args[1], args[2], args[4].toBoolean())
 
             Discord.sendDiscordMessage(
                 LangConfig.VipsDiscordActivateMessage

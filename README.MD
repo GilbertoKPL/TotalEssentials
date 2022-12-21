@@ -28,7 +28,7 @@
 | /editkit and /editarkit      | Editkit a kit with an interface / GUI.                                                          | totalessentials.commands.editkit     |
 | /kit and /kits               | Create a kit with an interface / GUI see all kits through the interface / GUI and also get them | totalessentials.commands.kit         |
 | /givekit and /darkit         | Give kit to player.                                                                             | totalessentials.commands.givekit     |
-| /nick and /nome              | Give kit to player.                                                                             | totalessentials.commands.nick        |
+| /nick and /nome              | set nick in game.                                                                               | totalessentials.commands.nick        |
 | /sethome and /setarhome      | Set home of player with name.                                                                   | totalessentials.commands.sethome     |
 | /delhome and /deletarhome    | Del home of player.                                                                             | totalessentials.commands.delhome     |
 | /home and /h                 | Go to home of player.                                                                           | totalessentials.commands.home        |
@@ -55,6 +55,10 @@
 | /invsee                      | see inventory of other player.                                                                  | totalessentials.commands.invsee      |
 | /login                       | log into your account.                                                                          | totalessentials.commands.login       |
 | /register                    | register account.                                                                               | totalessentials.commands.register    |
+| /changepass                  | change pass of account.                                                                         | totalessentials.commands.changepass  |
+| /vip                         | vip system.                                                                                     | totalessentials.commands.vip         |
+| /shop and /loja              | players shops.                                                                                  | totalessentials.commands.shop        |
+| /clearitems                  | clear all items in server (with config).                                                        | totalessentials.commands.clearitems  |
 
 ## Permission Color
 

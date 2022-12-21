@@ -47,7 +47,6 @@ internal class ByteCacheBuilder<T>(t: Table, pc: Column<String>, c: Column<T>) :
     override fun delete(entity: String) {
         hashMap[entity.lowercase()] = null
         toUpdate.add(entity.lowercase())
-        toUnload.add(entity.lowercase())
     }
 
     override operator fun set(entity: Player, value: T) {
@@ -57,7 +56,6 @@ internal class ByteCacheBuilder<T>(t: Table, pc: Column<String>, c: Column<T>) :
     override operator fun set(entity: String, value: T) {
         hashMap[entity.lowercase()] = value
         toUpdate.add(entity.lowercase())
-        toUnload.add(entity.lowercase())
     }
 
     private fun save(list: List<String>) {

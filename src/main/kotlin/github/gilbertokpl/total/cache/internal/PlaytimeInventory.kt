@@ -91,7 +91,7 @@ object PlaytimeInventory {
                 DataManager.playTimeGuiCache[size] = inv
                 length = 0
                 size += 1
-                inv = TotalEssentials.instance.server.createInventory(null, 36, "§eSHOP $size")
+                inv = TotalEssentials.instance.server.createInventory(null, 36, "§ePLAYTIME $size")
             }
         }
         if (length > 0) {

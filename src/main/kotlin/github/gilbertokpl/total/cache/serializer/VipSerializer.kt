@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.cache.serializer
 
-import github.gilbertokpl.core.external.cache.convert.SerializatorBase
+import github.gilbertokpl.core.external.cache.convert.SerializerBase
 
-class VipSerializer : SerializatorBase<HashMap<String, Long>, String> {
+class VipSerializer : SerializerBase<HashMap<String, Long>, String> {
     override fun convertToDatabase(hash: HashMap<String, Long>): String {
         var string = ""
         for (i in hash) {

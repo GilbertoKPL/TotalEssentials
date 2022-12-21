@@ -78,11 +78,9 @@ class PlayerJoin : Listener {
 
             VipUtil.checkVip(p.name.lowercase())
 
-            if (MainConfig.generalAntiVPN) {
+            if (MainConfig.generalAntiVpn) {
                 // fix
-                if (PlayerUtil.checkPlayer(address)[3] == "true") {
-                    println("bot entrou")
-                }
+                PlayerData.bot[p] = PlayerUtil.checkPlayer(address)[3] == "true"
             }
 
             switchContext(SynchronizationContext.SYNC)

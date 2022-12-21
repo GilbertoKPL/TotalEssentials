@@ -7,12 +7,12 @@ import github.gilbertokpl.total.discord.Discord
 import github.gilbertokpl.total.util.ColorUtil
 import github.gilbertokpl.total.util.MainUtil
 import github.gilbertokpl.total.util.PlayerUtil
-import github.gilbertokpl.total.util.TaskUtil
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object DiscordLoop {
     fun setup() {
-        TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
+        Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
             if (MainConfig.discordbotConnectDiscordChat) {
                 if (Discord.jda == null) {
                     MainUtil.consoleMessage(
@@ -26,8 +26,8 @@ object DiscordLoop {
                         .replace("%online%", PlayerUtil.getIntOnlinePlayers(false).toString())
                         .replace("%online_time%", TotalEssentials.basePlugin.getTime().convertMillisToString(TotalEssentials.basePlugin.getTime().getOnlineTime(), true))
                         .replace("%time%", TotalEssentials.basePlugin.getTime().getCurrentDate())
-                )?.queue()
+                )?.complete()
             }
-        }, 2, 15, TimeUnit.MINUTES)
+        }, 15, 15, TimeUnit.MINUTES)
     }
 }

@@ -52,7 +52,7 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "Anti-VPN", lang = LangTypes.EN_US)
             }
     )
-    public static Boolean generalAntiVPN = true;
+    public static Boolean generalAntiVpn = true;
 
     @PrimaryComments(
             {

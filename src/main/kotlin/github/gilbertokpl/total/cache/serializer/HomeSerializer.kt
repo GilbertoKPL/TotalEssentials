@@ -1,9 +1,9 @@
 package github.gilbertokpl.total.cache.serializer
 
-import github.gilbertokpl.core.external.cache.convert.SerializatorBase
+import github.gilbertokpl.core.external.cache.convert.SerializerBase
 import org.bukkit.Location
 
-internal class HomeSerializer : SerializatorBase<HashMap<String, Location>, String> {
+internal class HomeSerializer : SerializerBase<HashMap<String, Location>, String> {
 
     private val locationSerializer = LocationSerializer()
     override fun convertToDatabase(hash: HashMap<String, Location>): String {

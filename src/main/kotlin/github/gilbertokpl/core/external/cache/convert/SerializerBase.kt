@@ -1,6 +1,6 @@
 package github.gilbertokpl.core.external.cache.convert
 
-interface SerializatorBase<T, V> {
+interface SerializerBase<T, V> {
     fun convertToDatabase(hash: T): V
-    fun convertToCache(value: V): T
+    fun convertToCache(value: V): T?
 }

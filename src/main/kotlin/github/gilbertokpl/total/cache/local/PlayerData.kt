@@ -40,6 +40,7 @@ object PlayerData : CacheBase {
     val inTeleport = ins.simpleBoolean()
     val afk = ins.simpleInteger()
     val playtimeLocal = ins.simpleLong()
+    val bot = ins.simpleBoolean()
 
     fun checkIfPlayerExist(entity: String) : Boolean {
         return nickCache[entity.lowercase()] != null

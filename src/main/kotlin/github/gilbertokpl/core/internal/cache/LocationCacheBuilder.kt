@@ -1,6 +1,6 @@
 package github.gilbertokpl.core.internal.cache
 
-import github.gilbertokpl.core.external.cache.convert.SerializatorBase
+import github.gilbertokpl.core.external.cache.convert.SerializerBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import github.gilbertokpl.core.external.utils.Executor
 import okhttp3.internal.toImmutableList
@@ -15,7 +15,7 @@ internal class LocationCacheBuilder(
     t: Table,
     pc: Column<String>,
     c: Column<String>,
-    classConverter: SerializatorBase<Location?, String>
+    classConverter: SerializerBase<Location?, String>
 ) : CacheBuilder<Location?> {
 
     private val conv = classConverter
@@ -29,8 +29,6 @@ internal class LocationCacheBuilder(
     private val hashMap = HashMap<String, Location?>()
 
     private val toUpdate = ArrayList<String>()
-
-    private val toUnload = ArrayList<String>()
 
     override fun getMap(): Map<String, Location?> {
         return hashMap.toImmutableMap()
@@ -55,7 +53,6 @@ internal class LocationCacheBuilder(
     override operator fun set(entity: String, value: Location?) {
         hashMap[entity.lowercase()] = value
         toUpdate.add(entity.lowercase())
-        toUnload.add(entity.lowercase())
 
     }
 
@@ -66,7 +63,6 @@ internal class LocationCacheBuilder(
     override fun delete(entity: String) {
         hashMap[entity.lowercase()] = null
         toUpdate.add(entity.lowercase())
-        toUnload.add(entity.lowercase())
     }
 
     override fun update() {
@@ -92,7 +88,9 @@ internal class LocationCacheBuilder(
                 }
             } else {
                 if (value == null) {
-                    table.deleteWhere { primaryColumn eq i }
+                    table.update({ primaryColumn eq i }) {
+                        it[column] = ""
+                    }
                     continue
                 }
                 table.update({ primaryColumn eq i }) {
@@ -110,7 +108,7 @@ internal class LocationCacheBuilder(
     }
 
     override fun unload() {
-        save(toUnload.toImmutableList())
+        save(toUpdate.toImmutableList())
     }
 
 }

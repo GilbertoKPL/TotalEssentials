@@ -9,7 +9,7 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 
 object MoneyUtil {
-    val tycoonPlayer = HashMap<String, Int>(10)
+    val tycoonPlayer = LinkedHashMap<String, Int>(10)
     private val format: NumberFormat = DecimalFormat("#,##0.00")
 
     private fun getUnityMoney(double: Double): String {
