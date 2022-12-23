@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.7.22"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -27,7 +27,7 @@ dependencies {
     }
 
     //spigot
-    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT") {
+    compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") {
         exclude("commons-lang", "commons-lang")
         exclude("commons-io", "commons-io")
         exclude("org.yaml", "snakeyaml")
@@ -39,9 +39,11 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-core:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
+
     compileOnly("org.jetbrains.exposed:exposed-dao:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
+
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
@@ -54,7 +56,7 @@ dependencies {
 
     //implementation to mysql - MariaDB
     compileOnly("com.zaxxer:HikariCP:4.0.3") {
-        exclude("org.slf4j", "slf4j-api")
+            exclude("org.slf4j", "slf4j-api")
     }
 
     //remove all connections of slf4
@@ -64,13 +66,13 @@ dependencies {
     compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.7.3")
 
     //host info
-    compileOnly("com.github.oshi:oshi-core:6.3.2") {
+    compileOnly("com.github.oshi:oshi-core:6.4.0") {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.21")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.22")
 
-    compileOnly("net.dv8tion:JDA:5.0.0-beta.1") {
+    compileOnly("net.dv8tion:JDA:5.0.0-beta.2") {
         exclude("club.minnced","opus-java")
         exclude("org.slf4j", "slf4j-api")
     }

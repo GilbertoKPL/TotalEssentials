@@ -15,14 +15,14 @@ internal object DataManager {
 
     //ShopInv
     val shopGuiCache = HashMap<Int, Inventory>(10)
-    val ClickShopGuiCache = HashMap<Int, String>(40)
+    val ClickShopGuiCache = LinkedHashMap<Int, String>(40)
 
     //kitInv
     val kitGuiCache = HashMap<Int, Inventory>(10)
     val ClickKitGuiCache = HashMap<Int, String>(40)
 
     //PlaytimeInv
-    val playTimeGuiCache = HashMap<Int, Inventory>(10)
+    val playTimeGuiCache = LinkedHashMap<Int, Inventory>(10)
 
     //editKit
     val editKit = HashMap<Player, String>(10)

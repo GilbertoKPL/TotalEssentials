@@ -21,11 +21,5 @@ class EntityPortalCreate : Listener {
 
     private fun blockCreationPortal(e: PortalCreateEvent) {
         e.isCancelled = true
-        try {
-            if (e.entity is Player) {
-                (e.entity as Player).sendMessage(LangConfig.generalNotPermAction)
-            }
-        } catch (ignored: NoSuchMethodError) {
-        }
     }
 }

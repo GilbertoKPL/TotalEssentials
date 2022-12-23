@@ -27,7 +27,7 @@ internal class InternalColor(lf: CorePlugin) {
                     val color = string.substring(matcher.start(), matcher.end())
                     string = string.replace(
                         color,
-                        ChatColor.of(color).toString() + ""
+                        ChatColor.stripColor(color).toString() + ""
                     )
                     matcher = pattern.matcher(string)
                 }

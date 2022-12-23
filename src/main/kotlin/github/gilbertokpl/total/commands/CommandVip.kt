@@ -32,7 +32,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 "totalessentials.commands.vip.admin_/vip gerarkey <vipName> <days>",
                 "totalessentials.commands.vip.admin_/vip dar <player> <vipName> <days> <items,true/false>",
                 "totalessentials.commands.vip.admin_/vip tempo <player>",
-                "totalessentials.commands.vip.admin_/vip items <vipName>",
+                "totalessentials.commands.vip.admin_/vip itens <vipName>",
                 "totalessentials.commands.vip.admin_/vip comando <vipName> list",
                 "totalessentials.commands.vip.admin_/vip comando <vipName> add <command>",
                 "totalessentials.commands.vip.admin_/vip comando <vipName> remove <command>",
@@ -180,14 +180,14 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
         }
 
-        if (s is Player && args[0].lowercase() == "items" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")) {
+        if (s is Player && args[0].lowercase() == "itens" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")) {
 
             if (!VipData.checkIfVipExist(args[1])) {
                 s.sendMessage(LangConfig.VipsNotExist)
                 return false
             }
 
-            val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipEditItems " + args[1])
+            val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipEditItens " + args[1])
 
             for (i in VipData.vipItems[args[1]]!!) {
                 inv.addItem(i)
@@ -199,9 +199,9 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             return false
         }
 
-        if (s is Player && args[0].lowercase() == "items" && args.size == 1) {
+        if (s is Player && args[0].lowercase() == "itens" && args.size == 1) {
 
-            val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipItems")
+            val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipItens")
 
             for (i in PlayerData.vipItems[s] ?: emptyList()) {
                 inv.addItem(i)

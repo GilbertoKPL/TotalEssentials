@@ -31,13 +31,16 @@ object PluginLoop {
             } catch (e: Exception) {
                 println(e)
             }
-            try {
-                if (MainConfig.discordbotSendTopicUpdate) {
-                    DiscordLoop.setup()
-                }
-            } catch (e: Exception) {
-                println(e)
-            }
         },5,5, TimeUnit.MINUTES)
+
+        try {
+            if (MainConfig.discordbotSendTopicUpdate) {
+                DiscordLoop.setup()
+            }
+        } catch (e: Exception) {
+            println(e)
+        }
     }
+
+
 }

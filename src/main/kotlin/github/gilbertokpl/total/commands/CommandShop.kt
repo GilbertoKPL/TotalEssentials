@@ -4,6 +4,7 @@ import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.cache.internal.DataManager
 import github.gilbertokpl.total.cache.internal.ShopInventory
+import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -41,6 +42,7 @@ class CommandShop : github.gilbertokpl.core.external.command.CommandCreator("sho
                     s.sendMessage(LangConfig.shopNotExistShop)
                     return false
                 }
+
                 p.openInventory(it)
             }
             return false
@@ -80,6 +82,11 @@ class CommandShop : github.gilbertokpl.core.external.command.CommandCreator("sho
         //check if not exist
         if (!ShopData.checkIfExist(args[0])) {
             s.sendMessage(LangConfig.shopNotExist)
+            return false
+        }
+
+        if (ShopData.shopOpen[args[0].lowercase()] == false) {
+            s.sendMessage(LangConfig.shopClosedMessage)
             return false
         }
 

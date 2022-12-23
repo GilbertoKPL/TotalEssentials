@@ -97,7 +97,7 @@ class InventoryClick : Listener {
     private fun vipGuiEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
         val inventoryName = e.view.title.split(" ")
-        if (inventoryName[0] == "§eVipItems") {
+        if (inventoryName[0] == "§eVipItens") {
             val p = e.whoClicked as Player
             e.isCancelled = true
             if (e.click.isLeftClick) {
@@ -119,7 +119,7 @@ class InventoryClick : Listener {
                 e.currentItem = ItemStack(Material.AIR)
 
 
-                val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipItems")
+                val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipItens")
 
                 val list = ArrayList<ItemStack>()
 
