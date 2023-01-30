@@ -180,7 +180,8 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
         }
 
-        if (s is Player && args[0].lowercase() == "itens" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")) {
+        if (s is Player && args[0].lowercase() == "itens" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin") ||
+                s is Player && args[0].lowercase() == "items" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")) {
 
             if (!VipData.checkIfVipExist(args[1])) {
                 s.sendMessage(LangConfig.VipsNotExist)
@@ -199,7 +200,8 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             return false
         }
 
-        if (s is Player && args[0].lowercase() == "itens" && args.size == 1) {
+        if (s is Player && args[0].lowercase() == "itens" && args.size == 1 ||
+                s is Player && args[0].lowercase() == "items" && args.size == 1 ) {
 
             val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipItens")
 

@@ -21,17 +21,7 @@ internal object KitGuiInventory {
         var length = 0
         var inv = github.gilbertokpl.total.TotalEssentials.instance.server.createInventory(null, 36, "§eKits 1")
 
-        val newHash = LinkedHashMap<String, Int>()
-
-        KitsData.kitWeight.getMap().forEach {
-            val value = it.value
-            if (value != null) {
-                newHash[it.key] = value
-            }
-        }
-
-        val cache = newHash.entries.sortedBy { it.value }.associate { it.toPair() }.asIterable().reversed()
-
+        val cache = KitsData.kitWeight.getMap().toList().sortedBy { (_, value) -> value }.reversed().toMap()
 
         for (kit in cache) {
             val name = LangConfig.kitsInventoryItemsName.replace(

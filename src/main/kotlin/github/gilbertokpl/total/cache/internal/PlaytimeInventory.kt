@@ -18,16 +18,7 @@ object PlaytimeInventory {
         var length = 0
         var inv = TotalEssentials.instance.server.createInventory(null, 36, "§ePLAYTIME 1")
 
-        val newHash = LinkedHashMap<String, Long>()
-
-        PlayerData.playTimeCache.getMap().forEach {
-            val value = it.value
-            if (value != null) {
-                newHash[it.key] = value
-            }
-        }
-
-        val cache = newHash.entries.sortedBy { it.value }.associate { it.toPair() }.asIterable().reversed()
+        val cache = PlayerData.playTimeCache.getMap().toList().sortedBy { (_, value) -> value }.reversed().toMap()
 
         for (time in cache) {
             val name = LangConfig.playtimeInventoryItemsName.replace(
@@ -44,7 +35,7 @@ object PlaytimeInventory {
 
             val t1 = (PlayerData.playtimeLocal[time.key] ?: 0L)
 
-            val t = time.value + if (t1 != 0L) System.currentTimeMillis() - t1 else 0L
+            val t = time.value!! + if (t1 != 0L) System.currentTimeMillis() - t1 else 0L
 
             LangConfig.playtimeInventoryItemsLore.forEach {
                 itemLore.add(it.replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(t, true)))

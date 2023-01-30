@@ -18,17 +18,7 @@ object ShopInventory {
         var length = 0
         var inv = github.gilbertokpl.total.TotalEssentials.instance.server.createInventory(null, 36, "§eSHOP 1")
 
-        val newHash = LinkedHashMap<String, Int>()
-
-        ShopData.shopVisits.getMap().forEach {
-            val value = it.value
-            if (value != null) {
-                newHash[it.key] = value
-            }
-        }
-
-        val cache = newHash.entries.sortedBy { it.value }.associate { it.toPair() }.asIterable().reversed()
-
+        val cache = ShopData.shopVisits.getMap().toList().sortedBy { (_, value) -> value }.reversed().toMap()
 
         for (shop in cache) {
             val name = LangConfig.shopInventoryItemsName.replace(

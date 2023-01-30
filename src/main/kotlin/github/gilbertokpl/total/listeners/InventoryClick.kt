@@ -100,6 +100,9 @@ class InventoryClick : Listener {
         if (inventoryName[0] == "§eVipItens") {
             val p = e.whoClicked as Player
             e.isCancelled = true
+            if (e.rawSlot != e.slot) {
+                return false;
+            }
             if (e.click.isLeftClick) {
 
                 var inventorySpace = 0
@@ -118,20 +121,15 @@ class InventoryClick : Listener {
 
                 e.currentItem = ItemStack(Material.AIR)
 
-
-                val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipItens")
-
                 val list = ArrayList<ItemStack>()
 
                 for (i in e.inventory.contents) {
                     if (i == null || i == ItemStack(Material.AIR)) continue
-                    inv.addItem(i)
                     list.add(i)
                 }
 
                 PlayerData.vipItems[p.name, list] = true
 
-                p.openInventory(inv)
             }
             return true
         }
