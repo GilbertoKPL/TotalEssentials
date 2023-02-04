@@ -52,16 +52,26 @@ internal class InternalColor(lf: CorePlugin) {
             return strv.replace("&", "§")
         }
         var newMessage = strv
-        fun colorHelper(color: String) {
-            newMessage = if (p.hasPermission("totalessentials.color.$color")) {
-                newMessage.replace(color, color.replace("&", "§"))
+        list.forEach {
+            newMessage = if (p.hasPermission("totalessentials.color.$it")) {
+                newMessage.replace(it, it.replace("&", "§"))
             } else {
-                newMessage.replace(color, "")
+                newMessage.replace(it, "")
             }
         }
-        list.forEach {
-            colorHelper(it)
-        }
         return newMessage
+    }
+
+    fun list (p: Player) : List<String> {
+
+        val l = ArrayList<String>()
+
+        list.forEach {
+            if (p.hasPermission("totalessentials.color.$it")) {
+                l.add("${it.replace("&", "§")}$it")
+            }
+        }
+
+        return l
     }
 }

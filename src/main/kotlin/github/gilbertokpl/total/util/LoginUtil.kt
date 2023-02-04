@@ -23,8 +23,7 @@ object LoginUtil {
             }
             if (LoginData.checkIfPlayerExist(player)) {
                 player.sendMessage(LangConfig.authLoginMessage)
-            }
-            else {
+            } else {
                 player.sendMessage(LangConfig.authRegisterMessage)
             }
             LoginData.values[player] = LoginData.values[player]?.plus(1)!!

@@ -1,11 +1,11 @@
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.internal.EditKitInventory
 import github.gilbertokpl.total.cache.internal.KitGuiInventory
 import github.gilbertokpl.total.cache.internal.PlaytimeInventory
 import github.gilbertokpl.total.cache.internal.ShopInventory
 import github.gilbertokpl.total.cache.loop.AntiAfkLoop
+import github.gilbertokpl.total.config.files.MainConfig
 import java.io.InputStream
 import java.net.URL
 import java.util.*

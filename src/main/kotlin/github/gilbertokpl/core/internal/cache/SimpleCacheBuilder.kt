@@ -1,7 +1,6 @@
 package github.gilbertokpl.core.internal.cache
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
-import org.bukkit.Location
 import org.bukkit.entity.Player
 
 class SimpleCacheBuilder<T> : CacheBuilder<T> {

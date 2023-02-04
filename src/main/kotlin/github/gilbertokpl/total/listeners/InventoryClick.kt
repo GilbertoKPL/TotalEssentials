@@ -1,21 +1,18 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.TotalEssentials
-import github.gilbertokpl.total.config.files.LangConfig
-import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.local.KitsData
-import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.internal.DataManager
 import github.gilbertokpl.total.cache.internal.EditKitInventory.editKitGui
 import github.gilbertokpl.total.cache.internal.EditKitInventory.editKitGuiItems
 import github.gilbertokpl.total.cache.internal.KitGuiInventory.kitGui
+import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.local.LoginData
+import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.ShopData
-
+import github.gilbertokpl.total.config.files.LangConfig
+import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.PermissionUtil
 import github.gilbertokpl.total.util.PlayerUtil
-
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -77,7 +74,7 @@ class InventoryClick : Listener {
 
             }
         }
-        if(MainConfig.playtimeActivated) {
+        if (MainConfig.playtimeActivated) {
             try {
                 playtimeGuiEvent(e)
             } catch (_: Throwable) {

@@ -17,7 +17,8 @@ internal class InternalDatabase(lf: CorePlugin) {
             val type = lunarFrame.getConfig().configs().databaseType
             when (type.lowercase()) {
                 "h2" -> {
-                    lunarFrame.sql = Database.connect("jdbc:h2:./${lunarFrame.mainPath}/sql/H2database", "org.h2.Driver")
+                    lunarFrame.sql =
+                        Database.connect("jdbc:h2:./${lunarFrame.mainPath}/sql/H2database", "org.h2.Driver")
                 }
 
                 "mysql" -> {
@@ -36,7 +37,8 @@ internal class InternalDatabase(lf: CorePlugin) {
                 }
 
                 else -> {
-                    lunarFrame.sql = Database.connect("jdbc:h2:./${lunarFrame.mainPath}/sql/H2database", "org.h2.Driver")
+                    lunarFrame.sql =
+                        Database.connect("jdbc:h2:./${lunarFrame.mainPath}/sql/H2database", "org.h2.Driver")
                 }
             }
         } catch (e: Throwable) {

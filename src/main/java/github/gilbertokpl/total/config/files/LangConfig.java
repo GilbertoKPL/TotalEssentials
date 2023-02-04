@@ -2137,6 +2137,39 @@ public class LangConfig implements DefaultLang {
     )
     public static String discordchatServerClose;
 
+    @Values(
+            {
+                    @Value(value = "%prefix%&eLista de cores disponíveis: %colors%", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String colorSendList;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&eCor setada com sucesso! : %color%", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String colorSet;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê não tem permissão para utilizar essa cor!", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String colorNotSet;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&cVocê acabou de remover a sua cor do chat!", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String colorRemove;
+
+
     @Nullable
     @Override
     public String getGeneralCommandsUsage() {

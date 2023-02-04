@@ -15,18 +15,18 @@ object KeyData : CacheBase {
     val vipName = ins.string(this, VipKeysSQL.vipName)
     val vipTime = ins.long(this, VipKeysSQL.vipTime)
 
-    fun checkIfKeyExist(entity: String) : Boolean {
+    fun checkIfKeyExist(entity: String): Boolean {
         return vipName[entity] != null
     }
 
-    fun getRandomString() : String {
+    fun getRandomString(): String {
         return Random().ints(97, 122 + 1)
             .limit(10)
             .collect({ StringBuilder() }, java.lang.StringBuilder::appendCodePoint, java.lang.StringBuilder::append)
             .toString().uppercase()
     }
 
-    fun genNewVipKey(name: String, time: Long) : String {
+    fun genNewVipKey(name: String, time: Long): String {
         var key = getRandomString()
 
         if (checkIfKeyExist(key)) {

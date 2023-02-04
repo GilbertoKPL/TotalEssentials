@@ -1,7 +1,6 @@
 package github.gilbertokpl.total.util
 
 import github.gilbertokpl.core.external.task.SynchronizationContext
-import org.bukkit.Bukkit
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService

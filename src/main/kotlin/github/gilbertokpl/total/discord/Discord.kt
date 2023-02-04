@@ -10,12 +10,9 @@ import github.gilbertokpl.total.util.MainUtil
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
-import net.dv8tion.jda.api.entities.Member
-import net.dv8tion.jda.api.entities.UserSnowflake
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.exceptions.ContextException
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
-import net.dv8tion.jda.api.requests.ErrorResponse
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import java.awt.Color
@@ -33,160 +30,152 @@ internal object Discord {
 
     private val hashTextChannel = HashMap<String, TextChannel>()
 
-        /**
-         * Send message to discord with chat ID.
-         *
-         * @throws BotIsNotInitialized if bot is true but token is incorrect.
-         * @throws BotIsNotActivated if bot is not activated.
-         * @throws ChatDoesNotExist if chat does not exist.
-         */
-        fun sendDiscordMessage(message: String, embed: Boolean) {
-            sendDiscordMessage(message, MainConfig.discordbotIdDiscordChat, embed)
-        }
+    /**
+     * Send message to discord with chat ID.
+     *
+     * @throws BotIsNotInitialized if bot is true but token is incorrect.
+     * @throws BotIsNotActivated if bot is not activated.
+     * @throws ChatDoesNotExist if chat does not exist.
+     */
+    fun sendDiscordMessage(message: String, embed: Boolean) {
+        sendDiscordMessage(message, MainConfig.discordbotIdDiscordChat, embed)
+    }
 
-        /**
-         * Send message to discord with chat ID.
-         *
-         * @throws BotIsNotInitialized if bot is true but token is incorrect.
-         * @throws BotIsNotActivated if bot is not activated.
-         * @throws ChatDoesNotExist if chat does not exist.
-         */
-        fun sendDiscordMessage(message: String, chatID: String, embed: Boolean) {
+    /**
+     * Send message to discord with chat ID.
+     *
+     * @throws BotIsNotInitialized if bot is true but token is incorrect.
+     * @throws BotIsNotActivated if bot is not activated.
+     * @throws ChatDoesNotExist if chat does not exist.
+     */
+    fun sendDiscordMessage(message: String, chatID: String, embed: Boolean) {
 
-            if (hashTextChannel[chatID] == null) {
-                TotalEssentials.basePlugin.getTask().async {
-                    val newChat = setupDiscordChat() ?: throw ChatDoesNotExist()
+        if (hashTextChannel[chatID] == null) {
+            TotalEssentials.basePlugin.getTask().async {
+                val newChat = setupDiscordChat() ?: throw ChatDoesNotExist()
 
-                    hashTextChannel[chatID] = newChat
+                hashTextChannel[chatID] = newChat
 
-                    if (embed) {
-                        val msg = EmbedBuilder().setDescription(message).setColor(randomColor())
-                        newChat.sendMessageEmbeds(msg.build()).queue()
-                        return@async
-                    }
-
-                    newChat.sendMessage(message).queue()
-
-                }
-                return
-            }
-
-            try {
                 if (embed) {
                     val msg = EmbedBuilder().setDescription(message).setColor(randomColor())
-                    hashTextChannel[chatID]!!.sendMessageEmbeds(msg.build()).queue()
-                    return
+                    newChat.sendMessageEmbeds(msg.build()).queue()
+                    return@async
                 }
-                hashTextChannel[chatID]!!.sendMessage(message).queue()
-            } catch (e: Throwable) {
-                hashTextChannel.remove(chatID)
+
+                newChat.sendMessage(message).queue()
+
             }
+            return
         }
 
-
-        fun sendDiscordMessage(userID: Long, message: String) : Boolean {
-            val jda = getJdaCheck()
-
-            try {
-                jda.retrieveUserById(userID).complete()?.openPrivateChannel()?.queue{ channel ->
-                    channel.sendMessage(message).queue()
-                } ?: return false
+        try {
+            if (embed) {
+                val msg = EmbedBuilder().setDescription(message).setColor(randomColor())
+                hashTextChannel[chatID]!!.sendMessageEmbeds(msg.build()).queue()
+                return
             }
-            catch (e: ContextException ) {
-                return false
-            }
-            catch (e: Exception) {
-                return false
-            }
+            hashTextChannel[chatID]!!.sendMessage(message).queue()
+        } catch (e: Throwable) {
+            hashTextChannel.remove(chatID)
+        }
+    }
 
-            return true
+
+    fun sendDiscordMessage(userID: Long, message: String): Boolean {
+        val jda = getJdaCheck()
+
+        try {
+            jda.retrieveUserById(userID).complete()?.openPrivateChannel()?.queue { channel ->
+                channel.sendMessage(message).queue()
+            } ?: return false
+        } catch (e: ContextException) {
+            return false
+        } catch (e: Exception) {
+            return false
         }
 
-        fun checkIfRoleIdExist(roleId: Long) : Boolean {
-            val jda = getJdaCheck()
+        return true
+    }
 
-            jda.getRoleById(roleId) ?: return false
+    fun checkIfRoleIdExist(roleId: Long): Boolean {
+        val jda = getJdaCheck()
 
-            return true
+        jda.getRoleById(roleId) ?: return false
+
+        return true
+    }
+
+
+    /**
+     * Add role to user.
+     *
+     * @throws BotIsNotInitialized if bot is true but token is incorrect.
+     * @throws BotIsNotActivated if bot is not activated.
+     * @throws UserDoesNotExist if user does not exist.
+     * @throws RoleDoesNotExist if role does not exist.
+     */
+    fun addUserRole(userID: Long, roleId: Long): Boolean {
+        val jda = getJdaCheck()
+
+        try {
+            val role = jda.getRoleById(roleId) ?: throw RoleDoesNotExist()
+            jda.retrieveUserById(userID).queue {
+                jda.getGuildById(jda.guilds[0].id)?.addRoleToMember(it, role)?.queue()
+            }
+        } catch (e: ContextException) {
+            return false
+        } catch (e: Exception) {
+            return false
+        } catch (e: ErrorResponseException) {
+            return false
+        } catch (e: Throwable) {
+            return false
         }
 
+        return true
+    }
 
-        /**
-         * Add role to user.
-         *
-         * @throws BotIsNotInitialized if bot is true but token is incorrect.
-         * @throws BotIsNotActivated if bot is not activated.
-         * @throws UserDoesNotExist if user does not exist.
-         * @throws RoleDoesNotExist if role does not exist.
-         */
-        fun addUserRole(userID: Long, roleId: Long) : Boolean {
-            val jda = getJdaCheck()
+    /**
+     * remove user role.
+     *
+     * @throws BotIsNotInitialized if bot is true but token is incorrect.
+     * @throws BotIsNotActivated if bot is not activated.
+     * @throws UserDoesNotExist if user does not exist.
+     * @throws RoleDoesNotExist if role does not exist.
+     * @throws UserDoesNotHaveThisRole if user does not have this role.
+     */
+    fun removeUserRole(userID: Long, roleId: Long): Boolean {
+        val jda = getJdaCheck()
 
-            try {
-                val role = jda.getRoleById(roleId) ?: throw RoleDoesNotExist()
-                jda.retrieveUserById(userID).queue {
-                    jda.getGuildById(jda.guilds[0].id)?.addRoleToMember(it, role)?.queue()
-                }
+        try {
+            val role = jda.getRoleById(roleId) ?: return false
+            jda.retrieveUserById(userID).queue {
+                jda.getGuildById(jda.guilds[0].id)?.removeRoleFromMember(it, role)?.queue()
             }
-            catch (e: ContextException ) {
-                return false
-            }
-            catch (e: Exception) {
-                return false
-            }
-            catch (e: ErrorResponseException) {
-                return false
-            }
-            catch (e: Throwable) {
-                return false
-            }
-
-            return true
+        } catch (e: ContextException) {
+            return false
+        } catch (e: Exception) {
+            return false
         }
 
-        /**
-         * remove user role.
-         *
-         * @throws BotIsNotInitialized if bot is true but token is incorrect.
-         * @throws BotIsNotActivated if bot is not activated.
-         * @throws UserDoesNotExist if user does not exist.
-         * @throws RoleDoesNotExist if role does not exist.
-         * @throws UserDoesNotHaveThisRole if user does not have this role.
-         */
-        fun removeUserRole(userID: Long, roleId: Long) : Boolean {
-            val jda = getJdaCheck()
+        return true
+    }
 
-            try {
-                val role = jda.getRoleById(roleId) ?: return false
-                jda.retrieveUserById(userID).queue {
-                    jda.getGuildById(jda.guilds[0].id)?.removeRoleFromMember(it, role)?.queue()
-                }
-            }
-            catch (e: ContextException ) {
-                return false
-            }
-            catch (e: Exception) {
-                return false
-            }
+    /**
+     * Reload all chat ids.
+     */
+    fun reloadDiscordChat() {
+        hashTextChannel.clear()
+    }
 
-            return true
-        }
-
-        /**
-         * Reload all chat ids.
-         */
-        fun reloadDiscordChat() {
-            hashTextChannel.clear()
-        }
-
-        /**
-         * Get chat id in use.
-         *
-         * @return chat in use, null if bot not in use.
-         */
-        fun getChatIdInUse(): String? {
-            return hashTextChannel[MainConfig.discordbotIdDiscordChat]?.id
-        }
+    /**
+     * Get chat id in use.
+     *
+     * @return chat in use, null if bot not in use.
+     */
+    fun getChatIdInUse(): String? {
+        return hashTextChannel[MainConfig.discordbotIdDiscordChat]?.id
+    }
 
     private fun getJdaCheck(): JDA {
         val jda = jda

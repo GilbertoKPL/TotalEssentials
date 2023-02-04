@@ -2,9 +2,9 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.cache.local.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.local.WarpData
 import org.bukkit.command.CommandSender
 
 class CommandDelWarp : github.gilbertokpl.core.external.command.CommandCreator("delwarp") {

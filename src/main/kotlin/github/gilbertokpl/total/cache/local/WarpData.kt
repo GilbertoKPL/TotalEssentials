@@ -15,7 +15,7 @@ object WarpData : CacheBase {
 
     val warpLocation = ins.location(this, WarpsDataSQL.warpLocationTable, LocationSerializer())
 
-    fun checkIfWarpExist(warp: String) : Boolean {
+    fun checkIfWarpExist(warp: String): Boolean {
         return warpLocation[warp] != null
     }
 

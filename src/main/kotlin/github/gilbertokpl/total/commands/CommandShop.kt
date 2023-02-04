@@ -4,7 +4,6 @@ import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.cache.internal.DataManager
 import github.gilbertokpl.total.cache.internal.ShopInventory
-import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig

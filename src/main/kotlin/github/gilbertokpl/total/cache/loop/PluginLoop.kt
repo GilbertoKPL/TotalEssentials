@@ -31,7 +31,7 @@ object PluginLoop {
             } catch (e: Exception) {
                 println(e)
             }
-        },5,5, TimeUnit.MINUTES)
+        }, 5, 5, TimeUnit.MINUTES)
 
         try {
             if (MainConfig.discordbotSendTopicUpdate) {

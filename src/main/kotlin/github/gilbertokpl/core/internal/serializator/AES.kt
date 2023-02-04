@@ -6,7 +6,7 @@ import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
-class AES (lf: CorePlugin) {
+class AES(lf: CorePlugin) {
 
     private val lunarFrame = lf
 

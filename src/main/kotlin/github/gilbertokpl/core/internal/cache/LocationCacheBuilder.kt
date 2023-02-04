@@ -2,14 +2,11 @@ package github.gilbertokpl.core.internal.cache
 
 import github.gilbertokpl.core.external.cache.convert.SerializerBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
-import github.gilbertokpl.core.external.utils.Executor
 import okhttp3.internal.toImmutableList
 import okhttp3.internal.toImmutableMap
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import java.util.concurrent.TimeUnit
 
 internal class LocationCacheBuilder(
     t: Table,
@@ -68,6 +65,7 @@ internal class LocationCacheBuilder(
     override fun update() {
         save(toUpdate.toImmutableList())
     }
+
     private fun save(list: List<String>) {
 
         val currentHash = hashMap.toImmutableMap()

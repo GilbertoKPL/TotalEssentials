@@ -1,15 +1,13 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.TotalEssentials
-import github.gilbertokpl.total.config.files.LangConfig
-import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.local.KitsData
-import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.internal.DataManager
 import github.gilbertokpl.total.cache.internal.KitGuiInventory
+import github.gilbertokpl.total.cache.local.KitsData
+import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.VipData
+import github.gilbertokpl.total.config.files.LangConfig
+import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil
-
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -82,9 +80,10 @@ class InventoryClose : Listener {
 
             KitsData.kitItems[it, array] = true
 
-            val name =  KitsData.kitFakeName[it]
+            val name = KitsData.kitFakeName[it]
 
-            PlayerUtil.sendMessage(e.player.name,
+            PlayerUtil.sendMessage(
+                e.player.name,
                 LangConfig.kitsEditKitSuccess.replace(
                     "%kit%",
                     if (name == null || name == "") it else name

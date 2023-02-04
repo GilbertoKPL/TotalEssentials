@@ -867,6 +867,15 @@ public class MainConfig implements DefaultConfig {
     )
     public static Boolean shopActivated = true;
 
+    //shop
+    @Comments(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), O /cor será ativado.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "If enabled (true), The color will be actived.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean colorActivated = true;
+
     //antiafk
 
     @Comments(

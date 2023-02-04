@@ -40,7 +40,7 @@ class EconomyHolder : Economy {
     }
 
     override fun hasAccount(player: OfflinePlayer): Boolean {
-        return PlayerData.checkIfPlayerExist(player.name?: "")
+        return PlayerData.checkIfPlayerExist(player.name ?: "")
     }
 
     override fun hasAccount(playerName: String, worldName: String): Boolean {
@@ -56,7 +56,7 @@ class EconomyHolder : Economy {
     }
 
     override fun getBalance(player: OfflinePlayer): Double {
-        return getBalance(player.name?: "")
+        return getBalance(player.name ?: "")
     }
 
     override fun getBalance(playerName: String, world: String?): Double {
@@ -96,7 +96,7 @@ class EconomyHolder : Economy {
     }
 
     override fun withdrawPlayer(player: OfflinePlayer, amount: Double): EconomyResponse {
-        return MoneyUtil.withdrawPlayer(player.name?: "", amount)
+        return MoneyUtil.withdrawPlayer(player.name ?: "", amount)
     }
 
     override fun depositPlayer(playerName: String?, worldName: String?, amount: Double): EconomyResponse {

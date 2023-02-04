@@ -1,10 +1,11 @@
 package github.gilbertokpl.total.listeners
 
+import github.gilbertokpl.total.cache.internal.DataManager
+import github.gilbertokpl.total.cache.local.KitsData
+import github.gilbertokpl.total.cache.local.LoginData
+import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.cache.local.KitsData
-import github.gilbertokpl.total.cache.internal.DataManager
-import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.util.PermissionUtil
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -29,7 +30,9 @@ class ChatEventAsync : Listener {
         }
         if (MainConfig.addonsColorInChat) {
             try {
-                colorChat(e)
+
+                e.message = PlayerData.colorCache[e.player] + PermissionUtil.colorPermission(e.player, e.message)
+
             } catch (e: Throwable) {
 
             }
@@ -111,9 +114,5 @@ class ChatEventAsync : Listener {
 
             return true
         }
-    }
-
-    private fun colorChat(e: AsyncPlayerChatEvent) {
-        e.message = PermissionUtil.colorPermission(e.player, e.message)
     }
 }

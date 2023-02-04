@@ -34,7 +34,7 @@ class ItemSerializator {
 
     fun deserialize(data: String): ArrayList<ItemStack> {
         if (data == "") return ArrayList()
-        val toReturn: ArrayList<ItemStack>  = ArrayList()
+        val toReturn: ArrayList<ItemStack> = ArrayList()
         try {
             val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(data))
             val dataInput = try {

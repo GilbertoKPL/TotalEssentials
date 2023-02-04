@@ -52,11 +52,12 @@ class CommandAnnounce : CommandCreator("announce") {
                 .replace("%message%", newMessage)
         )
 
-        Discord.sendDiscordMessage(LangConfig.announceSendAnnounce
-            .replace("%name%", name)
-            .replace("%message%", newMessage)
-            .replace(Regex("§[0-9]|§[a-zA-Z]"), "")
-        , true)
+        Discord.sendDiscordMessage(
+            LangConfig.announceSendAnnounce
+                .replace("%name%", name)
+                .replace("%message%", newMessage)
+                .replace(Regex("§[0-9]|§[a-zA-Z]"), ""), true
+        )
 
         return false
     }

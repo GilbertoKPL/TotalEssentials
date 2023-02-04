@@ -1,8 +1,7 @@
 package github.gilbertokpl.total.cache.internal
 
-import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.loop.AnnounceLoop
-
+import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.TaskUtil
 
 

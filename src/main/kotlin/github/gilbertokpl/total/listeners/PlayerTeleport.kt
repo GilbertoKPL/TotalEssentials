@@ -1,10 +1,9 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.config.files.LangConfig
-import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.SpawnData
-
+import github.gilbertokpl.total.config.files.LangConfig
+import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.event.EventHandler

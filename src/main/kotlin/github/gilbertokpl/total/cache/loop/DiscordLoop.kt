@@ -24,7 +24,10 @@ object DiscordLoop {
                 Discord.jda?.getTextChannelById(MainConfig.discordbotIdDiscordChat)?.manager?.setTopic(
                     LangConfig.discordchatDiscordTopic
                         .replace("%online%", PlayerUtil.getIntOnlinePlayers(false).toString())
-                        .replace("%online_time%", TotalEssentials.basePlugin.getTime().convertMillisToString(TotalEssentials.basePlugin.getTime().getOnlineTime(), true))
+                        .replace("%online_time%",
+                            TotalEssentials.basePlugin.getTime()
+                                .convertMillisToString(TotalEssentials.basePlugin.getTime().getOnlineTime(), true)
+                        )
                         .replace("%time%", TotalEssentials.basePlugin.getTime().getCurrentDate())
                 )?.complete()
             }

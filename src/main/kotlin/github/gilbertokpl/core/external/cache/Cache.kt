@@ -112,7 +112,7 @@ class Cache(lf: CorePlugin) {
 
 
     fun start(cachePackage: String) {
-       lunarFrame.getReflection().getClasses(cachePackage)
+        lunarFrame.getReflection().getClasses(cachePackage)
         transaction(lunarFrame.sql) {
             for (i in toByteUpdate) {
                 i.load()
@@ -132,7 +132,7 @@ class Cache(lf: CorePlugin) {
             } catch (e: Exception) {
                 println(e)
             }
-        },5,5,TimeUnit.MINUTES)
+        }, 5, 5, TimeUnit.MINUTES)
     }
 
     private val toByteUpdate = ArrayList<CacheBuilder<*>>()

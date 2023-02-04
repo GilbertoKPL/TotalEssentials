@@ -8,7 +8,6 @@ import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
-import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 
 class CommandLogin : github.gilbertokpl.core.external.command.CommandCreator("login") {
@@ -66,7 +65,7 @@ class CommandLogin : github.gilbertokpl.core.external.command.CommandCreator("lo
         }
 
         @Suppress("USELESS_IS_CHECK")
-        if (s is Player && LoginData.checkIfPlayerIsLoggedIn(s)  && s.hasPermission("totalessentials.commands.login.other") || s is CommandSender) {
+        if (s is Player && LoginData.checkIfPlayerIsLoggedIn(s) && s.hasPermission("totalessentials.commands.login.other") || s is CommandSender) {
 
             if (!LoginData.checkIfPlayerExist(args[0])) {
                 s.sendMessage(LangConfig.generalPlayerNotExist)

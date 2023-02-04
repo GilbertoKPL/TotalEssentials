@@ -1,9 +1,9 @@
 package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
-import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.cache.serializer.LocationSerializer
 import github.gilbertokpl.total.cache.sql.SpawnDataSQL
+import github.gilbertokpl.total.config.files.LangConfig
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table

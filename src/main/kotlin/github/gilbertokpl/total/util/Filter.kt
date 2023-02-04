@@ -15,6 +15,7 @@ class Filter : Filter {
         "issued server command: /registrar"
 
     )
+
     override fun isLoggable(record: LogRecord): Boolean {
         var recordable = true
 

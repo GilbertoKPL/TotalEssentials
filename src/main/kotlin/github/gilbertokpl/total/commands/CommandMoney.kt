@@ -40,8 +40,9 @@ class CommandMoney : github.gilbertokpl.core.external.command.CommandCreator("mo
 
             s.sendMessage(
                 MoneyUtil.coinReplacer(
-                LangConfig.moneyMessage, money
-            ))
+                    LangConfig.moneyMessage, money
+                )
+            )
             return false
         }
 
@@ -71,9 +72,11 @@ class CommandMoney : github.gilbertokpl.core.external.command.CommandCreator("mo
                 return false
             }
 
-            s.sendMessage(MoneyUtil.coinReplacer(
-                LangConfig.moneyMessageOther, PlayerData.moneyCache[args[0]] ?: 0.0
-            ).replace("%player%", args[0].lowercase()))
+            s.sendMessage(
+                MoneyUtil.coinReplacer(
+                    LangConfig.moneyMessageOther, PlayerData.moneyCache[args[0]] ?: 0.0
+                ).replace("%player%", args[0].lowercase())
+            )
             return false
         }
 
@@ -138,32 +141,42 @@ class CommandMoney : github.gilbertokpl.core.external.command.CommandCreator("mo
             if (args[0] == "set") {
                 PlayerData.moneyCache[args[1]] = value
 
-                s.sendMessage(MoneyUtil.coinReplacer(
-                    LangConfig.moneySet, value
-                ).replace("%player%", args[1].lowercase()))
+                s.sendMessage(
+                    MoneyUtil.coinReplacer(
+                        LangConfig.moneySet, value
+                    ).replace("%player%", args[1].lowercase())
+                )
 
-                PlayerUtil.sendMessage(args[1].lowercase(), MoneyUtil.coinReplacer(
-                    LangConfig.moneySetOther, value
-                ))
+                PlayerUtil.sendMessage(
+                    args[1].lowercase(), MoneyUtil.coinReplacer(
+                        LangConfig.moneySetOther, value
+                    )
+                )
 
                 return false
             }
             if (args[0] == "take") {
                 val otherPlayer = PlayerData.moneyCache[args[1]] ?: return true
                 if (otherPlayer < value) {
-                    s.sendMessage(MoneyUtil.coinReplacer(
-                        LangConfig.moneyMissing, value - otherPlayer
-                    ))
+                    s.sendMessage(
+                        MoneyUtil.coinReplacer(
+                            LangConfig.moneyMissing, value - otherPlayer
+                        )
+                    )
                     return false
                 }
                 PlayerData.moneyCache[args[1]] = otherPlayer - value
 
-                s.sendMessage(MoneyUtil.coinReplacer(
-                    LangConfig.moneyTake, value
-                ).replace("%player%", args[1].lowercase()))
-                PlayerUtil.sendMessage(args[1].lowercase(), MoneyUtil.coinReplacer(
-                    LangConfig.moneyTakeOther, value
-                ))
+                s.sendMessage(
+                    MoneyUtil.coinReplacer(
+                        LangConfig.moneyTake, value
+                    ).replace("%player%", args[1].lowercase())
+                )
+                PlayerUtil.sendMessage(
+                    args[1].lowercase(), MoneyUtil.coinReplacer(
+                        LangConfig.moneyTakeOther, value
+                    )
+                )
 
                 return false
             }
@@ -171,13 +184,17 @@ class CommandMoney : github.gilbertokpl.core.external.command.CommandCreator("mo
                 val otherPlayer = PlayerData.moneyCache[args[1]] ?: 0.0
                 PlayerData.moneyCache[args[1]] = otherPlayer + value
 
-                s.sendMessage(MoneyUtil.coinReplacer(
-                    LangConfig.moneyAdd, value
-                ).replace("%player%", args[1].lowercase()))
+                s.sendMessage(
+                    MoneyUtil.coinReplacer(
+                        LangConfig.moneyAdd, value
+                    ).replace("%player%", args[1].lowercase())
+                )
 
-                PlayerUtil.sendMessage(args[1].lowercase(), MoneyUtil.coinReplacer(
-                    LangConfig.moneyAddOther, value
-                ))
+                PlayerUtil.sendMessage(
+                    args[1].lowercase(), MoneyUtil.coinReplacer(
+                        LangConfig.moneyAddOther, value
+                    )
+                )
 
                 return false
             }

@@ -25,7 +25,9 @@ class CommandMaterial : github.gilbertokpl.core.external.command.CommandCreator(
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        s.sendMessage(LangConfig.MaterialName.replace("%material%", (s as Player).inventory.itemInHand.type.name).lowercase())
+        s.sendMessage(
+            LangConfig.MaterialName.replace("%material%", (s as Player).inventory.itemInHand.type.name).lowercase()
+        )
 
         return false
     }

@@ -64,6 +64,7 @@ class CorePlugin(pl: Plugin) {
         configPackageReload = configPackage
         getConfig().start(configPackage)
     }
+
     fun start(
         commandPackage: String,
         listenerPackage: String,

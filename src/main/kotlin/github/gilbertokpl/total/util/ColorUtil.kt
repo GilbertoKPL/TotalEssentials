@@ -1,7 +1,5 @@
 package github.gilbertokpl.total.util
 
-import java.awt.Color
-
 internal enum class ColorUtil(val color: String) {
     BLACK("\u001B[30m"),
     RED("\u001B[31m"),

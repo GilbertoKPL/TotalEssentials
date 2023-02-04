@@ -7,7 +7,7 @@ import github.gilbertokpl.total.cache.sql.VipDataSQL
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 
-object VipData : CacheBase  {
+object VipData : CacheBase {
     override var table: Table = VipDataSQL
     override var primaryColumn: Column<String> = VipDataSQL.vipName
 
@@ -30,7 +30,7 @@ object VipData : CacheBase  {
         vipCommands[vipName] = ArrayList()
     }
 
-    fun checkIfVipExist(entity: String) : Boolean {
+    fun checkIfVipExist(entity: String): Boolean {
         return vipPrice[entity.lowercase()] != null
     }
 

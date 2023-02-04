@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.cache.internal
 
-import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.MaterialUtil

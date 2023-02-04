@@ -78,7 +78,7 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
         }
 
         @Suppress("USELESS_IS_CHECK")
-        if (s is Player && LoginData.checkIfPlayerIsLoggedIn(s)  && s.hasPermission("totalessentials.commands.register.other") || s is CommandSender) {
+        if (s is Player && LoginData.checkIfPlayerIsLoggedIn(s) && s.hasPermission("totalessentials.commands.register.other") || s is CommandSender) {
             if (LoginData.checkIfPlayerExist(args[0])) {
                 s.sendMessage(LangConfig.generalPlayerExist)
                 return false
@@ -88,7 +88,7 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
 
             s.sendMessage(LangConfig.authOtherRegister.replace("%player%", args[0].lowercase()))
 
-            val p  = Bukkit.getPlayer(args[0]) ?: return false
+            val p = Bukkit.getPlayer(args[0]) ?: return false
 
             LoginData.loggedIn[p] = true
 

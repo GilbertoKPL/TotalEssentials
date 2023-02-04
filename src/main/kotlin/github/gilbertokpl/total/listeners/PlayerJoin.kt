@@ -3,16 +3,12 @@ package github.gilbertokpl.total.listeners
 import github.gilbertokpl.core.external.task.SynchronizationContext
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.local.LoginData
-import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
+import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
 import github.gilbertokpl.total.util.*
-import github.gilbertokpl.total.util.MainUtil
-import github.gilbertokpl.total.util.PermissionUtil
-import github.gilbertokpl.total.util.PlayerUtil
-
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -31,8 +27,7 @@ class PlayerJoin : Listener {
         if (LoginData.ip[e.player] == address) {
             e.player.sendMessage(LangConfig.authAutoLogin)
             LoginData.loggedIn[e.player] = true
-        }
-        else {
+        } else {
             LoginUtil.loginMessage(e.player)
         }
 

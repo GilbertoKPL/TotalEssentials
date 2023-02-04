@@ -48,9 +48,13 @@ class CommandPlayTime : github.gilbertokpl.core.external.command.CommandCreator(
 
         val pTime = PlayerData.playtimeLocal[args[0]] ?: 0L
 
-        val time = ((PlayerData.playTimeCache[args[0]]) ?: 0L) + if (pTime != 0L) (System.currentTimeMillis() - pTime) else 0L
+        val time =
+            ((PlayerData.playTimeCache[args[0]]) ?: 0L) + if (pTime != 0L) (System.currentTimeMillis() - pTime) else 0L
 
-        s.sendMessage(LangConfig.playtimeMessage.replace("%player%", args[0]).replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(time, false)))
+        s.sendMessage(
+            LangConfig.playtimeMessage.replace("%player%", args[0])
+                .replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(time, false))
+        )
 
         return false
     }

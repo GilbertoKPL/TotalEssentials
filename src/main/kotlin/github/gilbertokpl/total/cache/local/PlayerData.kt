@@ -2,8 +2,6 @@ package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
 import github.gilbertokpl.total.cache.serializer.*
-import github.gilbertokpl.total.cache.serializer.HomeSerializer
-import github.gilbertokpl.total.cache.serializer.KitSerializer
 import github.gilbertokpl.total.cache.sql.PlayerDataSQL
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil
@@ -35,6 +33,7 @@ object PlayerData : CacheBase {
     val moneyCache = ins.double(this, PlayerDataSQL.moneyTable)
     val discordCache = ins.long(this, PlayerDataSQL.DiscordTable)
     val playTimeCache = ins.long(this, PlayerDataSQL.PlaytimeTable)
+    val colorCache = ins.string(this, PlayerDataSQL.colorTable)
     val inInvSee = ins.simplePlayer()
     val homeLimitCache = ins.simpleInteger()
     val inTeleport = ins.simpleBoolean()
@@ -42,11 +41,11 @@ object PlayerData : CacheBase {
     val playtimeLocal = ins.simpleLong()
     val bot = ins.simpleBoolean()
 
-    fun checkIfPlayerExist(entity: String) : Boolean {
+    fun checkIfPlayerExist(entity: String): Boolean {
         return nickCache[entity.lowercase()] != null
     }
 
-    fun checkIfPlayerExist(entity: Player) : Boolean {
+    fun checkIfPlayerExist(entity: Player): Boolean {
         return nickCache[entity] != null
     }
 
@@ -66,6 +65,7 @@ object PlayerData : CacheBase {
         afk[entity] = 1
         playTimeCache[entity] = 0
         discordCache[entity] = 0
+        colorCache[entity] = ""
     }
 
     fun values(p: Player) {

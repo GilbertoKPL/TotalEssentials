@@ -1,13 +1,12 @@
 package github.gilbertokpl.total.util
 
 import github.gilbertokpl.total.TotalEssentials
-import github.gilbertokpl.total.config.files.LangConfig
-import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.ShopData
+import github.gilbertokpl.total.config.files.LangConfig
+import github.gilbertokpl.total.config.files.MainConfig
 import org.apache.commons.io.IOUtils
 import org.bukkit.GameMode
-import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.json.JSONObject
 import java.net.URL
@@ -22,12 +21,12 @@ internal object PlayerUtil {
     }
 
     fun sendMessage(player: String, message: String) {
-        val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayerExact(player.lowercase()) ?: return
+        val p = TotalEssentials.instance.server.getPlayerExact(player.lowercase()) ?: return
         p.sendMessage(message)
     }
 
     fun getIntOnlinePlayers(vanish: Boolean): Int {
-        var amount = github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().getPlayers()
+        var amount = TotalEssentials.basePlugin.getReflection().getPlayers()
         if (!vanish) {
             amount = amount.filter {
                 PlayerData.vanishCache[it] != null && !PlayerData.vanishCache[it]!!
@@ -96,7 +95,12 @@ internal object PlayerUtil {
     }
 
     fun checkPlayer(address: String): Array<String> {
-        val result = JSONObject(IOUtils.toString(URL("http://ip-api.com/json$address?fields=status,country,regionName,city,hosting,query"), "UTF-8"))
+        val result = JSONObject(
+            IOUtils.toString(
+                URL("http://ip-api.com/json$address?fields=status,country,regionName,city,hosting,query"),
+                "UTF-8"
+            )
+        )
         if (!(result["status"]?.equals("fail"))!!) {
             return arrayOf(
                 "País: ${result.get("country")}",
