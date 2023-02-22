@@ -21,14 +21,16 @@ class PlayerJoin : Listener {
 
         val address = e.player.address?.address.toString()
 
-        LoginData.attempts[e.player] = 0
-        LoginData.values[e.player] = 0
+        if (MainConfig.authActivated) {
+            LoginData.attempts[e.player] = 0
+            LoginData.values[e.player] = 0
 
-        if (LoginData.ip[e.player] == address) {
-            e.player.sendMessage(LangConfig.authAutoLogin)
-            LoginData.loggedIn[e.player] = true
-        } else {
-            LoginUtil.loginMessage(e.player)
+            if (LoginData.ip[e.player] == address) {
+                e.player.sendMessage(LangConfig.authAutoLogin)
+                LoginData.loggedIn[e.player] = true
+            } else {
+                LoginUtil.loginMessage(e.player)
+            }
         }
 
         val p = e.player

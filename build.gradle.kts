@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm") version "1.8.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -74,7 +74,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0")
 
-    implementation("net.dv8tion:JDA:5.0.0-beta.3") {
+    implementation("net.dv8tion:JDA:5.0.0-beta.4") {
         exclude("club.minnced","opus-java")
         exclude("org.slf4j", "slf4j-api")
     }
