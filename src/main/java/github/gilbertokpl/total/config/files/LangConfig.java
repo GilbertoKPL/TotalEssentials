@@ -462,14 +462,14 @@ public class LangConfig implements DefaultLang {
 
     @Values(
             {
-                    @Value(value = "&aAberto.", lang = LangTypes.PT_BR),
+                    @Value(value = "&aAberto", lang = LangTypes.PT_BR),
                     @Value(value = "", lang = LangTypes.EN_US)
             }
     )
     public static String shopOpen;
     @Values(
             {
-                    @Value(value = "&cFechado.", lang = LangTypes.PT_BR),
+                    @Value(value = "&cFechado", lang = LangTypes.PT_BR),
                     @Value(value = "", lang = LangTypes.EN_US)
             }
     )
@@ -483,7 +483,7 @@ public class LangConfig implements DefaultLang {
     public static String shopNotExist;
     @Values(
             {
-                    @Value(value = "%prefix%&eSua loja foi criado com sucesso.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&eSua loja foi setada com sucesso.", lang = LangTypes.PT_BR),
                     @Value(value = "", lang = LangTypes.EN_US)
             }
     )
@@ -559,6 +559,22 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String shopTimeToTeleport;
+
+    @Values(
+            {
+                    @Value(value = "&aSetar sua loja nesta posição.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopLoreSet;
+
+    @Values(
+            {
+                    @Value(value = "&aAo cliar aqui você mudará o estado de sua loja!.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String shopLoreSwitch;
 
     //kits
     @Values(
@@ -1020,6 +1036,21 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String VipsTimeNoVip;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&eLista de vips:", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsListMessage;
+    @Values(
+            {
+                    @Value(value = "&9> '&e%vip%&9'", lang = LangTypes.PT_BR),
+                    @Value(value = "&9> '&e%vip%'", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsList;
 
 
     //nicks
@@ -2136,6 +2167,22 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String discordchatServerClose;
+
+    @Values(
+            {
+                    @Value(value = "Player: %player%, IP: %ip%, País: %country%, Estado: %state%, Cidade: %city%.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String discordchatSendPlayerLocale;
+
+    @Values(
+            {
+                    @Value(value = "Trocou ip -> Player: %player%, IP: %ip%, País: %country%, Estado: %state%, Cidade: %city%.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String discordchatSendPlayerLocalAtt;
 
     @Values(
             {

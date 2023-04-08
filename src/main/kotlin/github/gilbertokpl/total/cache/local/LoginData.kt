@@ -11,33 +11,33 @@ object LoginData : CacheBase {
     override var table: Table = LoginDataSQL
     override var primaryColumn: Column<String> = LoginDataSQL.player
 
-    private val ins = TotalEssentials.basePlugin.getCache()
+    private val cache = TotalEssentials.basePlugin.getCache()
 
-    val attempts = ins.simpleInteger()
-    val values = ins.simpleInteger()
-    val loggedIn = ins.simpleBoolean()
-    val password = ins.string(this, LoginDataSQL.password)
-    val ip = ins.string(this, LoginDataSQL.ip)
+    val loginAttempts = cache.simpleInteger()
+    val values = cache.simpleInteger()
+    val isLoggedIn = cache.simpleBoolean()
+    val password = cache.string(this, LoginDataSQL.password)
+    val ipAddress = cache.string(this, LoginDataSQL.ip)
 
-    fun checkIfPlayerIsLoggedIn(entity: String): Boolean {
-        return loggedIn[entity.lowercase()] == true
+    fun isPlayerLoggedIn(playerName: String): Boolean {
+        return isLoggedIn[playerName.lowercase()] == true
     }
 
-    fun checkIfPlayerIsLoggedIn(p: Player): Boolean {
-        return loggedIn[p] == true
+    fun isPlayerLoggedIn(player: Player): Boolean {
+        return isLoggedIn[player] == true
     }
 
-    fun checkIfPlayerExist(entity: String): Boolean {
-        return password[entity.lowercase()] != null
+    fun doesPlayerExist(playerName: String): Boolean {
+        return password[playerName.lowercase()] != null
     }
 
-    fun checkIfPlayerExist(entity: Player): Boolean {
-        return password[entity] != null
+    fun doesPlayerExist(player: Player): Boolean {
+        return password[player] != null
     }
 
-    fun createNewLoginData(entity: String, pass: String, i: String) {
-        loggedIn[entity] = true
-        password[entity] = pass
-        ip[entity] = i
+    fun createNewLoginData(playerName: String, password: String, ipAddress: String) {
+        isLoggedIn[playerName] = true
+        this.password[playerName] = password
+        this.ipAddress[playerName] = ipAddress
     }
 }

@@ -3,7 +3,8 @@ package github.gilbertokpl.total.listeners
 import github.gilbertokpl.total.cache.internal.DataManager
 import github.gilbertokpl.total.cache.internal.EditKitInventory.editKitGui
 import github.gilbertokpl.total.cache.internal.EditKitInventory.editKitGuiItems
-import github.gilbertokpl.total.cache.internal.KitGuiInventory.kitGui
+import github.gilbertokpl.total.cache.internal.KitGuiInventory.openKitInventory
+import github.gilbertokpl.total.cache.internal.ShopInventory
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.cache.local.PlayerData
@@ -26,7 +27,7 @@ class InventoryClick : Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     fun event(e: InventoryClickEvent) {
 
-        if (e.whoClicked is Player && !LoginData.checkIfPlayerIsLoggedIn(e.whoClicked as Player)) {
+        if (e.whoClicked is Player && !LoginData.isPlayerLoggedIn(e.whoClicked as Player)) {
             e.isCancelled = true
             return
         }
@@ -142,10 +143,10 @@ class InventoryClick : Listener {
             e.isCancelled = true
             val number = e.slot
             if (number == 27 && inventoryName[1].toInt() > 1) {
-                p.openInventory(DataManager.playTimeGuiCache[inventoryName[1].toInt() - 1]!!)
+                p.openInventory(DataManager.playTimeInventoryCache[inventoryName[1].toInt() - 1]!!)
             }
             if (number == 35) {
-                val check = DataManager.playTimeGuiCache[inventoryName[1].toInt() + 1]
+                val check = DataManager.playTimeInventoryCache[inventoryName[1].toInt() + 1]
                 if (check != null) {
                     p.openInventory(check)
                 }
@@ -164,7 +165,7 @@ class InventoryClick : Listener {
             e.isCancelled = true
             val number = e.slot
             if (number < 27) {
-                val loc = DataManager.ClickShopGuiCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
+                val loc = DataManager.shopItemCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
                 if (loc != null) {
                     if (!ShopData.shopOpen[loc]!!) {
                         p.sendMessage(LangConfig.shopClosedMessage)
@@ -178,10 +179,33 @@ class InventoryClick : Listener {
                 return true
             }
             if (number == 27 && inventoryName[1].toInt() > 1) {
-                p.openInventory(DataManager.shopGuiCache[inventoryName[1].toInt() - 1]!!)
+                p.openInventory(DataManager.shopInventoryCache[inventoryName[1].toInt() - 1]!!)
+            }
+            if (number == 30 && p.hasPermission("totalessentials.commands.shop.set")) {
+                ShopData.createNewShop(p.location, p)
+                p.sendMessage(LangConfig.shopCreateShopSuccess)
+                ShopInventory.setup()
+                p.closeInventory()
+            }
+            if (number == 32 && p.hasPermission("totalessentials.commands.shop.set")) {
+
+                if (!ShopData.checkIfShopExists(p.name.lowercase())) {
+                    return true
+                }
+
+                val new = ShopData.shopOpen[p]?.not() ?: false
+                ShopData.shopOpen[p] = new
+                if (new) {
+                    p.sendMessage(LangConfig.shopSwitchMessage.replace("%open%", LangConfig.shopOpen))
+                }
+                else {
+                    p.sendMessage(LangConfig.shopSwitchMessage.replace("%open%", LangConfig.shopClosed))
+                }
+                ShopInventory.setup()
+                p.closeInventory()
             }
             if (number == 35) {
-                val check = DataManager.shopGuiCache[inventoryName[1].toInt() + 1]
+                val check = DataManager.shopInventoryCache[inventoryName[1].toInt() + 1]
                 if (check != null) {
                     p.openInventory(check)
                 }
@@ -202,7 +226,7 @@ class InventoryClick : Listener {
 
             val number = e.slot
             if (number == 36) {
-                p.openInventory(DataManager.kitGuiCache[inventoryName[2].toInt()]!!)
+                p.openInventory(DataManager.kitInventoryCache[inventoryName[2].toInt()]!!)
             }
             if (number == 40 && meta.displayName == LangConfig.kitsInventoryIconEditKitName && p.hasPermission(
                     "totalessentials.commands.editkit"
@@ -217,7 +241,7 @@ class InventoryClick : Listener {
                     return true
                 }
                 if (meta.displayName == LangConfig.kitsGetIconNotCatch) {
-                    kitGui(inventoryName[1], inventoryName[2], p)
+                    openKitInventory(inventoryName[1], inventoryName[2], p)
                 }
             }
             return true
@@ -228,17 +252,17 @@ class InventoryClick : Listener {
             val number = e.slot
             if (number < 27) {
                 val kit =
-                    DataManager.ClickKitGuiCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
+                    DataManager.kitItemCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
                 if (kit != null) {
-                    kitGui(kit, inventoryName[1], p)
+                    openKitInventory(kit, inventoryName[1], p)
                 }
                 return true
             }
             if (number == 27 && inventoryName[1].toInt() > 1) {
-                p.openInventory(DataManager.kitGuiCache[inventoryName[1].toInt() - 1]!!)
+                p.openInventory(DataManager.kitInventoryCache[inventoryName[1].toInt() - 1]!!)
             }
             if (number == 35) {
-                val check = DataManager.kitGuiCache[inventoryName[1].toInt() + 1]
+                val check = DataManager.kitInventoryCache[inventoryName[1].toInt() + 1]
                 if (check != null) {
                     p.openInventory(check)
                 }
@@ -262,28 +286,28 @@ class InventoryClick : Listener {
             if (number == 10) {
                 p.closeInventory()
                 editKitGuiItems(p, inventoryName[1], KitsData.kitItems[inventoryName[1]]!!)
-                DataManager.editKit[p] = inventoryName[1]
+                DataManager.playerEditKit[p] = inventoryName[1]
             }
 
             //time
             if (number == 12) {
                 p.closeInventory()
                 p.sendMessage(LangConfig.kitsEditKitInventoryTimeMessage)
-                DataManager.editKitChat[p] = "time-${inventoryName[1]}"
+                DataManager.playerEditKitChat[p] = "time-${inventoryName[1]}"
             }
 
             //name
             if (number == 14) {
                 p.closeInventory()
                 p.sendMessage(LangConfig.kitsEditKitInventoryNameMessage)
-                DataManager.editKitChat[p] = "name-${inventoryName[1]}"
+                DataManager.playerEditKitChat[p] = "name-${inventoryName[1]}"
             }
 
             //weight
             if (number == 16) {
                 p.closeInventory()
                 p.sendMessage(LangConfig.kitsEditKitInventoryWeightMessage)
-                DataManager.editKitChat[p] = "weight-${inventoryName[1]}"
+                DataManager.playerEditKitChat[p] = "weight-${inventoryName[1]}"
             }
 
         }

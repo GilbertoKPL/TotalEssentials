@@ -8,8 +8,8 @@ import org.bukkit.entity.Player
 import org.simpleyaml.configuration.file.YamlFile
 import java.lang.reflect.Field
 
-class Reflection(lf: CorePlugin) {
-    private val reflectionInstance = InternalReflection(lf)
+class Reflection(core: CorePlugin) {
+    private val reflectionInstance = InternalReflection(core)
 
     fun getClasses(packageName: String): List<Class<*>> {
         return reflectionInstance.getClasses(packageName)

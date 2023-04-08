@@ -9,11 +9,11 @@ import org.bukkit.SkullType
 import org.bukkit.inventory.ItemStack
 
 object ShopInventory {
-    private val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§eSHOP", true)
+    val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§eSHOP", true)
 
     fun setup() {
-        DataManager.ClickShopGuiCache.clear()
-        DataManager.shopGuiCache.clear()
+        DataManager.shopItemCache.clear()
+        DataManager.shopInventoryCache.clear()
         var size = 1
         var length = 0
         var inv = github.gilbertokpl.total.TotalEssentials.instance.server.createInventory(null, 36, "§eSHOP 1")
@@ -45,7 +45,7 @@ object ShopInventory {
             meta?.lore = itemLore
             item.itemMeta = meta
             val cacheValue = (length + 1) + ((size - 1) * 27)
-            DataManager.ClickShopGuiCache[cacheValue] = shop.key
+            DataManager.shopItemCache[cacheValue] = shop.key
 
             if (length < 26) {
                 inv.setItem(length, item)
@@ -82,7 +82,7 @@ object ShopInventory {
                         GLASS_MATERIAL
                     )
                 }
-                DataManager.shopGuiCache[size] = inv
+                DataManager.shopInventoryCache[size] = inv
                 length = 0
                 size += 1
                 inv = github.gilbertokpl.total.TotalEssentials.instance.server.createInventory(null, 36, "§eSHOP $size")
@@ -104,12 +104,13 @@ object ShopInventory {
                 )
             }
             for (to in 28..35) {
+                if (to == 30 || to == 32) continue
                 inv.setItem(
                     to,
                     GLASS_MATERIAL
                 )
             }
-            DataManager.shopGuiCache[size] = inv
+            DataManager.shopInventoryCache[size] = inv
         }
     }
 }

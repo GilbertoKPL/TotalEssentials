@@ -30,12 +30,12 @@ class SimpleCacheBuilder<T> : CacheBuilder<T> {
         return get(entity.name)
     }
 
-    override fun delete(entity: String) {
+    override fun remove(entity: String) {
         hashMap.remove(entity.lowercase())
     }
 
-    override fun delete(entity: Player) {
-        delete(entity.name)
+    override fun remove(entity: Player) {
+        remove(entity.name)
     }
 
     override fun set(entity: Player, value: T) {

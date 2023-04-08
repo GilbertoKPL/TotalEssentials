@@ -53,11 +53,11 @@ internal class LocationCacheBuilder(
 
     }
 
-    override fun delete(entity: Player) {
-        delete(entity.name)
+    override fun remove(entity: Player) {
+        remove(entity.name)
     }
 
-    override fun delete(entity: String) {
+    override fun remove(entity: String) {
         hashMap[entity.lowercase()] = null
         toUpdate.add(entity.lowercase())
     }

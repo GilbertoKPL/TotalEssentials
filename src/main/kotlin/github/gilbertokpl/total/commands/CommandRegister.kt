@@ -7,6 +7,7 @@ import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.discord.Discord
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -33,9 +34,11 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
 
         val encrypt = TotalEssentials.basePlugin.getEncrypt()
 
-        if (s is Player && !LoginData.checkIfPlayerExist(s)) {
+        if (s is Player && !LoginData.doesPlayerExist(s)) {
 
-            if (PlayerData.bot[s] == true) {
+            val vpn = PlayerData.playerInfo[s]?.get(3) ?: false
+
+            if (vpn == true) {
                 s.sendMessage(LangConfig.authVpn)
                 return false
             }
@@ -59,7 +62,7 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
 
             val playerAddress = s.address?.address.toString()
 
-            for (i in LoginData.ip.getMap().values) {
+            for (i in LoginData.ipAddress.getMap().values) {
                 if (i == playerAddress) {
                     quant += 1
                 }
@@ -70,16 +73,31 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
                 return false
             }
 
+            val info = PlayerData.playerInfo[s]
+
             LoginData.createNewLoginData(s.name.lowercase(), encrypt.encrypt(args[0]), playerAddress)
 
             s.sendMessage(LangConfig.authRegisterSuccess)
+
+            val message = LangConfig.discordchatSendPlayerLocale
+                .replace("%player%", s.name)
+                .replace("%ip%", playerAddress)
+                .replace("%country%", info?.get(0) ?: "none")
+                .replace("%state%",info?.get(1) ?: "none")
+                .replace("%city%",info?.get(2) ?: "none")
+
+
+            if (MainConfig.discordbotConnectRegisterChat) {
+                Discord.sendDiscordMessage(message, MainConfig.discordbotIdRegisterChat, false)
+            }
+
             return false
 
         }
 
         @Suppress("USELESS_IS_CHECK")
-        if (s is Player && LoginData.checkIfPlayerIsLoggedIn(s) && s.hasPermission("totalessentials.commands.register.other") || s is CommandSender) {
-            if (LoginData.checkIfPlayerExist(args[0])) {
+        if (s is Player && LoginData.isPlayerLoggedIn(s) && s.hasPermission("totalessentials.commands.register.other") || s is CommandSender) {
+            if (LoginData.doesPlayerExist(args[0])) {
                 s.sendMessage(LangConfig.generalPlayerExist)
                 return false
             }
@@ -90,7 +108,7 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
 
             val p = Bukkit.getPlayer(args[0]) ?: return false
 
-            LoginData.loggedIn[p] = true
+            LoginData.isLoggedIn[p] = true
 
             p.sendMessage(LangConfig.authLoggedIn)
 

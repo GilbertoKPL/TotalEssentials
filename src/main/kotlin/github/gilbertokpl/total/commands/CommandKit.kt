@@ -43,7 +43,7 @@ class CommandKit : github.gilbertokpl.core.external.command.CommandCreator("kit"
         //send gui
         if (args.isEmpty()) {
 
-            DataManager.kitGuiCache[1].also {
+            DataManager.kitInventoryCache[1].also {
                 it ?: run {
                     s.sendMessage(LangConfig.kitsNotExistKits)
                     return false

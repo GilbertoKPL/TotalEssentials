@@ -4,16 +4,16 @@ import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.core.internal.task.bukkitScheduler
 import github.gilbertokpl.core.internal.task.schedule
 
-class Task(lf: CorePlugin) {
+class Task(core: CorePlugin) {
 
-    private val lunarFrame = lf
+    private val corePlugin = core
 
     fun sync(block: suspend BukkitSchedulerController.() -> Unit): CoroutineTask {
-        return bukkitScheduler.schedule(lunarFrame.plugin, SynchronizationContext.SYNC, block)
+        return bukkitScheduler.schedule(corePlugin.plugin, SynchronizationContext.SYNC, block)
     }
 
     fun async(block: suspend BukkitSchedulerController.() -> Unit): CoroutineTask {
-        return bukkitScheduler.schedule(lunarFrame.plugin, SynchronizationContext.ASYNC, block)
+        return bukkitScheduler.schedule(corePlugin.plugin, SynchronizationContext.ASYNC, block)
     }
 
 }

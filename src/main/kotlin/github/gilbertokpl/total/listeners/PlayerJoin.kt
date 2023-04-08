@@ -22,12 +22,12 @@ class PlayerJoin : Listener {
         val address = e.player.address?.address.toString()
 
         if (MainConfig.authActivated) {
-            LoginData.attempts[e.player] = 0
+            LoginData.loginAttempts[e.player] = 0
             LoginData.values[e.player] = 0
 
-            if (LoginData.ip[e.player] == address) {
+            if (LoginData.ipAddress[e.player] == address) {
                 e.player.sendMessage(LangConfig.authAutoLogin)
-                LoginData.loggedIn[e.player] = true
+                LoginData.isLoggedIn[e.player] = true
             } else {
                 LoginUtil.loginMessage(e.player)
             }
@@ -35,7 +35,7 @@ class PlayerJoin : Listener {
 
         val p = e.player
 
-        SpawnData.teleport(p)
+        SpawnData.teleportToSpawn(p)
 
         TotalEssentials.basePlugin.getTask().async {
 
@@ -76,15 +76,14 @@ class PlayerJoin : Listener {
             VipUtil.checkVip(p.name.lowercase())
 
             if (MainConfig.generalAntiVpn) {
-                // fix
-                PlayerData.bot[p] = PlayerUtil.checkPlayer(address)[3] == "true"
+                PlayerData.playerInfo[p] = PlayerUtil.checkPlayer(address)
             }
 
             switchContext(SynchronizationContext.SYNC)
 
             PlayerData.values(e.player)
 
-            SpawnData.teleport(p)
+            SpawnData.teleportToSpawn(p)
 
         }
     }

@@ -43,6 +43,7 @@ class PlayerTeleport : Listener {
                 e.player.world.name.lowercase()
             ) && !e.player.hasPermission("totalessentials.bypass.backblockedworlds")
         ) return
+        if (e.player.location == SpawnData.spawnLocation["spawn"]) return
         PlayerData.backLocation[e.player] = e.player.location
     }
 
@@ -69,7 +70,7 @@ class PlayerTeleport : Listener {
             !p.hasPermission("totalessentials.bypass.netherceiling") &&
             e.to != null && e.to!!.world!!.environment === World.Environment.NETHER && e.to!!.y > 124.0
         ) {
-            SpawnData.teleport(p)
+            SpawnData.teleportToSpawn(p)
             e.player.sendMessage(LangConfig.generalNotPermAction)
         }
     }

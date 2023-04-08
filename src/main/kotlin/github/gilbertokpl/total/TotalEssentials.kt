@@ -15,6 +15,7 @@ import net.milkbowl.vault.permission.Permission
 import org.bukkit.Bukkit
 import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.logging.LogManager
 
 
 internal class TotalEssentials : JavaPlugin() {
@@ -78,7 +79,7 @@ internal class TotalEssentials : JavaPlugin() {
 
         PluginLoop.start()
 
-        this.server.logger.filter = Filter()
+        LogManager.getLogManager().readConfiguration(this::class.java.getResourceAsStream("/logging.properties"))
 
         super.onEnable()
     }

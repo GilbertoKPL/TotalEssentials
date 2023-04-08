@@ -25,7 +25,7 @@ class EntityDamage : Listener {
             if (p.location.blockY < 0) {
                 e.isCancelled = true
                 p.fallDistance = 1.0f
-                SpawnData.teleport(p)
+                SpawnData.teleportToSpawn(p)
             }
         }
     }

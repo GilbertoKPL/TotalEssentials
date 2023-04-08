@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 
 internal class InternalTime(lf: CorePlugin) {
 
-    private val lunarFrame = lf
+    private val totalCore = lf
 
     private val MILLIS_TO_SECONDS = 1_000
 
@@ -16,7 +16,7 @@ internal class InternalTime(lf: CorePlugin) {
     private val HOURS_TO_DAYS = 24
 
     fun getOnlineTime(): Long {
-        return System.currentTimeMillis() - lunarFrame.online
+        return System.currentTimeMillis() - totalCore.online
     }
 
     fun getCurrentDate(): String {
@@ -79,21 +79,21 @@ internal class InternalTime(lf: CorePlugin) {
         minutes %= SECONDS_TO_MINUTES
         hours %= HOURS_TO_DAYS
         val uniDays = if (days < 2) {
-            lunarFrame.getConfig().messages().timeDay
-        } else lunarFrame.getConfig().messages().timeDays
-        helper(days, "$days ${lunarFrame.getConfig().messages().timeDayShort}", "$days $uniDays")
+            totalCore.getConfig().messages().timeDay
+        } else totalCore.getConfig().messages().timeDays
+        helper(days, "$days ${totalCore.getConfig().messages().timeDayShort}", "$days $uniDays")
         val uniHours = if (hours < 2) {
-            lunarFrame.getConfig().messages().timeHour
-        } else lunarFrame.getConfig().messages().timeHours
-        helper(hours, "$hours ${lunarFrame.getConfig().messages().timeHourShort}", "${hours % 24} $uniHours")
+            totalCore.getConfig().messages().timeHour
+        } else totalCore.getConfig().messages().timeHours
+        helper(hours, "$hours ${totalCore.getConfig().messages().timeHourShort}", "${hours % 24} $uniHours")
         val uniMinutes = if (minutes < 2) {
-            lunarFrame.getConfig().messages().timeMinute
-        } else lunarFrame.getConfig().messages().timeMinutes
-        helper(minutes, "$minutes ${lunarFrame.getConfig().messages().timeMinuteShort}", "${minutes % 60} $uniMinutes")
+            totalCore.getConfig().messages().timeMinute
+        } else totalCore.getConfig().messages().timeMinutes
+        helper(minutes, "$minutes ${totalCore.getConfig().messages().timeMinuteShort}", "${minutes % 60} $uniMinutes")
         val uniSeconds = if (seconds < 2) {
-            lunarFrame.getConfig().messages().timeSecond
-        } else lunarFrame.getConfig().messages().timeSeconds
-        helper(seconds, "$seconds ${lunarFrame.getConfig().messages().timeSecondShort}", "${seconds % 60} $uniSeconds")
+            totalCore.getConfig().messages().timeSecond
+        } else totalCore.getConfig().messages().timeSeconds
+        helper(seconds, "$seconds ${totalCore.getConfig().messages().timeSecondShort}", "${seconds % 60} $uniSeconds")
         var toReturn = ""
         var quaint = 0
         for (values in toSend) {

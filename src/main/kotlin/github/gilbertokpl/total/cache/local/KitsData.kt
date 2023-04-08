@@ -23,15 +23,15 @@ object KitsData : CacheBase {
 
     fun createNewKitData(entity: String) {
         kitFakeName[entity] = ""
-        kitTime[entity] = 0
-        kitItems[entity] = ArrayList()
+        kitTime[entity] = 0L
+        kitItems[entity] = arrayListOf()
         kitWeight[entity] = 0
     }
 
     fun delete(entity: String) {
-        kitFakeName.delete(entity)
-        kitTime.delete(entity)
-        kitItems.delete(entity)
-        kitWeight.delete(entity)
+        kitFakeName.remove(entity)
+        kitTime.remove(entity)
+        kitItems.remove(entity)
+        kitWeight.remove(entity)
     }
 }

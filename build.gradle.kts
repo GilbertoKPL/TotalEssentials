@@ -26,6 +26,8 @@ dependencies {
         exclude("org.bukkit", "bukkit")
     }
 
+    compileOnly(fileTree(mapOf("dir" to "$buildDir\\..\\localjar", "include" to listOf("*.jar"))))
+
     //spigot
     compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") {
         exclude("commons-lang", "commons-lang")
@@ -36,52 +38,54 @@ dependencies {
 
 
     //exposed
-    implementation("org.jetbrains.exposed:exposed-core:0.41.1") {
+    compileOnly("org.jetbrains.exposed:exposed-core:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    implementation("org.jetbrains.exposed:exposed-dao:0.41.1") {
+    compileOnly("org.jetbrains.exposed:exposed-dao:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1") {
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
 
     //H2 database
-    implementation("com.h2database:h2:2.1.214")
+    compileOnly("com.h2database:h2:2.1.214")
 
     //Mysql with MariaDB driver database
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.2")
+    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.1.3")
 
     //implementation to mysql - MariaDB
-    implementation("com.zaxxer:HikariCP:4.0.3") {
+    compileOnly("com.zaxxer:HikariCP:4.0.3") {
             exclude("org.slf4j", "slf4j-api")
     }
 
     //remove all connections of slf4
-    implementation("org.slf4j:slf4j-nop:2.0.5")
+    compileOnly("org.slf4j:slf4j-nop:2.0.5")
 
     //simple yaml to help in yaml
-    implementation("me.carleslc.Simple-YAML:Simple-Yaml:1.7.3") {
+    compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.7.3") {
         exclude("org.slf4j", "slf4j-api")
     }
 
     //host info
-    implementation("com.github.oshi:oshi-core:6.4.0") {
+    compileOnly("com.github.oshi:oshi-core:6.4.1") {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10")
 
-    implementation("net.dv8tion:JDA:5.0.0-beta.4") {
+    compileOnly("net.dv8tion:JDA:5.0.0-beta.6") {
         exclude("club.minnced","opus-java")
         exclude("org.slf4j", "slf4j-api")
     }
 
-    implementation("commons-io:commons-io:2.11.0")
+    compileOnly("commons-io:commons-io:2.11.0")
 
-    implementation("org.json:json:20220924")
+    compileOnly("org.json:json:20230227")
+
+
 
 }
 

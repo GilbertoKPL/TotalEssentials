@@ -1,23 +1,26 @@
 package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
+import github.gilbertokpl.total.cache.local.PlayerData.playTimeCache
 import github.gilbertokpl.total.cache.serializer.*
 import github.gilbertokpl.total.cache.sql.PlayerDataSQL
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil
+import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
+import java.time.Year
+import java.util.concurrent.TimeUnit
 
-object PlayerData : CacheBase {
+object PlayerData : CacheBase{
     override var table: Table = PlayerDataSQL
     override var primaryColumn: Column<String> = PlayerDataSQL.playerTable
 
     private val ins = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
-
 
     val kitsCache = ins.stringHashMap(this, PlayerDataSQL.kitsTable, KitSerializer())
     val homeCache = ins.stringHashMap(this, PlayerDataSQL.homeTable, HomeSerializer())
@@ -39,7 +42,7 @@ object PlayerData : CacheBase {
     val inTeleport = ins.simpleBoolean()
     val afk = ins.simpleInteger()
     val playtimeLocal = ins.simpleLong()
-    val bot = ins.simpleBoolean()
+    val playerInfo = ins.simpleList<String>()
 
     fun checkIfPlayerExist(entity: String): Boolean {
         return nickCache[entity.lowercase()] != null
@@ -80,10 +83,12 @@ object PlayerData : CacheBase {
 
         val gameModeName = PlayerUtil.getGamemodeNumber(gameModeCache[p].toString())
 
-        if (p.gameMode != gameModeName) {
+        if (p.gameMode != gameModeName && gameModeName == GameMode.SURVIVAL) {
             p.gameMode = gameModeName
         }
-
+        if (p.gameMode != gameModeName && p.hasPermission("totalessentials.commands.gamemode")) {
+            p.gameMode = gameModeName
+        }
         if (vanishCache[p]!!) {
             p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
             for (it in github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().getPlayers()) {
@@ -113,6 +118,11 @@ object PlayerData : CacheBase {
             p.flySpeed = (speed * 0.1).toFloat()
         }
 
+        if( playTimeCache[p]!! > 31557600000) {
+            playTimeCache[p] = 0
+        }
+
+
         if (MainConfig.vanishActivated) {
             if (p.hasPermission("totalessentials.commands.vanish") ||
                 p.hasPermission("totalessentials.bypass.vanish")
@@ -124,6 +134,8 @@ object PlayerData : CacheBase {
                 }
             }
         }
+
+
 
     }
 }

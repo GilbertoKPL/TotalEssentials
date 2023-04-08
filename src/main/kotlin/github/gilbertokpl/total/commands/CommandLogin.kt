@@ -4,8 +4,10 @@ import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.local.LoginData
+import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.discord.Discord
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -32,24 +34,38 @@ class CommandLogin : github.gilbertokpl.core.external.command.CommandCreator("lo
 
         val encrypt = TotalEssentials.basePlugin.getEncrypt()
 
-        if (s is Player && LoginData.checkIfPlayerExist(s) && !LoginData.checkIfPlayerIsLoggedIn(s)) {
+        if (s is Player && LoginData.doesPlayerExist(s) && !LoginData.isPlayerLoggedIn(s)) {
 
             val password = encrypt.decrypt(LoginData.password[s]!!)
 
             if (password == args[0]) {
                 s.sendMessage(LangConfig.authLoggedIn)
-                LoginData.loggedIn[s] = true
+                LoginData.isLoggedIn[s] = true
 
                 val address = s.address?.address.toString()
 
-                if (LoginData.ip[s] != address) {
-                    LoginData.ip[s] = address
+                if (LoginData.ipAddress[s] != address) {
+                    LoginData.ipAddress[s] = address
+
+                    val info = PlayerData.playerInfo[s]
+
+                    val message = LangConfig.discordchatSendPlayerLocalAtt
+                        .replace("%player%", s.name)
+                        .replace("%ip%", address)
+                        .replace("%country%", info?.get(0) ?: "none")
+                        .replace("%state%",info?.get(1) ?: "none")
+                        .replace("%city%",info?.get(2) ?: "none")
+
+
+                    if (MainConfig.discordbotConnectRegisterChat) {
+                        Discord.sendDiscordMessage(message, MainConfig.discordbotIdRegisterChat, false)
+                    }
                 }
 
                 return false
             }
 
-            val attempts = LoginData.attempts[s]!! + 1
+            val attempts = LoginData.loginAttempts[s]!! + 1
 
             if (attempts == MainConfig.authMaxAttempts) {
                 s.kickPlayer(LangConfig.authKickMessage.replace("%quant%", attempts.toString()))
@@ -57,7 +73,7 @@ class CommandLogin : github.gilbertokpl.core.external.command.CommandCreator("lo
 
             s.sendMessage(LangConfig.authIncorrectPassword)
 
-            LoginData.attempts[s] = attempts
+            LoginData.loginAttempts[s] = attempts
 
             return false
 
@@ -65,13 +81,13 @@ class CommandLogin : github.gilbertokpl.core.external.command.CommandCreator("lo
         }
 
         @Suppress("USELESS_IS_CHECK")
-        if (s is Player && LoginData.checkIfPlayerIsLoggedIn(s) && s.hasPermission("totalessentials.commands.login.other") || s is CommandSender) {
+        if (s is Player && LoginData.isPlayerLoggedIn(s) && s.hasPermission("totalessentials.commands.login.other") || s is CommandSender) {
 
-            if (!LoginData.checkIfPlayerExist(args[0])) {
+            if (!LoginData.doesPlayerExist(args[0])) {
                 s.sendMessage(LangConfig.generalPlayerNotExist)
                 return false
             }
-            if (LoginData.checkIfPlayerIsLoggedIn(args[0])) {
+            if (LoginData.isPlayerLoggedIn(args[0])) {
                 s.sendMessage(LangConfig.authOtherAlreadyLogged.replace("%player%", args[0]))
                 return false
             }
@@ -83,7 +99,7 @@ class CommandLogin : github.gilbertokpl.core.external.command.CommandCreator("lo
                 return false
             }
 
-            LoginData.loggedIn[p] = true
+            LoginData.isLoggedIn[p] = true
 
             s.sendMessage(LangConfig.authOtherLogin.replace("%player%", p.name))
             p.sendMessage(LangConfig.authLoggedIn)

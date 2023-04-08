@@ -14,7 +14,7 @@ class CommandPlayTime : github.gilbertokpl.core.external.command.CommandCreator(
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf("time"),
+            aliases = listOf("tempo"),
             active = MainConfig.playtimeActivated,
             target = CommandTarget.ALL,
             countdown = 0,
@@ -31,7 +31,7 @@ class CommandPlayTime : github.gilbertokpl.core.external.command.CommandCreator(
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
         if (args.isEmpty() && s is Player) {
-            DataManager.playTimeGuiCache[1].also {
+            DataManager.playTimeInventoryCache[1].also {
                 it ?: run {
                     s.sendMessage(LangConfig.shopNotExistShop)
                     return false

@@ -75,11 +75,11 @@ internal class HashMapCacheBuilder<T, V, K>(
         toUpdate.add(entity.lowercase())
     }
 
-    override fun delete(entity: Player) {
-        delete(entity.name.lowercase())
+    override fun remove(entity: Player) {
+        remove(entity.name.lowercase())
     }
 
-    override fun delete(entity: String) {
+    override fun remove(entity: String) {
         hashMap[entity.lowercase()] = null
         toUpdate.add(entity)
     }

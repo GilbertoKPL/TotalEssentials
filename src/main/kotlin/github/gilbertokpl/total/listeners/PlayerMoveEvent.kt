@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.listeners
 
+import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.event.EventHandler
@@ -13,6 +14,9 @@ class PlayerMoveEvent : Listener {
         if (!MainConfig.antiafkEnabled) return
         if (!e.player.hasPermission("totalessentials.bypass.antiafk")) {
             PlayerData.afk[e.player] = 1
+        }
+        if (!LoginData.isPlayerLoggedIn(e.player)) {
+            e.isCancelled = true
         }
     }
 }

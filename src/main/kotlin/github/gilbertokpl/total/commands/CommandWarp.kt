@@ -41,7 +41,7 @@ class CommandWarp : github.gilbertokpl.core.external.command.CommandCreator("war
             s.sendMessage(
                 LangConfig.warpsList.replace(
                     "%list%",
-                    WarpData.getList(p).toString()
+                    WarpData.getWarpList(p).toString()
                 )
             )
             return false
@@ -57,7 +57,7 @@ class CommandWarp : github.gilbertokpl.core.external.command.CommandCreator("war
                 s.sendMessage(
                     LangConfig.warpsList.replace(
                         "%list%",
-                        WarpData.getList(null).toString()
+                        WarpData.getWarpList(null).toString()
                     )
                 )
                 return false
@@ -92,7 +92,7 @@ class CommandWarp : github.gilbertokpl.core.external.command.CommandCreator("war
             p.sendMessage(
                 LangConfig.warpsList.replace(
                     "%list%",
-                    WarpData.getList(p).toString()
+                    WarpData.getWarpList(p).toString()
                 )
             )
             return false

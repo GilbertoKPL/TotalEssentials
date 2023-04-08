@@ -13,7 +13,7 @@ class PlayerInteract : Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     fun event(e: PlayerInteractEvent) {
 
-        if (!LoginData.checkIfPlayerIsLoggedIn(e.player)) {
+        if (!LoginData.isPlayerLoggedIn(e.player)) {
             e.isCancelled = true
             return
         }

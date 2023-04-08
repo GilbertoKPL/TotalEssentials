@@ -52,7 +52,7 @@ internal object Discord {
 
         if (hashTextChannel[chatID] == null) {
             TotalEssentials.basePlugin.getTask().async {
-                val newChat = setupDiscordChat() ?: throw ChatDoesNotExist()
+                val newChat = setupDiscordChat(chatID) ?: throw ChatDoesNotExist()
 
                 hashTextChannel[chatID] = newChat
 
@@ -210,10 +210,10 @@ internal object Discord {
         }
     }
 
-    private fun setupDiscordChat(): TextChannel? {
+    private fun setupDiscordChat(chatID: String): TextChannel? {
         val jda = getJdaCheck()
         val newChat =
-            jda.getTextChannelById(MainConfig.discordbotIdDiscordChat) ?: run {
+            jda.getTextChannelById(chatID) ?: run {
                 MainUtil.consoleMessage(
                     ColorUtil.YELLOW.color + LangConfig.discordchatNoChatId + ColorUtil.RESET.color
                 )

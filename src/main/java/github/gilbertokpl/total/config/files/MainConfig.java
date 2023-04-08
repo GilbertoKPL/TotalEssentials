@@ -53,6 +53,13 @@ public class MainConfig implements DefaultConfig {
             }
     )
     public static Boolean generalAntiVpn = true;
+    @Comments(
+            {
+                    @Comment(annotations = "Utilize sistema custom de salvar itemstack, com nbt e type (apenas crucible com o plugin evernifecore)", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "itemstack", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean generalCustomItemStack = false;
 
     @PrimaryComments(
             {
@@ -730,6 +737,21 @@ public class MainConfig implements DefaultConfig {
             }
     )
     public static String discordbotIdDiscordChat = "123456";
+
+    @Comments(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), O discord conectará com o registro chat do discord.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean discordbotConnectRegisterChat = false;
+    @Comments(
+            {
+                    @Comment(annotations = "Caso o connect esteja ativado terá que colocar o id do registro chat para armazenar os ips.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String discordbotIdRegisterChat = "123456";
     @Comments(
             {
                     @Comment(annotations = "Comando que ira detectar para enviar ao Discord.", lang = LangTypes.PT_BR),
@@ -797,6 +819,21 @@ public class MainConfig implements DefaultConfig {
             "&9Minecraft Server \n&9Está aberto com players %players_online% online!",
             "&eMinecraft Server \n&eEstá aberto com players %players_online% online!",
             "&fMinecraft Server \n&fEstá aberto com players %players_online% online!"
+    );
+
+    @Comments(
+            {
+                    @Comment(annotations = "Adicionar lista para ver no motd com whitelist on, use (/ n> 1.5.2) para pular linhas;\n" +
+                            "Lista de motds aletórias, caso queira estático utilize só 1 linha;\n" +
+                            "Variaveis -> %players_online%.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "Add list to see in motd use (/n>1.5.2) to skip lines;\n" +
+                            "List of random motds, if you want static use only 1 line;\n" +
+                            "Variables -> %players_online%.", lang = LangTypes.EN_US)
+            }
+    )
+    public static List<String> motdListMotdWhitelist = Arrays.asList(
+            "&3Minecraft Server \n&4Está fechado",
+            "&9Minecraft Server \n&cEstá fechado"
     );
 
     //auto messages
@@ -892,7 +929,7 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "", lang = LangTypes.EN_US)
             }
     )
-    public static Integer antiafkTimeToCheck = 5;
+    public static Long antiafkTimeToCheck = 5L;
 
     @Comments(
             {
@@ -900,7 +937,7 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "", lang = LangTypes.EN_US)
             }
     )
-    public static Integer antiafkTimeToExecute = 15;
+    public static Long antiafkTimeToExecute = 15L;
 
     @Comments(
             {

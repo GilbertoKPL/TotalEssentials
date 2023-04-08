@@ -32,7 +32,7 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
         val encrypt = TotalEssentials.basePlugin.getEncrypt()
 
-        if (s is Player && LoginData.checkIfPlayerExist(s) && LoginData.checkIfPlayerIsLoggedIn(s)) {
+        if (s is Player && LoginData.doesPlayerExist(s) && LoginData.isPlayerLoggedIn(s)) {
             val password = encrypt.decrypt(LoginData.password[s]!!)
 
             if (password == args[0]) {
@@ -41,20 +41,20 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
                 return false
             }
 
-            if (s.hasPermission("totalessentials.commands.changepass.other") && !LoginData.checkIfPlayerExist(args[0])) {
+            if (s.hasPermission("totalessentials.commands.changepass.other") && !LoginData.doesPlayerExist(args[0])) {
                 s.sendMessage(LangConfig.generalPlayerNotExist)
                 return false
             }
 
-            if (s.hasPermission("totalessentials.commands.changepass.other") && LoginData.checkIfPlayerExist(args[0])) {
+            if (s.hasPermission("totalessentials.commands.changepass.other") && LoginData.doesPlayerExist(args[0])) {
 
                 LoginData.values[args[0]] = 0
 
                 LoginData.password[args[0]] = encrypt.encrypt(args[1])
 
-                LoginData.ip[args[0]] = "127.0.0.1"
+                LoginData.ipAddress[args[0]] = "127.0.0.1"
 
-                LoginData.loggedIn[args[0]] = false
+                LoginData.isLoggedIn[args[0]] = false
 
                 s.sendMessage(LangConfig.authOtherChangePass.replace("%player%", args[0]))
 
@@ -72,7 +72,7 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
             return false
         }
 
-        if (!LoginData.checkIfPlayerExist(args[0])) {
+        if (!LoginData.doesPlayerExist(args[0])) {
             s.sendMessage(LangConfig.generalPlayerNotExist)
             return false
         }
@@ -81,9 +81,9 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
 
         LoginData.password[args[0]] = encrypt.encrypt(args[1])
 
-        LoginData.ip[args[0]] = "127.0.0.1"
+        LoginData.ipAddress[args[0]] = "127.0.0.1"
 
-        LoginData.loggedIn[args[0]] = false
+        LoginData.isLoggedIn[args[0]] = false
 
         val p = Bukkit.getPlayer(args[0])
 

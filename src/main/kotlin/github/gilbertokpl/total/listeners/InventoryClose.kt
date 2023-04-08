@@ -44,7 +44,7 @@ class InventoryClose : Listener {
     //vips
     private fun vipInventoryCloseEvent(e: InventoryCloseEvent): Boolean {
         val p = e.player as Player
-        DataManager.vipEdit[p].also {
+        DataManager.playerVipEdit[p].also {
 
             if (it == null) return false
 
@@ -56,7 +56,7 @@ class InventoryClose : Listener {
 
             VipData.vipItems[it, array] = true
 
-            DataManager.vipEdit.remove(p)
+            DataManager.playerVipEdit.remove(p)
 
             PlayerUtil.sendMessage(e.player.name, LangConfig.VipsUpdateItems.replace("%vip%", it))
 
@@ -68,9 +68,9 @@ class InventoryClose : Listener {
     //editkit
     private fun editKitInventoryCloseEvent(e: InventoryCloseEvent): Boolean {
         val p = e.player as Player
-        DataManager.editKit[p].also {
+        DataManager.playerEditKit[p].also {
             if (it == null) return false
-            DataManager.editKit.remove(p)
+            DataManager.playerEditKit.remove(p)
 
             val array = ArrayList<ItemStack>()
 

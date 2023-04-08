@@ -13,7 +13,7 @@ object PlaytimeInventory {
     private val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§ePLAYTIME", true)
 
     fun setup() {
-        DataManager.playTimeGuiCache.clear()
+        DataManager.playTimeInventoryCache.clear()
         var size = 1
         var length = 0
         var inv = TotalEssentials.instance.server.createInventory(null, 36, "§ePLAYTIME 1")
@@ -79,7 +79,7 @@ object PlaytimeInventory {
                         GLASS_MATERIAL
                     )
                 }
-                DataManager.playTimeGuiCache[size] = inv
+                DataManager.playTimeInventoryCache[size] = inv
                 length = 0
                 size += 1
                 inv = TotalEssentials.instance.server.createInventory(null, 36, "§ePLAYTIME $size")
@@ -106,7 +106,7 @@ object PlaytimeInventory {
                     GLASS_MATERIAL
                 )
             }
-            DataManager.playTimeGuiCache[size] = inv
+            DataManager.playTimeInventoryCache[size] = inv
         }
     }
 }

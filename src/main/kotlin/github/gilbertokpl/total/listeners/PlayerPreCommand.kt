@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.listeners
 
+import br.com.devpaulo.legendchat.mutes.Mute
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -24,7 +25,7 @@ class PlayerPreCommand : Listener {
     fun event(e: PlayerCommandPreprocessEvent) {
         val split = e.message.split(" ")
 
-        if (!LoginData.checkIfPlayerIsLoggedIn(e.player) && split[0] != "/login" && split[0] != "/logar" && split[0] != "/register" && split[0] != "/registrar") {
+        if (!LoginData.isPlayerLoggedIn(e.player) && split[0] != "/login" && split[0] != "/logar" && split[0] != "/register" && split[0] != "/registrar") {
             e.isCancelled = true
             return
         }
@@ -72,6 +73,15 @@ class PlayerPreCommand : Listener {
 
     private fun discordChatEvent(e: PlayerCommandPreprocessEvent, split: List<String>) {
         if (MainConfig.discordbotCommandChat.contains(split[0].lowercase())) {
+
+            val bol = try {
+                br.com.devpaulo.legendchat.mutes.MuteManager().isPlayerMuted(e.player.name)
+            } catch (e: NoClassDefFoundError) {
+                false
+            }
+
+            if (bol) return
+
             if (chat == null) {
                 Bukkit.getConsoleSender().sendMessage(
                     ColorUtil.YELLOW.color + LangConfig.generalVaultNotExist + ColorUtil.RESET.color

@@ -10,30 +10,24 @@ import org.jetbrains.exposed.sql.Table
 object WarpData : CacheBase {
     override var table: Table = WarpsDataSQL
     override var primaryColumn: Column<String> = WarpsDataSQL.warpNameTable
+    private val cache = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
 
-    private val ins = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
+    val warpLocation = cache.location(this, WarpsDataSQL.warpLocationTable, LocationSerializer())
 
-    val warpLocation = ins.location(this, WarpsDataSQL.warpLocationTable, LocationSerializer())
-
-    fun checkIfWarpExist(warp: String): Boolean {
-        return warpLocation[warp] != null
+    fun checkIfWarpExist(warpName: String): Boolean {
+        return warpLocation[warpName] != null
     }
 
-    fun getList(p: Player?): List<String> {
-        val list = warpLocation.getMap().map { it.key }
-        if (p != null) {
-            val newList = ArrayList<String>()
-            list.forEach {
-                if (p.hasPermission("totalessentials.commands.warp.$it")) {
-                    newList.add(it)
-                }
-            }
-            return newList
+    fun getWarpList(player: Player?): List<String> {
+        val warpNames = warpLocation.getMap().keys.toList()
+        return if (player == null) {
+            warpNames
+        } else {
+            warpNames.filter { player.hasPermission("totalessentials.commands.warp.$it") }
         }
-        return list
     }
 
-    fun delete(entity: String) {
-        warpLocation.delete(entity)
+    fun deleteWarp(warpName: String) {
+        warpLocation.remove(warpName)
     }
 }

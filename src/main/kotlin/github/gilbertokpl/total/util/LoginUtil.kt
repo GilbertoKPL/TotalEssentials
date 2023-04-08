@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 object LoginUtil {
     fun loginMessage(player: Player) {
         TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
-            if (!player.isOnline || LoginData.checkIfPlayerIsLoggedIn(player)) {
+            if (!player.isOnline || LoginData.isPlayerLoggedIn(player)) {
                 Thread.currentThread().stop()
             }
             if ((MainConfig.authMaxAttempts + 1) == LoginData.values[player]) {
@@ -21,23 +21,12 @@ object LoginUtil {
                 })
                 Thread.currentThread().stop()
             }
-            if (LoginData.checkIfPlayerExist(player)) {
+            if (LoginData.doesPlayerExist(player)) {
                 player.sendMessage(LangConfig.authLoginMessage)
             } else {
                 player.sendMessage(LangConfig.authRegisterMessage)
             }
             LoginData.values[player] = LoginData.values[player]?.plus(1)!!
         }, 0, 10, TimeUnit.SECONDS)
-
-        TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
-            if (!player.isOnline) {
-                Thread.currentThread().stop()
-            }
-            if (LoginData.checkIfPlayerIsLoggedIn(player)) {
-                SpawnData.teleport(player)
-                Thread.currentThread().stop()
-            }
-            SpawnData.teleport(player)
-        }, 100000, 100000, TimeUnit.MICROSECONDS)
     }
 }

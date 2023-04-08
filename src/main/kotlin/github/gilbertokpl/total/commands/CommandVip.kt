@@ -27,6 +27,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             minimumSize = 1,
             maximumSize = null,
             usage = listOf(
+                "totalessentials.commands.vip.admin_/vip list",
                 "totalessentials.commands.vip.admin_/vip criar <vipName> <vipGroup>",
                 "totalessentials.commands.vip.admin_/vip discrole <vipName> <roleID>",
                 "totalessentials.commands.vip.admin_/vip gerarkey <vipName> <days>",
@@ -49,7 +50,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
         if (args[0].lowercase() == "criar" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
-            if (VipData.checkIfVipExist(args[1])) {
+            if (VipData.vipExists(args[1])) {
                 s.sendMessage(LangConfig.VipsExist)
                 return false
             }
@@ -62,10 +63,18 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             return false
         }
 
+        if (args[0].lowercase() == "list" && args.size == 1 && s.hasPermission("totalessentials.commands.vip.admin")) {
+            s.sendMessage(LangConfig.VipsListMessage)
+            for (i in VipData.vipPrice.getMap()) {
+                s.sendMessage(LangConfig.VipsList.replace("%vip%", i.key))
+            }
+            return false
+        }
+
         if (args[0].lowercase() == "gerarkey" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
             val time = args[2].toLongOrNull() ?: return true
 
-            if (VipData.checkIfVipExist(args[1])) {
+            if (VipData.vipExists(args[1])) {
                 val key = KeyData.genNewVipKey(args[1], time)
                 s.sendMessage(LangConfig.VipsCreateNewKey.replace("%key%", key))
             }
@@ -94,7 +103,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
             PlayerData.vipCache[s] = hashMapOf(vipName to millisVipTime)
 
-            KeyData.delete(args[1])
+            KeyData.remove(args[1])
 
             VipUtil.updateCargo(s.name.lowercase(), vipName)
 
@@ -131,7 +140,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
             val role = args[2].toLongOrNull() ?: return false
 
-            if (!VipData.checkIfVipExist(args[1])) {
+            if (!VipData.vipExists(args[1])) {
                 s.sendMessage(LangConfig.VipsNotExist)
                 return false
             }
@@ -149,7 +158,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
         if (args[0].lowercase() == "comando" && args.size >= 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
 
-            if (!VipData.checkIfVipExist(args[1])) {
+            if (!VipData.vipExists(args[1])) {
                 s.sendMessage(LangConfig.VipsNotExist)
                 return false
             }
@@ -191,7 +200,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             s is Player && args[0].lowercase() == "items" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")
         ) {
 
-            if (!VipData.checkIfVipExist(args[1])) {
+            if (!VipData.vipExists(args[1])) {
                 s.sendMessage(LangConfig.VipsNotExist)
                 return false
             }
@@ -202,7 +211,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 inv.addItem(i)
             }
 
-            DataManager.vipEdit[s] = args[1]
+            DataManager.playerVipEdit[s] = args[1]
 
             s.openInventory(inv)
             return false
@@ -287,7 +296,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 return true
             }
 
-            if (!VipData.checkIfVipExist(args[2])) {
+            if (!VipData.vipExists(args[2])) {
                 s.sendMessage(LangConfig.VipsNotExist)
                 return false
             }
@@ -346,7 +355,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
         if (args[0].lowercase() == "discord" && args.size == 2 && s is Player) {
             val id = args[1].toLongOrNull() ?: return true
             TotalEssentials.basePlugin.getTask().async {
-                val token = KeyData.getRandomString()
+                val token = KeyData.generateRandomString()
                 if (Discord.sendDiscordMessage(id, LangConfig.VipsDiscordMessage.replace("%value%", token))) {
                     DataManager.tokenVip[token] = id
                     s.sendMessage(LangConfig.VipsDiscordLocalMessage)

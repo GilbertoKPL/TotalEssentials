@@ -54,15 +54,12 @@ internal class ListCacheBuilder<K, V>(
     }
 
     override operator fun set(entity: String, value: ArrayList<V>) {
-        val ent = hashMap[entity.lowercase()] ?: run {
+        val ent = hashMap[entity.lowercase()] ?: let {
             hashMap[entity.lowercase()] = value
             toUpdate.add(entity.lowercase())
             return
         }
-        for (i in value) {
-            ent.add(i)
-        }
-        hashMap[entity.lowercase()] = ent
+        ent.addAll(value)
         toUpdate.add(entity.lowercase())
     }
 
@@ -79,11 +76,11 @@ internal class ListCacheBuilder<K, V>(
         toUpdate.add(entity.lowercase())
     }
 
-    override fun delete(entity: Player) {
-        delete(entity.name)
+    override fun remove(entity: Player) {
+        remove(entity.name)
     }
 
-    override fun delete(entity: String) {
+    override fun remove(entity: String) {
         hashMap[entity.lowercase()] = null
         toUpdate.add(entity.lowercase())
     }

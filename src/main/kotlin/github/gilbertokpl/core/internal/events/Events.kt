@@ -5,15 +5,19 @@ import org.bukkit.event.Listener
 
 class Events(lf: CorePlugin) {
 
-    private val lunarFrame = lf
+    private val corePlugin = lf
 
     fun start(packageName: String) {
-        val classes = lunarFrame.getReflection().getClasses(packageName)
+        val classes = corePlugin.getReflection().getClasses(packageName)
         classes.forEach {
-            lunarFrame.plugin.server.pluginManager.registerEvents(
-                it.getDeclaredConstructor().newInstance() as Listener,
-                lunarFrame.plugin
-            )
+            try {
+                corePlugin.plugin.server.pluginManager.registerEvents(
+                    it.getDeclaredConstructor().newInstance() as Listener,
+                    corePlugin.plugin
+                )
+            } catch (e: NoClassDefFoundError) {
+                e.printStackTrace()
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ class PlayerRespawn : Listener {
             PlayerData.values(e.player)
 
             if (MainConfig.spawnSendToSpawnOnDeath) {
-                SpawnData.teleport(e.player)
+                SpawnData.teleportToSpawn(e.player)
             }
 
         }

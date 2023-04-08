@@ -7,9 +7,12 @@ import github.gilbertokpl.total.cache.internal.ShopInventory
 import github.gilbertokpl.total.cache.local.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.PlayerUtil
+import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 class CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
 
@@ -36,19 +39,29 @@ class CommandShop : github.gilbertokpl.core.external.command.CommandCreator("sho
 
         if (args.isEmpty()) {
 
-            DataManager.shopGuiCache[1].also {
-                it ?: run {
-                    s.sendMessage(LangConfig.shopNotExistShop)
-                    return false
-                }
 
-                p.openInventory(it)
+
+            val inventory = DataManager.shopInventoryCache[1] ?: run {
+                s.sendMessage(LangConfig.shopNotExistShop)
+                return false
             }
+
+            if (p.hasPermission("totalessentials.commands.shop.set")) {
+                inventory.setItem(30, ItemUtil.item(Material.CHEST, LangConfig.shopLoreSet, false))
+                inventory.setItem(32, ItemUtil.item(Material.CHEST, LangConfig.shopLoreSwitch, false))
+            }
+            else {
+                inventory.setItem(30, ShopInventory.GLASS_MATERIAL)
+                inventory.setItem(32, ShopInventory.GLASS_MATERIAL)
+            }
+
+            p.openInventory(inventory)
+
             return false
         }
 
         if (args[0].equals("trocar", true) && p.hasPermission("totalessentials.commands.shop.set")) {
-            if (!ShopData.checkIfExist(p.name.lowercase())) {
+            if (!ShopData.checkIfShopExists(p.name.lowercase())) {
                 s.sendMessage(LangConfig.shopNotCreated)
                 return false
             }
@@ -69,17 +82,17 @@ class CommandShop : github.gilbertokpl.core.external.command.CommandCreator("sho
 
         if (args[0].equals("setar", true) && p.hasPermission("totalessentials.commands.shop.set")) {
             s.sendMessage(LangConfig.shopCreateShopSuccess)
-            if (ShopData.checkIfExist(p.name.lowercase())) {
+            if (ShopData.checkIfShopExists(p.name.lowercase())) {
                 ShopData.shopLocation[p] = p.location
                 return false
             }
-            ShopData.createNewShop(p, p.location)
+            ShopData.createNewShop(p.location, p)
             ShopInventory.setup()
             return false
         }
 
         //check if not exist
-        if (!ShopData.checkIfExist(args[0])) {
+        if (!ShopData.checkIfShopExists(args[0])) {
             s.sendMessage(LangConfig.shopNotExist)
             return false
         }

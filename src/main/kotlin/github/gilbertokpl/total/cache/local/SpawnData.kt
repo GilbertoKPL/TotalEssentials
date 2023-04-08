@@ -12,18 +12,19 @@ object SpawnData : CacheBase {
     override var table: Table = SpawnDataSQL
     override var primaryColumn: Column<String> = SpawnDataSQL.spawnNameTable
 
-    private val ins = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
+    private val cache = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
 
-    val spawnLocation = ins.location(this, SpawnDataSQL.spawnLocationTable, LocationSerializer())
+    val spawnLocation = cache.location(this, SpawnDataSQL.spawnLocationTable, LocationSerializer())
 
-    fun teleport(p: Player) {
-        val loc = spawnLocation["spawn"] ?: run {
-            if (p.hasPermission("*")) {
-                p.sendMessage(LangConfig.spawnNotSet)
+    fun teleportToSpawn(player: Player) {
+        val spawnLoc = spawnLocation["spawn"]
+        if (spawnLoc != null) {
+            player.teleport(spawnLoc)
+        } else {
+            if (player.hasPermission("*")) {
+                player.sendMessage(LangConfig.spawnNotSet)
+                spawnLocation["spawn"] = player.location
             }
-            return
         }
-
-        p.teleport(loc)
     }
 }

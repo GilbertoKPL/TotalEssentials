@@ -1,6 +1,8 @@
 package github.gilbertokpl.total.listeners
 
+import br.com.devpaulo.legendchat.api.events.ChatMessageEvent
 import github.gilbertokpl.total.cache.internal.DataManager
+import github.gilbertokpl.total.cache.internal.KitGuiInventory
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.cache.local.PlayerData
@@ -16,7 +18,7 @@ class ChatEventAsync : Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     fun event(e: AsyncPlayerChatEvent) {
 
-        if (!LoginData.checkIfPlayerIsLoggedIn(e.player)) {
+        if (!LoginData.isPlayerLoggedIn(e.player)) {
             e.isCancelled = true
             return
         }
@@ -28,23 +30,14 @@ class ChatEventAsync : Listener {
 
             }
         }
-        if (MainConfig.addonsColorInChat) {
-            try {
-
-                e.message = PlayerData.colorCache[e.player] + PermissionUtil.colorPermission(e.player, e.message)
-
-            } catch (e: Throwable) {
-
-            }
-        }
     }
 
     private fun editKitChatEvent(e: AsyncPlayerChatEvent): Boolean {
         val p = e.player
 
-        DataManager.editKitChat[p].also {
+        DataManager.playerEditKitChat[p].also {
             if (it == null) return false
-            DataManager.editKitChat.remove(p)
+            DataManager.playerEditKitChat.remove(p)
             val split = it.split("-")
 
             //time
@@ -91,6 +84,8 @@ class ChatEventAsync : Listener {
                         split[1]
                     )
                 )
+
+                KitGuiInventory.setup()
             }
 
             //weight
@@ -110,6 +105,8 @@ class ChatEventAsync : Listener {
                         split[1]
                     )
                 )
+
+                KitGuiInventory.setup()
             }
 
             return true

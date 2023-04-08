@@ -10,23 +10,28 @@ internal object DataManager {
     lateinit var sql: Database
 
     //vip
-    val tokenVip = HashMap<String, Long>(10)
-    val vipEdit = HashMap<Player, String>(10)
+    val tokenVip: MutableMap<String, Long> = mutableMapOf()
+    val playerVipEdit: MutableMap<Player, String> = mutableMapOf()
 
     //ShopInv
-    val shopGuiCache = LinkedHashMap<Int, Inventory>(10)
-    val ClickShopGuiCache = HashMap<Int, String>(40)
+    val shopInventoryCache: MutableMap<Int, Inventory> = linkedMapOf()
+    val shopItemCache: MutableMap<Int, String> = hashMapOf()
 
     //kitInv
-    val kitGuiCache = LinkedHashMap<Int, Inventory>(10)
-    val ClickKitGuiCache = HashMap<Int, String>(40)
+    val kitInventoryCache: MutableMap<Int, Inventory> = linkedMapOf()
+    val kitItemCache: MutableMap<Int, String> = hashMapOf()
 
     //PlaytimeInv
-    val playTimeGuiCache = LinkedHashMap<Int, Inventory>(10)
+    val playTimeInventoryCache: MutableMap<Int, Inventory> = linkedMapOf()
 
     //editKit
-    val editKit = HashMap<Player, String>(10)
-    val editKitInventory = HashMap<Int, ItemStack>(50)
-    val editKitChat = HashMap<Player, String>(10)
+    val playerEditKit: MutableMap<Player, String> = mutableMapOf()
+    val editKitItemCache: MutableMap<Int, ItemStack> = hashMapOf()
+    val playerEditKitChat: MutableMap<Player, String> = mutableMapOf()
 
 }
+
+
+
+
+

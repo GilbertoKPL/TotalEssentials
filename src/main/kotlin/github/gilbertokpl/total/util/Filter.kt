@@ -13,7 +13,6 @@ class Filter : Filter {
         "issued server command: /logar",
         "issued server command: /register",
         "issued server command: /registrar"
-
     )
 
     override fun isLoggable(record: LogRecord): Boolean {

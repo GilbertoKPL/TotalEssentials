@@ -34,7 +34,7 @@ class CommandDelWarp : github.gilbertokpl.core.external.command.CommandCreator("
             return false
         }
 
-        WarpData.delete(args[0].lowercase())
+        WarpData.deleteWarp(args[0].lowercase())
 
         s.sendMessage(
             LangConfig.warpsRemoved.replace(

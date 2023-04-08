@@ -19,19 +19,16 @@ object KeyData : CacheBase {
         return vipName[entity] != null
     }
 
-    fun getRandomString(): String {
-        return Random().ints(97, 122 + 1)
-            .limit(10)
-            .collect({ StringBuilder() }, java.lang.StringBuilder::appendCodePoint, java.lang.StringBuilder::append)
-            .toString().uppercase()
+    fun generateRandomString(): String {
+        return UUID.randomUUID().toString().replace("-", "").toUpperCase().substring(0, 10)
     }
 
     fun genNewVipKey(name: String, time: Long): String {
-        var key = getRandomString()
+        var key: String
 
-        if (checkIfKeyExist(key)) {
-            key = getRandomString()
-        }
+        do {
+            key = generateRandomString()
+        } while (checkIfKeyExist(key))
 
         vipName[key] = name
         vipTime[key] = time
@@ -39,8 +36,8 @@ object KeyData : CacheBase {
         return key
     }
 
-    fun delete(entity: String) {
-        vipName.delete(entity)
-        vipTime.delete(entity)
+    fun remove(entity: String) {
+        vipName.remove(entity)
+        vipTime.remove(entity)
     }
 }

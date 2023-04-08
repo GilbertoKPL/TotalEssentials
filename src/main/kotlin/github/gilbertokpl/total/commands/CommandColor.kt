@@ -22,7 +22,7 @@ class CommandColor : github.gilbertokpl.core.external.command.CommandCreator("co
             maximumSize = 2,
             usage = listOf(
                 "/cor list",
-                "/cor set",
+                "/cor set <&cor>",
                 "/cor remover",
             )
         )
@@ -43,11 +43,11 @@ class CommandColor : github.gilbertokpl.core.external.command.CommandCreator("co
 
         if (args[0].lowercase() == "set" && args.size == 2) {
 
-            val color = args[1]
+            val color = args[1].toCharArray()
 
-            if (s.hasPermission("totalessentials.color.$color") && color.contains("&") || s.hasPermission("totalessentials.color.*")) {
-                PlayerData.colorCache[s as Player] = color.replace("&", "§")
-                s.sendMessage(LangConfig.colorSet.replace("%color%", color.replace("&", "§") + "cor"))
+            if (color.size == 2 && s.hasPermission("totalessentials.color.${color[1]}") && color[0].toString().contains("&") || color.size == 2 && s.hasPermission("totalessentials.color.*") && color[0].toString().contains("&")) {
+                PlayerData.colorCache[s as Player] = args[1].replace("&", "§")
+                s.sendMessage(LangConfig.colorSet.replace("%color%", args[1].replace("&", "§") + "cor"))
                 return false
             }
             s.sendMessage(LangConfig.colorNotSet)

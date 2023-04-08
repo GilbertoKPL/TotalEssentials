@@ -37,11 +37,11 @@ internal class ByteCacheBuilder<T>(t: Table, pc: Column<String>, c: Column<T>) :
         set(entity, value)
     }
 
-    override fun delete(entity: Player) {
-        delete(entity.name)
+    override fun remove(entity: Player) {
+        remove(entity.name)
     }
 
-    override fun delete(entity: String) {
+    override fun remove(entity: String) {
         hashMap[entity.lowercase()] = null
         toUpdate.add(entity.lowercase())
     }

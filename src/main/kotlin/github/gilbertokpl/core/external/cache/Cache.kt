@@ -13,11 +13,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-class Cache(lf: CorePlugin) {
-    private val lunarFrame = lf
+class Cache(core: CorePlugin) {
+    private val corePlugin = core
 
     fun stop() {
-        transaction(lunarFrame.sql) {
+        transaction(corePlugin.sql) {
             for (i in toByteUpdate) {
                 i.unload()
             }
@@ -37,6 +37,10 @@ class Cache(lf: CorePlugin) {
     }
 
     fun simplePlayer(): CacheBuilder<Player?> {
+        return SimpleCacheBuilder()
+    }
+
+    fun <T> simpleList(): CacheBuilder<List<T>> {
         return SimpleCacheBuilder()
     }
 
@@ -112,15 +116,15 @@ class Cache(lf: CorePlugin) {
 
 
     fun start(cachePackage: String) {
-        lunarFrame.getReflection().getClasses(cachePackage)
-        transaction(lunarFrame.sql) {
+        corePlugin.getReflection().getClasses(cachePackage)
+        transaction(corePlugin.sql) {
             for (i in toByteUpdate) {
                 i.load()
             }
         }
         Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
             try {
-                transaction(lunarFrame.sql) {
+                transaction(corePlugin.sql) {
                     for (i in toByteUpdate) {
                         try {
                             i.update()

@@ -12,19 +12,19 @@ object ShopData : CacheBase {
     override var table: Table = ShopDataSQL
     override var primaryColumn: Column<String> = ShopDataSQL.playerTable
 
-    private val ins = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
+    private val cache = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
 
-    val shopVisits = ins.integer(this, ShopDataSQL.visits)
-    val shopLocation = ins.location(this, ShopDataSQL.location, LocationSerializer())
-    val shopOpen = ins.boolean(this, ShopDataSQL.open)
+    val shopVisits = cache.integer(this, ShopDataSQL.visits)
+    val shopLocation = cache.location(this, ShopDataSQL.location, LocationSerializer())
+    val shopOpen = cache.boolean(this, ShopDataSQL.open)
 
-    fun createNewShop(player: Player, location: Location) {
+    fun createNewShop(location: Location, player: Player) {
         shopVisits[player] = 0
         shopLocation[player] = location
-        shopOpen[player] = true
+        shopOpen[player] = false
     }
 
-    fun checkIfExist(entity: String): Boolean {
-        return shopVisits[entity.lowercase()] != null
+    fun checkIfShopExists(playerName: String): Boolean {
+        return shopVisits[playerName.lowercase()] != null
     }
 }

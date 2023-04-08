@@ -94,7 +94,13 @@ internal object PlayerUtil {
         }
     }
 
-    fun checkPlayer(address: String): Array<String> {
+    fun checkPlayer(address: String): List<String> {
+        if (address.contains("127.0.0.1")) return listOf(
+            "País: Local",
+            "Estado: Local",
+            "Cidade: Local",
+            "false"
+        )
         val result = JSONObject(
             IOUtils.toString(
                 URL("http://ip-api.com/json$address?fields=status,country,regionName,city,hosting,query"),
@@ -102,14 +108,14 @@ internal object PlayerUtil {
             )
         )
         if (!(result["status"]?.equals("fail"))!!) {
-            return arrayOf(
+            return listOf(
                 "País: ${result.get("country")}",
                 "Estado: ${result.get("regionName")}",
                 "Cidade: ${result.get("city")}",
                 "${result.get("hosting")}"
             )
         }
-        return arrayOf("Erro API")
+        return listOf("Erro API").toList()
     }
 
     fun shopTeleport(p: Player, shop: String) {
