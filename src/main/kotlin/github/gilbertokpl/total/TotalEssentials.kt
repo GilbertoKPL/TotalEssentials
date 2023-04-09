@@ -79,7 +79,7 @@ internal class TotalEssentials : JavaPlugin() {
 
         PluginLoop.start()
 
-        LogManager.getLogManager().readConfiguration(this::class.java.getResourceAsStream("/logging.properties"))
+        this.server.logger.filter = Filter()
 
         super.onEnable()
     }

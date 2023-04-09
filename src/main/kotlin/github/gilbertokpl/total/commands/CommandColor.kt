@@ -45,7 +45,7 @@ class CommandColor : github.gilbertokpl.core.external.command.CommandCreator("co
 
             val color = args[1].toCharArray()
 
-            if (color.size == 2 && s.hasPermission("totalessentials.color.${color[1]}") && color[0].toString().contains("&") || color.size == 2 && s.hasPermission("totalessentials.color.*") && color[0].toString().contains("&")) {
+            if (color.size == 2 && s.hasPermission("totalessentials.color.${args[1]}") && color[0].toString().contains("&") || color.size == 2 && s.hasPermission("totalessentials.color.*") && color[0].toString().contains("&")) {
                 PlayerData.colorCache[s as Player] = args[1].replace("&", "§")
                 s.sendMessage(LangConfig.colorSet.replace("%color%", args[1].replace("&", "§") + "cor"))
                 return false

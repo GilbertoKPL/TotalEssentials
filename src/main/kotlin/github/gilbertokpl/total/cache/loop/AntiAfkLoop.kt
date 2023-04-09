@@ -3,6 +3,7 @@ package github.gilbertokpl.total.cache.loop
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.SpawnData
+import github.gilbertokpl.total.cache.local.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.TaskUtil
@@ -36,7 +37,15 @@ object AntiAfkLoop {
             PlayerData.afk[player] = afkTime
 
             if (afkTime >= TIME_TO_EXECUTE / TIME_TO_CHECK_MINUTES) {
-                SpawnData.teleportToSpawn(player)
+                val warp = WarpData.warpLocation[MainConfig.antiafkWarp]
+
+                if (warp == null) {
+                    SpawnData.teleportToSpawn(player)
+                }
+                else {
+                    player.teleport(warp)
+                }
+
                 player.sendMessage(LangConfig.antiafkMessage)
             }
         }

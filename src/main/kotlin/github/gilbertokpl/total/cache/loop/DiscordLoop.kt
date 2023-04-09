@@ -12,10 +12,16 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object DiscordLoop {
+
+    var start = false
     fun start() {
         if (!MainConfig.discordbotConnectDiscordChat) {
             return
         }
+
+        if (start) return
+
+        start = true
 
         TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
             val online = PlayerUtil.getIntOnlinePlayers(false)

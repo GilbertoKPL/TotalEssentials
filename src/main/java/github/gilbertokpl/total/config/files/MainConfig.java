@@ -925,6 +925,14 @@ public class MainConfig implements DefaultConfig {
 
     @Comments(
             {
+                    @Comment(annotations = "Qual warp será teleportado, se não existir ira para o spawn.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "If enabled (true), The AntiAFK will be actived.", lang = LangTypes.EN_US)
+            }
+    )
+    public static String antiafkWarp = "afk";
+
+    @Comments(
+            {
                     @Comment(annotations = "Tempo de check do plugin", lang = LangTypes.PT_BR),
                     @Comment(annotations = "", lang = LangTypes.EN_US)
             }

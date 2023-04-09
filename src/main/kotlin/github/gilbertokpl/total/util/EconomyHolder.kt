@@ -12,7 +12,7 @@ class EconomyHolder : Economy {
     }
 
     override fun getName(): String {
-        return "EssentialsK-Economy"
+        return "TotalEconomy"
     }
 
     override fun hasBankSupport(): Boolean {
@@ -100,11 +100,20 @@ class EconomyHolder : Economy {
     }
 
     override fun depositPlayer(playerName: String?, worldName: String?, amount: Double): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, null)
+        return if (playerName != null) {
+            return MoneyUtil.depositPlayer(playerName, amount)
+        } else {
+            EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
+        }
     }
 
     override fun depositPlayer(player: OfflinePlayer?, worldName: String?, amount: Double): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, null)
+        val playerName = player?.name
+        return if (playerName != null) {
+            return MoneyUtil.depositPlayer(playerName, amount)
+        } else {
+            EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
+        }
     }
 
     override fun depositPlayer(playerName: String, amount: Double): EconomyResponse {
@@ -164,18 +173,36 @@ class EconomyHolder : Economy {
     }
 
     override fun createPlayerAccount(playerName: String?): Boolean {
-        return true
+        if (playerName != null) {
+            PlayerData.createNewPlayerData(playerName)
+            return true
+        }
+        return false
     }
 
     override fun createPlayerAccount(player: OfflinePlayer?): Boolean {
-        return true
+        val playerName = player?.name
+        if (playerName != null) {
+            PlayerData.createNewPlayerData(playerName)
+            return true
+        }
+        return false
     }
 
     override fun createPlayerAccount(playerName: String?, worldName: String?): Boolean {
-        return true
+        if (playerName != null) {
+            PlayerData.createNewPlayerData(playerName)
+            return true
+        }
+        return false
     }
 
     override fun createPlayerAccount(player: OfflinePlayer?, worldName: String?): Boolean {
-        return true
+        val playerName = player?.name
+        if (playerName != null) {
+            PlayerData.createNewPlayerData(playerName)
+            return true
+        }
+        return false
     }
 }
