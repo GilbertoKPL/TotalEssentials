@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.internal.TpaData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -68,11 +69,14 @@ class CommandTpaccept : github.gilbertokpl.core.external.command.CommandCreator(
                 .replace("%time%", time.toString())
         )
 
-        val exe = TaskUtil.teleportExecutor(time)
-
-        exe {
-            TpaData.remove(p)
-            p.teleport(s.location)
+        TotalEssentials.basePlugin.getTask().async {
+            waitFor(time.toLong() * 20)
+            try {
+                TpaData.remove(p)
+                p.teleport(s.location)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
         }
 
         return false
