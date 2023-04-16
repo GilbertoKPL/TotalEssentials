@@ -14,7 +14,7 @@ class PlayerInteractEntity : Listener {
             try {
                 blockNameTag(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

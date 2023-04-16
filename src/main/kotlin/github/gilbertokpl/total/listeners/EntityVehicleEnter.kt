@@ -14,7 +14,7 @@ class EntityVehicleEnter : Listener {
             try {
                 blockEnterInVehicles(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

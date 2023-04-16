@@ -13,11 +13,9 @@ class ChatEventLegend : Listener {
     fun event(e: ChatMessageEvent) {
         if (MainConfig.addonsColorInChat) {
             try {
-
                 e.message = PlayerData.colorCache[e.sender] + PermissionUtil.colorPermission(e.sender, e.message)
-
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

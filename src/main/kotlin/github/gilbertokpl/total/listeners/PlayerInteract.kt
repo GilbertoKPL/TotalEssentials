@@ -22,7 +22,7 @@ class PlayerInteract : Listener {
             try {
                 infinityAnvil(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

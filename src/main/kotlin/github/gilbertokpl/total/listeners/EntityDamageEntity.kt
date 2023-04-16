@@ -13,7 +13,7 @@ class EntityDamageEntity : Listener {
             try {
                 blockItemsExplode(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

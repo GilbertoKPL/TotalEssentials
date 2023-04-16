@@ -13,7 +13,7 @@ class PlayerRespawn : Listener {
         try {
             playerData(e)
         } catch (e: Throwable) {
-
+            e.printStackTrace()
         }
     }
 

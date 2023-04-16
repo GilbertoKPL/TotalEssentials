@@ -52,21 +52,21 @@ internal data class TpaData(
                     val sender = tpaData[pSender] ?: return@runAsync
                     if (sender.wait) {
                         github.gilbertokpl.total.TotalEssentials.instance.server.scheduler.runTask(
-                            github.gilbertokpl.total.TotalEssentials.instance,
-                            Runnable {
-                                pSender.sendMessage(
-                                    LangConfig.tpaRequestOtherDenyTime.replace(
-                                        "%player%",
-                                        pReceived.name
-                                    )
+                            github.gilbertokpl.total.TotalEssentials.instance
+                        ) {
+                            pSender.sendMessage(
+                                LangConfig.tpaRequestOtherDenyTime.replace(
+                                    "%player%",
+                                    pReceived.name
                                 )
-                            })
+                            )
+                        }
                         tpaData.remove(pSender)
                     }
                 } catch (ex: Exception) {
                     tpaData.remove(pSender)
                 }
-            }, TaskUtil.getTeleportExecutor())
+            }, TaskUtil.getInternalExecutor())
         }
 
     }

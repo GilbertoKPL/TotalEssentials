@@ -38,55 +38,55 @@ class InventoryClick : Listener {
         if (MainConfig.kitsActivated) {
             try {
                 if (editKitInventoryClickEvent(e)) return
-            } catch (_: Throwable) {
-
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
             try {
                 if (kitGuiEvent(e)) return
-            } catch (_: Throwable) {
-
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
         }
         if (MainConfig.containersBlockShiftEnable) {
             try {
                 blockShiftInInventory(e)
-            } catch (_: Throwable) {
-
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
         }
         if (MainConfig.addonsColorInAnvil) {
             try {
                 anvilColor(e)
-            } catch (_: Throwable) {
-
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
         }
         if (MainConfig.invseeActivated) {
             try {
                 invSeeEvent(e)
-            } catch (_: Throwable) {
-
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
         }
         if (MainConfig.shopActivated) {
             try {
                 shopGuiEvent(e)
-            } catch (_: Throwable) {
-
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
         }
         if (MainConfig.playtimeActivated) {
             try {
                 playtimeGuiEvent(e)
-            } catch (_: Throwable) {
-
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
         }
         if (MainConfig.vipActivated) {
             try {
                 vipGuiEvent(e)
-            } catch (_: Throwable) {
-
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
         }
     }

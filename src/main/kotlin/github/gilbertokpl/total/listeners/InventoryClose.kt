@@ -22,21 +22,21 @@ class InventoryClose : Listener {
             try {
                 if (editKitInventoryCloseEvent(e)) return
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
         if (MainConfig.invseeActivated) {
             try {
                 invseeInventoryCloseEvent(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
         if (MainConfig.vipActivated) {
             try {
                 vipInventoryCloseEvent(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

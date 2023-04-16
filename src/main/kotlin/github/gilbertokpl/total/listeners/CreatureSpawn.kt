@@ -12,7 +12,7 @@ class CreatureSpawn : Listener {
             try {
                 blockMobCatch(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

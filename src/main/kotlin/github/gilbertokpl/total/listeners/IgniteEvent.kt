@@ -12,7 +12,7 @@ class IgniteEvent : Listener {
             try {
                 blockPropagationFire(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

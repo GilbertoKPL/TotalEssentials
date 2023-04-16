@@ -27,7 +27,7 @@ class ChatEventAsync : Listener {
             try {
                 if (editKitChatEvent(e)) return
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

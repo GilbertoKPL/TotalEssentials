@@ -2,7 +2,6 @@ package github.gilbertokpl.total.util
 
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.local.LoginData
-import github.gilbertokpl.total.cache.local.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.Bukkit
@@ -11,7 +10,7 @@ import java.util.concurrent.TimeUnit
 
 object LoginUtil {
     fun loginMessage(player: Player) {
-        TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
+        TaskUtil.getInternalExecutor().scheduleWithFixedDelay({
             if (!player.isOnline || LoginData.isPlayerLoggedIn(player)) {
                 Thread.currentThread().stop()
             }

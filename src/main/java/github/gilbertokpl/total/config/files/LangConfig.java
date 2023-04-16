@@ -105,6 +105,20 @@ public class LangConfig implements DefaultLang {
     public static String generalVaultNotExist;
     @Values(
             {
+                    @Value(value = "%prefix%&cVocê já está esperando um teleporte.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cYou are already expecting a teleport.", lang = LangTypes.EN_US)
+            }
+    )
+    public static String generalInTeleport;
+    @Values(
+            {
+                    @Value(value = "%prefix%&eVocê será teleportado para -> %local% loja em %time% segundos!.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String generalTimeToTeleport;
+    @Values(
+            {
                     @Value(value = "%prefix%&cMundo %world% não existe, spawn desativado.", lang = LangTypes.PT_BR),
                     @Value(value = "%prefix%&cWorld %world% no existing, spawn disabled.", lang = LangTypes.EN_US)
             }
@@ -551,14 +565,6 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String shopNotCreated;
-
-    @Values(
-            {
-                    @Value(value = "%prefix%&eVocê será teleportado para a loja em %time% segundos!.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
-            }
-    )
-    public static String shopTimeToTeleport;
 
     @Values(
             {
@@ -1154,13 +1160,7 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String homesNameDontExist;
-    @Values(
-            {
-                    @Value(value = "%prefix%&eEm %time% segundos você será teleportado para %home%.", lang = LangTypes.PT_BR),
-                    @Value(value = "%prefix%&eIn %time% seconds you will be teleported to %home%.", lang = LangTypes.EN_US)
-            }
-    )
-    public static String homesTimeToTeleport;
+
     @Values(
             {
                     @Value(value = "%prefix%&eVocê acaba de apagar sua home %home%.", lang = LangTypes.PT_BR),
@@ -1231,13 +1231,6 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String homesTeleportedOther;
-    @Values(
-            {
-                    @Value(value = "%prefix%&cVocê já está esperando um teleporte.", lang = LangTypes.PT_BR),
-                    @Value(value = "%prefix%&cYou are already expecting a teleport.", lang = LangTypes.EN_US)
-            }
-    )
-    public static String homesInTeleport;
 
     //warps
     @Values(
@@ -1261,13 +1254,7 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String warpsNameDontExist;
-    @Values(
-            {
-                    @Value(value = "%prefix%&eEm %time% segundos você será teleportado para warp %warp%.", lang = LangTypes.PT_BR),
-                    @Value(value = "%prefix%&eIn %time% seconds you will be teleported to warp %warp%.", lang = LangTypes.EN_US)
-            }
-    )
-    public static String warpsTimeToTeleport;
+
     @Values(
             {
                     @Value(value = "%prefix%&eVocê foi teleportado com sucesso para warp %warp%.", lang = LangTypes.PT_BR),
@@ -1694,13 +1681,6 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String spawnSetMessage;
-    @Values(
-            {
-                    @Value(value = "%prefix%&eEm %time% segundos você será teleportado para o spawn.", lang = LangTypes.PT_BR),
-                    @Value(value = "%prefix%&eIn %time% seconds you will be teleported to spawn.", lang = LangTypes.EN_US)
-            }
-    )
-    public static String spawnTimeToTeleport;
     @Values(
             {
                     @Value(value = "%prefix%&cVocê já está esperando um teleporte.", lang = LangTypes.PT_BR),

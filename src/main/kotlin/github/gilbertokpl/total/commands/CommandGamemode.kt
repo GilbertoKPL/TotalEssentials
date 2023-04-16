@@ -30,7 +30,7 @@ class CommandGamemode : github.gilbertokpl.core.external.command.CommandCreator(
 
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val playerGameMode = PlayerUtil.getGamemodeNumber(args[0])
+        val playerGameMode = PlayerUtil.getGameModeNumber(args[0])
 
         if (args.size == 1 && s is Player) {
 
@@ -96,7 +96,7 @@ class CommandGamemode : github.gilbertokpl.core.external.command.CommandCreator(
 
     private fun setGamemode(gm: GameMode, player: Player) {
 
-        val gamemodeNumber = PlayerUtil.getNumberGamemode(gm)
+        val gamemodeNumber = PlayerUtil.getNumberGameMode(gm)
 
         PlayerData.gameModeCache[player] = gamemodeNumber
 

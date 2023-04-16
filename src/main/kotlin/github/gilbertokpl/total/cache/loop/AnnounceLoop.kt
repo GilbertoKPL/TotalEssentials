@@ -1,7 +1,6 @@
 package github.gilbertokpl.total.cache.loop
 
 import  github.gilbertokpl.total.cache.internal.OtherConfig
-import github.gilbertokpl.total.util.PlayerUtil
 import github.gilbertokpl.total.util.TaskUtil
 import org.bukkit.Bukkit
 import java.util.concurrent.TimeUnit
@@ -22,7 +21,7 @@ internal object AnnounceLoop {
     fun start(maxAnnouncements: Int, intervalInMinutes: Int) {
         maxAnnouncementIndex = maxAnnouncements
 
-        TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay(::sendAnnouncement, intervalInMinutes * 20L, intervalInMinutes * 20L, TimeUnit.MINUTES)
+        TaskUtil.getInternalExecutor().scheduleWithFixedDelay(::sendAnnouncement, intervalInMinutes * 20L, intervalInMinutes * 20L, TimeUnit.MINUTES)
     }
 
     /**

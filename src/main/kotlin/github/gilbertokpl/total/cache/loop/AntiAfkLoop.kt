@@ -21,7 +21,7 @@ object AntiAfkLoop {
      * Inicia o loop anti-AFK.
      */
     fun start() {
-        TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay(::checkPlayersAfk, TIME_TO_CHECK_MINUTES, TIME_TO_CHECK_MINUTES, TimeUnit.MINUTES)
+        TaskUtil.getInternalExecutor().scheduleWithFixedDelay(::checkPlayersAfk, TIME_TO_CHECK_MINUTES, TIME_TO_CHECK_MINUTES, TimeUnit.MINUTES)
     }
 
     /**

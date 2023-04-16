@@ -19,12 +19,6 @@ internal object MainUtil {
         return list[rand.nextInt(list.size)]
     }
 
-    fun fileDownloader(url: String): InputStream? {
-        val stream = URL(url).openConnection()
-        stream.connect()
-        return stream.getInputStream()
-    }
-
     fun consoleMessage(message: String) {
         println("${ColorUtil.CYAN.color}[${github.gilbertokpl.total.TotalEssentials.instance.name}]${ColorUtil.RESET.color} $message")
     }

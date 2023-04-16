@@ -5,6 +5,7 @@ import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.PlayerUtil
 import github.gilbertokpl.total.util.TaskUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -101,45 +102,8 @@ class CommandHome : github.gilbertokpl.core.external.command.CommandCreator("hom
             return false
         }
 
-        val time = MainConfig.homesTimeToTeleport
+        PlayerUtil.teleportWithTime(p, loc, MainConfig.homesTimeToTeleport, LangConfig.homesTeleported.replace("%home%", nameHome), nameHome)
 
-        if (p.hasPermission("totalessentials.bypass.teleport") || time == 0) {
-            p.teleport(loc)
-            p.sendMessage(
-                LangConfig.homesTeleported.replace(
-                    "%home%",
-                    nameHome
-                )
-            )
-            return false
-        }
-
-        //teleport
-        val inTeleport = PlayerData.inTeleport[p]
-        if (inTeleport != null && inTeleport) {
-            p.sendMessage(LangConfig.homesInTeleport)
-            return false
-        }
-
-        val exe = TaskUtil.teleportExecutor(time)
-
-        PlayerData.inTeleport[p] = true
-
-        exe {
-            PlayerData.inTeleport[p] = false
-            p.teleport(PlayerData.homeCache[p]?.get(nameHome) ?: return@exe)
-            p.sendMessage(
-                LangConfig.homesTeleported.replace(
-                    "%home%",
-                    nameHome
-                )
-            )
-        }
-
-        p.sendMessage(
-            LangConfig.homesTimeToTeleport.replace("%home%", nameHome)
-                .replace("%time%", time.toString())
-        )
         return false
     }
 }

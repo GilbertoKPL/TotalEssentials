@@ -12,7 +12,7 @@ class WeatherChange : Listener {
             try {
                 disableRain(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

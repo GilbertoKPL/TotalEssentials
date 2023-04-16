@@ -14,7 +14,7 @@ class EntityChangeBlock : Listener {
             try {
                 blockPlayerBreakPlantation(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

@@ -34,19 +34,19 @@ class PlayerPreCommand : Listener {
             try {
                 vanishPreCommandEvent(e, split)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
         try {
             blockCommands(e, split)
         } catch (e: Throwable) {
-
+            e.printStackTrace()
         }
         if (MainConfig.discordbotConnectDiscordChat) {
             try {
                 discordChatEvent(e, split)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

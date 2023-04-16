@@ -14,7 +14,7 @@ class EntityDamage : Listener {
             try {
                 blockPlayerFallInVoid(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

@@ -14,7 +14,7 @@ class EntitySignChange : Listener {
             try {
                 signColor(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

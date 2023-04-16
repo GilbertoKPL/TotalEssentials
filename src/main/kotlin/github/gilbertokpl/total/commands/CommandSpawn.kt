@@ -6,6 +6,7 @@ import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.PlayerUtil
 import github.gilbertokpl.total.util.TaskUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -67,36 +68,7 @@ class CommandSpawn : github.gilbertokpl.core.external.command.CommandCreator("sp
             return false
         }
 
-        val inTeleport = PlayerData.inTeleport[s]
-        if (inTeleport != null && inTeleport) {
-            s.sendMessage(LangConfig.homesInTeleport)
-            return false
-        }
-
-        val time = MainConfig.spawnTimeToTeleport
-
-        if (s.hasPermission("totalessentials.bypass.teleport") || time == 0) {
-            s.teleport(spawnCache)
-            s.sendMessage(LangConfig.spawnMessage)
-            return false
-        }
-
-        s.sendMessage(
-            LangConfig.spawnTimeToTeleport.replace(
-                "%time%",
-                time.toString()
-            )
-        )
-
-        val exe = TaskUtil.teleportExecutor(time)
-
-        PlayerData.inTeleport[s] = true
-
-        exe {
-            PlayerData.inTeleport[s] = false
-            s.teleport(spawnCache)
-            s.sendMessage(LangConfig.spawnMessage)
-        }
+        PlayerUtil.teleportWithTime(s, spawnCache, MainConfig.spawnTimeToTeleport, LangConfig.spawnMessage, "spawn")
 
         return false
     }

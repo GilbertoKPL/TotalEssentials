@@ -13,7 +13,7 @@ class InventoryOpen : Listener {
             try {
                 blockOpenInventory(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

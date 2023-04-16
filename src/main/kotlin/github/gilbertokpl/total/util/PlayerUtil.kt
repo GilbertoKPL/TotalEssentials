@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.util
 
+import github.gilbertokpl.core.external.task.SynchronizationContext
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.ShopData
@@ -7,6 +8,7 @@ import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.apache.commons.io.IOUtils
 import org.bukkit.GameMode
+import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.json.JSONObject
 import java.net.URL
@@ -35,32 +37,24 @@ internal object PlayerUtil {
         return amount.size
     }
 
-    fun getNumberGamemode(gamemode: GameMode): Int {
-        try {
-            if (gamemode == GameMode.SURVIVAL) {
-                return 0
-            }
-            if (gamemode == GameMode.CREATIVE) {
-                return 1
-            }
-            if (gamemode == GameMode.ADVENTURE) {
-                return 2
-            }
-            if (gamemode == GameMode.SPECTATOR) {
-                return 3
+    fun getNumberGameMode(gameMode: GameMode): Int {
+        return try {
+            when (gameMode) {
+                GameMode.SURVIVAL -> 0
+                GameMode.CREATIVE -> 1
+                GameMode.ADVENTURE -> 2
+                GameMode.SPECTATOR -> 3
             }
         } catch (e: Throwable) {
-            if (gamemode == GameMode.SURVIVAL) {
-                return 0
-            }
-            if (gamemode == GameMode.CREATIVE) {
-                return 1
+            when (gameMode) {
+                GameMode.SURVIVAL -> 0
+                GameMode.CREATIVE -> 1
+                else -> { 0 }
             }
         }
-        return 1
     }
 
-    fun getGamemodeNumber(number: String): GameMode {
+    fun getGameModeNumber(number: String): GameMode {
         return when (number.lowercase()) {
             "0" -> GameMode.SURVIVAL
             "1" -> GameMode.CREATIVE
@@ -71,7 +65,6 @@ internal object PlayerUtil {
             } catch (e: NoSuchMethodError) {
                 GameMode.SURVIVAL
             }
-
             "spectactor" -> try {
                 GameMode.SPECTATOR
             } catch (e: NoSuchMethodError) {
@@ -119,36 +112,38 @@ internal object PlayerUtil {
     }
 
     fun shopTeleport(p: Player, shop: String) {
-        //teleport
+        teleportWithTime(p, ShopData.shopLocation[shop]!!, MainConfig.homesTimeToTeleport, LangConfig.shopTeleport.replace("%player%", shop), "shop")
+    }
 
-        val time = MainConfig.homesTimeToTeleport
-
+    fun teleportWithTime(p: Player, location: Location, time: Int, message: String?, locationName: String) {
         if (p.hasPermission("totalessentials.bypass.teleport") || time == 0) {
-            p.teleport(ShopData.shopLocation[shop]!!)
-            p.sendMessage(LangConfig.shopTeleport.replace("%player%", shop))
+            p.teleport(location)
+            if (message != null) {
+                p.sendMessage(message)
+            }
             return
         }
-
         val inTeleport = PlayerData.inTeleport[p]
 
         if (inTeleport != null && inTeleport) {
-            p.sendMessage(LangConfig.homesInTeleport)
+            p.sendMessage(LangConfig.generalInTeleport)
             return
         }
 
-        val exe = TaskUtil.teleportExecutor(time)
-
-        PlayerData.inTeleport[p] = true
-
-        exe {
-            PlayerData.inTeleport[p] = false
-            p.teleport(ShopData.shopLocation[shop] ?: return@exe)
-            p.sendMessage(LangConfig.shopTeleport.replace("%player%", shop))
+        TotalEssentials.basePlugin.getTask().async {
+            waitFor(time.toLong() * 20)
+            try {
+                switchContext(SynchronizationContext.SYNC)
+                PlayerData.inTeleport[p] = false
+                p.teleport(location)
+                p.sendMessage(message)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
         }
 
-        p.sendMessage(
-            LangConfig.shopTimeToTeleport.replace("%time%", time.toString())
-        )
+        p.sendMessage(LangConfig.generalTimeToTeleport.replace("%local%", locationName).replace("%time%", time.toString()))
+
     }
 
 }

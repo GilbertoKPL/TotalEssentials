@@ -13,7 +13,7 @@ class PlayerPortal : Listener {
             try {
                 blockPlayerTeleport(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

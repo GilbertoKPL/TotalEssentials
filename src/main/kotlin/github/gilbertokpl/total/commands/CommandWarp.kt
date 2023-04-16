@@ -6,6 +6,7 @@ import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.PlayerUtil
 import github.gilbertokpl.total.util.TaskUtil
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
@@ -104,45 +105,7 @@ class CommandWarp : github.gilbertokpl.core.external.command.CommandCreator("war
             return false
         }
 
-        val time = MainConfig.warpsTimeToTeleport
-
-        if (p.hasPermission("totalessentials.bypass.teleport") || time == 0) {
-            p.teleport(WarpData.warpLocation[warpName]!!)
-            p.sendMessage(
-                LangConfig.warpsTeleported.replace(
-                    "%warp%",
-                    warpName
-                )
-            )
-            return false
-        }
-
-        val inTeleport = PlayerData.inTeleport[p]
-        if (inTeleport != null && inTeleport) {
-            p.sendMessage(LangConfig.homesInTeleport)
-            return false
-        }
-
-        val exe = TaskUtil.teleportExecutor(time)
-
-        PlayerData.inTeleport[p] = true
-
-        exe {
-            PlayerData.inTeleport[p] = false
-            val loc = WarpData.warpLocation[warpName] ?: return@exe
-            p.teleport(loc)
-            s.sendMessage(
-                LangConfig.warpsTeleported.replace(
-                    "%warp%",
-                    warpName
-                )
-            )
-        }
-
-        s.sendMessage(
-            LangConfig.warpsTimeToTeleport.replace("%warp%", warpName)
-                .replace("%time%", time.toString())
-        )
+        PlayerUtil.teleportWithTime(p, WarpData.warpLocation[warpName]!!, MainConfig.warpsTimeToTeleport, LangConfig.warpsTeleported.replace("%warp%", warpName), warpName)
 
         return false
     }

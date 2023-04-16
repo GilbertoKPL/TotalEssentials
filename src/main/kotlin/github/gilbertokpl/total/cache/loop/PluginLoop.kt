@@ -5,13 +5,12 @@ import github.gilbertokpl.total.cache.internal.ShopInventory
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.MoneyUtil
 import github.gilbertokpl.total.util.TaskUtil
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object PluginLoop {
 
     fun start() {
-        TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
+        TaskUtil.getInternalExecutor().scheduleWithFixedDelay({
             refreshMoney()
             setupShopInventory()
             setupPlaytimeInventory()

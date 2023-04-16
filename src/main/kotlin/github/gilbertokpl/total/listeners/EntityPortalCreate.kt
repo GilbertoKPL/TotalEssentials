@@ -12,7 +12,7 @@ class EntityPortalCreate : Listener {
             try {
                 blockCreationPortal(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

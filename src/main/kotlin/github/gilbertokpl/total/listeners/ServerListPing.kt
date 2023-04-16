@@ -16,7 +16,7 @@ class ServerListPing : Listener {
             try {
                 motd(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

@@ -16,7 +16,7 @@ object ClearItemsLoop
      * Inicia o loop de limpeza de itens.
      */
     fun start() {
-        TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay(::clearItems, CLEAR_ITEMS_INTERVAL_MINUTES, CLEAR_ITEMS_INTERVAL_MINUTES, TimeUnit.MINUTES)
+        TaskUtil.getInternalExecutor().scheduleWithFixedDelay(::clearItems, CLEAR_ITEMS_INTERVAL_MINUTES, CLEAR_ITEMS_INTERVAL_MINUTES, TimeUnit.MINUTES)
     }
 
     /**

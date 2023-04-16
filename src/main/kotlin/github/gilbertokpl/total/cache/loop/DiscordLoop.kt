@@ -4,11 +4,8 @@ import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
-import github.gilbertokpl.total.util.ColorUtil
-import github.gilbertokpl.total.util.MainUtil
 import github.gilbertokpl.total.util.PlayerUtil
 import github.gilbertokpl.total.util.TaskUtil
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object DiscordLoop {
@@ -23,7 +20,7 @@ object DiscordLoop {
 
         start = true
 
-        TaskUtil.getAnnounceExecutor().scheduleWithFixedDelay({
+        TaskUtil.getInternalExecutor().scheduleWithFixedDelay({
             val online = PlayerUtil.getIntOnlinePlayers(false)
             val onlineTime = TotalEssentials.basePlugin.getTime().getOnlineTime()
             val currentTime = TotalEssentials.basePlugin.getTime().getCurrentDate()

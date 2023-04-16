@@ -19,21 +19,21 @@ class PlayerDeath : Listener {
             try {
                 setBackLocation(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
         if (MainConfig.messagesDeathmessagesMessage) {
             try {
                 deathMessage(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
         if (MainConfig.addonsPlayerPreventLoseXp) {
             try {
                 loseXP(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

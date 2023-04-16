@@ -13,7 +13,7 @@ class PlayerBedEnter : Listener {
             try {
                 blockEnterInBed(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

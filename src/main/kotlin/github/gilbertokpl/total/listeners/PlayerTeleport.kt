@@ -18,21 +18,21 @@ class PlayerTeleport : Listener {
             try {
                 setBackLocation(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
         if (MainConfig.antibugsBlockGoingEdgeEnderpearl) {
             try {
                 blockPassEdgeEnderPearl(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
         if (MainConfig.antibugsBlockPlayerGoToNetherCeiling) {
             try {
                 blockPassNetherCeiling(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }

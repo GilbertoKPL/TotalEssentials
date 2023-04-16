@@ -64,7 +64,7 @@ internal object OtherConfig {
             if (dif) {
                 announcementsListAnnounce = hash
                 if (MainConfig.announcementsEnabled) {
-                    TaskUtil.restartAnnounceExecutor()
+                    TaskUtil.restartInternalExecutor()
                     AnnounceLoop.start(
                         announce.size,
                         MainConfig.announcementsTime

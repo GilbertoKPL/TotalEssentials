@@ -15,13 +15,13 @@ class PlayerChangeWorld : Listener {
             try {
                 data(e)
             } catch (e: Throwable) {
-
+                e.printStackTrace()
             }
         }
     }
 
     private fun data(e: PlayerChangedWorldEvent) {
-        val gm = PlayerUtil.getGamemodeNumber(PlayerData.gameModeCache[e.player].toString())
+        val gm = PlayerUtil.getGameModeNumber(PlayerData.gameModeCache[e.player].toString())
         github.gilbertokpl.total.TotalEssentials.basePlugin.getTask().async {
             waitFor(20)
             if (gm != e.player.gameMode) {

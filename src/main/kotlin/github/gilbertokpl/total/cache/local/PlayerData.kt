@@ -1,7 +1,6 @@
 package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
-import github.gilbertokpl.total.cache.local.PlayerData.playTimeCache
 import github.gilbertokpl.total.cache.serializer.*
 import github.gilbertokpl.total.cache.sql.PlayerDataSQL
 import github.gilbertokpl.total.config.files.MainConfig
@@ -13,8 +12,6 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
-import java.time.Year
-import java.util.concurrent.TimeUnit
 
 object PlayerData : CacheBase{
     override var table: Table = PlayerDataSQL
@@ -81,7 +78,7 @@ object PlayerData : CacheBase{
             p.setDisplayName(nick)
         }
 
-        val gameModeName = PlayerUtil.getGamemodeNumber(gameModeCache[p].toString())
+        val gameModeName = PlayerUtil.getGameModeNumber(gameModeCache[p].toString())
 
         if (p.gameMode != gameModeName && gameModeName == GameMode.SURVIVAL) {
             p.gameMode = gameModeName
