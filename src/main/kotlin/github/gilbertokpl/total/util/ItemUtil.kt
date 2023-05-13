@@ -23,6 +23,7 @@ internal object ItemUtil {
         //get all time of kit
         val kitsCache = PlayerData.kitsCache[p] ?: return
         var timeAll = kitsCache[kit] ?: 0L
+
         timeAll += KitsData.kitTime[kit]!!
 
         // if time is remaining

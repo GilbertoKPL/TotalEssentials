@@ -22,10 +22,11 @@ class CommandLogin : github.gilbertokpl.core.external.command.CommandCreator("lo
             countdown = 0,
             permission = "totalessentials.commands.login",
             minimumSize = 1,
-            maximumSize = 1,
+            maximumSize = 2,
             usage = listOf(
                 "P_/login <senha>",
                 "totalessentials.commands.login.other_/login <player>",
+                "totalessentials.commands.login.ip_/login ip <player>",
             )
         )
     }
@@ -80,8 +81,14 @@ class CommandLogin : github.gilbertokpl.core.external.command.CommandCreator("lo
 
         }
 
-        @Suppress("USELESS_IS_CHECK")
-        if (s is Player && LoginData.isPlayerLoggedIn(s) && s.hasPermission("totalessentials.commands.login.other") || s is CommandSender) {
+        if (args[0] == "ip" && args.size == 2 && s.hasPermission("totalessentials.commands.login.ip") || args[0] == "ip" && args.size == 2 && s !is Player) {
+            val ip = LoginData.ipAddress[args[1]] ?: "0.0.0.0"
+            s.sendMessage(LangConfig.authIpMessage.replace("%ip%", ip))
+
+            return false
+        }
+
+        if (s is Player && LoginData.isPlayerLoggedIn(s) && s.hasPermission("totalessentials.commands.login.other") || s !is Player) {
 
             if (!LoginData.doesPlayerExist(args[0])) {
                 s.sendMessage(LangConfig.generalPlayerNotExist)

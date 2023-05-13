@@ -112,7 +112,7 @@ public class LangConfig implements DefaultLang {
     public static String generalInTeleport;
     @Values(
             {
-                    @Value(value = "%prefix%&eVocê será teleportado para -> %local% loja em %time% segundos!.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&eVocê será teleportado para -> %local% em %time% segundos!.", lang = LangTypes.PT_BR),
                     @Value(value = "", lang = LangTypes.EN_US)
             }
     )
@@ -431,6 +431,14 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String authOtherAlreadyLogged;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aÚltimo ip logado : %ip%!", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String authIpMessage;
 
     //PLAYTIME
 

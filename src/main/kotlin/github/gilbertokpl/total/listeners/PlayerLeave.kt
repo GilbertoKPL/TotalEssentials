@@ -45,8 +45,22 @@ class PlayerLeave : Listener {
         try {
             if (MainConfig.playtimeActivated) {
                 if (PlayerData.playTimeCache[e.player] != null) {
-                    PlayerData.playTimeCache[e.player] =
-                        (PlayerData.playTimeCache[e.player] ?: 0L) + (System.currentTimeMillis() - (PlayerData.playtimeLocal[e.player] ?: System.currentTimeMillis()))
+
+                    val time = PlayerData.playTimeCache[e.player]!!
+
+                    val timePlayed = PlayerData.playtimeLocal[e.player] ?: return
+
+                    var newTime = time + (System.currentTimeMillis() - timePlayed)
+
+                    if (time > 94608000000) {
+                        newTime = time
+                    }
+
+                    if (newTime > 94608000000) {
+                        newTime = 518400000
+                    }
+
+                    PlayerData.playTimeCache[e.player] = newTime
                 } else {
                     PlayerData.playTimeCache[e.player] = 0L
                 }

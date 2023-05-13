@@ -61,7 +61,7 @@ object PlayerData : CacheBase{
         backLocation[entity] = SpawnData.spawnLocation["spawn"]
             ?: Location(github.gilbertokpl.total.TotalEssentials.instance.server.getWorld("world"), 1.0, 1.0, 1.0)
         speedCache[entity] = 1
-        moneyCache[entity] = 0.0
+        moneyCache[entity] = MainConfig.moneyDefault?.toDouble() ?: 0.0
         afk[entity] = 1
         playTimeCache[entity] = 0
         discordCache[entity] = 0

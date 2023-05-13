@@ -236,7 +236,7 @@ class InventoryClick : Listener {
             }
             if (number == 44) {
                 if (meta.displayName == LangConfig.kitsGetIcon) {
-                    ItemUtil.pickupKit(p, inventoryName[1])
+                    ItemUtil.pickupKit(p, inventoryName[1].lowercase())
                     p.closeInventory()
                     return true
                 }

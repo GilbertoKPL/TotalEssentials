@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.10"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    kotlin("jvm") version "1.8.21"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 val base = "github.gilbertokpl.library"
@@ -38,52 +38,52 @@ dependencies {
 
 
     //exposed
-    compileOnly("org.jetbrains.exposed:exposed-core:0.41.1") {
+    implementation("org.jetbrains.exposed:exposed-core:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-dao:0.41.1") {
+    implementation("org.jetbrains.exposed:exposed-dao:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.41.1") {
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1") {
         exclude("org.slf4j", "slf4j-api")
     }
 
     //H2 database
-    compileOnly("com.h2database:h2:2.1.214")
+    implementation("com.h2database:h2:2.1.214")
 
     //Mysql with MariaDB driver database
-    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.1.3")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.4")
 
     //implementation to mysql - MariaDB
-    compileOnly("com.zaxxer:HikariCP:4.0.3") {
+    implementation("com.zaxxer:HikariCP:4.0.3") {
             exclude("org.slf4j", "slf4j-api")
     }
 
     //remove all connections of slf4
-    compileOnly("org.slf4j:slf4j-nop:2.0.5")
+    implementation("org.slf4j:slf4j-nop:2.0.5")
 
     //simple yaml to help in yaml
-    compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.7.3") {
+    implementation("me.carleslc.Simple-YAML:Simple-Yaml:1.7.3") {
         exclude("org.slf4j", "slf4j-api")
     }
 
     //host info
-    compileOnly("com.github.oshi:oshi-core:6.4.1") {
+    implementation("com.github.oshi:oshi-core:6.4.1") {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21")
 
-    compileOnly("net.dv8tion:JDA:5.0.0-beta.6") {
+    implementation("net.dv8tion:JDA:5.0.0-beta.9") {
         exclude("club.minnced","opus-java")
         exclude("org.slf4j", "slf4j-api")
     }
 
-    compileOnly("commons-io:commons-io:2.11.0")
+    implementation("commons-io:commons-io:2.11.0")
 
-    compileOnly("org.json:json:20230227")
+    implementation("org.json:json:20230227")
 
 
 
