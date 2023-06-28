@@ -56,7 +56,7 @@ class CorePlugin(pl: Plugin) {
     private val inventoryInstance = Inventory(this)
 
     //obf
-    private val encryptInstance = Encrypt(this)
+    private val encryptInstance = Encrypt()
 
     fun startConfig(configPackage: String) {
         mainPath = plugin.dataFolder.path

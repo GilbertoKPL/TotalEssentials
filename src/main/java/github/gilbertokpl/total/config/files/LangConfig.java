@@ -1890,42 +1890,35 @@ public class LangConfig implements DefaultLang {
     //money
     @Values(
             {
-                    @Value(value = "%prefix%&eVocê tem %money% %unity%.", lang = LangTypes.PT_BR),
-                    @Value(value = "%prefix%&eYou have %money% %unity%.", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eVocê tem %unity% %money%.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&eYou have %unity% %money%.", lang = LangTypes.EN_US)
             }
     )
     public static String moneyMessage;
     @Values(
             {
-                    @Value(value = "%prefix%&eO %player% tem %money% %unity%.", lang = LangTypes.PT_BR),
-                    @Value(value = "%prefix%&eThe %player% has %money% %unity%.", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eO %player% tem %unity% %money%.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&eThe %player% has %unity% %money%.", lang = LangTypes.EN_US)
             }
     )
     public static String moneyMessageOther;
     @Values(
             {
-                    @Value(value = "real", lang = LangTypes.PT_BR),
-                    @Value(value = "bal", lang = LangTypes.EN_US)
+                    @Value(value = "$ ", lang = LangTypes.PT_BR),
+                    @Value(value = "$ ", lang = LangTypes.EN_US)
             }
     )
-    public static String moneySingular;
+    public static String moneySymbol;
     @Values(
             {
-                    @Value(value = "reais", lang = LangTypes.PT_BR),
-                    @Value(value = "balance", lang = LangTypes.EN_US)
-            }
-    )
-    public static String moneyPlural;
-    @Values(
-            {
-                    @Value(value = "%prefix%&cVocê pagou %money% %unity% para %player%.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cVocê pagou %unity% %money% para %player%.", lang = LangTypes.PT_BR),
                     @Value(value = "%prefix%&cYou paid %money% %unity% to %player%.", lang = LangTypes.EN_US)
             }
     )
     public static String moneyPay;
     @Values(
             {
-                    @Value(value = "%prefix%&aVocê recebeu %money% %unity% do %player%.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aVocê recebeu %unity% %money% do %player%.", lang = LangTypes.PT_BR),
                     @Value(value = "%prefix%&aYou received %money% %unity% from %player%.", lang = LangTypes.EN_US)
             }
     )
@@ -1939,49 +1932,49 @@ public class LangConfig implements DefaultLang {
     public static String moneyPaySame;
     @Values(
             {
-                    @Value(value = "%prefix%&eVocê setou o dinheiro do %player% para %money% %unity%.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&eVocê setou o dinheiro do %player% para %unity% %money%.", lang = LangTypes.PT_BR),
                     @Value(value = "%prefix%&eYou have set %player% money to %money% %unity%.", lang = LangTypes.EN_US)
             }
     )
     public static String moneySet;
     @Values(
             {
-                    @Value(value = "%prefix%&cAlguém do além setou seu dinheiro para %money% %unity%.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cAlguém do além setou seu dinheiro para %unity% %money%.", lang = LangTypes.PT_BR),
                     @Value(value = "%prefix%&cSomeone from beyond set their money to %money% %unity%.", lang = LangTypes.EN_US)
             }
     )
     public static String moneySetOther;
     @Values(
             {
-                    @Value(value = "%prefix%&cVocê tirou %money% %unity% do %player%.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cVocê tirou %unity% %money% do %player%.", lang = LangTypes.PT_BR),
                     @Value(value = "%prefix%&cYou took %money% %unity% from %player%.", lang = LangTypes.EN_US)
             }
     )
     public static String moneyTake;
     @Values(
             {
-                    @Value(value = "%prefix%&cAlguém do além tirou do seu dinheiro %money% %unity%.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cAlguém do além tirou do seu dinheiro %unity% %money%.", lang = LangTypes.PT_BR),
                     @Value(value = "%prefix%&cSomeone from beyond took %money% %unity% of your money.", lang = LangTypes.EN_US)
             }
     )
     public static String moneyTakeOther;
     @Values(
             {
-                    @Value(value = "%prefix%&aVocê deu %money% %unity% ao %player%.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aVocê deu %unity% %money% ao %player%.", lang = LangTypes.PT_BR),
                     @Value(value = "%prefix%&aYou gave %money% %unity% to %player%.", lang = LangTypes.EN_US)
             }
     )
     public static String moneyAdd;
     @Values(
             {
-                    @Value(value = "%prefix%&aAlguém do além adicionou ao seu dinheiro %money% %unity%.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aAlguém do além adicionou ao seu dinheiro %unity% %money%.", lang = LangTypes.PT_BR),
                     @Value(value = "%prefix%&aSomeone from beyond added %money% %unity% to your money.", lang = LangTypes.EN_US)
             }
     )
     public static String moneyAddOther;
     @Values(
             {
-                    @Value(value = "%prefix%&cVocê não tem dinheiro suficiente, falta %money% %unity%.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cVocê não tem dinheiro suficiente, falta %unity% %money%.", lang = LangTypes.PT_BR),
                     @Value(value = "%prefix%&cYou don't have enough money, you lack %money% %unity%.", lang = LangTypes.EN_US)
             }
     )
@@ -1995,7 +1988,7 @@ public class LangConfig implements DefaultLang {
     public static String moneyTopMessage;
     @Values(
             {
-                    @Value(value = "&9> &e%position% - %player%, &a%money% &e%unity%.", lang = LangTypes.PT_BR),
+                    @Value(value = "&9> &e%position% - %player%, &e%unity% &a%money%.", lang = LangTypes.PT_BR),
                     @Value(value = "&9> &e%position% - %player%, &a%money% &e%unity%.", lang = LangTypes.EN_US)
             }
     )

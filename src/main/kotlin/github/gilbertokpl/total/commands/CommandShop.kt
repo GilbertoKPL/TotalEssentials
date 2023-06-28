@@ -14,7 +14,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
+class
+CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(

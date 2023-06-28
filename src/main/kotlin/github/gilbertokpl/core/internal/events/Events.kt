@@ -3,19 +3,17 @@ package github.gilbertokpl.core.internal.events
 import github.gilbertokpl.core.external.CorePlugin
 import org.bukkit.event.Listener
 
-class Events(lf: CorePlugin) {
-
-    private val corePlugin = lf
+class Events(private val corePlugin: CorePlugin) {
 
     fun start(packageName: String) {
         val classes = corePlugin.getReflection().getClasses(packageName)
-        classes.forEach {
+        classes.forEach { clazz ->
             try {
-                corePlugin.plugin.server.pluginManager.registerEvents(
-                    it.getDeclaredConstructor().newInstance() as Listener,
-                    corePlugin.plugin
-                )
-            } catch (e: NoClassDefFoundError) {
+                val instance = clazz.getDeclaredConstructor().newInstance() as? Listener
+                instance?.let {
+                    corePlugin.plugin.server.pluginManager.registerEvents(it, corePlugin.plugin)
+                }
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }

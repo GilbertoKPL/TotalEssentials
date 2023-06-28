@@ -6,79 +6,75 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 
-internal class InternalCommand(commandCreator: CommandCreator) {
-
-    private val cc = commandCreator
+internal class InternalCommand(private val commandCreator: CommandCreator) {
 
     fun execute(s: CommandSender, label: String, args: Array<out String>): Boolean {
+        val configMessages = commandCreator.basePlugin?.getConfig()?.messages()
 
-        if (s !is Player && cc.target == CommandTarget.PLAYER) {
-            s.sendMessage(cc.basePlugin?.getConfig()?.messages()?.generalOnlyPlayerCommand!!)
+        if (s !is Player && commandCreator.target == CommandTarget.PLAYER) {
+            s.sendMessage(configMessages?.generalOnlyPlayerCommand!!)
             return true
         }
 
-        if (s is Player && cc.target == CommandTarget.CONSOLE) {
-            s.sendMessage(cc.basePlugin?.getConfig()?.messages()?.generalOnlyConsoleCommand!!)
+        if (s is Player && commandCreator.target == CommandTarget.CONSOLE) {
+            s.sendMessage(configMessages?.generalOnlyConsoleCommand!!)
             return true
         }
 
-        if (s is Player && !cc.permission.isNullOrEmpty() && !s.hasPermission(cc.permission!!)) {
-            s.sendMessage(cc.basePlugin?.getConfig()?.messages()?.generalNotPerm!!)
+        if (s is Player && !commandCreator.permission.isNullOrEmpty() && !s.hasPermission(commandCreator.permission!!)) {
+            s.sendMessage(configMessages?.generalNotPerm!!)
             return true
         }
 
         var error = false
 
-        if (cc.maximumSize != null && args.size > cc.maximumSize!! || cc.minimumSize != null && args.size < cc.minimumSize!!) {
+        if (commandCreator.maximumSize != null && args.size > commandCreator.maximumSize!! ||
+            commandCreator.minimumSize != null && args.size < commandCreator.minimumSize!!
+        ) {
             error = true
         } else {
-            if (cc.countdown != null && s is Player) {
-                val time = cc.hashCountDown.getOrDefault(s, 0)
+            if (commandCreator.countdown != null && s is Player) {
+                val time = commandCreator.hashCountDown.getOrDefault(s, 0)
 
                 if (time != 0L && System.currentTimeMillis() < time) {
+                    val timeString = commandCreator.basePlugin?.getTime()
+                        ?.convertMillisToString(time - System.currentTimeMillis(), true)
                     s.sendMessage(
-                        cc.basePlugin?.getConfig()?.messages()?.generalCooldownMoreTime!!.replace(
-                            "%time%",
-                            cc.basePlugin?.getTime()!!.convertMillisToString(time - System.currentTimeMillis(), true)
-                        )
+                        configMessages?.generalCooldownMoreTime!!.replace("%time%", timeString!!)
                     )
                     return true
                 }
             }
-            if (cc.funCommand(s, label, args)) {
+            if (commandCreator.funCommand(s, label, args)) {
                 error = true
             } else {
-                if (cc.countdown != null && s is Player) {
-                    cc.hashCountDown[s] = System.currentTimeMillis() + (cc.countdown!! * 1000)
+                if (commandCreator.countdown != null && s is Player) {
+                    commandCreator.hashCountDown[s] = System.currentTimeMillis() + (commandCreator.countdown!! * 1000)
                 }
             }
         }
 
         if (error) {
-            s.sendMessage(cc.basePlugin?.getConfig()?.messages()?.generalCommandsUsage!!)
-            for (it in cc.commandUsage) {
+            val sb = StringBuilder()
+            sb.append(configMessages?.generalCommandsUsage!!).append("\n")
+            for (it in commandCreator.commandUsage) {
                 val to = it.split("_")
                 if (to.size == 1) {
-                    s.sendMessage(
-                        cc.basePlugin?.getConfig()!!.messages().generalCommandsUsageList!!.replace(
-                            "%command%",
-                            it
-                        )
-                    )
+                    sb.append(
+                        configMessages.generalCommandsUsageList!!.replace("%command%", it)
+                    ).append("\n")
                     continue
                 }
-                if (to[0] == "C" && s is Player || to[0] == "P" && s !is Player) {
+                if ((to[0] == "C" && s is Player) || (to[0] == "P" && s !is Player)) {
                     continue
                 }
                 if (s !is Player || s.hasPermission(to[0])) {
-                    s.sendMessage(
-                        cc.basePlugin?.getConfig()?.messages()!!.generalCommandsUsageList!!.replace(
-                            "%command%",
-                            to[1]
-                        )
-                    )
+                    sb.append(
+                        configMessages.generalCommandsUsageList!!.replace("%command%", to[1])
+                    ).append("\n")
                 }
             }
+            s.sendMessage(sb.toString())
         }
 
         return true

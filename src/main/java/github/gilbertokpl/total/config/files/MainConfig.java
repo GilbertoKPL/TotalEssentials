@@ -516,6 +516,13 @@ public class MainConfig implements DefaultConfig {
             }
     )
     public static Integer moneyDefault = 1000;
+    @Comments(
+            {
+                    @Comment(annotations = "mostre o dinheiro em formato extenso.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean moneyExtended = true;
 
     //nickCommand
     @PrimaryComments(

@@ -5,8 +5,8 @@ import github.gilbertokpl.core.external.config.def.DefaultConfig
 import github.gilbertokpl.core.external.config.def.DefaultLang
 import github.gilbertokpl.core.internal.config.InternalConfig
 
-class Config(lf: CorePlugin) {
-    private val configInstance = InternalConfig(lf)
+class Config(corePlugin: CorePlugin) {
+    private val configInstance = InternalConfig(corePlugin)
 
     fun configs(): DefaultConfig {
         return configInstance.configs

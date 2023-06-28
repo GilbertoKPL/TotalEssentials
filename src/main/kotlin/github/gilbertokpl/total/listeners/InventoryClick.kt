@@ -94,12 +94,12 @@ class InventoryClick : Listener {
     //vips event
     private fun vipGuiEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
-        val inventoryName = e.view.title.split(" ")
+        val inventoryName = try { e.view.title.split(" ") } catch (e: NullPointerException) { return false }
         if (inventoryName[0] == "§eVipItens") {
             val p = e.whoClicked as Player
             e.isCancelled = true
             if (e.rawSlot != e.slot) {
-                return false;
+                return false
             }
             if (e.click.isLeftClick) {
 
@@ -137,7 +137,7 @@ class InventoryClick : Listener {
     //playtime event
     private fun playtimeGuiEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
-        val inventoryName = e.view.title.split(" ")
+        val inventoryName = try { e.view.title.split(" ") } catch (e: NullPointerException) { return false }
         if (inventoryName[0] == "§ePLAYTIME") {
             val p = e.whoClicked as Player
             e.isCancelled = true
@@ -159,7 +159,7 @@ class InventoryClick : Listener {
     //shop event
     private fun shopGuiEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
-        val inventoryName = e.view.title.split(" ")
+        val inventoryName = try { e.view.title.split(" ") } catch (e: NullPointerException) { return false }
         if (inventoryName[0] == "§eSHOP") {
             val p = e.whoClicked as Player
             e.isCancelled = true
@@ -218,7 +218,7 @@ class InventoryClick : Listener {
     //kit event
     private fun kitGuiEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
-        val inventoryName = e.view.title.split(" ")
+        val inventoryName = try { e.view.title.split(" ") } catch (e: NullPointerException) { return false }
         if (inventoryName[0] == "§eKit") {
             val meta = e.currentItem!!.itemMeta ?: return false
             val p = e.whoClicked as Player
@@ -275,8 +275,7 @@ class InventoryClick : Listener {
     //editkit event
     private fun editKitInventoryClickEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
-        e.view.title
-        val inventoryName = e.view.title.split(" ")
+        val inventoryName = try { e.view.title.split(" ") } catch (e: NullPointerException) { return false }
         if (inventoryName[0].equals("§eEditKit", true)) {
             e.isCancelled = true
             val number = e.slot
@@ -310,6 +309,7 @@ class InventoryClick : Listener {
                 DataManager.playerEditKitChat[p] = "weight-${inventoryName[1]}"
             }
 
+            return true
         }
 
         return false

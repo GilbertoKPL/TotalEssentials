@@ -14,6 +14,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import java.util.*
 
 internal object KitGuiInventory {
 
@@ -32,8 +33,7 @@ internal object KitGuiInventory {
             val kitName = kitFakeName[kit.key]?.takeIf { it.isNotEmpty() } ?: kit.key
 
             val itemName = LangConfig.kitsInventoryItemsName.replace("%kitrealname%", kitName)
-            val item = try { KitsData.kitItems[kit.key]?.get(0)?.let { ItemStack(it) } ?: ItemStack(Material.CHEST) } catch (e : Exception ) { ItemStack(Material.CHEST) }
-
+            val item = KitsData.kitItems[kit.key]?.getOrNull(0) ?: ItemStack(Material.CHEST)
 
             val meta = item.itemMeta
             item.amount = 1
@@ -48,6 +48,9 @@ internal object KitGuiInventory {
             currentSlot++
             if (currentSlot == 27) {
                 inventory.setItem(27, createBackItem(currentPage))
+                for (i in 28..34) {
+                    inventory.setItem(i, GLASS_MATERIAL)
+                }
                 inventory.setItem(35, createNextItem(currentPage, sortedKits.size))
                 kitInventoryCache[currentPage] = inventory
                 currentPage++
@@ -58,8 +61,8 @@ internal object KitGuiInventory {
 
         if (currentSlot > 0) {
             inventory.setItem(27, if (currentPage > 1) createBackItem(currentPage) else GLASS_MATERIAL)
-            for (slot in 28..35) {
-                inventory.setItem(slot, GLASS_MATERIAL)
+            for (i in 28..35) {
+                inventory.setItem(i, GLASS_MATERIAL)
             }
             kitInventoryCache[currentPage] = inventory
         }
@@ -85,18 +88,18 @@ internal object KitGuiInventory {
                         if (timeAll <= System.currentTimeMillis() || timeAll == 0L || player.hasPermission("totalessentials.bypass.kitcatch")) {
                             setInventoryItem(i, Material.ARROW, LangConfig.kitsGetIcon, inventory)
                         } else {
-                            val array = ArrayList<String>()
+                            val array = arrayOfNulls<String>(LangConfig.kitsGetIconLoreTime.size)
                             val remainingTime = timeAll - System.currentTimeMillis()
-                            for (j in LangConfig.kitsGetIconLoreTime) {
-                                array.add(j.replace("%time%", github.gilbertokpl.total.TotalEssentials.basePlugin.getTime().convertMillisToString(remainingTime, MainConfig.kitsUseShortTime)))
+                            for (j in LangConfig.kitsGetIconLoreTime.indices) {
+                                array[j] = LangConfig.kitsGetIconLoreTime[j].replace("%time%", github.gilbertokpl.total.TotalEssentials.basePlugin.getTime().convertMillisToString(remainingTime, MainConfig.kitsUseShortTime))
                             }
-                            setInventoryItem(i, Material.ARROW, LangConfig.kitsGetIconNotCatch, array, inventory)
+                            setInventoryItem(i, Material.ARROW, LangConfig.kitsGetIconNotCatch, array.toList().requireNoNulls(), inventory)
                         }
                     } else {
                         setInventoryItem(i, Material.ARROW, LangConfig.kitsGetIconNotCatch, LangConfig.kitsGetIconLoreNotPerm, inventory)
                     }
                 }
-                else -> GLASS_MATERIAL
+                else -> inventory.setItem(i, GLASS_MATERIAL)
             }
         }
         player.openInventory(inventory)

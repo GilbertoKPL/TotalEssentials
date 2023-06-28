@@ -2,35 +2,23 @@ package github.gilbertokpl.core.internal.cache
 
 import github.gilbertokpl.core.external.cache.convert.SerializerBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
-import okhttp3.internal.toImmutableList
-import okhttp3.internal.toImmutableMap
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 internal class HashMapCacheBuilder<T, V, K>(
-    t: Table,
-    pc: Column<String>,
-    c: Column<T>,
-    classConverter: SerializerBase<HashMap<V, K>, T>
-) :
-    CacheBuilderV2<HashMap<V, K>, V> {
-
-    private val conv = classConverter
-
-    private val table = t
-
-    private val column = c
-
-    private val primaryColumn = pc
+    private val table: Table,
+    private val primaryColumn: Column<String>,
+    private val column: Column<T>,
+    private val classConvert : SerializerBase<HashMap<V, K>, T>
+) : CacheBuilderV2<HashMap<V, K>, V> {
 
     private val hashMap = HashMap<String, HashMap<V, K>?>()
+    private val toUpdate = mutableListOf<String>()
+
     override fun getMap(): Map<String, HashMap<V, K>?> {
-        return hashMap.toImmutableMap()
+        return hashMap.toMap()
     }
-
-    private val toUpdate = ArrayList<String>()
-
 
     override operator fun get(entity: String): HashMap<V, K>? {
         return hashMap[entity.lowercase()]
@@ -48,18 +36,11 @@ internal class HashMapCacheBuilder<T, V, K>(
         set(entity, value)
     }
 
-
     override operator fun set(entity: String, value: HashMap<V, K>) {
-        val ent = hashMap[entity.lowercase()] ?: run {
-            hashMap[entity.lowercase()] = value
-            toUpdate.add(entity.lowercase())
-            return
-        }
-        for (i in value) {
-            ent[i.key] = i.value
-        }
+        val ent = hashMap[entity.lowercase()] ?: HashMap()
+        ent.putAll(value)
         hashMap[entity.lowercase()] = ent
-        toUpdate.add(entity.lowercase())
+        toUpdate += entity.lowercase()
     }
 
     override fun remove(entity: Player, value: V) {
@@ -67,12 +48,10 @@ internal class HashMapCacheBuilder<T, V, K>(
     }
 
     override fun remove(entity: String, value: V) {
-        val ent = hashMap[entity.lowercase()] ?: run {
-            return
-        }
+        val ent = hashMap[entity.lowercase()] ?: return
         ent.remove(value)
         hashMap[entity.lowercase()] = ent
-        toUpdate.add(entity.lowercase())
+        toUpdate += entity.lowercase()
     }
 
     override fun remove(entity: Player) {
@@ -81,24 +60,22 @@ internal class HashMapCacheBuilder<T, V, K>(
 
     override fun remove(entity: String) {
         hashMap[entity.lowercase()] = null
-        toUpdate.add(entity)
+        toUpdate += entity.lowercase()
     }
 
     private fun save(list: List<String>) {
-        val currentHash = hashMap.toImmutableMap()
+        val currentHash = hashMap
 
         for (i in list) {
             toUpdate.remove(i)
             val tab = table.select { primaryColumn eq i }
-
             val value = currentHash[i]
 
             if (tab.empty()) {
                 if (value == null) continue
-
                 table.insert {
                     it[primaryColumn] = i
-                    it[column] = conv.convertToDatabase(value)
+                    it[column] = classConvert.convertToDatabase(value)
                 }
             } else {
                 if (value == null) {
@@ -106,26 +83,23 @@ internal class HashMapCacheBuilder<T, V, K>(
                     continue
                 }
                 table.update({ primaryColumn eq i }) {
-                    it[column] = conv.convertToDatabase(value)
+                    it[column] = classConvert.convertToDatabase(value)
                 }
-
             }
         }
     }
 
-
     override fun update() {
-        save(toUpdate.toImmutableList())
+        save(toUpdate.toList())
     }
 
     override fun load() {
         for (i in table.selectAll()) {
-            hashMap[i[primaryColumn]] = conv.convertToCache(i[column]) ?: HashMap()
+            hashMap[i[primaryColumn]] = classConvert.convertToCache(i[column]) ?: HashMap()
         }
     }
 
     override fun unload() {
-        save(toUpdate.toImmutableList())
+        save(toUpdate.toList())
     }
-
 }

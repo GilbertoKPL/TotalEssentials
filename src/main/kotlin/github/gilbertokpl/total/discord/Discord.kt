@@ -4,7 +4,7 @@ import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.exceptions.*
-import github.gilbertokpl.total.discord.listeners.ChatDiscord
+import github.gilbertokpl.total.discord.listeners.ChatDiscordEvent
 import github.gilbertokpl.total.util.ColorUtil
 import github.gilbertokpl.total.util.MainUtil
 import net.dv8tion.jda.api.EmbedBuilder
@@ -201,7 +201,7 @@ internal object Discord {
                 .setLargeThreshold(50)
                 .disableCache(CacheFlag.ACTIVITY)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
-                .addEventListeners(ChatDiscord())
+                .addEventListeners(ChatDiscordEvent())
                 .build()
         } catch (e: LoginException) {
             null

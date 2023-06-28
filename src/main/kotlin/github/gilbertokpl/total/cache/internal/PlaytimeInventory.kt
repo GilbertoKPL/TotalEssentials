@@ -18,95 +18,87 @@ object PlaytimeInventory {
         var length = 0
         var inv = TotalEssentials.instance.server.createInventory(null, 36, "§ePLAYTIME 1")
 
-        val cache = PlayerData.playTimeCache.getMap().toList().sortedBy { (_, value) -> value }.reversed().toMap()
+        val cache = PlayerData.playTimeCache.getMap().toList().sortedByDescending { (_, value) -> value }
 
-        for (time in cache) {
-            val name = LangConfig.playtimeInventoryItemsName.replace(
-                "%player%",
-                time.key
-            )
-            val item = ItemStack(MaterialUtil["head"]!!, 1, SkullType.PLAYER.ordinal.toShort())
-            val meta = item.itemMeta
+        for ((player, time) in cache.take(135)) {
 
-            item.amount = 1
-            meta?.setDisplayName(name)
-
-            val itemLore = ArrayList<String>()
-
-            val t1 = (PlayerData.playtimeLocal[time.key] ?: 0L)
-
-            val t = time.value!! + if (t1 != 0L) System.currentTimeMillis() - t1 else 0L
-
-            LangConfig.playtimeInventoryItemsLore.forEach {
-                itemLore.add(it.replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(t, true)))
-            }
-
-            meta?.lore = itemLore
-            item.itemMeta = meta
+            val item = createHeadItem(player, time ?: 0L)
 
             if (length < 26) {
                 inv.setItem(length, item)
-                length += 1
+                length++
             } else {
                 inv.setItem(length, item)
                 for (to in 27..35) {
-                    if (to == 27 && size > 1) {
-                        inv.setItem(
+                    when {
+                        to == 27 && size > 1 -> inv.setItem(
                             to,
-                            ItemUtil
-                                .item(
-                                    Material.HOPPER,
-                                    LangConfig.playtimeInventoryIconBackName,
-                                    true
-                                )
+                            ItemUtil.item(
+                                Material.HOPPER,
+                                LangConfig.playtimeInventoryIconBackName,
+                                true
+                            )
                         )
-                        continue
-                    }
-                    if (to == 35) {
-                        inv.setItem(
+                        to == 35 -> inv.setItem(
                             to,
-                            ItemUtil
-                                .item(
-                                    Material.ARROW,
-                                    LangConfig.playtimeInventoryIconNextName,
-                                    true
-                                )
+                            ItemUtil.item(
+                                Material.ARROW,
+                                LangConfig.playtimeInventoryIconNextName,
+                                true
+                            )
                         )
-                        continue
+                        else -> inv.setItem(to, GLASS_MATERIAL)
                     }
-                    inv.setItem(
-                        to,
-                        GLASS_MATERIAL
-                    )
                 }
                 DataManager.playTimeInventoryCache[size] = inv
                 length = 0
-                size += 1
+                size++
                 inv = TotalEssentials.instance.server.createInventory(null, 36, "§ePLAYTIME $size")
             }
         }
+
         if (length > 0) {
-            if (size != 1) {
-                inv.setItem(
-                    27,
+            inv.setItem(
+                27,
+                if (size != 1) {
                     ItemUtil.item(
                         Material.HOPPER,
                         LangConfig.playtimeInventoryIconBackName
                     )
-                )
-            } else {
-                inv.setItem(
-                    27,
+                } else {
                     GLASS_MATERIAL
-                )
-            }
+                }
+            )
+
             for (to in 28..35) {
-                inv.setItem(
-                    to,
-                    GLASS_MATERIAL
-                )
+                inv.setItem(to, GLASS_MATERIAL)
             }
+
             DataManager.playTimeInventoryCache[size] = inv
         }
+    }
+
+    fun createHeadItem(name: String, time: Long): ItemStack {
+        val playerName = LangConfig.playtimeInventoryItemsName.replace("%player%", name)
+        val playtimeInventoryItemsLore = LangConfig.playtimeInventoryItemsLore
+        val item = ItemStack(MaterialUtil["head"]!!, 1, SkullType.PLAYER.ordinal.toShort())
+        val meta = item.itemMeta
+
+        meta?.setDisplayName(playerName)
+
+        val itemLore = ArrayList<String>(playtimeInventoryItemsLore.size)
+
+        val t1 = PlayerData.playtimeLocal[name] ?: 0L
+        val t = time + if (t1 != 0L) System.currentTimeMillis() - t1 else 0L
+
+        playtimeInventoryItemsLore.forEach {
+            itemLore.add(it.replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(t, true)))
+        }
+
+        meta.lore = itemLore
+
+        item.itemMeta = meta
+
+        return item
     }
 }

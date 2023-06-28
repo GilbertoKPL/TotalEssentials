@@ -13,77 +13,68 @@ import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
 
-internal class InternalReflection(lf: CorePlugin) {
-
-    private val lunarFrame = lf
+internal class InternalReflection(private val corePlugin: CorePlugin) {
 
     private var getPlayersList: Boolean? = null
+
     fun getClasses(packageName: String): List<Class<*>> {
-        val classes = ArrayList<Class<*>>()
+        val classes = mutableListOf<Class<*>>()
         val directory = try {
             val path = packageName.replace('.', '/')
             Files.newDirectoryStream(
                 FileSystems.newFileSystem(
                     Paths.get(
-                        this.lunarFrame.plugin.javaClass.protectionDomain?.codeSource?.location?.toURI()
+                        this.corePlugin.plugin.javaClass.protectionDomain?.codeSource?.location?.toURI()
                             ?: return emptyList()
                     ),
-                    this.lunarFrame.plugin.javaClass.classLoader
+                    this.corePlugin.plugin.javaClass.classLoader
                 ).getPath("/$path")
             )
         } catch (x: NullPointerException) {
             return emptyList()
         }
         for (i in directory) {
-            if (i.fileName.toString().endsWith(".class")) {
-                if (i.fileName.toString().contains("$")) continue
-                val cla = Class.forName(packageName + "." + i.fileName.toString().replace(".class", ""))
+            if (i.fileName.toString().endsWith(".class") && !i.fileName.toString().contains("$")) {
+                val className = packageName + "." + i.fileName.toString().replace(".class", "")
+                val cla = Class.forName(className)
                 classes.add(cla)
             }
         }
-        return classes.toList()
+        return classes
     }
 
     fun bukkitCommandRegister(command: Command) {
         val bukkitCommandMap: Field = Bukkit.getServer().javaClass.getDeclaredField("commandMap")
-
         bukkitCommandMap.isAccessible = true
         val commandMap: CommandMap = bukkitCommandMap.get(Bukkit.getServer()) as CommandMap
-
         commandMap.register("lunarFrame", command)
     }
 
     fun nameFieldHelper(field: Field): String {
         val nameField = field.name.split("(?=\\p{Upper})".toRegex())
-
-        var nameFieldComplete = ""
-
+        val nameFieldComplete = StringBuilder()
         var quanta = 0
-
         for (value in nameField) {
             quanta += 1
-            if (nameFieldComplete == "") {
-                nameFieldComplete = "${value.lowercase()}."
+            if (nameFieldComplete.isEmpty()) {
+                nameFieldComplete.append("${value.lowercase()}.")
                 continue
             }
             if (quanta == 2) {
-                nameFieldComplete += value.lowercase()
+                nameFieldComplete.append(value.lowercase())
                 continue
             }
-            nameFieldComplete += "-${value.lowercase()}"
+            nameFieldComplete.append("-${value.lowercase()}")
         }
-
-        return nameFieldComplete
+        return nameFieldComplete.toString()
     }
 
     fun setValuesOfClass(cl: Class<*>, clInstance: Any, config: YamlFile) {
-        for (it in cl.declaredFields) {
-            val checkedValue = checkTypeField(it.genericType) ?: continue
-
-            val nameFieldComplete = nameFieldHelper(it)
-
-            val value = checkedValue.getValueConfig(config, nameFieldComplete, lunarFrame) ?: continue
-            it.set(clInstance, value)
+        for (field in cl.declaredFields) {
+            val checkedValue = checkTypeField(field.genericType) ?: continue
+            val nameFieldComplete = nameFieldHelper(field)
+            val value = checkedValue.getValueConfig(config, nameFieldComplete, corePlugin) ?: continue
+            field.set(clInstance, value)
         }
     }
 
@@ -91,25 +82,17 @@ internal class InternalReflection(lf: CorePlugin) {
         return when (type.typeName!!.lowercase()) {
             "java.lang.string" -> ObjectTypes.STRING
             "java.util.list<java.lang.string>" -> ObjectTypes.STRING_LIST
-            "java.lang.boolean" -> ObjectTypes.BOOLEAN
-            "boolean" -> ObjectTypes.BOOLEAN
-            "java.lang.integer" -> ObjectTypes.INTEGER
-            "integer" -> ObjectTypes.INTEGER
-            "int" -> ObjectTypes.INTEGER
-            else -> {
-                null
-            }
+            "java.lang.boolean", "boolean" -> ObjectTypes.BOOLEAN
+            "java.lang.integer", "integer", "int" -> ObjectTypes.INTEGER
+            else -> null
         }
     }
 
-    fun registerCommandByPackage(pa: String) {
-        val listClass = getClasses(pa)
-
+    fun registerCommandByPackage(packageName: String) {
+        val listClass = getClasses(packageName)
         for (cl in listClass) {
-
             val instance = cl.getDeclaredConstructor().newInstance() as CommandCreator
-
-            instance.basePlugin = lunarFrame
+            instance.basePlugin = corePlugin
             instance.aliases = instance.commandPattern().aliases
             instance.active = instance.commandPattern().active
             instance.target = instance.commandPattern().target
@@ -118,12 +101,9 @@ internal class InternalReflection(lf: CorePlugin) {
             instance.countdown = instance.commandPattern().countdown
             instance.minimumSize = instance.commandPattern().minimumSize
             instance.maximumSize = instance.commandPattern().maximumSize
-
             if (!instance.commandPattern().active) continue
-
             bukkitCommandRegister(instance)
         }
-
     }
 
     fun getPlayers(): List<Player> {
@@ -131,15 +111,15 @@ internal class InternalReflection(lf: CorePlugin) {
             val onlinePlayersMethod = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers")
             return try {
                 @Suppress("UNCHECKED_CAST")
-                val to = (onlinePlayersMethod.invoke(Bukkit.getServer()) as Array<Player>).toList()
+                val players = onlinePlayersMethod.invoke(Bukkit.getServer()) as Array<Player>
                 getPlayersList = true
-                to
+                players.toList()
             } catch (e: ClassCastException) {
                 getPlayersList = false
                 Bukkit.getOnlinePlayers().toList()
             }
         }
-        return if (getPlayersList!!) {
+        return if (getPlayersList == true) {
             val list = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers")
             @Suppress("UNCHECKED_CAST")
             (list.invoke(Bukkit.getServer()) as Array<Player>).toList()
@@ -148,26 +128,24 @@ internal class InternalReflection(lf: CorePlugin) {
         }
     }
 
-    fun getHealth(p: Player): Double {
+    fun getHealth(player: Player): Double {
         return try {
-            p.health
+            player.health
         } catch (e: Throwable) {
             try {
-                (p.javaClass.getMethod("getHealth").invoke(p, arrayListOf<Int>()) as Int).toDouble()
+                (player.javaClass.getMethod("getHealth").invoke(player, arrayListOf<Int>()) as Int).toDouble()
             } catch (e1: Throwable) {
                 0.0
             }
         }
     }
 
-    fun setHealth(p: Player, health: Int) {
+    fun setHealth(player: Player, health: Int) {
         try {
-            p.health = health.toDouble()
+            player.health = health.toDouble()
         } catch (e: Throwable) {
             try {
-                p.javaClass.getMethod("setHealth").invoke(
-                    p, health
-                )
+                player.javaClass.getMethod("setHealth").invoke(player, health)
             } catch (e: Throwable) {
                 e.printStackTrace()
             }

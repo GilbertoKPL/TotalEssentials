@@ -14,7 +14,7 @@ object KitsData : CacheBase {
 
     val kitFakeName = ins.string(this, KitsDataSQL.kitFakeNameTable)
     val kitTime = ins.long(this, KitsDataSQL.kitTimeTable)
-    val kitItems = ins.stringList(this, KitsDataSQL.kitItemsTable, ItemSerializer())
+    val kitItems = ins.list(this, KitsDataSQL.kitItemsTable, ItemSerializer())
     val kitWeight = ins.integer(this, KitsDataSQL.kitWeightTable)
 
     fun checkIfExist(entity: String): Boolean {

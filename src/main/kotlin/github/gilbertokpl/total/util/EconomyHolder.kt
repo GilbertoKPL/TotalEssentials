@@ -28,11 +28,11 @@ class EconomyHolder : Economy {
     }
 
     override fun currencyNamePlural(): String {
-        return LangConfig.moneyPlural
+        return LangConfig.moneySymbol
     }
 
     override fun currencyNameSingular(): String {
-        return LangConfig.moneySingular
+        return LangConfig.moneySymbol
     }
 
     override fun hasAccount(playerName: String): Boolean {

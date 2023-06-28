@@ -4,22 +4,19 @@ import github.gilbertokpl.core.external.CorePlugin
 import org.simpleyaml.configuration.file.YamlFile
 import java.util.stream.Collectors
 
-class Value(lf: CorePlugin) {
-
-    private val lunarFrame = lf
+class Value(private val corePlugin: CorePlugin) {
     fun getString(source: YamlFile, path: String, color: Boolean = true): String? {
-        return if (color) {
-            lunarFrame.getColor().rgbHex(null, source.getString(path))
-                .replace("%prefix%", lunarFrame.serverPrefix)
-        } else source.getString(path)
+        val value = source.getString(path)
+        return if (color && value != null) {
+            corePlugin.getColor().rgbHex(null, value).replace("%prefix%", corePlugin.serverPrefix)
+        } else value
     }
 
     fun getStringList(source: YamlFile, path: String, color: Boolean = true): List<String> {
-        return if (color) {
-            source.getStringList(path).stream()
-                .map { to -> lunarFrame.getColor().rgbHex(null, to).replace("%prefix%", lunarFrame.serverPrefix) }
-                .collect(Collectors.toList())
-        } else source.getStringList(path)
+        val list = source.getStringList(path)
+        return if (color && list.isNotEmpty()) {
+            list.map { corePlugin.getColor().rgbHex(null, it).replace("%prefix%", corePlugin.serverPrefix) }
+        } else list
     }
 
     fun getInt(source: YamlFile, path: String): Int = source.getInt(path)

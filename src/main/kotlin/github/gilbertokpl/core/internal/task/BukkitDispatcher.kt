@@ -4,11 +4,13 @@ import kotlinx.coroutines.*
 import org.bukkit.Bukkit
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitTask
+import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
 
 internal val bukkitScheduler
     get() = Bukkit.getScheduler()
 
+private val dispatcherThreadPool = Executors.newCachedThreadPool().asCoroutineDispatcher()
 
 @OptIn(InternalCoroutinesApi::class)
 class BukkitDispatcher(val plugin: Plugin, val async: Boolean = false) : CoroutineDispatcher(), Delay {
@@ -50,7 +52,6 @@ class BukkitDispatcher(val plugin: Plugin, val async: Boolean = false) : Corouti
             runTask(plugin, block)
         }
     }
-
 }
 
 fun Plugin.dispatcher(async: Boolean = false) = BukkitDispatcher(this, async)

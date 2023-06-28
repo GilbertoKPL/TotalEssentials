@@ -9,9 +9,9 @@ import org.bukkit.entity.Player
 
 abstract class CommandCreator(name: String) : Command(name), CommandBase {
 
-    private var ic: InternalCommand = InternalCommand(this)
+    private val internalCommand: InternalCommand = InternalCommand(this)
 
-    val hashCountDown = HashMap<Player, Long>()
+    val hashCountDown: HashMap<Player, Long> = HashMap()
 
     var basePlugin: CorePlugin? = null
     var active = true
@@ -22,6 +22,6 @@ abstract class CommandCreator(name: String) : Command(name), CommandBase {
     var maximumSize: Int? = 0
 
     override fun execute(sender: CommandSender, commandLabel: String, args: Array<out String>): Boolean {
-        return ic.execute(sender, commandLabel, args)
+        return internalCommand.execute(sender, commandLabel, args)
     }
 }

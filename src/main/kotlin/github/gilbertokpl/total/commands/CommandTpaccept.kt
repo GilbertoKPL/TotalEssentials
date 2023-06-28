@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.core.external.task.SynchronizationContext
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.internal.TpaData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -72,6 +73,7 @@ class CommandTpaccept : github.gilbertokpl.core.external.command.CommandCreator(
         TotalEssentials.basePlugin.getTask().async {
             waitFor(time.toLong() * 20)
             try {
+                switchContext(SynchronizationContext.SYNC)
                 TpaData.remove(p)
                 p.teleport(s.location)
             } catch (ex: Throwable) {

@@ -1,10 +1,9 @@
 package github.gilbertokpl.core.external.utils
 
-import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.core.internal.serializator.AES
 
-class Encrypt(lf: CorePlugin) {
-    private val encryptInstance = AES(lf)
+class Encrypt {
+    private val encryptInstance = AES()
 
     fun encrypt(toEncrypt: String): String {
         return encryptInstance.encrypt(toEncrypt)

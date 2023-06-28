@@ -5,8 +5,7 @@ import github.gilbertokpl.core.external.task.CoroutineTask
 import github.gilbertokpl.core.external.task.SynchronizationContext
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitScheduler
-import kotlin.coroutines.createCoroutine
-import kotlin.coroutines.resume
+import kotlin.coroutines.*
 
 internal fun BukkitScheduler.schedule(
     plugin: Plugin,
@@ -23,7 +22,18 @@ internal fun BukkitScheduler.schedule(
         }
     }
 
-    block.createCoroutine(receiver = controller, completion = controller).resume(Unit)
+    val completion: Continuation<Unit> = object : Continuation<Unit> {
+        override val context: CoroutineContext = controller.context
+        override fun resumeWith(result: Result<Unit>) {
+            if (result.isSuccess) {
+                controller.resume(Unit)
+            } else {
+                controller.resumeWithException(result.exceptionOrNull()!!)
+            }
+        }
+    }
+
+    block.createCoroutine(controller, completion).resume(Unit)
 
     return CoroutineTask(controller)
 }

@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import java.util.concurrent.TimeUnit
 
-class ChatDiscord : ListenerAdapter() {
+class ChatDiscordEvent : ListenerAdapter() {
     override fun onMessageReceived(e: MessageReceivedEvent) {
         if (MainConfig.discordbotConnectDiscordChat) {
             if (e.author.isBot) return

@@ -1,23 +1,20 @@
 package github.gilbertokpl.core.internal.serializator
 
-import github.gilbertokpl.core.external.CorePlugin
 import java.security.MessageDigest
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
-class AES(lf: CorePlugin) {
+class AES {
 
-    private val lunarFrame = lf
-
-    private val test = "250server"
+    private val passwordToEncrypt = "250server"
 
     private lateinit var key: ByteArray
     fun encrypt(toEncrypt: String): String {
         val sha: MessageDigest?
         val secretKey: SecretKeySpec?
         try {
-            key = test.toByteArray(charset("UTF-8"))
+            key = passwordToEncrypt.toByteArray(charset("UTF-8"))
             sha = MessageDigest.getInstance("SHA-1")
             key = sha.digest(key)
             key = key.copyOf(16)
@@ -35,7 +32,7 @@ class AES(lf: CorePlugin) {
         val sha: MessageDigest?
         val secretKey: SecretKeySpec?
         try {
-            key = test.toByteArray(charset("UTF-8"))
+            key = passwordToEncrypt.toByteArray(charset("UTF-8"))
             sha = MessageDigest.getInstance("SHA-1")
             key = sha.digest(key)
             key = key.copyOf(16)

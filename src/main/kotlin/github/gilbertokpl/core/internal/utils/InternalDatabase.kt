@@ -3,53 +3,62 @@ package github.gilbertokpl.core.internal.utils
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import github.gilbertokpl.core.external.CorePlugin
+import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.sql.SQLTransientConnectionException
 
-internal class InternalDatabase(lf: CorePlugin) {
+internal class InternalDatabase(private val corePlugin: CorePlugin) {
 
-    private val lunarFrame = lf
     fun start(databaseTablePackage: List<Table>) {
-
         try {
-            val type = lunarFrame.getConfig().configs().databaseType
-            when (type.lowercase()) {
+
+            val database = when (corePlugin.getConfig().configs().databaseType.lowercase()) {
                 "h2" -> {
-                    lunarFrame.sql =
-                        Database.connect("jdbc:h2:./${lunarFrame.mainPath}/sql/H2database", "org.h2.Driver")
+                    val databasePath = "./${corePlugin.mainPath}/sql/H2database"
+                    Database.connect("jdbc:h2:$databasePath", "org.h2.Driver")
                 }
 
                 "mysql" -> {
                     val config = HikariConfig().apply {
-                        jdbcUrl =
-                            "jdbc:mariadb://${lunarFrame.getConfig().configs().databaseSqlIp}" +
-                                    ":${lunarFrame.getConfig().configs().databaseSqlPort}" +
-                                    "/${lunarFrame.getConfig().configs().databaseSqlDatabase}"
+                        val databaseSqlIp = corePlugin.getConfig().configs().databaseSqlIp
+                        val databaseSqlPort = corePlugin.getConfig().configs().databaseSqlPort
+                        val databaseSqlDatabase = corePlugin.getConfig().configs().databaseSqlDatabase
+                        val databaseSqlUsername = corePlugin.getConfig().configs().databaseSqlUsername
+                        val databaseSqlPassword = corePlugin.getConfig().configs().databaseSqlPassword
+
+                        jdbcUrl = "jdbc:mariadb://$databaseSqlIp:$databaseSqlPort/$databaseSqlDatabase"
                         driverClassName = "org.mariadb.jdbc.Driver"
-                        username = lunarFrame.getConfig().configs().databaseSqlUsername
-                        password = lunarFrame.getConfig().configs().databaseSqlPassword
+                        username = databaseSqlUsername
+                        password = databaseSqlPassword
                         maximumPoolSize = 40
                     }
                     val dataSource = HikariDataSource(config)
-                    lunarFrame.sql = Database.connect(dataSource)
+                    Database.connect(dataSource)
                 }
 
                 else -> {
-                    lunarFrame.sql =
-                        Database.connect("jdbc:h2:./${lunarFrame.mainPath}/sql/H2database", "org.h2.Driver")
+                    val databasePath = "./${corePlugin.mainPath}/sql/H2database"
+                    Database.connect("jdbc:h2:$databasePath", "org.h2.Driver")
                 }
             }
+
+            for (table in databaseTablePackage) {
+                transaction(database) {
+                    SchemaUtils.createMissingTablesAndColumns(table)
+                }
+            }
+
+            corePlugin.sql = database
+
         } catch (e: Throwable) {
             println(e)
+            Bukkit.getServer().shutdown()
+        } catch (e: SQLTransientConnectionException) {
+            println(e)
+            Bukkit.getServer().shutdown()
         }
-
-        for (cl in databaseTablePackage) {
-            transaction(lunarFrame.sql) {
-                SchemaUtils.createMissingTablesAndColumns(cl)
-            }
-        }
-
     }
 }

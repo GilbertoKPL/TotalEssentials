@@ -24,7 +24,7 @@ internal object OtherConfig {
                 }
             }
         } catch (e: Throwable) {
-
+            e.printStackTrace()
         }
 
         try {
@@ -36,7 +36,7 @@ internal object OtherConfig {
                 }
             }
         } catch (e: Throwable) {
-
+            e.printStackTrace()
         }
         try {
             var dif = false
@@ -72,7 +72,7 @@ internal object OtherConfig {
                 }
             }
         } catch (e: Throwable) {
-
+            e.printStackTrace()
         }
 
         EditKitInventory.setup()

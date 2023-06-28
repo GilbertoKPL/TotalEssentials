@@ -5,18 +5,14 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
-internal class InternalTime(lf: CorePlugin) {
-
-    private val totalCore = lf
-
-    private val MILLIS_TO_SECONDS = 1_000
-
-    private val SECONDS_TO_MINUTES = 60
-
-    private val HOURS_TO_DAYS = 24
+internal class InternalTime(private val corePlugin: CorePlugin) {
+    private val MILLIS_TO_SECONDS = 1_000L
+    private val SECONDS_TO_MINUTES = 60L
+    private val MINUTES_TO_HOURS = 60L
+    private val HOURS_TO_DAYS = 24L
 
     fun getOnlineTime(): Long {
-        return System.currentTimeMillis() - totalCore.online
+        return System.currentTimeMillis() - corePlugin.online
     }
 
     fun getCurrentDate(): String {
@@ -26,92 +22,63 @@ internal class InternalTime(lf: CorePlugin) {
     }
 
     fun convertStringToMillis(timeString: String): Long {
-        val messageSplit = timeString.split(" ")
-        var convert = 0L
-        for (i in messageSplit) {
-            val split = i.replace("(?<=[A-Z])(?=[A-Z])|(?<=[a-z])(?=[A-Z])|(?<=\\D)$".toRegex(), "1")
-                .split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)".toRegex())
-            val unit = try {
-                split[1]
-            } catch (e: Throwable) {
-                null
+        val timeUnits = timeString.split(" ")
+        var totalMillis = 0L
+
+        for (unit in timeUnits) {
+            val value = unit.substring(0, unit.length - 1).toLongOrNull() ?: continue
+            val timeUnit = when (unit.last().toLowerCase()) {
+                's' -> TimeUnit.SECONDS
+                'm' -> TimeUnit.MINUTES
+                'h' -> TimeUnit.HOURS
+                'd' -> TimeUnit.DAYS
+                else -> TimeUnit.MINUTES
             }
-            convert += if (unit == null) {
-                try {
-                    TimeUnit.MINUTES.toMillis(split[0].toLong())
-                } catch (e: Throwable) {
-                    0L
-                }
-            } else {
-                try {
-                    when (unit.lowercase()) {
-                        "s" -> TimeUnit.SECONDS.toMillis(split[0].toLong())
-                        "m" -> TimeUnit.MINUTES.toMillis(split[0].toLong())
-                        "h" -> TimeUnit.HOURS.toMillis(split[0].toLong())
-                        "d" -> TimeUnit.DAYS.toMillis(split[0].toLong())
-                        else -> TimeUnit.MINUTES.toMillis(split[0].toLong())
-                    }
-                } catch (e: Throwable) {
-                    0L
-                }
-            }
+            totalMillis += timeUnit.toMillis(value)
         }
-        return convert
+
+        return totalMillis
     }
 
-    fun convertMillisToString(time: Long, short: Boolean): String {
-        val toSend = ArrayList<String>()
-        fun helper(time: Long, sendShort: String, send: String) {
-            if (time > 0L) {
-                if (short) {
-                    toSend.add(sendShort)
-                } else {
-                    toSend.add(send)
-                }
-            }
-        }
+    fun convertMillisToString(time: Long, shortFormat: Boolean): String {
+        val units = ArrayList<String>()
 
         var seconds = time / MILLIS_TO_SECONDS
         var minutes = seconds / SECONDS_TO_MINUTES
-        var hours = minutes / SECONDS_TO_MINUTES
+        var hours = minutes / MINUTES_TO_HOURS
         val days = hours / HOURS_TO_DAYS
+
         seconds %= SECONDS_TO_MINUTES
-        minutes %= SECONDS_TO_MINUTES
+        minutes %= MINUTES_TO_HOURS
         hours %= HOURS_TO_DAYS
-        val uniDays = if (days < 2) {
-            totalCore.getConfig().messages().timeDay
-        } else totalCore.getConfig().messages().timeDays
-        helper(days, "$days ${totalCore.getConfig().messages().timeDayShort}", "$days $uniDays")
-        val uniHours = if (hours < 2) {
-            totalCore.getConfig().messages().timeHour
-        } else totalCore.getConfig().messages().timeHours
-        helper(hours, "$hours ${totalCore.getConfig().messages().timeHourShort}", "${hours % 24} $uniHours")
-        val uniMinutes = if (minutes < 2) {
-            totalCore.getConfig().messages().timeMinute
-        } else totalCore.getConfig().messages().timeMinutes
-        helper(minutes, "$minutes ${totalCore.getConfig().messages().timeMinuteShort}", "${minutes % 60} $uniMinutes")
-        val uniSeconds = if (seconds < 2) {
-            totalCore.getConfig().messages().timeSecond
-        } else totalCore.getConfig().messages().timeSeconds
-        helper(seconds, "$seconds ${totalCore.getConfig().messages().timeSecondShort}", "${seconds % 60} $uniSeconds")
-        var toReturn = ""
-        var quaint = 0
-        for (values in toSend) {
-            quaint += 1
-            toReturn = if (quaint == values.length) {
-                if (toReturn == "") {
-                    "$values."
-                } else {
-                    "$toReturn, $values."
-                }
-            } else {
-                if (toReturn == "") {
-                    values
-                } else {
-                    "$toReturn, $values"
-                }
-            }
+
+        if (days > 0) {
+            val unit = if (shortFormat) corePlugin.getConfig().messages().timeDayShort else corePlugin.getConfig().messages().timeDays
+            units.add("$days $unit")
         }
-        return toReturn
+
+        if (hours > 0) {
+            val unit = if (shortFormat) corePlugin.getConfig().messages().timeHourShort else corePlugin.getConfig().messages().timeHours
+            units.add("$hours $unit")
+        }
+
+        if (minutes > 0) {
+            val unit = if (shortFormat) corePlugin.getConfig().messages().timeMinuteShort else corePlugin.getConfig().messages().timeMinutes
+            units.add("$minutes $unit")
+        }
+
+        if (seconds > 0) {
+            val unit = if (shortFormat) corePlugin.getConfig().messages().timeSecondShort else corePlugin.getConfig().messages().timeSeconds
+            units.add("$seconds $unit")
+        }
+
+        val delimiter = if (shortFormat) ", " else ", "
+        var result = units.joinToString(delimiter)
+
+        if (result.isNotEmpty() && !shortFormat) {
+            result += "."
+        }
+
+        return result
     }
 }

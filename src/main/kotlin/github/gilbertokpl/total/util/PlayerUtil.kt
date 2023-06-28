@@ -112,7 +112,8 @@ internal object PlayerUtil {
     }
 
     fun shopTeleport(p: Player, shop: String) {
-        teleportWithTime(p, ShopData.shopLocation[shop]!!, MainConfig.homesTimeToTeleport, LangConfig.shopTeleport.replace("%player%", shop), "shop")
+        val loc = ShopData.shopLocation[shop] ?: return
+        teleportWithTime(p, loc, MainConfig.homesTimeToTeleport, LangConfig.shopTeleport.replace("%player%", shop), "shop")
     }
 
     fun teleportWithTime(p: Player, location: Location, time: Int, message: String?, locationName: String) {

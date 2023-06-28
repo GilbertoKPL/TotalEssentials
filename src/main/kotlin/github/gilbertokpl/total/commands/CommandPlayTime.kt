@@ -4,6 +4,7 @@ import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.internal.DataManager
+import github.gilbertokpl.total.cache.internal.PlaytimeInventory
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -30,6 +31,12 @@ class CommandPlayTime : github.gilbertokpl.core.external.command.CommandCreator(
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
+        val playerName = if (args.isEmpty() && s is Player) s.name else args[0]
+
+        val playerTimeMillis = PlayerData.playtimeLocal[playerName] ?: 0L
+
+        val playerTime = ((PlayerData.playTimeCache[playerName]) ?: 0L) + if (playerTimeMillis != 0L) (System.currentTimeMillis() - playerTimeMillis) else 0L
+
         if (args.isEmpty() && s is Player) {
             DataManager.playTimeInventoryCache[1].also {
                 it ?: run {
@@ -37,8 +44,19 @@ class CommandPlayTime : github.gilbertokpl.core.external.command.CommandCreator(
                     return false
                 }
                 s.openInventory(it)
-            }
+            }?.setItem(31, PlaytimeInventory.createHeadItem(s.name, playerTime))
             return false
+        }
+
+        if (args[0].lowercase() == "fix" && s !is Player) {
+
+            for (i in PlayerData.playTimeCache.getMap()) {
+                if (i.value!! > 31557600000) {
+                    PlayerData.playTimeCache[i.key] = 0
+                }
+            }
+
+            return true
         }
 
         if (!PlayerData.checkIfPlayerExist(args[0])) {
@@ -46,14 +64,9 @@ class CommandPlayTime : github.gilbertokpl.core.external.command.CommandCreator(
             return false
         }
 
-        val pTime = PlayerData.playtimeLocal[args[0]] ?: 0L
-
-        val time =
-            ((PlayerData.playTimeCache[args[0]]) ?: 0L) + if (pTime != 0L) (System.currentTimeMillis() - pTime) else 0L
-
         s.sendMessage(
             LangConfig.playtimeMessage.replace("%player%", args[0])
-                .replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(time, false))
+                .replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(playerTime, false))
         )
 
         return false

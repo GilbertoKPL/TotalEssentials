@@ -20,7 +20,7 @@ object KeyData : CacheBase {
     }
 
     fun generateRandomString(): String {
-        return UUID.randomUUID().toString().replace("-", "").toUpperCase().substring(0, 10)
+        return UUID.randomUUID().toString().replace("-", "").uppercase().substring(0, 10)
     }
 
     fun genNewVipKey(name: String, time: Long): String {

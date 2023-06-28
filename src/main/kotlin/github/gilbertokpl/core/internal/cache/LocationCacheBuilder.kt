@@ -2,33 +2,22 @@ package github.gilbertokpl.core.internal.cache
 
 import github.gilbertokpl.core.external.cache.convert.SerializerBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
-import okhttp3.internal.toImmutableList
-import okhttp3.internal.toImmutableMap
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 
 internal class LocationCacheBuilder(
-    t: Table,
-    pc: Column<String>,
-    c: Column<String>,
-    classConverter: SerializerBase<Location?, String>
+    private val table: Table,
+    private val primaryColumn: Column<String>,
+    private val column: Column<String>,
+    private val classConvert : SerializerBase<Location?, String>
 ) : CacheBuilder<Location?> {
 
-    private val conv = classConverter
-
-    private val table = t
-
-    private val column = c
-
-    private val primaryColumn = pc
-
     private val hashMap = HashMap<String, Location?>()
-
-    private val toUpdate = ArrayList<String>()
+    private val toUpdate = mutableListOf<String>()
 
     override fun getMap(): Map<String, Location?> {
-        return hashMap.toImmutableMap()
+        return hashMap.toMap()
     }
 
     override operator fun get(entity: String): Location? {
@@ -50,7 +39,6 @@ internal class LocationCacheBuilder(
     override operator fun set(entity: String, value: Location?) {
         hashMap[entity.lowercase()] = value
         toUpdate.add(entity.lowercase())
-
     }
 
     override fun remove(entity: Player) {
@@ -63,26 +51,22 @@ internal class LocationCacheBuilder(
     }
 
     override fun update() {
-        save(toUpdate.toImmutableList())
+        save(toUpdate.toList())
     }
 
     private fun save(list: List<String>) {
-
-        val currentHash = hashMap.toImmutableMap()
+        val currentHash = hashMap
 
         for (i in list) {
-
             toUpdate.remove(i)
-
             val tab = table.select { primaryColumn eq i }
-
             val value = currentHash[i]
 
             if (tab.empty()) {
                 if (value == null) continue
                 table.insert {
                     it[primaryColumn] = i
-                    it[column] = conv.convertToDatabase(value)
+                    it[column] = classConvert.convertToDatabase(value)
                 }
             } else {
                 if (value == null) {
@@ -92,7 +76,7 @@ internal class LocationCacheBuilder(
                     continue
                 }
                 table.update({ primaryColumn eq i }) {
-                    it[column] = conv.convertToDatabase(value)
+                    it[column] = classConvert.convertToDatabase(value)
                 }
             }
         }
@@ -100,13 +84,12 @@ internal class LocationCacheBuilder(
 
     override fun load() {
         for (i in table.selectAll()) {
-            val location = conv.convertToCache(i[column]) ?: continue
+            val location = classConvert.convertToCache(i[column]) ?: continue
             hashMap[i[primaryColumn]] = location
         }
     }
 
     override fun unload() {
-        save(toUpdate.toImmutableList())
+        save(toUpdate.toList())
     }
-
 }

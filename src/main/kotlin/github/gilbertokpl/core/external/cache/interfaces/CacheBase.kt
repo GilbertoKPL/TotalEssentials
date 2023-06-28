@@ -9,5 +9,4 @@ interface CacheBase {
 
     var primaryColumn: Column<String>
 
-
 }

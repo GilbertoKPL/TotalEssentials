@@ -56,7 +56,7 @@ class CommandMoney : github.gilbertokpl.core.external.command.CommandCreator("mo
             for (i in MoneyUtil.tycoonPlayer) {
                 s.sendMessage(
                     MoneyUtil.coinReplacer(
-                        LangConfig.moneyTop, i.value.toDouble()
+                        LangConfig.moneyTop, i.value
                     )
                         .replace("%player%", i.key)
                         .replace("%position%", position.toString())

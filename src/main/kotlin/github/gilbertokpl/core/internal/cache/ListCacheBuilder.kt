@@ -2,35 +2,24 @@ package github.gilbertokpl.core.internal.cache
 
 import github.gilbertokpl.core.external.cache.convert.SerializerBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
-import okhttp3.internal.toImmutableList
-import okhttp3.internal.toImmutableMap
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 internal class ListCacheBuilder<K, V>(
-    t: Table,
-    pc: Column<String>,
-    c: Column<K>,
-    classConverter: SerializerBase<ArrayList<V>, K>
-) :
-    CacheBuilderV2<ArrayList<V>, V> {
+    private val table: Table,
+    private val primaryColumn: Column<String>,
+    private val column: Column<K>,
+    private val classConvert : SerializerBase<ArrayList<V>, K>
+) : CacheBuilderV2<ArrayList<V>, V> {
 
-    private val conv = classConverter
-
-    private val table = t
-
-    private val column = c
-
-    private val primaryColumn = pc
 
     private val hashMap = HashMap<String, ArrayList<V>?>()
+    private val toUpdate = mutableListOf<String>()
 
     override fun getMap(): Map<String, ArrayList<V>?> {
-        return hashMap.toImmutableMap()
+        return hashMap.toMap()
     }
-
-    private val toUpdate = ArrayList<String>()
 
     override operator fun get(entity: String): ArrayList<V>? {
         return hashMap[entity.lowercase()]
@@ -54,12 +43,9 @@ internal class ListCacheBuilder<K, V>(
     }
 
     override operator fun set(entity: String, value: ArrayList<V>) {
-        val ent = hashMap[entity.lowercase()] ?: let {
-            hashMap[entity.lowercase()] = value
-            toUpdate.add(entity.lowercase())
-            return
-        }
+        val ent = hashMap[entity.lowercase()] ?: ArrayList()
         ent.addAll(value)
+        hashMap[entity.lowercase()] = ent
         toUpdate.add(entity.lowercase())
     }
 
@@ -68,16 +54,14 @@ internal class ListCacheBuilder<K, V>(
     }
 
     override fun remove(entity: String, value: V) {
-        val ent = hashMap[entity.lowercase()] ?: run {
-            return
-        }
+        val ent = hashMap[entity.lowercase()] ?: return
         ent.remove(value)
         hashMap[entity.lowercase()] = ent
         toUpdate.add(entity.lowercase())
     }
 
     override fun remove(entity: Player) {
-        remove(entity.name)
+        remove(entity.name.lowercase())
     }
 
     override fun remove(entity: String) {
@@ -86,25 +70,22 @@ internal class ListCacheBuilder<K, V>(
     }
 
     override fun update() {
-        save(toUpdate.toImmutableList())
+        save(toUpdate.toList())
     }
 
     private fun save(list: List<String>) {
-
-        val currentHash = hashMap.toImmutableMap()
+        val currentHash = hashMap
 
         for (i in list) {
             val tab = table.select { primaryColumn eq i }
-
             toUpdate.remove(i)
-
             val value = currentHash[i]
 
             if (tab.empty()) {
                 if (value == null) continue
                 table.insert {
                     it[primaryColumn] = i
-                    it[column] = conv.convertToDatabase(value)
+                    it[column] = classConvert.convertToDatabase(value)
                 }
             } else {
                 if (value == null) {
@@ -112,21 +93,19 @@ internal class ListCacheBuilder<K, V>(
                     continue
                 }
                 table.update({ primaryColumn eq i }) {
-                    it[column] = conv.convertToDatabase(value)
+                    it[column] = classConvert.convertToDatabase(value)
                 }
-
             }
         }
     }
 
     override fun load() {
         for (i in table.selectAll()) {
-            hashMap[i[primaryColumn]] = conv.convertToCache(i[column]) ?: ArrayList()
+            hashMap[i[primaryColumn]] = classConvert.convertToCache(i[column]) ?: ArrayList()
         }
     }
 
     override fun unload() {
-        save(toUpdate.toImmutableList())
+        save(toUpdate.toList())
     }
-
 }

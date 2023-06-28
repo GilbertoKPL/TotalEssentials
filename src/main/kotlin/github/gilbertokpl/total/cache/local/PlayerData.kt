@@ -19,10 +19,10 @@ object PlayerData : CacheBase{
 
     private val ins = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
 
-    val kitsCache = ins.stringHashMap(this, PlayerDataSQL.kitsTable, KitSerializer())
-    val homeCache = ins.stringHashMap(this, PlayerDataSQL.homeTable, HomeSerializer())
-    val vipCache = ins.stringHashMap(this, PlayerDataSQL.vipTable, VipSerializer())
-    val vipItems = ins.stringList(this, PlayerDataSQL.vipItems, ItemSerializer())
+    val kitsCache = ins.hashMap(this, PlayerDataSQL.kitsTable, KitSerializer())
+    val homeCache = ins.hashMap(this, PlayerDataSQL.homeTable, HomeSerializer())
+    val vipCache = ins.hashMap(this, PlayerDataSQL.vipTable, VipSerializer())
+    val vipItems = ins.list(this, PlayerDataSQL.vipItems, ItemSerializer())
     val nickCache = ins.string(this, PlayerDataSQL.nickTable)
     val gameModeCache = ins.integer(this, PlayerDataSQL.gameModeTable)
     val vanishCache = ins.boolean(this, PlayerDataSQL.vanishTable)
@@ -115,7 +115,7 @@ object PlayerData : CacheBase{
             p.flySpeed = (speed * 0.1).toFloat()
         }
 
-        if( playTimeCache[p]!! > 31557600000) {
+        if (playTimeCache[p]!! > 31557600000) {
             playTimeCache[p] = 0
         }
 
@@ -131,8 +131,5 @@ object PlayerData : CacheBase{
                 }
             }
         }
-
-
-
     }
 }

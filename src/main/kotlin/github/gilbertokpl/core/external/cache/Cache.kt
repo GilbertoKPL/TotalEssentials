@@ -84,7 +84,7 @@ class Cache(core: CorePlugin) {
         return instance
     }
 
-    fun <V> stringList(
+    fun <V> list(
         cacheBase: CacheBase,
         column: Column<String>,
         base: SerializerBase<ArrayList<V>, String>
@@ -94,7 +94,7 @@ class Cache(core: CorePlugin) {
         return instance
     }
 
-    fun <V, K> stringHashMap(
+    fun <V, K> hashMap(
         cacheBase: CacheBase,
         column: Column<String>,
         base: SerializerBase<HashMap<V, K>, String>

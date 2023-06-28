@@ -11,9 +11,7 @@ import github.gilbertokpl.core.external.config.types.LangTypes
 import org.simpleyaml.configuration.file.YamlFile
 import java.io.File
 
-internal class InternalConfig(lf: CorePlugin) {
-
-    private val lunarFrame = lf
+internal class InternalConfig(private val corePlugin: CorePlugin) {
 
     lateinit var messages: DefaultLang
     lateinit var configs: DefaultConfig
@@ -28,9 +26,9 @@ internal class InternalConfig(lf: CorePlugin) {
     )
 
     fun start(configPackage: String) {
-        val listClass = lunarFrame.getReflection().getClasses(configPackage).toMutableList()
+        val listClass = corePlugin.getReflection().getClasses(configPackage).toMutableList()
 
-        lateinit var toRemove: Class<*>
+        var mainConfigClass: Class<*>? = null
 
         for (cl in listClass) {
             lateinit var values: ConfigPattern
@@ -38,37 +36,34 @@ internal class InternalConfig(lf: CorePlugin) {
             for (clAnnotations in cl.annotations) {
                 if (clAnnotations is ConfigPattern) {
                     values = clAnnotations
+                    break
                 }
             }
 
             val instance = cl.getDeclaredConstructor().newInstance()
 
             if (instance is DefaultConfig) {
-
                 configs = instance
-
                 startClass(
                     NewConfig(
                         cl,
                         instance,
-                        File(lunarFrame.mainPath, "${values.name}.yml"),
+                        File(corePlugin.mainPath, "${values.name}.yml"),
                         null
                     ),
                     true
                 )
-                toRemove = cl
+                mainConfigClass = cl
                 break
             }
         }
 
-        listClass.remove(toRemove)
+        listClass.remove(mainConfigClass)
 
         for (cl in listClass) {
-
             val instance = cl.getDeclaredConstructor().newInstance()
 
             if (instance is DefaultLang) {
-
                 messages = instance
 
                 for (i in LangTypes.values()) {
@@ -76,7 +71,7 @@ internal class InternalConfig(lf: CorePlugin) {
                         NewConfig(
                             cl,
                             instance,
-                            i.getFile(lunarFrame),
+                            i.getFile(corePlugin),
                             i
                         ),
                         false
@@ -90,6 +85,7 @@ internal class InternalConfig(lf: CorePlugin) {
             for (clAnnotations in cl.annotations) {
                 if (clAnnotations is ConfigPattern) {
                     values = clAnnotations
+                    break
                 }
             }
 
@@ -97,7 +93,7 @@ internal class InternalConfig(lf: CorePlugin) {
                 NewConfig(
                     cl,
                     instance,
-                    File(lunarFrame.mainPath, "${values?.name}.yml"),
+                    File(corePlugin.mainPath, "${values?.name}.yml"),
                     null
                 ),
                 null
@@ -106,22 +102,17 @@ internal class InternalConfig(lf: CorePlugin) {
     }
 
     private fun startClass(config: NewConfig, mainConfig: Boolean?) {
-
-        if (!config.file.exists()) {
-
-            val file = genYaml(config, config.lang ?: LangTypes.PT_BR)
-
-            file.save(config.file)
-
+        val configFile = config.file
+        if (!configFile.exists()) {
+            val yamlFile = genYaml(config, config.lang ?: LangTypes.PT_BR)
+            yamlFile.save(configFile)
             if (config.lang == null || config.lang == lang) {
-                load(config, file)
-                return
+                load(config, yamlFile)
             }
-
             return
         }
 
-        val currentConfig = loadYaml(config.file, false)
+        val currentConfig = loadYaml(configFile, false)
 
         if (mainConfig == true) {
             lang = try {
@@ -131,7 +122,7 @@ internal class InternalConfig(lf: CorePlugin) {
             }
         }
         if (mainConfig == false && lang == config.lang) {
-            lunarFrame.serverPrefix = try {
+            corePlugin.serverPrefix = try {
                 currentConfig.getString("general.server-prefix").replace("&", "§")
             } catch (_: IllegalArgumentException) {
                 ""
@@ -175,18 +166,15 @@ internal class InternalConfig(lf: CorePlugin) {
             checkYaml.set(i.key, i.value)
         }
 
-        checkYaml.save(config.file)
+        checkYaml.save(configFile)
 
         if (config.lang == null || config.lang == lang) {
             load(config, checkYaml)
-
-            return
         }
-
     }
 
     private fun load(newConfig: NewConfig, yamlFile: YamlFile) {
-        lunarFrame.getReflection().setValuesOfClass(newConfig.javaClass, newConfig.classInstance, yamlFile)
+        corePlugin.getReflection().setValuesOfClass(newConfig.javaClass, newConfig.classInstance, yamlFile)
     }
 
     private fun loadYaml(file: File, comment: Boolean): YamlFile {
@@ -200,49 +188,52 @@ internal class InternalConfig(lf: CorePlugin) {
     }
 
     private fun genYaml(newConfig: NewConfig, lang: LangTypes): YamlFile {
-
-        val tempFile = File.createTempFile("check", ".yml")
-
-        val tempYamlFile = loadYaml(tempFile, true)
-
-        tempFile.delete()
+        val tempYamlFile = YamlFile()
 
         for (i in newConfig.javaClass.declaredFields) {
-            val path = lunarFrame.getReflection().nameFieldHelper(i)
-
+            val path = corePlugin.getReflection().nameFieldHelper(i)
 
             if (newConfig.lang == null) {
                 tempYamlFile.set(path, i.get(newConfig.classInstance))
             }
 
+            val commentsList = mutableListOf<Comments>()
+            var primaryComments: PrimaryComments? = null
+            var values: Values? = null
+
             for (comments in i.annotations) {
-                if (comments is Comments) {
-                    for (com in comments.value) {
-                        if (com.annotations != "" && lang == com.lang) {
-                            tempYamlFile.setComment(path, com.annotations)
-                        }
-                    }
-                    continue
+                when (comments) {
+                    is Comments -> commentsList.add(comments)
+                    is PrimaryComments -> primaryComments = comments
+                    is Values -> values = comments
                 }
-                if (comments is PrimaryComments) {
-                    for (com in comments.value) {
-                        if (com.primaryAnnotations != "" && lang == com.lang) {
-                            tempYamlFile.setComment(path.split(".")[0], com.primaryAnnotations)
-                        }
+            }
+
+            for (comments in commentsList) {
+                for (com in comments.value) {
+                    if (com.annotations != "" && lang == com.lang) {
+                        tempYamlFile.setComment(path, com.annotations)
                     }
-                    continue
                 }
-                if (comments is Values) {
-                    for (com in comments.value) {
-                        if (lang == com.lang) {
-                            if (com.value.contains("|")) {
-                                tempYamlFile.set(path, com.value.split("|").toList())
-                                continue
-                            }
+            }
+
+            primaryComments?.let {
+                for (com in it.value) {
+                    if (com.primaryAnnotations != "" && lang == com.lang) {
+                        tempYamlFile.setComment(path.split(".")[0], com.primaryAnnotations)
+                    }
+                }
+            }
+
+            values?.let {
+                for (com in it.value) {
+                    if (lang == com.lang) {
+                        if (com.value.contains("|")) {
+                            tempYamlFile.set(path, com.value.split("|").toList())
+                        } else {
                             tempYamlFile.set(path, com.value)
                         }
                     }
-                    continue
                 }
             }
         }

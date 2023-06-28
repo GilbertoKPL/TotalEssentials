@@ -18,8 +18,8 @@ class SimpleCacheBuilder<T> : CacheBuilder<T> {
         TODO("Not yet implemented")
     }
 
-    override fun getMap(): HashMap<String, T?> {
-        return hashMap
+    override fun getMap(): Map<String, T?> {
+        return hashMap.toMap()
     }
 
     override fun get(entity: String): T? {

@@ -8,21 +8,14 @@ import org.bukkit.scheduler.BukkitTask
 
 
 internal interface TaskScheduler {
-
     val currentTask: BukkitTask?
-
     fun doWait(ticks: Long, task: (Long) -> Unit)
-
     fun doYield(task: (Long) -> Unit)
-
     fun doContextSwitch(context: SynchronizationContext, task: (Boolean) -> Unit)
-
     fun forceNewContext(context: SynchronizationContext, task: () -> Unit)
-
 }
 
 internal class NonRepeatingTaskScheduler(val plugin: Plugin, val scheduler: BukkitScheduler) : TaskScheduler {
-
     override var currentTask: BukkitTask? = null
 
     override fun doWait(ticks: Long, task: (Long) -> Unit) {
@@ -33,7 +26,6 @@ internal class NonRepeatingTaskScheduler(val plugin: Plugin, val scheduler: Bukk
         doWait(0, task)
     }
 
-    //TODO Be lazy if not yet started
     override fun doContextSwitch(context: SynchronizationContext, task: (Boolean) -> Unit) {
         val currentContext = currentContext()
         if (context == currentContext) {
@@ -60,7 +52,6 @@ internal class NonRepeatingTaskScheduler(val plugin: Plugin, val scheduler: Bukk
             SynchronizationContext.ASYNC -> scheduler.runTaskLaterAsynchronously(plugin, task, ticks)
         }
     }
-
 }
 
 private class RepetitionContinuation(val resume: (Long) -> Unit, val delay: Long = 0) {
@@ -84,7 +75,6 @@ internal class RepeatingTaskScheduler(
     val plugin: Plugin,
     val scheduler: BukkitScheduler
 ) : TaskScheduler {
-
     override var currentTask: BukkitTask? = null
     private var nextContinuation: RepetitionContinuation? = null
 
@@ -96,7 +86,6 @@ internal class RepeatingTaskScheduler(
         nextContinuation = RepetitionContinuation(task)
     }
 
-    //TODO Be lazy if not yet started...maybe?
     override fun doContextSwitch(context: SynchronizationContext, task: (Boolean) -> Unit) {
         val currentContext = currentContext()
         if (context == currentContext) {
@@ -119,7 +108,6 @@ internal class RepeatingTaskScheduler(
             SynchronizationContext.ASYNC -> scheduler.runTaskTimerAsynchronously(plugin, task, 0L, interval)
         }
     }
-
 }
 
 fun currentContext() = if (Bukkit.isPrimaryThread()) SynchronizationContext.SYNC else SynchronizationContext.ASYNC
