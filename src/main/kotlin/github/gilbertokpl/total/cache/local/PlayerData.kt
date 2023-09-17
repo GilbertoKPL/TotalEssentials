@@ -1,23 +1,26 @@
 package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.serializer.*
 import github.gilbertokpl.total.cache.sql.PlayerDataSQL
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil
+import github.gilbertokpl.total.util.VipUtil
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 
-object PlayerData : CacheBase{
+object PlayerData : CacheBase {
     override var table: Table = PlayerDataSQL
     override var primaryColumn: Column<String> = PlayerDataSQL.playerTable
 
-    private val ins = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
+    private val ins = TotalEssentials.basePlugin.getCache()
 
     val kitsCache = ins.hashMap(this, PlayerDataSQL.kitsTable, KitSerializer())
     val homeCache = ins.hashMap(this, PlayerDataSQL.homeTable, HomeSerializer())
@@ -34,6 +37,7 @@ object PlayerData : CacheBase{
     val discordCache = ins.long(this, PlayerDataSQL.DiscordTable)
     val playTimeCache = ins.long(this, PlayerDataSQL.PlaytimeTable)
     val colorCache = ins.string(this, PlayerDataSQL.colorTable)
+    val CommandCache = ins.string(this, PlayerDataSQL.CommandTable)
     val inInvSee = ins.simplePlayer()
     val homeLimitCache = ins.simpleInteger()
     val inTeleport = ins.simpleBoolean()
@@ -53,6 +57,7 @@ object PlayerData : CacheBase{
         kitsCache[entity] = HashMap()
         homeCache[entity] = HashMap()
         vipCache[entity] = HashMap()
+        vipItems[entity] = ArrayList()
         nickCache[entity] = ""
         gameModeCache[entity] = 0
         vanishCache[entity] = false
@@ -88,7 +93,7 @@ object PlayerData : CacheBase{
         }
         if (vanishCache[p]!!) {
             p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
-            for (it in github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().getPlayers()) {
+            for (it in TotalEssentials.basePlugin.getReflection().getPlayers()) {
                 if (it.player!!.hasPermission("totalessentials.commands.vanish")
                     || it.player!!.hasPermission("totalessentials.bypass.vanish")
                 ) {
@@ -119,17 +124,28 @@ object PlayerData : CacheBase{
             playTimeCache[p] = 0
         }
 
+        if (!CommandCache[p].isNullOrEmpty()) {
+            for (i in CommandCache[p]?.split(" -")!!) {
+                TotalEssentials.instance.server.dispatchCommand(
+                    TotalEssentials.instance.server.consoleSender,
+                    i
+                )
+            }
+            CommandCache[p] = ""
+            VipUtil.updateCargo(p.name.lowercase())
+        }
 
         if (MainConfig.vanishActivated) {
             if (p.hasPermission("totalessentials.commands.vanish") ||
                 p.hasPermission("totalessentials.bypass.vanish")
             ) return
-            for (it in github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().getPlayers()) {
+            for (it in TotalEssentials.basePlugin.getReflection().getPlayers()) {
                 if (vanishCache[it] ?: continue) {
                     @Suppress("DEPRECATION")
                     p.hidePlayer(it)
                 }
             }
         }
+
     }
 }

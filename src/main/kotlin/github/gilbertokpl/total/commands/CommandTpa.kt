@@ -2,7 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.cache.internal.TpaData
+import github.gilbertokpl.total.cache.internal.DataTeleport
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
@@ -40,19 +40,19 @@ class CommandTpa : github.gilbertokpl.core.external.command.CommandCreator("tpa"
         }
 
         //check if player already send
-        if (TpaData.checkTpa(s as Player)) {
+        if (DataTeleport.checkTpa(s as Player)) {
             s.sendMessage(LangConfig.tpaAlreadySend)
             return false
         }
 
         //check if player has telepot request
-        if (TpaData.checkOtherTpa(p)) {
+        if (DataTeleport.checkOtherTpa(p)) {
             s.sendMessage(LangConfig.tpaAlreadyInAccept)
             return false
         }
         val time = MainConfig.tpaTimeToAccept
 
-        TpaData.createNewTpa(s, p, time)
+        DataTeleport.createNewTpa(s, p, time)
 
         s.sendMessage(LangConfig.tpaSuccess.replace("%player%", p.name))
         p.sendMessage(

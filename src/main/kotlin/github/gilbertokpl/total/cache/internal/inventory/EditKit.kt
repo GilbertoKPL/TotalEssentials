@@ -1,5 +1,6 @@
-package github.gilbertokpl.total.cache.internal
+package github.gilbertokpl.total.cache.internal.inventory
 
+import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.MaterialUtil
@@ -8,7 +9,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
-internal object EditKitInventory {
+internal object EditKit {
 
     private const val EDIT_KIT_INVENTORY_SIZE = 27
     private const val EDIT_KIT_ITEMS_INVENTORY_SIZE = 36
@@ -41,7 +42,7 @@ internal object EditKitInventory {
 
     fun setup() {
         for (slot in 0 until EDIT_KIT_INVENTORY_SIZE) {
-            DataManager.editKitItemCache[slot] = when (slot) {
+            Data.editKitItemCache[slot] = when (slot) {
                 10 -> CHEST_ITEM
                 12 -> CLOCK_ITEM
                 14 -> BOOK_ITEM
@@ -54,7 +55,7 @@ internal object EditKitInventory {
     fun editKitGui(p: Player, kit: String) {
         val inv: Inventory = github.gilbertokpl.total.TotalEssentials.instance.server
             .createInventory(null, EDIT_KIT_INVENTORY_SIZE, "§eEditKit $kit")
-        DataManager.editKitItemCache.forEach { (slot, item) ->
+        Data.editKitItemCache.forEach { (slot, item) ->
             inv.setItem(slot, item)
         }
         p.openInventory(inv)

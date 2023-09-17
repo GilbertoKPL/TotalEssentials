@@ -31,6 +31,8 @@ class PlayerJoin : Listener {
             } else {
                 LoginUtil.loginMessage(e.player)
             }
+        } else {
+            LoginData.isLoggedIn[e.player] = true
         }
 
         val p = e.player

@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.cache.loop
 
-import github.gilbertokpl.total.cache.internal.PlaytimeInventory
-import github.gilbertokpl.total.cache.internal.ShopInventory
+import github.gilbertokpl.total.cache.internal.inventory.Playtime
+import github.gilbertokpl.total.cache.internal.inventory.Shop
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.MoneyUtil
 import github.gilbertokpl.total.util.TaskUtil
@@ -31,7 +31,7 @@ object PluginLoop {
     private fun setupShopInventory() {
         if (MainConfig.shopActivated) {
             try {
-                ShopInventory.setup()
+                Shop.setup()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -41,7 +41,7 @@ object PluginLoop {
     private fun setupPlaytimeInventory() {
         if (MainConfig.playtimeActivated) {
             try {
-                PlaytimeInventory.setup()
+                Playtime.setup()
             } catch (e: Exception) {
                 e.printStackTrace()
             }

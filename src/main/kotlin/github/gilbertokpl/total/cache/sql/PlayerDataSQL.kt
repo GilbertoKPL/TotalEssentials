@@ -20,5 +20,6 @@ object PlayerDataSQL : Table("PlayerData" + MainConfig.databaseManager) {
     val DiscordTable = long("DiscordID").default(0)
     val PlaytimeTable = long("Playtime").default(0)
     val colorTable = varchar("color", 10).default("")
+    val CommandTable = text("command").default("")
     override val primaryKey = PrimaryKey(playerTable)
 }

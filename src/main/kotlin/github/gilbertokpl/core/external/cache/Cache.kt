@@ -139,6 +139,6 @@ class Cache(core: CorePlugin) {
         }, 5, 5, TimeUnit.MINUTES)
     }
 
-    private val toByteUpdate = ArrayList<CacheBuilder<*>>()
+    val toByteUpdate = ArrayList<CacheBuilder<*>>()
 
 }

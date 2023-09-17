@@ -75,11 +75,8 @@ class CommandHome : github.gilbertokpl.core.external.command.CommandCreator("hom
                 return false
             }
 
-            github.gilbertokpl.total.TotalEssentials.instance.server.scheduler.runTask(
-                github.gilbertokpl.total.TotalEssentials.instance,
-                Runnable {
-                    p.teleport(loc)
-                })
+            p.teleport(loc)
+
 
             p.sendMessage(
                 LangConfig.homesTeleportedOther.replace(

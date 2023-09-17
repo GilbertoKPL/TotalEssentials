@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.cache.internal.OtherConfig
+import github.gilbertokpl.total.cache.internal.InternalLoader
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -76,7 +76,7 @@ class PlayerDeath : Listener {
                 return
             }
             val causeMessage =
-                OtherConfig.deathmessageListReplacer[ent.damager.toString().lowercase()] ?: run {
+                InternalLoader.deathMessageListReplacer[ent.damager.toString().lowercase()] ?: run {
                     ent.damager.toString().lowercase()
                 }
             MainUtil.serverMessage(
@@ -88,7 +88,7 @@ class PlayerDeath : Listener {
         }
 
         val causeMessage =
-            OtherConfig.deathmessageListReplacer[damageCause.cause.name.lowercase()] ?: run {
+            InternalLoader.deathMessageListReplacer[damageCause.cause.name.lowercase()] ?: run {
                 MainUtil.consoleMessage(
                     LangConfig.deathmessagesCauseNotExist
                         .replace("%cause%", damageCause.cause.name.lowercase())

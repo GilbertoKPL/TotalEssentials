@@ -202,6 +202,30 @@ public class LangConfig implements DefaultLang {
     )
     public static String generalSaveDataSuccess;
 
+    @Values(
+            {
+                    @Value(value = "%prefix%&aEnviado código ao discord do dono, apenas pegar e dar /e reset [código].", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String generalResetMessage;
+    @Values(
+            {
+                    @Value(value = "%prefix%&cNão tem nenhum dono setado na config.", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String generalResetMessageNotSet;
+
+    @Values(
+            {
+                    @Value(value = "Utilize o comando '/e reset %value%' para resetar as informações do servidor.", lang = LangTypes.PT_BR),
+                    @Value(value = "not lang", lang = LangTypes.EN_US)
+            }
+    )
+    public static String generalResetDiscordMessage;
+
+
     //time
     @Values(
             {

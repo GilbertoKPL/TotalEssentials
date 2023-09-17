@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.cache.internal.DataManager
-import github.gilbertokpl.total.cache.internal.KitGuiInventory
+import github.gilbertokpl.total.cache.internal.Data
+import github.gilbertokpl.total.cache.internal.inventory.Kit
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.VipData
@@ -44,7 +44,7 @@ class InventoryClose : Listener {
     //vips
     private fun vipInventoryCloseEvent(e: InventoryCloseEvent): Boolean {
         val p = e.player as Player
-        DataManager.playerVipEdit[p].also {
+        Data.playerVipEdit[p].also {
 
             if (it == null) return false
 
@@ -56,7 +56,7 @@ class InventoryClose : Listener {
 
             VipData.vipItems[it, array] = true
 
-            DataManager.playerVipEdit.remove(p)
+            Data.playerVipEdit.remove(p)
 
             PlayerUtil.sendMessage(e.player.name, LangConfig.VipsUpdateItems.replace("%vip%", it))
 
@@ -68,9 +68,9 @@ class InventoryClose : Listener {
     //editkit
     private fun editKitInventoryCloseEvent(e: InventoryCloseEvent): Boolean {
         val p = e.player as Player
-        DataManager.playerEditKit[p].also {
+        Data.playerEditKit[p].also {
             if (it == null) return false
-            DataManager.playerEditKit.remove(p)
+            Data.playerEditKit.remove(p)
 
             val array = ArrayList<ItemStack>()
 
@@ -91,7 +91,7 @@ class InventoryClose : Listener {
             )
         }
 
-        KitGuiInventory.setup()
+        Kit.setup()
 
         return true
     }

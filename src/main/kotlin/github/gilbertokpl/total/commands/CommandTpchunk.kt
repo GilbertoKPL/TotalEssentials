@@ -32,7 +32,7 @@ class CommandTpchunk : github.gilbertokpl.core.external.command.CommandCreator("
             args[0].toInt()
             args[1].toInt()
         } catch (ex: Exception) {
-            return false
+            return true
         }
 
         val chunk = p.world.getChunkAt(args[0].toInt(), args[1].toInt())
@@ -42,6 +42,6 @@ class CommandTpchunk : github.gilbertokpl.core.external.command.CommandCreator("
         val z: Double = b.z.toDouble()
         p.teleport(Location(p.world, x, p.world.getHighestBlockYAt(Location(p.world, x, y, z)).toDouble(), z))
 
-        return true
+        return false
     }
 }

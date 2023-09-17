@@ -1,10 +1,9 @@
 package github.gilbertokpl.core.external.utils
 
-import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.core.internal.inventory.serializator.ItemSerializer
 import org.bukkit.inventory.ItemStack
 
-class Inventory(core: CorePlugin) {
+class Inventory {
     private val itemInstance = ItemSerializer()
 
     fun serialize(items: ArrayList<ItemStack>): String {

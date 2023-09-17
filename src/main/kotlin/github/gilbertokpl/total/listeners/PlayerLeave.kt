@@ -46,7 +46,7 @@ class PlayerLeave : Listener {
             if (MainConfig.playtimeActivated) {
                 if (PlayerData.playTimeCache[e.player] != null) {
 
-                    val time = PlayerData.playTimeCache[e.player]!!
+                    val time = PlayerData.playTimeCache[e.player] ?: 0L
 
                     val timePlayed = PlayerData.playtimeLocal[e.player] ?: return
 

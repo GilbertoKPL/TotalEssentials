@@ -4,10 +4,9 @@ import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.core.external.task.SynchronizationContext
 import github.gilbertokpl.total.TotalEssentials
-import github.gilbertokpl.total.cache.internal.TpaData
+import github.gilbertokpl.total.cache.internal.DataTeleport
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.TaskUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -28,7 +27,7 @@ class CommandTpaccept : github.gilbertokpl.core.external.command.CommandCreator(
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        val p = TpaData.getTpa(s as Player) ?: run {
+        val p = DataTeleport.getTpa(s as Player) ?: run {
             s.sendMessage(LangConfig.tpaNotAnyRequest)
             return false
         }
@@ -46,13 +45,13 @@ class CommandTpaccept : github.gilbertokpl.core.external.command.CommandCreator(
             )
         )
 
-        val tpaCache = TpaData[p] ?: return false
+        val tpaCache = DataTeleport[p] ?: return false
 
         tpaCache.otherPlayer = null
         tpaCache.wait = false
 
         if (p.hasPermission("totalessentials.bypass.teleport")) {
-            TpaData.remove(p)
+            DataTeleport.remove(p)
             p.sendMessage(
                 LangConfig.tpaRequestOtherNoDelayAccepted.replace(
                     "%player%",
@@ -74,7 +73,7 @@ class CommandTpaccept : github.gilbertokpl.core.external.command.CommandCreator(
             waitFor(time.toLong() * 20)
             try {
                 switchContext(SynchronizationContext.SYNC)
-                TpaData.remove(p)
+                DataTeleport.remove(p)
                 p.teleport(s.location)
             } catch (ex: Throwable) {
                 ex.printStackTrace()

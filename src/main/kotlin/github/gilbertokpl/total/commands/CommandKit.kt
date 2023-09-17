@@ -2,7 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.cache.internal.DataManager
+import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -43,7 +43,7 @@ class CommandKit : github.gilbertokpl.core.external.command.CommandCreator("kit"
         //send gui
         if (args.isEmpty()) {
 
-            DataManager.kitInventoryCache[1].also {
+            Data.kitInventoryCache[1].also {
                 it ?: run {
                     s.sendMessage(LangConfig.kitsNotExistKits)
                     return false

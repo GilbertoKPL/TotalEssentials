@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.21"
+    kotlin("jvm") version "1.9.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -14,9 +14,8 @@ repositories {
     mavenCentral()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://m2.dv8tion.net/releases")
-    maven("https://mvnrepository.com/artifact/net.dv8tion/JDA")
-    maven("https://jitpack.io")
     maven("https://maven.elmakers.com/repository/")
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -50,19 +49,23 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
     }
 
+
     //H2 database
-    implementation("com.h2database:h2:2.1.214")
+    implementation("com.github.h2database:h2database:version-2.2.220") {
+        exclude("org.slf4j", "slf4j-api")
+    }
 
     //Mysql with MariaDB driver database
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.4")
-
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.4") {
+        exclude("org.slf4j", "slf4j-api")
+    }
     //implementation to mysql - MariaDB
     implementation("com.zaxxer:HikariCP:4.0.3") {
             exclude("org.slf4j", "slf4j-api")
     }
 
     //remove all connections of slf4
-    implementation("org.slf4j:slf4j-nop:2.0.5")
+    implementation("org.slf4j:slf4j-nop:2.0.7")
 
     //simple yaml to help in yaml
     implementation("me.carleslc.Simple-YAML:Simple-Yaml:1.7.3") {
@@ -70,20 +73,27 @@ dependencies {
     }
 
     //host info
-    implementation("com.github.oshi:oshi-core:6.4.3") {
+    implementation("com.github.oshi:oshi-core:6.4.4") {
         exclude("org.slf4j", "slf4j-api")
     }
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0") {
+        exclude("org.slf4j", "slf4j-api")
+    }
 
-    implementation("net.dv8tion:JDA:5.0.0-beta.9") {
+    implementation("net.dv8tion:JDA:5.0.0-beta.12") {
         exclude("club.minnced","opus-java")
         exclude("org.slf4j", "slf4j-api")
+        exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    implementation("commons-io:commons-io:2.11.0")
+    implementation("commons-io:commons-io:2.11.0") {
+        exclude("org.slf4j", "slf4j-api")
+    }
 
-    implementation("org.json:json:20230227")
+    implementation("org.json:json:20230227") {
+        exclude("org.slf4j", "slf4j-api")
+    }
 
 
 

@@ -1,14 +1,11 @@
 package github.gilbertokpl.total.listeners
 
-import br.com.devpaulo.legendchat.api.events.ChatMessageEvent
-import github.gilbertokpl.total.cache.internal.DataManager
-import github.gilbertokpl.total.cache.internal.KitGuiInventory
+import github.gilbertokpl.total.cache.internal.Data
+import github.gilbertokpl.total.cache.internal.inventory.Kit
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.local.LoginData
-import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.PermissionUtil
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -35,9 +32,9 @@ class ChatEventAsync : Listener {
     private fun editKitChatEvent(e: AsyncPlayerChatEvent): Boolean {
         val p = e.player
 
-        DataManager.playerEditKitChat[p].also {
+        Data.playerEditKitChat[p].also {
             if (it == null) return false
-            DataManager.playerEditKitChat.remove(p)
+            Data.playerEditKitChat.remove(p)
             val split = it.split("-")
 
             //time
@@ -85,7 +82,7 @@ class ChatEventAsync : Listener {
                     )
                 )
 
-                KitGuiInventory.setup()
+                Kit.setup()
             }
 
             //weight
@@ -106,7 +103,7 @@ class ChatEventAsync : Listener {
                     )
                 )
 
-                KitGuiInventory.setup()
+                Kit.setup()
             }
 
             return true

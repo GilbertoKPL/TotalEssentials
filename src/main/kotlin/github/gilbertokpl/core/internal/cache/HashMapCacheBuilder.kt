@@ -33,7 +33,12 @@ internal class HashMapCacheBuilder<T, V, K>(
     }
 
     override fun set(entity: String, value: HashMap<V, K>, override: Boolean) {
-        set(entity, value)
+        if (override) {
+            hashMap[entity.lowercase()] = value
+        }
+        else {
+            set(entity, value)
+        }
     }
 
     override operator fun set(entity: String, value: HashMap<V, K>) {

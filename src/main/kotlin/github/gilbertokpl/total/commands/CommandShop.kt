@@ -2,8 +2,8 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.cache.internal.DataManager
-import github.gilbertokpl.total.cache.internal.ShopInventory
+import github.gilbertokpl.total.cache.internal.Data
+import github.gilbertokpl.total.cache.internal.inventory.Shop
 import github.gilbertokpl.total.cache.local.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -12,7 +12,6 @@ import github.gilbertokpl.total.util.PlayerUtil
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 class
 CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
@@ -42,7 +41,7 @@ CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
 
 
 
-            val inventory = DataManager.shopInventoryCache[1] ?: run {
+            val inventory = Data.shopInventoryCache[1] ?: run {
                 s.sendMessage(LangConfig.shopNotExistShop)
                 return false
             }
@@ -52,8 +51,8 @@ CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
                 inventory.setItem(32, ItemUtil.item(Material.CHEST, LangConfig.shopLoreSwitch, false))
             }
             else {
-                inventory.setItem(30, ShopInventory.GLASS_MATERIAL)
-                inventory.setItem(32, ShopInventory.GLASS_MATERIAL)
+                inventory.setItem(30, Shop.GLASS_MATERIAL)
+                inventory.setItem(32, Shop.GLASS_MATERIAL)
             }
 
             p.openInventory(inventory)
@@ -77,7 +76,7 @@ CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
             }
 
             p.sendMessage(LangConfig.shopSwitchMessage.replace("%open%", checkIfIsOpen))
-            ShopInventory.setup()
+            Shop.setup()
             return false
         }
 
@@ -88,7 +87,7 @@ CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
                 return false
             }
             ShopData.createNewShop(p.location, p)
-            ShopInventory.setup()
+            Shop.setup()
             return false
         }
 

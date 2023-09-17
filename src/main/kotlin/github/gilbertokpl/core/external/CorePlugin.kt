@@ -53,7 +53,7 @@ class CorePlugin(pl: Plugin) {
     private val cacheInstance = Cache(this)
 
     //obf
-    private val inventoryInstance = Inventory(this)
+    private val inventoryInstance = Inventory()
 
     //obf
     private val encryptInstance = Encrypt()

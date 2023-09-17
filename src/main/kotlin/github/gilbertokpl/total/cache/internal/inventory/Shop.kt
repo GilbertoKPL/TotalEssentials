@@ -1,5 +1,6 @@
-package github.gilbertokpl.total.cache.internal
+package github.gilbertokpl.total.cache.internal.inventory
 
+import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.cache.local.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.util.ItemUtil
@@ -9,13 +10,16 @@ import org.bukkit.Material
 import org.bukkit.SkullType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import java.util.Collections
 
-object ShopInventory {
+object Shop {
     val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§eSHOP", true)
 
     fun setup() {
-        DataManager.shopItemCache.clear()
-        DataManager.shopInventoryCache.clear()
+        val inventoryCache: MutableMap<Int, Inventory> = HashMap()
+        val itemCache: MutableMap<Int, String> = HashMap()
+
+
         var size = 1
         var length = 0
         var inv: Inventory = Bukkit.createInventory(null, 36, "§eSHOP 1")
@@ -36,12 +40,14 @@ object ShopInventory {
                 LangConfig.shopInventoryItemsLore[it].replace("%visits%", shop.value.toString()).replace("%open%", if (checkIfIsOpen) LangConfig.shopOpen else LangConfig.shopClosed)
             }
 
-            meta.lore = itemLore
+            if (meta != null) {
+                meta.lore = itemLore
+            }
 
             item.itemMeta = meta
 
             val cacheValue = (length + 1) + ((size - 1) * 27)
-            DataManager.shopItemCache[cacheValue] = shop.key
+            itemCache[cacheValue] = shop.key
 
             if (length < 26) {
                 inv.setItem(length, item)
@@ -59,7 +65,7 @@ object ShopInventory {
                     }
                     inv.setItem(to, GLASS_MATERIAL)
                 }
-                DataManager.shopInventoryCache[size] = inv
+                inventoryCache[size] = inv
                 length = 0
                 size += 1
                 inv = Bukkit.createInventory(null, 36, "§eSHOP $size")
@@ -74,7 +80,11 @@ object ShopInventory {
             for (to in 28..35) {
                 inv.setItem(to, GLASS_MATERIAL)
             }
-            DataManager.shopInventoryCache[size] = inv
+            inventoryCache[size] = inv
         }
+
+        Data.shopInventoryCache = Collections.unmodifiableMap(inventoryCache)
+        Data.shopItemCache = Collections.unmodifiableMap(itemCache)
+
     }
 }

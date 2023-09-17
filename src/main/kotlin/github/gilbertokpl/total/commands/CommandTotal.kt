@@ -2,9 +2,16 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.internal.Data
+import github.gilbertokpl.total.cache.local.*
 import github.gilbertokpl.total.config.files.LangConfig
+import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.discord.Discord
 import github.gilbertokpl.total.util.PluginUtil
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("total") {
 
@@ -20,7 +27,8 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
             usage = listOf(
                 "/total reload",
                 "/total host",
-                "/total plugin <load/unload/reload> <pluginName>"
+                "/total plugin <load/unload/reload> <pluginName>",
+                "C_/total reset"
             )
         )
     }
@@ -49,10 +57,80 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
         }
 
         if (args[0].lowercase() == "reload") {
-            if (github.gilbertokpl.total.TotalEssentials.basePlugin.reloadConfig()) {
+            if (TotalEssentials.basePlugin.reloadConfig()) {
                 s.sendMessage(
                     LangConfig.generalConfigReload
                 )
+            }
+            return false
+        }
+
+        if (args[0].lowercase() == "reset" && args.size == 1 && s !is Player) {
+
+            if (MainConfig.generalResetList.size == 1 && MainConfig.generalResetList[0] == "0") {
+                s.sendMessage(LangConfig.generalResetMessageNotSet)
+                return false
+            }
+
+            TotalEssentials.basePlugin.getTask().async {
+                val token = KeyData.generateRandomString()
+                for (i in MainConfig.generalResetList) {
+                    val id = i.toLongOrNull() ?: continue
+                    if (!Discord.sendDiscordMessage(id, LangConfig.generalResetDiscordMessage.replace("%value%", token))) {
+                        s.sendMessage(LangConfig.VipsDiscordUserIdNotExist)
+                    }
+                }
+                Data.tokenReset = token
+            }
+
+            s.sendMessage(LangConfig.generalResetMessage)
+            return false
+        }
+
+        if (args[0].lowercase() == "reset" && args.size == 2 && s !is Player) {
+
+            if (args[1].contains(Data.tokenReset)) {
+                for (players in PlayerData.vipCache.getMap()) {
+
+                    PlayerData.CommandCache[players.key, ""] = true
+
+                    if (players.value.isNullOrEmpty()) continue
+
+                    val p = PlayerData.vipCache[players.key] ?: continue
+
+                    for (vips in p) {
+                        val vipItems = VipData.vipItems[vips.key]!!
+
+                        var commands = PlayerData.CommandCache[players.key] ?: ""
+
+                        for (c in (VipData.vipCommands[vips.key] ?: ArrayList())) {
+                            commands += if (commands == "") c.replace("%player%", players.key) else "-" + c.replace("%player%", players.key)
+                        }
+
+                        PlayerData.CommandCache[players.key, commands] = true
+
+                        PlayerData.vipItems[players.key, vipItems] = true
+                    }
+                }
+
+                TotalEssentials.basePlugin.getTask().async {
+                    try {
+                        transaction(basePlugin?.sql) {
+                            for (i in basePlugin?.getCache()?.toByteUpdate!!) {
+                                try {
+                                    i.update()
+                                } catch (e: Exception) {
+                                    println(e)
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        println(e)
+                    }
+                }
+
+                Data.tokenReset = ""
+                return false
             }
             return false
         }

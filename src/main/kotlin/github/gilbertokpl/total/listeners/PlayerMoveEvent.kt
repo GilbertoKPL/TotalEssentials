@@ -9,14 +9,14 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 
 class PlayerMoveEvent : Listener {
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun event(e: PlayerMoveEvent) {
+        if (!LoginData.isPlayerLoggedIn(e.player)) {
+            e.isCancelled = true
+        }
         if (!MainConfig.antiafkEnabled) return
         if (!e.player.hasPermission("totalessentials.bypass.antiafk")) {
             PlayerData.afk[e.player] = 1
-        }
-        if (!LoginData.isPlayerLoggedIn(e.player)) {
-            e.isCancelled = true
         }
     }
 }

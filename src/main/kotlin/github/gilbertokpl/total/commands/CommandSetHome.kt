@@ -80,13 +80,7 @@ class CommandSetHome : github.gilbertokpl.core.external.command.CommandCreator("
             return false
         }
 
-        val homes = PlayerData.homeCache[s as Player]!!
-
-        //check if already exist
-        if (homes.contains(nameHome)) {
-            s.sendMessage(LangConfig.homesNameAlreadyExist)
-            return false
-        }
+        s as Player
 
         //update limit
         if (!s.hasPermission("totalessentials.commands.sethome." + PlayerData.homeLimitCache[s])) {

@@ -1,7 +1,7 @@
 package github.gilbertokpl.total
 
 import github.gilbertokpl.core.external.CorePlugin
-import github.gilbertokpl.total.cache.internal.OtherConfig
+import github.gilbertokpl.total.cache.internal.InternalLoader
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.loop.ClearItemsLoop
 import github.gilbertokpl.total.cache.loop.PluginLoop
@@ -15,7 +15,6 @@ import net.milkbowl.vault.permission.Permission
 import org.bukkit.Bukkit
 import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.logging.LogManager
 
 
 internal class TotalEssentials : JavaPlugin() {
@@ -57,7 +56,7 @@ internal class TotalEssentials : JavaPlugin() {
 
         permission = Bukkit.getServer().servicesManager.getRegistration(Permission::class.java)!!.provider
 
-        OtherConfig.start(
+        InternalLoader.start(
             MainConfig.announcementsListAnnounce,
             LangConfig.deathmessagesCauseReplacer,
             LangConfig.deathmessagesEntityReplacer
@@ -88,9 +87,26 @@ internal class TotalEssentials : JavaPlugin() {
 
         for (p in basePlugin.getReflection().getPlayers()) {
             if (MainConfig.playtimeActivated) {
-                PlayerData.playTimeCache[p] =
-                    (PlayerData.playTimeCache[p] ?: 0L) + System.currentTimeMillis() - (PlayerData.playtimeLocal[p]
-                        ?: 0L)
+                if (PlayerData.playTimeCache[p] != null) {
+
+                    val time = PlayerData.playTimeCache[p] ?: 0L
+
+                    val timePlayed = PlayerData.playtimeLocal[p] ?: continue
+
+                    var newTime = time + (System.currentTimeMillis() - timePlayed)
+
+                    if (time > 94608000000) {
+                        newTime = time
+                    }
+
+                    if (newTime > 94608000000) {
+                        newTime = 518400000
+                    }
+
+                    PlayerData.playTimeCache[p] = newTime
+                } else {
+                    PlayerData.playTimeCache[p] = 0L
+                }
                 PlayerData.playtimeLocal[p] = 0L
             }
         }

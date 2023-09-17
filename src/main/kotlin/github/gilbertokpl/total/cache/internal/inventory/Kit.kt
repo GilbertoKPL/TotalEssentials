@@ -1,7 +1,7 @@
-package github.gilbertokpl.total.cache.internal
+package github.gilbertokpl.total.cache.internal.inventory
 
-import github.gilbertokpl.total.cache.internal.DataManager.kitInventoryCache
-import github.gilbertokpl.total.cache.internal.DataManager.kitItemCache
+import github.gilbertokpl.total.cache.internal.Data.kitInventoryCache
+import github.gilbertokpl.total.cache.internal.Data.kitItemCache
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.local.KitsData.kitFakeName
 import github.gilbertokpl.total.cache.local.KitsData.kitWeight
@@ -15,14 +15,17 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.util.*
+import kotlin.collections.HashMap
 
-internal object KitGuiInventory {
+internal object Kit {
 
     private val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§eKIT", true)
 
     fun setup() {
-        kitItemCache.clear()
-        kitInventoryCache.clear()
+
+        val inventoryCache: MutableMap<Int, Inventory> = HashMap()
+        val itemCache: MutableMap<Int, String> = HashMap()
+
         var currentPage = 1
         var currentSlot = 0
         var inventory = createKitsInventory(currentPage)
@@ -33,16 +36,18 @@ internal object KitGuiInventory {
             val kitName = kitFakeName[kit.key]?.takeIf { it.isNotEmpty() } ?: kit.key
 
             val itemName = LangConfig.kitsInventoryItemsName.replace("%kitrealname%", kitName)
-            val item = KitsData.kitItems[kit.key]?.getOrNull(0) ?: ItemStack(Material.CHEST)
+            val item = ItemStack(KitsData.kitItems[kit.key]?.getOrNull(0) ?: ItemStack(Material.CHEST))
 
             val meta = item.itemMeta
             item.amount = 1
-            meta.displayName = itemName
-            meta.lore = LangConfig.kitsInventoryItemsLore.map { it.replace("%realname%", kit.key) }
+            meta?.setDisplayName(itemName)
+            if (meta != null) {
+                meta.lore = LangConfig.kitsInventoryItemsLore.map { it.replace("%realname%", kit.key) }
+            }
             item.itemMeta = meta
 
             val cacheValue = currentSlot + 1 + (27 * (currentPage - 1))
-            kitItemCache[cacheValue] = kit.key
+            itemCache[cacheValue] = kit.key
 
             inventory.setItem(currentSlot, item)
             currentSlot++
@@ -52,7 +57,7 @@ internal object KitGuiInventory {
                     inventory.setItem(i, GLASS_MATERIAL)
                 }
                 inventory.setItem(35, createNextItem(currentPage, sortedKits.size))
-                kitInventoryCache[currentPage] = inventory
+                inventoryCache[currentPage] = inventory
                 currentPage++
                 currentSlot = 0
                 inventory = createKitsInventory(currentPage)
@@ -64,8 +69,12 @@ internal object KitGuiInventory {
             for (i in 28..35) {
                 inventory.setItem(i, GLASS_MATERIAL)
             }
-            kitInventoryCache[currentPage] = inventory
+            inventoryCache[currentPage] = inventory
         }
+
+        kitItemCache = Collections.unmodifiableMap(itemCache)
+        kitInventoryCache = Collections.unmodifiableMap(inventoryCache)
+
     }
 
     fun openKitInventory(kit: String, guiNumber: String, player: Player) {

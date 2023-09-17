@@ -1,19 +1,23 @@
-package github.gilbertokpl.total.cache.internal
+package github.gilbertokpl.total.cache.internal.inventory
 
 import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.MaterialUtil
 import org.bukkit.Material
 import org.bukkit.SkullType
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import java.util.*
+import kotlin.collections.ArrayList
 
-object PlaytimeInventory {
+object Playtime {
     private val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§ePLAYTIME", true)
 
     fun setup() {
-        DataManager.playTimeInventoryCache.clear()
+        val inventoryCache: MutableMap<Int, Inventory> = linkedMapOf()
         var size = 1
         var length = 0
         var inv = TotalEssentials.instance.server.createInventory(null, 36, "§ePLAYTIME 1")
@@ -50,7 +54,7 @@ object PlaytimeInventory {
                         else -> inv.setItem(to, GLASS_MATERIAL)
                     }
                 }
-                DataManager.playTimeInventoryCache[size] = inv
+                inventoryCache[size] = inv
                 length = 0
                 size++
                 inv = TotalEssentials.instance.server.createInventory(null, 36, "§ePLAYTIME $size")
@@ -74,8 +78,10 @@ object PlaytimeInventory {
                 inv.setItem(to, GLASS_MATERIAL)
             }
 
-            DataManager.playTimeInventoryCache[size] = inv
+            inventoryCache[size] = inv
         }
+
+        Data.playTimeInventoryCache = Collections.unmodifiableMap(inventoryCache)
     }
 
     fun createHeadItem(name: String, time: Long): ItemStack {
@@ -95,7 +101,9 @@ object PlaytimeInventory {
             itemLore.add(it.replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(t, true)))
         }
 
-        meta.lore = itemLore
+        if (meta != null) {
+            meta.lore = itemLore
+        }
 
         item.itemMeta = meta
 

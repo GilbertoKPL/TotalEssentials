@@ -45,13 +45,13 @@ internal class InternalDatabase(private val corePlugin: CorePlugin) {
                 }
             }
 
+            corePlugin.sql = database
+
             for (table in databaseTablePackage) {
                 transaction(database) {
                     SchemaUtils.createMissingTablesAndColumns(table)
                 }
             }
-
-            corePlugin.sql = database
 
         } catch (e: Throwable) {
             println(e)

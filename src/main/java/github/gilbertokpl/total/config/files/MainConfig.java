@@ -61,6 +61,14 @@ public class MainConfig implements DefaultConfig {
     )
     public static Boolean generalCustomItemStack = false;
 
+    @Comments(
+            {
+                    @Comment(annotations = "Lista de IDs dos donos do servidor para quando for utilizado o comando reset ter a dupla verificação", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static List<String> generalResetList = Collections.singletonList("0");
+
     @PrimaryComments(
             {
                     @PrimaryComment(primaryAnnotations = "Configurações do banco de dados.", lang = LangTypes.PT_BR),
@@ -411,7 +419,7 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "List of worlds blocked from using fly, use world name example: world.", lang = LangTypes.EN_US)
             }
     )
-    public static List<String> flyDisabledWorlds = Collections.singletonList("essentialsk");
+    public static List<String> flyDisabledWorlds = Collections.singletonList("TotalEssentials");
 
     @PrimaryComments(
             {

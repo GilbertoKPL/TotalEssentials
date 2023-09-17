@@ -1,13 +1,11 @@
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.total.cache.internal.EditKitInventory
-import github.gilbertokpl.total.cache.internal.KitGuiInventory
-import github.gilbertokpl.total.cache.internal.PlaytimeInventory
-import github.gilbertokpl.total.cache.internal.ShopInventory
+import github.gilbertokpl.total.cache.internal.inventory.EditKit
+import github.gilbertokpl.total.cache.internal.inventory.Kit
+import github.gilbertokpl.total.cache.internal.inventory.Playtime
+import github.gilbertokpl.total.cache.internal.inventory.Shop
 import github.gilbertokpl.total.cache.loop.AntiAfkLoop
 import github.gilbertokpl.total.config.files.MainConfig
-import java.io.InputStream
-import java.net.URL
 import java.util.*
 
 
@@ -31,17 +29,17 @@ internal object MainUtil {
 
     fun startInventories() {
         if (MainConfig.kitsActivated) {
-            EditKitInventory.setup()
-            KitGuiInventory.setup()
+            EditKit.setup()
+            Kit.setup()
         }
         if (MainConfig.shopActivated) {
-            ShopInventory.setup()
+            Shop.setup()
         }
         if (MainConfig.antiafkEnabled) {
             AntiAfkLoop.start()
         }
         if (MainConfig.playtimeActivated) {
-            PlaytimeInventory.setup()
+            Playtime.setup()
         }
         if (MainConfig.moneyActivated) {
             MoneyUtil.refreshTycoon()

@@ -9,34 +9,23 @@ import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.TaskUtil
 import java.util.concurrent.TimeUnit
 
-/**
- * Classe que executa um loop anti-AFK.
- * Quando um jogador estiver AFK por um determinado período de tempo, ele será teletransportado e receberá uma mensagem.
- */
 object AntiAfkLoop {
     private val TIME_TO_CHECK_MINUTES = MainConfig.antiafkTimeToCheck
     private val TIME_TO_EXECUTE = MainConfig.antiafkTimeToExecute
 
-    /**
-     * Inicia o loop anti-AFK.
-     */
     fun start() {
         TaskUtil.getInternalExecutor().scheduleWithFixedDelay(::checkPlayersAfk, TIME_TO_CHECK_MINUTES, TIME_TO_CHECK_MINUTES, TimeUnit.MINUTES)
     }
 
-    /**
-     * Verifica se os jogadores estão AFK e executa a ação apropriada se necessário.
-     */
     private fun checkPlayersAfk() {
-        TotalEssentials.basePlugin.getReflection().getPlayers().forEach { player ->
+        for (player in TotalEssentials.basePlugin.getReflection().getPlayers()) {
             if (player.hasPermission("totalessentials.bypass.antiafk")) {
-                return@forEach // continua com o próximo jogador se o jogador tiver permissão para ignorar o anti-AFK.
+                continue
             }
-
-            val afkTime = PlayerData.afk[player]?.plus(1) ?: 1
+            val afkTime = PlayerData.afk[player]?.plus(TIME_TO_CHECK_MINUTES.toInt()) ?: TIME_TO_CHECK_MINUTES.toInt()
             PlayerData.afk[player] = afkTime
 
-            if (afkTime >= TIME_TO_EXECUTE / TIME_TO_CHECK_MINUTES) {
+            if (afkTime.toLong() >= TIME_TO_EXECUTE) {
                 val warp = WarpData.warpLocation[MainConfig.antiafkWarp]
 
                 if (warp == null) {
@@ -46,6 +35,7 @@ object AntiAfkLoop {
                     player.teleport(warp)
                 }
 
+                PlayerData.afk[player] = 1
                 player.sendMessage(LangConfig.antiafkMessage)
             }
         }
