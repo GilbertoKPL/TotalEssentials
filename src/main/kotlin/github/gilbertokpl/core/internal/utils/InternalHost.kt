@@ -64,6 +64,7 @@ internal class InternalHost(private val corePlugin: CorePlugin) {
                     "0xd49" -> "Neoverse-N2"
                     else -> "Unknown"
                 }
+
                 else -> name
             }
 

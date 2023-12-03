@@ -44,9 +44,9 @@ class CommandHat : github.gilbertokpl.core.external.command.CommandCreator("hat"
         p.inventory.helmet = itemHand
 
         try {
-            p.inventory.setItemInMainHand(helmet)
+            p.inventory.itemInMainHand = helmet
         } catch (e: NoSuchMethodError) {
-            p.setItemInHand(helmet)
+            p.itemInHand = helmet
         }
 
 

@@ -10,7 +10,7 @@ import org.bukkit.Material
 import org.bukkit.SkullType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import java.util.Collections
+import java.util.*
 
 object Shop {
     val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§eSHOP", true)
@@ -32,12 +32,13 @@ object Shop {
             val meta = item.itemMeta
 
             item.amount = 1
-            meta?.setDisplayName(name)
+            meta?.displayName = name
 
             val checkIfIsOpen = ShopData.shopOpen[shop.key] ?: false
 
             val itemLore = List(LangConfig.shopInventoryItemsLore.size) {
-                LangConfig.shopInventoryItemsLore[it].replace("%visits%", shop.value.toString()).replace("%open%", if (checkIfIsOpen) LangConfig.shopOpen else LangConfig.shopClosed)
+                LangConfig.shopInventoryItemsLore[it].replace("%visits%", shop.value.toString())
+                    .replace("%open%", if (checkIfIsOpen) LangConfig.shopOpen else LangConfig.shopClosed)
             }
 
             if (meta != null) {

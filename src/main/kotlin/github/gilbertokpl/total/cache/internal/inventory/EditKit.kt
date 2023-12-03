@@ -53,7 +53,7 @@ internal object EditKit {
     }
 
     fun editKitGui(p: Player, kit: String) {
-        val inv: Inventory = github.gilbertokpl.total.TotalEssentials.instance.server
+        val inv: Inventory = github.gilbertokpl.total.TotalEssentialsJava.instance.server
             .createInventory(null, EDIT_KIT_INVENTORY_SIZE, "§eEditKit $kit")
         Data.editKitItemCache.forEach { (slot, item) ->
             inv.setItem(slot, item)
@@ -62,7 +62,7 @@ internal object EditKit {
     }
 
     fun editKitGuiItems(p: Player, kit: String, items: List<ItemStack>) {
-        val inv: Inventory = github.gilbertokpl.total.TotalEssentials.instance.server
+        val inv: Inventory = github.gilbertokpl.total.TotalEssentialsJava.instance.server
             .createInventory(null, EDIT_KIT_ITEMS_INVENTORY_SIZE, kit)
         items.forEach { item ->
             inv.addItem(item)

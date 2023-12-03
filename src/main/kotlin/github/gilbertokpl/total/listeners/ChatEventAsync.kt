@@ -41,11 +41,11 @@ class ChatEventAsync : Listener {
             if (split[0] == "time") {
                 e.isCancelled = true
                 val time =
-                    github.gilbertokpl.total.TotalEssentials.basePlugin.getTime().convertStringToMillis(e.message)
+                    github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getTime().convertStringToMillis(e.message)
                 p.sendMessage(
                     LangConfig.kitsEditKitTime.replace(
                         "%time%",
-                        github.gilbertokpl.total.TotalEssentials.basePlugin.getTime()
+                        github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getTime()
                             .convertMillisToString(
                                 time,
                                 MainConfig.kitsUseShortTime

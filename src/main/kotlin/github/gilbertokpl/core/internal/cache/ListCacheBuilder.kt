@@ -10,7 +10,7 @@ internal class ListCacheBuilder<K, V>(
     private val table: Table,
     private val primaryColumn: Column<String>,
     private val column: Column<K>,
-    private val classConvert : SerializerBase<ArrayList<V>, K>
+    private val classConvert: SerializerBase<ArrayList<V>, K>
 ) : CacheBuilderV2<ArrayList<V>, V> {
 
 

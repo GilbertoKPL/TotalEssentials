@@ -34,7 +34,7 @@ class CommandInvSee : github.gilbertokpl.core.external.command.CommandCreator("i
             return false
         }
 
-        val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[0])
+        val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0])
 
         //check if player is online and not op
         if (p == null || p.isOp && !(s as Player).isOp || p.gameMode != GameMode.SURVIVAL) {

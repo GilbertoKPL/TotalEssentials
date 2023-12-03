@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.VipData
 import github.gilbertokpl.total.discord.Discord
@@ -23,7 +23,7 @@ object VipUtil {
 
         for (t in toExclude) {
             PlayerData.vipCache.remove(entity, t)
-            TotalEssentials.permission.playerRemoveGroup(world, entity, VipData.vipGroup[t])
+            TotalEssentialsJava.permission.playerRemoveGroup(world, entity, VipData.vipGroup[t])
             VipData.vipQuantity[t] = (VipData.vipQuantity[t] ?: 0) - 1
             Discord.removeUserRole(PlayerData.discordCache[entity] ?: continue, VipData.vipDiscord[t] ?: continue)
         }
@@ -49,7 +49,7 @@ object VipUtil {
 
         for (g in sequence) {
             val group = VipData.vipGroup[g] ?: continue
-            if (TotalEssentials.permission.playerInGroup(world, entity, group)) {
+            if (TotalEssentialsJava.permission.playerInGroup(world, entity, group)) {
                 currentGroup = g
                 break
             }
@@ -57,12 +57,12 @@ object VipUtil {
 
         if (currentGroup == null) {
             if (newVip != null) {
-                TotalEssentials.permission.playerAddGroup(world, entity, VipData.vipGroup[newVip])
+                TotalEssentialsJava.permission.playerAddGroup(world, entity, VipData.vipGroup[newVip])
 
                 if (execute) {
                     for (c in (VipData.vipCommands[newVip] ?: ArrayList())) {
-                        TotalEssentials.instance.server.dispatchCommand(
-                            TotalEssentials.instance.server.consoleSender,
+                        TotalEssentialsJava.instance.server.dispatchCommand(
+                            TotalEssentialsJava.instance.server.consoleSender,
                             c.replace("%player%", entity)
                         )
                     }
@@ -79,7 +79,7 @@ object VipUtil {
             }
             if (size > 0) {
                 val newGroup = vips.keys.first()
-                TotalEssentials.permission.playerAddGroup(world, entity, VipData.vipGroup[newGroup])
+                TotalEssentialsJava.permission.playerAddGroup(world, entity, VipData.vipGroup[newGroup])
                 return newGroup
             }
             return null
@@ -101,15 +101,15 @@ object VipUtil {
             value += 1
         }
 
-        TotalEssentials.permission.playerRemoveGroup(world, entity, VipData.vipGroup[currentGroup])
+        TotalEssentialsJava.permission.playerRemoveGroup(world, entity, VipData.vipGroup[currentGroup])
 
         if (newVip != null) {
-            TotalEssentials.permission.playerAddGroup(world, entity, VipData.vipGroup[newVip])
+            TotalEssentialsJava.permission.playerAddGroup(world, entity, VipData.vipGroup[newVip])
 
             if (execute) {
                 for (c in (VipData.vipCommands[newVip] ?: ArrayList())) {
-                    TotalEssentials.instance.server.dispatchCommand(
-                        TotalEssentials.instance.server.consoleSender,
+                    TotalEssentialsJava.instance.server.dispatchCommand(
+                        TotalEssentialsJava.instance.server.consoleSender,
                         c.replace("%player%", entity)
                     )
                 }
@@ -125,7 +125,7 @@ object VipUtil {
             return null
         }
 
-        TotalEssentials.permission.playerAddGroup(world, entity, VipData.vipGroup[sequence[value - 1]])
+        TotalEssentialsJava.permission.playerAddGroup(world, entity, VipData.vipGroup[sequence[value - 1]])
 
         return sequence[value - 1]
 

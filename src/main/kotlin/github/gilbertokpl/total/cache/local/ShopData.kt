@@ -12,7 +12,7 @@ object ShopData : CacheBase {
     override var table: Table = ShopDataSQL
     override var primaryColumn: Column<String> = ShopDataSQL.playerTable
 
-    private val cache = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
+    private val cache = github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getCache()
 
     val shopVisits = cache.integer(this, ShopDataSQL.visits)
     val shopLocation = cache.location(this, ShopDataSQL.location, LocationSerializer())

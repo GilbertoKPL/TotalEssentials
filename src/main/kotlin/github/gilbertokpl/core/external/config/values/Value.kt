@@ -2,7 +2,6 @@ package github.gilbertokpl.core.external.config.values
 
 import github.gilbertokpl.core.external.CorePlugin
 import org.simpleyaml.configuration.file.YamlFile
-import java.util.stream.Collectors
 
 class Value(private val corePlugin: CorePlugin) {
     fun getString(source: YamlFile, path: String, color: Boolean = true): String? {

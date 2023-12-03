@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.listeners
 
 import github.gilbertokpl.core.external.task.SynchronizationContext
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.SpawnData
@@ -39,7 +39,7 @@ class PlayerJoin : Listener {
 
         SpawnData.teleportToSpawn(p)
 
-        TotalEssentials.basePlugin.getTask().async {
+        TotalEssentialsJava.basePlugin.getTask().async {
 
             if (MainConfig.playtimeActivated) {
                 PlayerData.playtimeLocal[p] = System.currentTimeMillis()

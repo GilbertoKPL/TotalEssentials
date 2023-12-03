@@ -15,7 +15,7 @@ class Color(lf: CorePlugin) {
         return colorInstance.color(player, str)
     }
 
-    fun list(player: Player) : List<String> {
+    fun list(player: Player): List<String> {
         return colorInstance.list(player)
     }
 

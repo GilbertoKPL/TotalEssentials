@@ -12,7 +12,7 @@ object SpawnData : CacheBase {
     override var table: Table = SpawnDataSQL
     override var primaryColumn: Column<String> = SpawnDataSQL.spawnNameTable
 
-    private val cache = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
+    private val cache = github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getCache()
 
     val spawnLocation = cache.location(this, SpawnDataSQL.spawnLocationTable, LocationSerializer())
 

@@ -57,7 +57,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
 
                 PlayerData.nickCache[s] = ""
 
-                s.setDisplayName(s.name)
+                s.displayName = s.name
 
                 s.sendMessage(LangConfig.nicksRemovedSuccess)
                 return false
@@ -103,7 +103,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
         }
 
         //check if player exist
-        val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[0]) ?: run {
+        val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
             s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
@@ -116,7 +116,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
             }
             PlayerData.nickCache[p] = ""
 
-            p.setDisplayName(p.name)
+            p.displayName = p.name
 
             s.sendMessage(LangConfig.nicksRemovedOtherSuccess)
             p.sendMessage(LangConfig.nicksRemovedOtherPlayerSuccess)
@@ -148,7 +148,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
                 return true
             }
         }
-        player.setDisplayName(newNick)
+        player.displayName = newNick
         PlayerData.nickCache[player] = newNick
         return false
     }

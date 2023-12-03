@@ -3,7 +3,7 @@ package github.gilbertokpl.total.commands
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.core.external.task.SynchronizationContext
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.internal.DataTeleport
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -33,7 +33,7 @@ class CommandTpaccept : github.gilbertokpl.core.external.command.CommandCreator(
         }
 
         //check if player is online
-        if (github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(p.name) == null) {
+        if (TotalEssentialsJava.instance.server.getPlayer(p.name) == null) {
             s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
@@ -69,7 +69,7 @@ class CommandTpaccept : github.gilbertokpl.core.external.command.CommandCreator(
                 .replace("%time%", time.toString())
         )
 
-        TotalEssentials.basePlugin.getTask().async {
+        TotalEssentialsJava.basePlugin.getTask().async {
             waitFor(time.toLong() * 20)
             try {
                 switchContext(SynchronizationContext.SYNC)

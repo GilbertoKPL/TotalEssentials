@@ -140,11 +140,11 @@ public class LangConfig implements DefaultLang {
     public static String generalConfigReload;
     @Values(
             {
-                    @Value(value = "&aIP: &f%ip%|&aOS: &f%os%, &aversão &f%os_version%|&aNome CPU: &f%cpu_name%|&aNúcleos: &f%cores% &anúcleos|&aNúcleos Liberados: &f%cores_server% &anúcleos|&aUso do CPU : &f%cpu_usage% %|&aClock CPU: &f%cpu_clock_min% / %cpu_clock_max% mhz|&aMemória: &f%used_mem% / %max_mem% mb|&aMemória Liberada: &f%used_server_mem% / %max_server_mem% mb|&aHD Usado: &f%used_hd%/%max_hd% mb|&aGPU: &f%gpu%", lang = LangTypes.PT_BR),
-                    @Value(value = "&aIP: &f%ip%|&aOS: &f%os%, &aversion &f%os_version%|&aCPU Name: &f%cpu_name%|&aCores: &f%cores% &anúcleos|&aReleased Cores: &f%cores_server% &anúcleos|&aCPU Usage : &f%cpu_usage% %|&aClock CPU: &f%cpu_clock_min% / %cpu_clock_max% mhz|&aMemory: &f%used_mem% / %max_mem% mb|&aFree memory: &f%used_server_mem% / %max_server_mem% mb|&aHD: &f%used_hd%/%max_hd% mb|&aGPU: &f%gpu%", lang = LangTypes.EN_US)
+                    @Value(value = "&aIP: &f%ip%|&aOS: &f%os%, &aversão &f%os_version%|&aNome CPU: &f%cpu_name%|&aNúcleos: &f%cores% &anúcleos|&aNúcleos Liberados: &f%cores_server% &anúcleos|&aUso do CPU : &f%cpu_usage% %|&aClock CPU: &f%cpu_clock_min% / %cpu_clock_max% mhz|&aMemória: &f%used_mem% / %max_mem% gb|&aMemória Liberada: &f%used_server_mem% / %max_server_mem% gb|&aHD Usado: &f%used_hd%/%max_hd% gb|&aGPU: &f%gpu%", lang = LangTypes.PT_BR),
+                    @Value(value = "&aIP: &f%ip%|&aOS: &f%os%, &aversion &f%os_version%|&aCPU Name: &f%cpu_name%|&aCores: &f%cores% &anúcleos|&aReleased Cores: &f%cores_server% &anúcleos|&aCPU Usage : &f%cpu_usage% %|&aClock CPU: &f%cpu_clock_min% / %cpu_clock_max% mhz|&aMemory: &f%used_mem% / %max_mem% gb|&aFree memory: &f%used_server_mem% / %max_server_mem% gb|&aHD: &f%used_hd%/%max_hd% gb|&aGPU: &f%gpu%", lang = LangTypes.EN_US)
             }
     )
-    public static List<String> generalHostConfigInfo;
+    public static List<String> generalHostConfig;
     @Values(
             {
                     @Value(value = "%prefix%&ePegando informações da host... Aguarde!", lang = LangTypes.PT_BR),
@@ -224,7 +224,6 @@ public class LangConfig implements DefaultLang {
             }
     )
     public static String generalResetDiscordMessage;
-
 
     //time
     @Values(

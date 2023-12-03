@@ -12,7 +12,12 @@ internal object AnnounceLoop {
     fun start(maxAnnouncements: Int, intervalInMinutes: Int) {
         maxAnnouncementIndex = maxAnnouncements
 
-        TaskUtil.getInternalExecutor().scheduleWithFixedDelay(::sendAnnouncement, intervalInMinutes * 20L, intervalInMinutes * 20L, TimeUnit.MINUTES)
+        TaskUtil.getInternalExecutor().scheduleWithFixedDelay(
+            ::sendAnnouncement,
+            intervalInMinutes * 20L,
+            intervalInMinutes * 20L,
+            TimeUnit.MINUTES
+        )
     }
 
     private fun sendAnnouncement() {
@@ -25,6 +30,7 @@ internal object AnnounceLoop {
             }
         }
 
-        currentAnnouncementIndex = if (currentAnnouncementIndex >= maxAnnouncementIndex) 0 else currentAnnouncementIndex + 1
+        currentAnnouncementIndex =
+            if (currentAnnouncementIndex >= maxAnnouncementIndex) 0 else currentAnnouncementIndex + 1
     }
 }

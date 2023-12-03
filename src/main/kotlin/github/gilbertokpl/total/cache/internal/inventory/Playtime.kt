@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.cache.internal.inventory
 
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -11,7 +11,6 @@ import org.bukkit.SkullType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.util.*
-import kotlin.collections.ArrayList
 
 object Playtime {
     private val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§ePLAYTIME", true)
@@ -20,7 +19,7 @@ object Playtime {
         val inventoryCache: MutableMap<Int, Inventory> = linkedMapOf()
         var size = 1
         var length = 0
-        var inv = TotalEssentials.instance.server.createInventory(null, 36, "§ePLAYTIME 1")
+        var inv = TotalEssentialsJava.instance.server.createInventory(null, 36, "§ePLAYTIME 1")
 
         val cache = PlayerData.playTimeCache.getMap().toList().sortedByDescending { (_, value) -> value }
 
@@ -43,6 +42,7 @@ object Playtime {
                                 true
                             )
                         )
+
                         to == 35 -> inv.setItem(
                             to,
                             ItemUtil.item(
@@ -51,13 +51,14 @@ object Playtime {
                                 true
                             )
                         )
+
                         else -> inv.setItem(to, GLASS_MATERIAL)
                     }
                 }
                 inventoryCache[size] = inv
                 length = 0
                 size++
-                inv = TotalEssentials.instance.server.createInventory(null, 36, "§ePLAYTIME $size")
+                inv = TotalEssentialsJava.instance.server.createInventory(null, 36, "§ePLAYTIME $size")
             }
         }
 
@@ -90,7 +91,7 @@ object Playtime {
         val item = ItemStack(MaterialUtil["head"]!!, 1, SkullType.PLAYER.ordinal.toShort())
         val meta = item.itemMeta
 
-        meta?.setDisplayName(playerName)
+        meta?.displayName = playerName
 
         val itemLore = ArrayList<String>(playtimeInventoryItemsLore.size)
 
@@ -98,7 +99,7 @@ object Playtime {
         val t = time + if (t1 != 0L) System.currentTimeMillis() - t1 else 0L
 
         playtimeInventoryItemsLore.forEach {
-            itemLore.add(it.replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(t, true)))
+            itemLore.add(it.replace("%time%", TotalEssentialsJava.basePlugin.getTime().convertMillisToString(t, true)))
         }
 
         if (meta != null) {

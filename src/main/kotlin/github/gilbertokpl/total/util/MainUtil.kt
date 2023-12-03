@@ -18,11 +18,11 @@ internal object MainUtil {
     }
 
     fun consoleMessage(message: String) {
-        println("${ColorUtil.CYAN.color}[${github.gilbertokpl.total.TotalEssentials.instance.name}]${ColorUtil.RESET.color} $message")
+        println("${ColorUtil.CYAN.color}[${github.gilbertokpl.total.TotalEssentialsJava.instance.name}]${ColorUtil.RESET.color} $message")
     }
 
     fun serverMessage(message: String) {
-        github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().getPlayers().forEach {
+        github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection().getPlayers().forEach {
             it.sendMessage(message)
         }
     }

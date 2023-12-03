@@ -40,19 +40,19 @@ class CommandHeal : github.gilbertokpl.core.external.command.CommandCreator("hea
             }
 
             //check if player exist
-            val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[0]) ?: run {
+            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
-            if (MainConfig.healNeedHealBelow && github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection()
+            if (MainConfig.healNeedHealBelow && github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection()
                     .getHealth(p) >= MAX_PLAYER_HEAL
             ) {
                 s.sendMessage(LangConfig.healOtherFullMessage)
                 return false
             }
 
-            github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().setHealth(p, 20)
+            github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection().setHealth(p, 20)
             p.sendMessage(LangConfig.healOtherMessage)
             s.sendMessage(
                 LangConfig.healSuccessOtherMessage.replace(
@@ -64,14 +64,14 @@ class CommandHeal : github.gilbertokpl.core.external.command.CommandCreator("hea
             return false
         }
 
-        if (MainConfig.healNeedHealBelow && github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection()
+        if (MainConfig.healNeedHealBelow && github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection()
                 .getHealth(s as Player) >= MAX_PLAYER_HEAL
         ) {
             s.sendMessage(LangConfig.healFullMessage)
             return false
         }
 
-        github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().setHealth(s as Player, MAX_PLAYER_HEAL)
+        github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection().setHealth(s as Player, MAX_PLAYER_HEAL)
         s.sendMessage(LangConfig.healMessage)
         return false
     }

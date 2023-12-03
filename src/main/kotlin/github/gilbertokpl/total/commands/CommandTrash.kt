@@ -24,7 +24,7 @@ class CommandTrash : github.gilbertokpl.core.external.command.CommandCreator("tr
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
         val inv =
-            github.gilbertokpl.total.TotalEssentials.instance.server.createInventory(
+            github.gilbertokpl.total.TotalEssentialsJava.instance.server.createInventory(
                 (s as Player),
                 36,
                 LangConfig.trashMenuName

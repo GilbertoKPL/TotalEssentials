@@ -40,7 +40,6 @@ CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
         if (args.isEmpty()) {
 
 
-
             val inventory = Data.shopInventoryCache[1] ?: run {
                 s.sendMessage(LangConfig.shopNotExistShop)
                 return false
@@ -49,8 +48,7 @@ CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
             if (p.hasPermission("totalessentials.commands.shop.set")) {
                 inventory.setItem(30, ItemUtil.item(Material.CHEST, LangConfig.shopLoreSet, false))
                 inventory.setItem(32, ItemUtil.item(Material.CHEST, LangConfig.shopLoreSwitch, false))
-            }
-            else {
+            } else {
                 inventory.setItem(30, Shop.GLASS_MATERIAL)
                 inventory.setItem(32, Shop.GLASS_MATERIAL)
             }

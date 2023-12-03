@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.serializer.*
 import github.gilbertokpl.total.cache.sql.PlayerDataSQL
 import github.gilbertokpl.total.config.files.MainConfig
@@ -10,7 +10,6 @@ import github.gilbertokpl.total.util.VipUtil
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.sql.Column
@@ -20,7 +19,7 @@ object PlayerData : CacheBase {
     override var table: Table = PlayerDataSQL
     override var primaryColumn: Column<String> = PlayerDataSQL.playerTable
 
-    private val ins = TotalEssentials.basePlugin.getCache()
+    private val ins = TotalEssentialsJava.basePlugin.getCache()
 
     val kitsCache = ins.hashMap(this, PlayerDataSQL.kitsTable, KitSerializer())
     val homeCache = ins.hashMap(this, PlayerDataSQL.homeTable, HomeSerializer())
@@ -64,7 +63,7 @@ object PlayerData : CacheBase {
         lightCache[entity] = false
         flyCache[entity] = false
         backLocation[entity] = SpawnData.spawnLocation["spawn"]
-            ?: Location(github.gilbertokpl.total.TotalEssentials.instance.server.getWorld("world"), 1.0, 1.0, 1.0)
+            ?: Location(TotalEssentialsJava.instance.server.getWorld("world"), 1.0, 1.0, 1.0)
         speedCache[entity] = 1
         moneyCache[entity] = MainConfig.moneyDefault?.toDouble() ?: 0.0
         afk[entity] = 1
@@ -80,7 +79,7 @@ object PlayerData : CacheBase {
         val nick = nickCache[p]
 
         if (nick != "" && nick != p.displayName && p.hasPermission("totalessentials.commands.nick")) {
-            p.setDisplayName(nick)
+            p.displayName = nick
         }
 
         val gameModeName = PlayerUtil.getGameModeNumber(gameModeCache[p].toString())
@@ -93,7 +92,7 @@ object PlayerData : CacheBase {
         }
         if (vanishCache[p]!!) {
             p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
-            for (it in TotalEssentials.basePlugin.getReflection().getPlayers()) {
+            for (it in TotalEssentialsJava.basePlugin.getReflection().getPlayers()) {
                 if (it.player!!.hasPermission("totalessentials.commands.vanish")
                     || it.player!!.hasPermission("totalessentials.bypass.vanish")
                 ) {
@@ -126,8 +125,8 @@ object PlayerData : CacheBase {
 
         if (!CommandCache[p].isNullOrEmpty()) {
             for (i in CommandCache[p]?.split(" -")!!) {
-                TotalEssentials.instance.server.dispatchCommand(
-                    TotalEssentials.instance.server.consoleSender,
+                TotalEssentialsJava.instance.server.dispatchCommand(
+                    TotalEssentialsJava.instance.server.consoleSender,
                     i
                 )
             }
@@ -139,7 +138,7 @@ object PlayerData : CacheBase {
             if (p.hasPermission("totalessentials.commands.vanish") ||
                 p.hasPermission("totalessentials.bypass.vanish")
             ) return
-            for (it in TotalEssentials.basePlugin.getReflection().getPlayers()) {
+            for (it in TotalEssentialsJava.basePlugin.getReflection().getPlayers()) {
                 if (vanishCache[it] ?: continue) {
                     @Suppress("DEPRECATION")
                     p.hidePlayer(it)

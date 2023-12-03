@@ -10,7 +10,7 @@ internal class LocationCacheBuilder(
     private val table: Table,
     private val primaryColumn: Column<String>,
     private val column: Column<String>,
-    private val classConvert : SerializerBase<Location?, String>
+    private val classConvert: SerializerBase<Location?, String>
 ) : CacheBuilder<Location?> {
 
     private val hashMap = HashMap<String, Location?>()

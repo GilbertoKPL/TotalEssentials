@@ -18,7 +18,7 @@ class PlayerRespawn : Listener {
     }
 
     private fun playerData(e: PlayerRespawnEvent) {
-        github.gilbertokpl.total.TotalEssentials.basePlugin.getTask().sync {
+        github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getTask().sync {
             waitFor(20)
             PlayerData.values(e.player)
 

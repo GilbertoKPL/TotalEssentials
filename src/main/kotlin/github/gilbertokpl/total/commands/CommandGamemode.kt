@@ -60,7 +60,7 @@ class CommandGamemode : github.gilbertokpl.core.external.command.CommandCreator(
             }
 
             //check if player exist
-            val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[1]) ?: run {
+            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[1]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }

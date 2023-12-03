@@ -94,7 +94,11 @@ class InventoryClick : Listener {
     //vips event
     private fun vipGuiEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
-        val inventoryName = try { e.view.title.split(" ") } catch (e: NullPointerException) { return false }
+        val inventoryName = try {
+            e.view.title.split(" ")
+        } catch (e: NullPointerException) {
+            return false
+        }
         if (inventoryName[0] == "§eVipItens") {
             val p = e.whoClicked as Player
             e.isCancelled = true
@@ -137,7 +141,11 @@ class InventoryClick : Listener {
     //playtime event
     private fun playtimeGuiEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
-        val inventoryName = try { e.view.title.split(" ") } catch (e: NullPointerException) { return false }
+        val inventoryName = try {
+            e.view.title.split(" ")
+        } catch (e: NullPointerException) {
+            return false
+        }
         if (inventoryName[0] == "§ePLAYTIME") {
             val p = e.whoClicked as Player
             e.isCancelled = true
@@ -159,7 +167,11 @@ class InventoryClick : Listener {
     //shop event
     private fun shopGuiEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
-        val inventoryName = try { e.view.title.split(" ") } catch (e: NullPointerException) { return false }
+        val inventoryName = try {
+            e.view.title.split(" ")
+        } catch (e: NullPointerException) {
+            return false
+        }
         if (inventoryName[0] == "§eSHOP") {
             val p = e.whoClicked as Player
             e.isCancelled = true
@@ -197,8 +209,7 @@ class InventoryClick : Listener {
                 ShopData.shopOpen[p] = new
                 if (new) {
                     p.sendMessage(LangConfig.shopSwitchMessage.replace("%open%", LangConfig.shopOpen))
-                }
-                else {
+                } else {
                     p.sendMessage(LangConfig.shopSwitchMessage.replace("%open%", LangConfig.shopClosed))
                 }
                 Shop.setup()
@@ -218,7 +229,11 @@ class InventoryClick : Listener {
     //kit event
     private fun kitGuiEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
-        val inventoryName = try { e.view.title.split(" ") } catch (e: NullPointerException) { return false }
+        val inventoryName = try {
+            e.view.title.split(" ")
+        } catch (e: NullPointerException) {
+            return false
+        }
         if (inventoryName[0] == "§eKit") {
             val meta = e.currentItem!!.itemMeta ?: return false
             val p = e.whoClicked as Player
@@ -275,7 +290,11 @@ class InventoryClick : Listener {
     //editkit event
     private fun editKitInventoryClickEvent(e: InventoryClickEvent): Boolean {
         e.currentItem ?: return false
-        val inventoryName = try { e.view.title.split(" ") } catch (e: NullPointerException) { return false }
+        val inventoryName = try {
+            e.view.title.split(" ")
+        } catch (e: NullPointerException) {
+            return false
+        }
         if (inventoryName[0].equals("§eEditKit", true)) {
             e.isCancelled = true
             val number = e.slot
@@ -343,13 +362,13 @@ class InventoryClick : Listener {
             if (oldMeta.hasDisplayName()) {
                 val oldName = oldMeta.displayName.replace("§", "")
                 if (name == oldName) {
-                    meta.setDisplayName(oldMeta.displayName)
+                    meta.displayName = oldMeta.displayName
                     item.itemMeta = meta
                     e.currentItem = item
                     return
                 }
             }
-            meta.setDisplayName(PermissionUtil.colorPermission(e.whoClicked as Player, name))
+            meta.displayName = PermissionUtil.colorPermission(e.whoClicked as Player, name)
             item.itemMeta = meta
             e.currentItem = item
         }

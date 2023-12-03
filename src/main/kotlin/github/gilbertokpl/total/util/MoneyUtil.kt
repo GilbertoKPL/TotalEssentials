@@ -4,7 +4,6 @@ import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import net.milkbowl.vault.economy.EconomyResponse
-import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
@@ -14,11 +13,10 @@ object MoneyUtil {
 
     fun coinReplacer(money: Double): String {
         return if (MainConfig.moneyExtended) {
-                formatNumberInWords(money)
-            }
-            else {
-                format.format(money)
-            }
+            formatNumberInWords(money)
+        } else {
+            format.format(money)
+        }
     }
 
 
@@ -74,8 +72,30 @@ object MoneyUtil {
     }
 
     fun formatNumberInWords(number: Double): String {
-        val suffixes = listOf("", "mil", "milhão", "bilhão", "trilhão", "quadrilhão", "quintilhão", "sextilhão", "setilhão", "octilhão")
-        val pluralSuffixes = listOf("", "mil", "milhões", "bilhões", "trilhões", "quadrilhões", "quintilhões", "sextilhões", "setilhões", "octilhões")
+        val suffixes = listOf(
+            "",
+            "mil",
+            "milhão",
+            "bilhão",
+            "trilhão",
+            "quadrilhão",
+            "quintilhão",
+            "sextilhão",
+            "setilhão",
+            "octilhão"
+        )
+        val pluralSuffixes = listOf(
+            "",
+            "mil",
+            "milhões",
+            "bilhões",
+            "trilhões",
+            "quadrilhões",
+            "quintilhões",
+            "sextilhões",
+            "setilhões",
+            "octilhões"
+        )
         val value = number.toLong()
         val parts = mutableListOf<String>()
 

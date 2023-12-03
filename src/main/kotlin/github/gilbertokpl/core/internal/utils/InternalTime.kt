@@ -27,7 +27,7 @@ internal class InternalTime(private val corePlugin: CorePlugin) {
 
         for (unit in timeUnits) {
             val value = unit.substring(0, unit.length - 1).toLongOrNull() ?: continue
-            val timeUnit = when (unit.last().toLowerCase()) {
+            val timeUnit = when (unit.last().lowercaseChar()) {
                 's' -> TimeUnit.SECONDS
                 'm' -> TimeUnit.MINUTES
                 'h' -> TimeUnit.HOURS
@@ -53,22 +53,26 @@ internal class InternalTime(private val corePlugin: CorePlugin) {
         hours %= HOURS_TO_DAYS
 
         if (days > 0) {
-            val unit = if (shortFormat) corePlugin.getConfig().messages().timeDayShort else corePlugin.getConfig().messages().timeDays
+            val unit = if (shortFormat) corePlugin.getConfig().messages().timeDayShort else corePlugin.getConfig()
+                .messages().timeDays
             units.add("$days $unit")
         }
 
         if (hours > 0) {
-            val unit = if (shortFormat) corePlugin.getConfig().messages().timeHourShort else corePlugin.getConfig().messages().timeHours
+            val unit = if (shortFormat) corePlugin.getConfig().messages().timeHourShort else corePlugin.getConfig()
+                .messages().timeHours
             units.add("$hours $unit")
         }
 
         if (minutes > 0) {
-            val unit = if (shortFormat) corePlugin.getConfig().messages().timeMinuteShort else corePlugin.getConfig().messages().timeMinutes
+            val unit = if (shortFormat) corePlugin.getConfig().messages().timeMinuteShort else corePlugin.getConfig()
+                .messages().timeMinutes
             units.add("$minutes $unit")
         }
 
         if (seconds > 0) {
-            val unit = if (shortFormat) corePlugin.getConfig().messages().timeSecondShort else corePlugin.getConfig().messages().timeSeconds
+            val unit = if (shortFormat) corePlugin.getConfig().messages().timeSecondShort else corePlugin.getConfig()
+                .messages().timeSeconds
             units.add("$seconds $unit")
         }
 

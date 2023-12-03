@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.Table
 object WarpData : CacheBase {
     override var table: Table = WarpsDataSQL
     override var primaryColumn: Column<String> = WarpsDataSQL.warpNameTable
-    private val cache = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
+    private val cache = github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getCache()
 
     val warpLocation = cache.location(this, WarpsDataSQL.warpLocationTable, LocationSerializer())
 

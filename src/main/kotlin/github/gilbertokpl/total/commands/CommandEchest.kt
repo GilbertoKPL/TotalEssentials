@@ -35,7 +35,7 @@ class CommandEchest : github.gilbertokpl.core.external.command.CommandCreator("e
 
         //admin
         if (s.hasPermission("totalessentials.commands.ec.other")) {
-            val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[0]) ?: run {
+            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }

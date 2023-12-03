@@ -1,12 +1,10 @@
 package github.gilbertokpl.core.internal.inventory.serializator
 
 import br.com.finalcraft.evernifecore.itemstack.FCItemFactory
-import br.com.finalcraft.evernifecore.itemstack.itembuilder.FCBaseItemBuilder
 import br.com.finalcraft.evernifecore.itemstack.itembuilder.FCItemBuilder
 import github.gilbertokpl.core.internal.serializator.InternalBukkitObjectInputStream
 import github.gilbertokpl.core.internal.serializator.InternalBukkitObjectOutputStream
 import github.gilbertokpl.total.config.files.MainConfig
-import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
@@ -32,16 +30,14 @@ class ItemSerializer {
                     for (configs in data.toDataPart()) {
                         if (itemConfig == "") {
                             itemConfig = configs.replace(",", "+").replace("|", "-")
-                        }
-                        else {
+                        } else {
                             itemConfig += "|" + configs.replace(",", "+").replace("|", "-")
                         }
                     }
 
                     if (toReturn == "") {
                         toReturn = itemConfig
-                    }
-                    else {
+                    } else {
                         toReturn += ",$itemConfig"
                     }
                 }

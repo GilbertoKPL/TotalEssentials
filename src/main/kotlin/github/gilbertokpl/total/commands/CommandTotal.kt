@@ -2,9 +2,11 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.internal.Data
-import github.gilbertokpl.total.cache.local.*
+import github.gilbertokpl.total.cache.local.KeyData
+import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.total.cache.local.VipData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
@@ -57,7 +59,7 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
         }
 
         if (args[0].lowercase() == "reload") {
-            if (TotalEssentials.basePlugin.reloadConfig()) {
+            if (TotalEssentialsJava.basePlugin.reloadConfig()) {
                 s.sendMessage(
                     LangConfig.generalConfigReload
                 )
@@ -72,11 +74,15 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
                 return false
             }
 
-            TotalEssentials.basePlugin.getTask().async {
+            TotalEssentialsJava.basePlugin.getTask().async {
                 val token = KeyData.generateRandomString()
                 for (i in MainConfig.generalResetList) {
                     val id = i.toLongOrNull() ?: continue
-                    if (!Discord.sendDiscordMessage(id, LangConfig.generalResetDiscordMessage.replace("%value%", token))) {
+                    if (!Discord.sendDiscordMessage(
+                            id,
+                            LangConfig.generalResetDiscordMessage.replace("%value%", token)
+                        )
+                    ) {
                         s.sendMessage(LangConfig.VipsDiscordUserIdNotExist)
                     }
                 }
@@ -104,7 +110,10 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
                         var commands = PlayerData.CommandCache[players.key] ?: ""
 
                         for (c in (VipData.vipCommands[vips.key] ?: ArrayList())) {
-                            commands += if (commands == "") c.replace("%player%", players.key) else "-" + c.replace("%player%", players.key)
+                            commands += if (commands == "") c.replace(
+                                "%player%",
+                                players.key
+                            ) else "-" + c.replace("%player%", players.key)
                         }
 
                         PlayerData.CommandCache[players.key, commands] = true
@@ -113,7 +122,7 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
                     }
                 }
 
-                TotalEssentials.basePlugin.getTask().async {
+                TotalEssentialsJava.basePlugin.getTask().async {
                     try {
                         transaction(basePlugin?.sql) {
                             for (i in basePlugin?.getCache()?.toByteUpdate!!) {
@@ -139,7 +148,7 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
             s.sendMessage(LangConfig.generalHostWait)
             //sendhostinfo
             val host = basePlugin!!.getHost().getHost()
-            LangConfig.generalHostConfigInfo.forEach {
+            LangConfig.generalHostConfig.forEach {
                 s.sendMessage(
                     it.replace("%ip%", host.ipAddress)
                         .replace("%os%", host.osName)

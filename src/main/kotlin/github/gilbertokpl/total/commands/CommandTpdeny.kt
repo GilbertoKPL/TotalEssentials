@@ -33,7 +33,7 @@ class CommandTpdeny : github.gilbertokpl.core.external.command.CommandCreator("t
 
         s.sendMessage(LangConfig.tpaRequestDeny.replace("%player%", p.name))
 
-        if (github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(p.name) != null) {
+        if (github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(p.name) != null) {
             p.sendMessage(
                 LangConfig.tpaRequestOtherDeny.replace(
                     "%player%",

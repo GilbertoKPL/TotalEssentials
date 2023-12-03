@@ -10,7 +10,7 @@ object KeyData : CacheBase {
     override var table: Table = VipKeysSQL
     override var primaryColumn: Column<String> = VipKeysSQL.vipKey
 
-    private val ins = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
+    private val ins = github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getCache()
 
     val vipName = ins.string(this, VipKeysSQL.vipName)
     val vipTime = ins.long(this, VipKeysSQL.vipTime)

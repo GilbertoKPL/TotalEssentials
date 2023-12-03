@@ -15,7 +15,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.util.*
-import kotlin.collections.HashMap
 
 internal object Kit {
 
@@ -40,7 +39,7 @@ internal object Kit {
 
             val meta = item.itemMeta
             item.amount = 1
-            meta?.setDisplayName(itemName)
+            meta?.displayName = itemName
             if (meta != null) {
                 meta.lore = LangConfig.kitsInventoryItemsLore.map { it.replace("%realname%", kit.key) }
             }
@@ -78,7 +77,12 @@ internal object Kit {
     }
 
     fun openKitInventory(kit: String, guiNumber: String, player: Player) {
-        val inventory = github.gilbertokpl.total.TotalEssentials.instance.server.createInventory(null, 45, "§eKit $kit $guiNumber")
+        val inventory =
+            github.gilbertokpl.total.TotalEssentialsJava.instance.server.createInventory(
+                null,
+                45,
+                "§eKit $kit $guiNumber"
+            )
         var timeAll = PlayerData.kitsCache[player]?.get(kit) ?: 0L
         timeAll += KitsData.kitTime[kit] ?: 0L
         KitsData.kitItems[kit]?.forEach { inventory.addItem(it) }
@@ -92,6 +96,7 @@ internal object Kit {
                         GLASS_MATERIAL
                     }
                 }
+
                 44 -> {
                     if (player.hasPermission("totalessentials.commands.kit.$kit")) {
                         if (timeAll <= System.currentTimeMillis() || timeAll == 0L || player.hasPermission("totalessentials.bypass.kitcatch")) {
@@ -100,14 +105,31 @@ internal object Kit {
                             val array = arrayOfNulls<String>(LangConfig.kitsGetIconLoreTime.size)
                             val remainingTime = timeAll - System.currentTimeMillis()
                             for (j in LangConfig.kitsGetIconLoreTime.indices) {
-                                array[j] = LangConfig.kitsGetIconLoreTime[j].replace("%time%", github.gilbertokpl.total.TotalEssentials.basePlugin.getTime().convertMillisToString(remainingTime, MainConfig.kitsUseShortTime))
+                                array[j] = LangConfig.kitsGetIconLoreTime[j].replace(
+                                    "%time%",
+                                    github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getTime()
+                                        .convertMillisToString(remainingTime, MainConfig.kitsUseShortTime)
+                                )
                             }
-                            setInventoryItem(i, Material.ARROW, LangConfig.kitsGetIconNotCatch, array.toList().requireNoNulls(), inventory)
+                            setInventoryItem(
+                                i,
+                                Material.ARROW,
+                                LangConfig.kitsGetIconNotCatch,
+                                array.toList().requireNoNulls(),
+                                inventory
+                            )
                         }
                     } else {
-                        setInventoryItem(i, Material.ARROW, LangConfig.kitsGetIconNotCatch, LangConfig.kitsGetIconLoreNotPerm, inventory)
+                        setInventoryItem(
+                            i,
+                            Material.ARROW,
+                            LangConfig.kitsGetIconNotCatch,
+                            LangConfig.kitsGetIconLoreNotPerm,
+                            inventory
+                        )
                     }
                 }
+
                 else -> inventory.setItem(i, GLASS_MATERIAL)
             }
         }
@@ -118,12 +140,18 @@ internal object Kit {
         inventory.setItem(slot, ItemUtil.item(material, name, true))
     }
 
-    private fun setInventoryItem(slot: Int, material: Material, name: String, lore: List<String>, inventory: Inventory) {
+    private fun setInventoryItem(
+        slot: Int,
+        material: Material,
+        name: String,
+        lore: List<String>,
+        inventory: Inventory
+    ) {
         inventory.setItem(slot, ItemUtil.item(material, name, lore, true))
     }
 
     private fun createKitsInventory(page: Int): Inventory {
-        return github.gilbertokpl.total.TotalEssentials.instance.server.createInventory(null, 36, "§eKits $page")
+        return github.gilbertokpl.total.TotalEssentialsJava.instance.server.createInventory(null, 36, "§eKits $page")
     }
 
     private fun createBackItem(currentPage: Int): ItemStack {

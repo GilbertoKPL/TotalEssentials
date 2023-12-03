@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -15,7 +15,7 @@ object LoginUtil {
                 Thread.currentThread().stop()
             }
             if ((MainConfig.authMaxAttempts + 1) == LoginData.values[player]) {
-                Bukkit.getScheduler().runTask(TotalEssentials.instance, Runnable {
+                Bukkit.getScheduler().runTask(TotalEssentialsJava.instance, Runnable {
                     player.kickPlayer(LangConfig.authKickMessageTime)
                 })
                 Thread.currentThread().stop()

@@ -51,8 +51,8 @@ internal data class DataTeleport(
                 try {
                     val sender = tpaData[pSender] ?: return@runAsync
                     if (sender.wait) {
-                        github.gilbertokpl.total.TotalEssentials.instance.server.scheduler.runTask(
-                            github.gilbertokpl.total.TotalEssentials.instance
+                        github.gilbertokpl.total.TotalEssentialsJava.instance.server.scheduler.runTask(
+                            github.gilbertokpl.total.TotalEssentialsJava.instance
                         ) {
                             pSender.sendMessage(
                                 LangConfig.tpaRequestOtherDenyTime.replace(

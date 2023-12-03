@@ -2,7 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.cache.internal.inventory.Playtime
 import github.gilbertokpl.total.cache.local.PlayerData
@@ -35,7 +35,8 @@ class CommandPlayTime : github.gilbertokpl.core.external.command.CommandCreator(
 
         val playerTimeMillis = PlayerData.playtimeLocal[playerName] ?: 0L
 
-        val playerTime = ((PlayerData.playTimeCache[playerName]) ?: 0L) + if (playerTimeMillis != 0L) (System.currentTimeMillis() - playerTimeMillis) else 0L
+        val playerTime = ((PlayerData.playTimeCache[playerName])
+            ?: 0L) + if (playerTimeMillis != 0L) (System.currentTimeMillis() - playerTimeMillis) else 0L
 
         if (args.isEmpty() && s is Player) {
             Data.playTimeInventoryCache[1].also {
@@ -66,7 +67,7 @@ class CommandPlayTime : github.gilbertokpl.core.external.command.CommandCreator(
 
         s.sendMessage(
             LangConfig.playtimeMessage.replace("%player%", args[0])
-                .replace("%time%", TotalEssentials.basePlugin.getTime().convertMillisToString(playerTime, false))
+                .replace("%time%", TotalEssentialsJava.basePlugin.getTime().convertMillisToString(playerTime, false))
         )
 
         return false

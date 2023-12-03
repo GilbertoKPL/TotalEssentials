@@ -10,7 +10,7 @@ internal class HashMapCacheBuilder<T, V, K>(
     private val table: Table,
     private val primaryColumn: Column<String>,
     private val column: Column<T>,
-    private val classConvert : SerializerBase<HashMap<V, K>, T>
+    private val classConvert: SerializerBase<HashMap<V, K>, T>
 ) : CacheBuilderV2<HashMap<V, K>, V> {
 
     private val hashMap = HashMap<String, HashMap<V, K>?>()
@@ -35,8 +35,7 @@ internal class HashMapCacheBuilder<T, V, K>(
     override fun set(entity: String, value: HashMap<V, K>, override: Boolean) {
         if (override) {
             hashMap[entity.lowercase()] = value
-        }
-        else {
+        } else {
             set(entity, value)
         }
     }

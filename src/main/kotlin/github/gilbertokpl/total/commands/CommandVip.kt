@@ -2,7 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.cache.local.KeyData
 import github.gilbertokpl.total.cache.local.PlayerData
@@ -56,7 +56,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 s.sendMessage(LangConfig.VipsExist)
                 return false
             }
-            if (TotalEssentials.permission.groups.contains(args[2])) {
+            if (TotalEssentialsJava.permission.groups.contains(args[2])) {
                 VipData.createNewVip(args[1], args[2])
                 s.sendMessage(LangConfig.VipsCreateNew.replace("%vip%", args[1]))
                 return false
@@ -113,23 +113,25 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
             s.sendMessage(LangConfig.VipsActivate.replace("%vip%", vipName).replace("%days%", vipTime.toString()))
 
+
             Discord.sendDiscordMessage(
                 LangConfig.VipsDiscordActivateMessage
                     .replace("%player%", args[1])
                     .replace(
                         "%time%",
-                        TotalEssentials.basePlugin.getTime().convertMillisToString(vipTime * 86400000, false)
+                        TotalEssentialsJava.basePlugin.getTime().convertMillisToString(vipTime * 86400000, false)
                     )
                     .replace("%vip%", args[2]),
                 true
             )
+
 
             PlayerUtil.sendAllMessage(
                 LangConfig.VipsActivateMessage
                     .replace("%player%", args[1])
                     .replace(
                         "%time%",
-                        TotalEssentials.basePlugin.getTime().convertMillisToString(vipTime * 86400000, false)
+                        TotalEssentialsJava.basePlugin.getTime().convertMillisToString(vipTime * 86400000, false)
                     )
                     .replace("%vip%", args[2])
             )
@@ -207,7 +209,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 return false
             }
 
-            val inv = TotalEssentials.instance.server.createInventory(null, 54, "§eVipEditItens " + args[1])
+            val inv = TotalEssentialsJava.instance.server.createInventory(null, 54, "§eVipEditItens " + args[1])
 
             for (i in VipData.vipItems[args[1]]!!) {
                 inv.addItem(i)
@@ -223,7 +225,11 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             s is Player && args[0].lowercase() == "items" && args.size == 1
         ) {
 
-            val inv = TotalEssentials.instance.server.createInventory(null, if ((PlayerData.vipItems[s]?.size ?: 54) > 54) 90 else 54, "§eVipItens")
+            val inv = TotalEssentialsJava.instance.server.createInventory(
+                null,
+                if ((PlayerData.vipItems[s]?.size ?: 54) > 54) 90 else 54,
+                "§eVipItens"
+            )
 
             for (i in PlayerData.vipItems[s] ?: emptyList()) {
                 inv.addItem(i)
@@ -252,7 +258,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 s.sendMessage(
                     LangConfig.VipsTimeMessage.replace("%vipName%", i.key).replace(
                         "%vipTime%",
-                        TotalEssentials.basePlugin.getTime()
+                        TotalEssentialsJava.basePlugin.getTime()
                             .convertMillisToString(i.value - System.currentTimeMillis(), false)
                     )
                 )
@@ -274,7 +280,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 s.sendMessage(
                     LangConfig.VipsTimeMessage.replace("%vipName%", i.key).replace(
                         "%vipTime%",
-                        TotalEssentials.basePlugin.getTime()
+                        TotalEssentialsJava.basePlugin.getTime()
                             .convertMillisToString(i.value - System.currentTimeMillis(), false)
                     )
                 )
@@ -333,7 +339,8 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                     .replace("%player%", args[1])
                     .replace(
                         "%time%",
-                        TotalEssentials.basePlugin.getTime().convertMillisToString(args[3].toLong() * 86400000, false)
+                        TotalEssentialsJava.basePlugin.getTime()
+                            .convertMillisToString(args[3].toLong() * 86400000, false)
                     )
                     .replace("%vip%", args[2])
             )
@@ -345,7 +352,8 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                     .replace("%player%", args[1])
                     .replace(
                         "%time%",
-                        TotalEssentials.basePlugin.getTime().convertMillisToString(args[3].toLong() * 86400000, false)
+                        TotalEssentialsJava.basePlugin.getTime()
+                            .convertMillisToString(args[3].toLong() * 86400000, false)
                     )
                     .replace("%vip%", args[2]),
                 true
@@ -356,7 +364,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
 
         if (args[0].lowercase() == "discord" && args.size == 2 && s is Player) {
             val id = args[1].toLongOrNull() ?: return true
-            TotalEssentials.basePlugin.getTask().async {
+            TotalEssentialsJava.basePlugin.getTask().async {
                 val token = KeyData.generateRandomString()
                 if (Discord.sendDiscordMessage(id, LangConfig.VipsDiscordMessage.replace("%value%", token))) {
                     Data.tokenVip[token] = id
@@ -407,7 +415,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                 }
             }
 
-            TotalEssentials.basePlugin.getTask().async {
+            TotalEssentialsJava.basePlugin.getTask().async {
                 try {
                     transaction(basePlugin?.sql) {
                         for (i in basePlugin?.getCache()?.toByteUpdate!!) {

@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.sql.LoginDataSQL
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.Column
@@ -11,7 +11,7 @@ object LoginData : CacheBase {
     override var table: Table = LoginDataSQL
     override var primaryColumn: Column<String> = LoginDataSQL.player
 
-    private val cache = TotalEssentials.basePlugin.getCache()
+    private val cache = TotalEssentialsJava.basePlugin.getCache()
 
     val loginAttempts = cache.simpleInteger()
     val values = cache.simpleInteger()

@@ -22,7 +22,7 @@ class PlayerChangeWorld : Listener {
 
     private fun data(e: PlayerChangedWorldEvent) {
         val gm = PlayerUtil.getGameModeNumber(PlayerData.gameModeCache[e.player].toString())
-        github.gilbertokpl.total.TotalEssentials.basePlugin.getTask().async {
+        github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getTask().async {
             waitFor(20)
             if (gm != e.player.gameMode) {
                 e.player.gameMode = gm

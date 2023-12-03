@@ -24,10 +24,10 @@ class LocationSerializer : SerializerBase<Location?, String> {
             val y = if (parts[1].isEmpty()) 0.0 else parts[1].toDouble()
             val z = if (parts[2].isEmpty()) 0.0 else parts[2].toDouble()
             val w = try {
-                github.gilbertokpl.total.TotalEssentials.instance.server.getWorld(parts[3])
+                github.gilbertokpl.total.TotalEssentialsJava.instance.server.getWorld(parts[3])
             } catch (e: Throwable) {
                 e.printStackTrace()
-                github.gilbertokpl.total.TotalEssentials.instance.server.getWorld("world")
+                github.gilbertokpl.total.TotalEssentialsJava.instance.server.getWorld("world")
             }
             Location(
                 w, x, y, z, try {

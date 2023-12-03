@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.total.TotalEssentials.Companion.lowVersion
+import github.gilbertokpl.total.TotalEssentialsJava.lowVersion
 import org.bukkit.entity.Player
 
 internal object PermissionUtil {
@@ -43,12 +43,12 @@ internal object PermissionUtil {
         if (!message.contains("&") && !message.contains("#")) return message
 
         if (p == null) {
-            return github.gilbertokpl.total.TotalEssentials.basePlugin.getColor().rgbHex(null, message)
+            return github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getColor().rgbHex(null, message)
         }
 
         if (p.hasPermission("totalessentials.color.*")) {
-            return github.gilbertokpl.total.TotalEssentials.basePlugin.getColor().rgbHex(p, message)
+            return github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getColor().rgbHex(p, message)
         }
-        return github.gilbertokpl.total.TotalEssentials.basePlugin.getColor().color(p, message)
+        return github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getColor().color(p, message)
     }
 }

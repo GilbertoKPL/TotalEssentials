@@ -6,7 +6,6 @@ import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil
-import github.gilbertokpl.total.util.TaskUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -99,7 +98,13 @@ class CommandHome : github.gilbertokpl.core.external.command.CommandCreator("hom
             return false
         }
 
-        PlayerUtil.teleportWithTime(p, loc, MainConfig.homesTimeToTeleport, LangConfig.homesTeleported.replace("%home%", nameHome), nameHome)
+        PlayerUtil.teleportWithTime(
+            p,
+            loc,
+            MainConfig.homesTimeToTeleport,
+            LangConfig.homesTeleported.replace("%home%", nameHome),
+            nameHome
+        )
 
         return false
     }

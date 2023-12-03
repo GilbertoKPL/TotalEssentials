@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.discord
 
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.exceptions.*
@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.exceptions.ContextException
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.cache.CacheFlag
+import org.bukkit.Bukkit
 import java.awt.Color
 import javax.security.auth.login.LoginException
 
@@ -34,7 +35,6 @@ internal object Discord {
      * Send message to discord with chat ID.
      *
      * @throws BotIsNotInitialized if bot is true but token is incorrect.
-     * @throws BotIsNotActivated if bot is not activated.
      * @throws ChatDoesNotExist if chat does not exist.
      */
     fun sendDiscordMessage(message: String, embed: Boolean) {
@@ -45,13 +45,15 @@ internal object Discord {
      * Send message to discord with chat ID.
      *
      * @throws BotIsNotInitialized if bot is true but token is incorrect.
-     * @throws BotIsNotActivated if bot is not activated.
      * @throws ChatDoesNotExist if chat does not exist.
      */
     fun sendDiscordMessage(message: String, chatID: String, embed: Boolean) {
+        if (!MainConfig.discordbotConnectDiscordChat) {
+            return
+        }
 
         if (hashTextChannel[chatID] == null) {
-            TotalEssentials.basePlugin.getTask().async {
+            TotalEssentialsJava.basePlugin.getTask().async {
                 val newChat = setupDiscordChat(chatID) ?: throw ChatDoesNotExist()
 
                 hashTextChannel[chatID] = newChat
@@ -82,6 +84,11 @@ internal object Discord {
 
 
     fun sendDiscordMessage(userID: Long, message: String): Boolean {
+
+        if (!MainConfig.discordbotConnectDiscordChat) {
+            return false
+        }
+
         val jda = getJdaCheck()
 
         try {
@@ -98,6 +105,11 @@ internal object Discord {
     }
 
     fun checkIfRoleIdExist(roleId: Long): Boolean {
+
+        if (!MainConfig.discordbotConnectDiscordChat) {
+            return false
+        }
+
         val jda = getJdaCheck()
 
         jda.getRoleById(roleId) ?: return false
@@ -110,11 +122,15 @@ internal object Discord {
      * Add role to user.
      *
      * @throws BotIsNotInitialized if bot is true but token is incorrect.
-     * @throws BotIsNotActivated if bot is not activated.
      * @throws UserDoesNotExist if user does not exist.
      * @throws RoleDoesNotExist if role does not exist.
      */
     fun addUserRole(userID: Long, roleId: Long): Boolean {
+
+        if (!MainConfig.discordbotConnectDiscordChat) {
+            return false
+        }
+
         val jda = getJdaCheck()
 
         try {
@@ -139,12 +155,16 @@ internal object Discord {
      * remove user role.
      *
      * @throws BotIsNotInitialized if bot is true but token is incorrect.
-     * @throws BotIsNotActivated if bot is not activated.
      * @throws UserDoesNotExist if user does not exist.
      * @throws RoleDoesNotExist if role does not exist.
      * @throws UserDoesNotHaveThisRole if user does not have this role.
      */
     fun removeUserRole(userID: Long, roleId: Long): Boolean {
+
+        if (!MainConfig.discordbotConnectDiscordChat) {
+            return false
+        }
+
         val jda = getJdaCheck()
 
         try {
@@ -178,6 +198,7 @@ internal object Discord {
     }
 
     private fun getJdaCheck(): JDA {
+
         val jda = jda
 
         if (jda == null && MainConfig.discordbotConnectDiscordChat) {
@@ -188,7 +209,8 @@ internal object Discord {
         }
 
         if (jda == null) {
-            throw BotIsNotActivated()
+            Bukkit.getServer().shutdown()
+            throw BotIsNotInitialized()
         }
 
         return jda
@@ -211,6 +233,7 @@ internal object Discord {
     }
 
     private fun setupDiscordChat(chatID: String): TextChannel? {
+
         val jda = getJdaCheck()
         val newChat =
             jda.getTextChannelById(chatID) ?: run {

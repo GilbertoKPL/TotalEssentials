@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.util
 
 import github.gilbertokpl.core.external.task.SynchronizationContext
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.World
@@ -13,14 +13,14 @@ object WorldUtil {
 
         val waitTime = ((time / 3) / 1000)
 
-        TotalEssentials.basePlugin.getTask().async {
+        TotalEssentialsJava.basePlugin.getTask().async {
             for (a in 0..(time / 10000)) {
 
                 if (time >= 10000) {
                     PlayerUtil.sendAllMessage(
                         LangConfig.ClearitemsMessage.replace(
                             "%time%",
-                            TotalEssentials.basePlugin.getTime().convertMillisToString(time, false)
+                            TotalEssentialsJava.basePlugin.getTime().convertMillisToString(time, false)
                         )
                     )
                     time -= 10000
@@ -33,7 +33,7 @@ object WorldUtil {
                 for (w in MainConfig.clearitemsWorlds) {
                     val world: World
                     try {
-                        world = TotalEssentials.instance.server.getWorld(w)!!
+                        world = TotalEssentialsJava.instance.server.getWorld(w)!!
                     } catch (ex: Exception) {
                         continue
                     }

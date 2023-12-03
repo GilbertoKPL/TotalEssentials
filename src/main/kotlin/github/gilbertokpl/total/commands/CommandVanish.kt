@@ -43,7 +43,7 @@ class CommandVanish : github.gilbertokpl.core.external.command.CommandCreator("v
             }
 
             //check if player is online
-            val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[0]) ?: run {
+            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
@@ -85,7 +85,7 @@ class CommandVanish : github.gilbertokpl.core.external.command.CommandCreator("v
 
         if (newValue) {
             player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
-            github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().getPlayers().forEach {
+            github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection().getPlayers().forEach {
                 @Suppress("DEPRECATION")
                 if (!it.hasPermission("totalessentials.commands.vanish") &&
                     !it.hasPermission("totalessentials.bypass.vanish")
@@ -95,7 +95,7 @@ class CommandVanish : github.gilbertokpl.core.external.command.CommandCreator("v
             }
         } else {
             player.removePotionEffect(PotionEffectType.INVISIBILITY)
-            github.gilbertokpl.total.TotalEssentials.basePlugin.getReflection().getPlayers().forEach {
+            github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection().getPlayers().forEach {
                 @Suppress("DEPRECATION")
                 it.showPlayer(player)
             }

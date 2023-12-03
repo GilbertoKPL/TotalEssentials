@@ -43,7 +43,7 @@ internal object PluginUtil {
             for (f in pluginDir.listFiles()!!) {
                 if (f.name.endsWith(".jar")) try {
                     val desc: PluginDescriptionFile =
-                        github.gilbertokpl.total.TotalEssentials.instance.pluginLoader.getPluginDescription(f)
+                        github.gilbertokpl.total.TotalEssentialsJava.instance.pluginLoader.getPluginDescription(f)
                     if (desc.name.equals(name, ignoreCase = true)) {
                         pluginFile = f
                         break

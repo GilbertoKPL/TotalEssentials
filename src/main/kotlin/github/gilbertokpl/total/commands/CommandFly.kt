@@ -42,7 +42,7 @@ class CommandFly : github.gilbertokpl.core.external.command.CommandCreator("fly"
             }
 
             //check if player is online
-            val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[0]) ?: run {
+            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }

@@ -1,7 +1,6 @@
 package github.gilbertokpl.core.internal.cache
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
-import okhttp3.internal.toImmutableList
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -26,6 +25,7 @@ internal class ByteCacheBuilder<T>(
     override operator fun get(entity: Player): T? {
         return hashMap[entity.name.lowercase()]
     }
+
     override fun set(entity: String, value: T) {
         hashMap[entity.lowercase()] = value
         toUpdate += entity.lowercase()

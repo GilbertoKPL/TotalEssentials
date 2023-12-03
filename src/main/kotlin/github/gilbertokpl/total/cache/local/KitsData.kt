@@ -10,7 +10,7 @@ object KitsData : CacheBase {
     override var table: Table = KitsDataSQL
     override var primaryColumn: Column<String> = KitsDataSQL.kitNameTable
 
-    private val ins = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
+    private val ins = github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getCache()
 
     val kitFakeName = ins.string(this, KitsDataSQL.kitFakeNameTable)
     val kitTime = ins.long(this, KitsDataSQL.kitTimeTable)

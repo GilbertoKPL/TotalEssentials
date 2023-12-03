@@ -52,7 +52,7 @@ class CommandSetWarp : github.gilbertokpl.core.external.command.CommandCreator("
             //check location
             val loc = try {
                 Location(
-                    github.gilbertokpl.total.TotalEssentials.instance.server.getWorld(args[1]),
+                    github.gilbertokpl.total.TotalEssentialsJava.instance.server.getWorld(args[1]),
                     args[2].toDouble(),
                     args[3].toDouble(),
                     args[4].toDouble()

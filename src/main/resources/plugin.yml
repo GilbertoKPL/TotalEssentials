@@ -1,6 +1,6 @@
 name: TotalEssentials
-version: 1.0
-main: github.gilbertokpl.total.TotalEssentials
+version: 1.1
+main: github.gilbertokpl.total.TotalEssentialsJava
 author: Gilberto
 api-version: 1.13
 softdepend:

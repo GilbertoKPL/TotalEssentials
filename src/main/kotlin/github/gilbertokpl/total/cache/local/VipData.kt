@@ -12,7 +12,7 @@ object VipData : CacheBase {
     override var table: Table = VipDataSQL
     override var primaryColumn: Column<String> = VipDataSQL.vipName
 
-    private val cache = github.gilbertokpl.total.TotalEssentials.basePlugin.getCache()
+    private val cache = github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getCache()
 
     val vipItems = cache.list(this, VipDataSQL.vipItems, ItemSerializer())
     val vipPrice = cache.integer(this, VipDataSQL.vipPrice)
@@ -21,7 +21,15 @@ object VipData : CacheBase {
     val vipDiscord = cache.long(this, VipDataSQL.vipDiscord)
     val vipCommands = cache.list(this, VipDataSQL.vipCommands, CommandsSerializer())
 
-    fun createNewVip(vipName: String, group: String, items: List<ItemStack> = emptyList(), price: Int = 0, quantity: Int = 0, discordId: Long = 0L, commands: List<String> = emptyList()) {
+    fun createNewVip(
+        vipName: String,
+        group: String,
+        items: List<ItemStack> = emptyList(),
+        price: Int = 0,
+        quantity: Int = 0,
+        discordId: Long = 0L,
+        commands: List<String> = emptyList()
+    ) {
         vipItems[vipName] = ArrayList(items)
         vipPrice[vipName] = price
         vipQuantity[vipName] = quantity

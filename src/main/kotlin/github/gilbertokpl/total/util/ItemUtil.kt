@@ -32,7 +32,7 @@ internal object ItemUtil {
             p.sendMessage(
                 LangConfig.kitsGetMessage.replace(
                     "%time%",
-                    github.gilbertokpl.total.TotalEssentials.basePlugin.getTime().convertMillisToString(
+                    github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getTime().convertMillisToString(
                         remainingTime,
                         MainConfig.kitsUseShortTime
                     )
@@ -174,7 +174,7 @@ internal object ItemUtil {
         }
         val meta = item.itemMeta
         meta?.lore = lore
-        meta?.setDisplayName(name)
+        meta?.displayName = name
         if (effect) {
             try {
                 meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)
@@ -194,7 +194,7 @@ internal object ItemUtil {
             }
         }
         val meta = item.itemMeta
-        meta?.setDisplayName(name)
+        meta?.displayName = name
         if (effect) {
             try {
                 meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)

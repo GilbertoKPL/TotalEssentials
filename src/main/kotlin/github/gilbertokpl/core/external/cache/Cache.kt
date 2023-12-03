@@ -6,6 +6,7 @@ import github.gilbertokpl.core.external.cache.interfaces.CacheBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
 import github.gilbertokpl.core.internal.cache.*
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.Column
@@ -129,12 +130,14 @@ class Cache(core: CorePlugin) {
                         try {
                             i.update()
                         } catch (e: Exception) {
-                            println(e)
+                            Bukkit.getServer().shutdown()
+                            e.printStackTrace()
                         }
                     }
                 }
             } catch (e: Exception) {
-                println(e)
+                Bukkit.getServer().shutdown()
+                e.printStackTrace()
             }
         }, 5, 5, TimeUnit.MINUTES)
     }

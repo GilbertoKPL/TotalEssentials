@@ -37,7 +37,7 @@ class CommandTp : github.gilbertokpl.core.external.command.CommandCreator("tp") 
 
         //only player name
         if (args.size == 1 && s is Player) {
-            val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[0]) ?: run {
+            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
@@ -49,12 +49,12 @@ class CommandTp : github.gilbertokpl.core.external.command.CommandCreator("tp") 
 
         //player to other player
         if (args.size == 2) {
-            val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[0]) ?: run {
+            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
-            val p1 = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[1]) ?: run {
+            val p1 = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[1]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
@@ -100,8 +100,8 @@ class CommandTp : github.gilbertokpl.core.external.command.CommandCreator("tp") 
 
             if (s is Player) {
                 val world = try {
-                    github.gilbertokpl.total.TotalEssentials.instance.server.getWorld(args[0])
-                        ?: github.gilbertokpl.total.TotalEssentials.instance.server.getWorld(args[3])
+                    github.gilbertokpl.total.TotalEssentialsJava.instance.server.getWorld(args[0])
+                        ?: github.gilbertokpl.total.TotalEssentialsJava.instance.server.getWorld(args[3])
                         ?: return true
                 } catch (ex: Exception) {
                     return true
@@ -127,8 +127,8 @@ class CommandTp : github.gilbertokpl.core.external.command.CommandCreator("tp") 
             val p = Bukkit.getPlayer(args[0].lowercase()) ?: return true
 
             val world = try {
-                github.gilbertokpl.total.TotalEssentials.instance.server.getWorld(args[1])
-                    ?: github.gilbertokpl.total.TotalEssentials.instance.server.getWorld(args[4])
+                github.gilbertokpl.total.TotalEssentialsJava.instance.server.getWorld(args[1])
+                    ?: github.gilbertokpl.total.TotalEssentialsJava.instance.server.getWorld(args[4])
                     ?: return true
             } catch (ex: Exception) {
                 return true

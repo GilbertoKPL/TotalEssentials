@@ -2,7 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -32,7 +32,7 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        val encrypt = TotalEssentials.basePlugin.getEncrypt()
+        val encrypt = TotalEssentialsJava.basePlugin.getEncrypt()
 
         if (s is Player && !LoginData.doesPlayerExist(s)) {
 
@@ -83,8 +83,8 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
                 .replace("%player%", s.name)
                 .replace("%ip%", playerAddress)
                 .replace("%country%", info?.get(0) ?: "none")
-                .replace("%state%",info?.get(1) ?: "none")
-                .replace("%city%",info?.get(2) ?: "none")
+                .replace("%state%", info?.get(1) ?: "none")
+                .replace("%city%", info?.get(2) ?: "none")
 
 
             if (MainConfig.discordbotConnectRegisterChat) {

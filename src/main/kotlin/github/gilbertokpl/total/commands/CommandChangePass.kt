@@ -2,7 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -30,7 +30,7 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val encrypt = TotalEssentials.basePlugin.getEncrypt()
+        val encrypt = TotalEssentialsJava.basePlugin.getEncrypt()
 
         if (s is Player && LoginData.doesPlayerExist(s) && LoginData.isPlayerLoggedIn(s)) {
             val password = encrypt.decrypt(LoginData.password[s]!!)

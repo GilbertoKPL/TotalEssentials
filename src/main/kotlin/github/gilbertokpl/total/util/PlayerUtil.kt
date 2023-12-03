@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.util
 
 import github.gilbertokpl.core.external.task.SynchronizationContext
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -17,18 +17,18 @@ import java.net.URL
 internal object PlayerUtil {
 
     fun sendAllMessage(message: String) {
-        for (p in TotalEssentials.basePlugin.getReflection().getPlayers()) {
+        for (p in TotalEssentialsJava.basePlugin.getReflection().getPlayers()) {
             p.sendMessage(message)
         }
     }
 
     fun sendMessage(player: String, message: String) {
-        val p = TotalEssentials.instance.server.getPlayerExact(player.lowercase()) ?: return
+        val p = TotalEssentialsJava.instance.server.getPlayerExact(player.lowercase()) ?: return
         p.sendMessage(message)
     }
 
     fun getIntOnlinePlayers(vanish: Boolean): Int {
-        var amount = TotalEssentials.basePlugin.getReflection().getPlayers()
+        var amount = TotalEssentialsJava.basePlugin.getReflection().getPlayers()
         if (!vanish) {
             amount = amount.filter {
                 PlayerData.vanishCache[it] != null && !PlayerData.vanishCache[it]!!
@@ -49,7 +49,9 @@ internal object PlayerUtil {
             when (gameMode) {
                 GameMode.SURVIVAL -> 0
                 GameMode.CREATIVE -> 1
-                else -> { 0 }
+                else -> {
+                    0
+                }
             }
         }
     }
@@ -65,6 +67,7 @@ internal object PlayerUtil {
             } catch (e: NoSuchMethodError) {
                 GameMode.SURVIVAL
             }
+
             "spectactor" -> try {
                 GameMode.SPECTATOR
             } catch (e: NoSuchMethodError) {
@@ -113,7 +116,13 @@ internal object PlayerUtil {
 
     fun shopTeleport(p: Player, shop: String) {
         val loc = ShopData.shopLocation[shop] ?: return
-        teleportWithTime(p, loc, MainConfig.homesTimeToTeleport, LangConfig.shopTeleport.replace("%player%", shop), "shop")
+        teleportWithTime(
+            p,
+            loc,
+            MainConfig.homesTimeToTeleport,
+            LangConfig.shopTeleport.replace("%player%", shop),
+            "shop"
+        )
     }
 
     fun teleportWithTime(p: Player, location: Location, time: Int, message: String?, locationName: String) {
@@ -131,7 +140,7 @@ internal object PlayerUtil {
             return
         }
 
-        TotalEssentials.basePlugin.getTask().async {
+        TotalEssentialsJava.basePlugin.getTask().async {
             waitFor(time.toLong() * 20)
             try {
                 switchContext(SynchronizationContext.SYNC)
@@ -143,7 +152,9 @@ internal object PlayerUtil {
             }
         }
 
-        p.sendMessage(LangConfig.generalTimeToTeleport.replace("%local%", locationName).replace("%time%", time.toString()))
+        p.sendMessage(
+            LangConfig.generalTimeToTeleport.replace("%local%", locationName).replace("%time%", time.toString())
+        )
 
     }
 

@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.cache.loop
 
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.SpawnData
 import github.gilbertokpl.total.cache.local.WarpData
@@ -14,11 +14,12 @@ object AntiAfkLoop {
     private val TIME_TO_EXECUTE = MainConfig.antiafkTimeToExecute
 
     fun start() {
-        TaskUtil.getInternalExecutor().scheduleWithFixedDelay(::checkPlayersAfk, TIME_TO_CHECK_MINUTES, TIME_TO_CHECK_MINUTES, TimeUnit.MINUTES)
+        TaskUtil.getInternalExecutor()
+            .scheduleWithFixedDelay(::checkPlayersAfk, TIME_TO_CHECK_MINUTES, TIME_TO_CHECK_MINUTES, TimeUnit.MINUTES)
     }
 
     private fun checkPlayersAfk() {
-        for (player in TotalEssentials.basePlugin.getReflection().getPlayers()) {
+        for (player in TotalEssentialsJava.basePlugin.getReflection().getPlayers()) {
             if (player.hasPermission("totalessentials.bypass.antiafk")) {
                 continue
             }
@@ -30,8 +31,7 @@ object AntiAfkLoop {
 
                 if (warp == null) {
                     SpawnData.teleportToSpawn(player)
-                }
-                else {
+                } else {
                     player.teleport(warp)
                 }
 

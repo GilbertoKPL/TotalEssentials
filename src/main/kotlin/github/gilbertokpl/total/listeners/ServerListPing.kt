@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.MainUtil
 import github.gilbertokpl.total.util.PlayerUtil
@@ -22,13 +22,12 @@ class ServerListPing : Listener {
     }
 
     private fun motd(e: ServerListPingEvent) {
-        val motd = if (TotalEssentials.instance.server.hasWhitelist()) {
+        val motd = if (TotalEssentialsJava.instance.server.hasWhitelist()) {
             MainUtil.getRandom(MainConfig.motdListMotdWhitelist).replace(
                 "%players_online%",
                 PlayerUtil.getIntOnlinePlayers(false).toString()
             ).replace("\\n", "\n")
-        }
-        else {
+        } else {
             MainUtil.getRandom(MainConfig.motdListMotd).replace(
                 "%players_online%",
                 PlayerUtil.getIntOnlinePlayers(false).toString()

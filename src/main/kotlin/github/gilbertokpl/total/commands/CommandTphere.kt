@@ -24,7 +24,7 @@ class CommandTphere : github.gilbertokpl.core.external.command.CommandCreator("t
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
         // check if player is online
-        val p = github.gilbertokpl.total.TotalEssentials.instance.server.getPlayer(args[0]) ?: run {
+        val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
             s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
