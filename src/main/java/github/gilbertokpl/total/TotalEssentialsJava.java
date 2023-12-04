@@ -1,5 +1,7 @@
 package github.gilbertokpl.total;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import github.gilbertokpl.core.external.CorePlugin;
 import github.gilbertokpl.total.cache.internal.InternalLoader;
 import github.gilbertokpl.total.cache.local.PlayerData;
@@ -12,6 +14,7 @@ import github.gilbertokpl.total.discord.Discord;
 import github.gilbertokpl.total.util.*;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
@@ -23,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -40,7 +44,7 @@ public class TotalEssentialsJava extends JavaPlugin {
     public static Permission permission;
     public static boolean lowVersion = false;
     private final List<String> dependency = Collections.singletonList(
-            "https://github.com/GilbertoKPL/TotalEssentials/releases/download/1.1/TotalEssentials-lib-1.1.jar"
+            "https://github.com/GilbertoKPL/TotalEssentials/releases/download/1.1.1/TotalEssentials-lib-1.1.1.jar"
     );
 
     public static TotalEssentialsJava getInstance() {
@@ -59,7 +63,164 @@ public class TotalEssentialsJava extends JavaPlugin {
         return lowVersion;
     }
 
-    public static void downloadArchive(String urlDownload, String path) {
+    public static Boolean start = false;
+
+    @Override
+    public void onLoad() {
+
+        //lib Checker
+
+        StringBuilder classPath = new StringBuilder();
+
+        for (String depend : dependency) {
+            String[] split = depend.split("/");
+            String name = split[split.length - 1];
+            String path = "plugins/TotalEssentials/lib/";
+            String newPath = path + name;
+
+            File file = new File(newPath);
+
+            classPath.append(newPath.replace("plugins/", "")).append(" ");
+
+            if (!file.exists()) {
+                Bukkit.getServer().getConsoleSender().sendMessage("Baixando dependencia = %dependency%.".replace("%dependency%", name));
+                downloadArchive(depend, newPath);
+            }
+
+        }
+
+        try {
+            if (!Objects.equals(getManifest(), classPath.toString().toString())) {
+                modifyManifest(classPath.toString().toString());
+                Bukkit.getServer().getConsoleSender().sendMessage("Reninciando para aplicar modificações");
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "restart");
+                start = true;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        //update
+
+        try {
+            String version = getLatestVersion("GilbertoKPL", "TotalEssentials");
+
+            if (!Objects.equals(version, this.getDescription().getVersion())) {
+               System.out.println("Existe uma nova versão disponivel = " + version + " baixando...");
+                boolean archive = downloadArchive("https://github.com/GilbertoKPL/TotalEssentials/releases/download/"+ version +"/TotalEssentials-" + version +".jar", "plugins/TotalEssentials-" + version +".jar");
+
+                if (archive) {
+                    new File("plugins/TotalEssentials-" + this.getDescription().getVersion() +".jar").deleteOnExit();
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "restart");
+                    start = true;
+                    System.out.println("Reninciando para aplicar configurações!");
+                }
+            }
+
+        } catch (IOException ignored) {}
+
+
+        instance = this;
+        basePlugin = new CorePlugin(this);
+
+        MaterialUtil.INSTANCE.startMaterials();
+
+        basePlugin.startConfig("github.gilbertokpl.total.config.files");
+
+        if (MainConfig.moneyActivated) {
+            Bukkit.getServicesManager().register(Economy.class, new EconomyHolder(), instance, ServicePriority.Highest);
+        }
+    }
+
+    @Override
+    public void onEnable() {
+
+        if (start) return;
+
+        basePlugin.start(
+                "github.gilbertokpl.total.commands",
+                "github.gilbertokpl.total.listeners",
+                "github.gilbertokpl.total.cache.local",
+                java.util.Arrays.asList(
+                        KitsDataSQL.INSTANCE,
+                        PlayerDataSQL.INSTANCE,
+                        SpawnDataSQL.INSTANCE,
+                        WarpsDataSQL.INSTANCE,
+                        LoginDataSQL.INSTANCE,
+                        VipDataSQL.INSTANCE,
+                        VipKeysSQL.INSTANCE,
+                        ShopDataSQL.INSTANCE
+                )
+        );
+
+        permission = Bukkit.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
+
+        InternalLoader.INSTANCE.start(
+                MainConfig.announcementsListAnnounce,
+                LangConfig.deathmessagesCauseReplacer,
+                LangConfig.deathmessagesEntityReplacer
+        );
+
+        MainUtil.INSTANCE.startInventories();
+
+        if (Bukkit.getBukkitVersion().contains("1.5.2") || Bukkit.getVersion().contains("1.5.2")) {
+            lowVersion = true;
+        }
+
+        Discord.INSTANCE.startBot();
+
+        if (MainConfig.discordbotConnectDiscordChat) {
+            Discord.INSTANCE.sendDiscordMessage(LangConfig.discordchatServerStart, true);
+        }
+
+        ClearItemsLoop.INSTANCE.start();
+
+        PluginLoop.INSTANCE.start();
+
+        instance.getServer().getLogger().setFilter(new Filter());
+    }
+
+    @Override
+    public void onDisable() {
+
+        if (start) return;
+
+        for (Player p : basePlugin.getReflection().getPlayers()) {
+            if (MainConfig.playtimeActivated) {
+                if (PlayerData.INSTANCE.getPlayTimeCache().get(p) != null) {
+                    long time = PlayerData.INSTANCE.getPlayTimeCache().get(p) != null ? PlayerData.INSTANCE.getPlayTimeCache().get(p) : 0L;
+                    long timePlayed = PlayerData.INSTANCE.getPlaytimeLocal().get(p) != null ? PlayerData.INSTANCE.getPlayTimeCache().get(p) : 0L;
+
+                    long newTime = time + (System.currentTimeMillis() - timePlayed);
+
+                    if (time > 94608000000L) {
+                        newTime = time;
+                    }
+
+                    if (newTime > 94608000000L) {
+                        newTime = 518400000L;
+                    }
+
+                    PlayerData.INSTANCE.getPlayTimeCache().set(p, newTime);
+                } else {
+                    PlayerData.INSTANCE.getPlayTimeCache().set(p, 0L);
+                }
+                PlayerData.INSTANCE.getPlaytimeLocal().set(p, 0L);
+            }
+        }
+
+        MainUtil.INSTANCE.consoleMessage(ColorUtil.YELLOW.getColor() + LangConfig.generalSaveDataMessage + ColorUtil.RESET.getColor());
+        basePlugin.stop();
+        MainUtil.INSTANCE.consoleMessage(ColorUtil.YELLOW.getColor() + LangConfig.generalSaveDataSuccess + ColorUtil.RESET.getColor());
+
+        TaskUtil.INSTANCE.disable();
+
+        if (MainConfig.discordbotConnectDiscordChat) {
+            Discord.INSTANCE.sendDiscordMessage(LangConfig.discordchatServerClose, true);
+        }
+    }
+
+    public static boolean downloadArchive(String urlDownload, String path) {
         try {
             URL url = new URL(urlDownload);
 
@@ -83,8 +244,10 @@ public class TotalEssentialsJava extends JavaPlugin {
                 }
             }
 
+            return true;
         } catch (IOException e) {
             e.fillInStackTrace();
+            return false;
         }
 
     }
@@ -159,129 +322,16 @@ public class TotalEssentialsJava extends JavaPlugin {
         }
     }
 
-    @Override
-    public void onLoad() {
+    public static String getLatestVersion(String owner, String repo) throws IOException {
+        String apiUrl = "https://api.github.com/repos/" + owner + "/" + repo + "/releases/latest";
+        URL url = new URL(apiUrl);
 
-        StringBuilder classPath = new StringBuilder();
+        try (InputStream inputStream = url.openConnection().getInputStream()) {
+            String jsonContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 
-        for (String depend : dependency) {
-            String[] split = depend.split("/");
-            String name = split[split.length - 1];
-            String path = "plugins/TotalEssentials/lib/";
-            String newPath = path + name;
+            JsonObject json = JsonParser.parseString(jsonContent).getAsJsonObject();
 
-            File file = new File(newPath);
-
-            classPath.append(newPath.replace("plugins/", "")).append(" ");
-
-            if (!file.exists()) {
-                Bukkit.getServer().getConsoleSender().sendMessage("Baixando dependencia = %dependency%.".replace("%dependency%", name));
-                downloadArchive(depend, newPath);
-            }
-
-        }
-
-        try {
-            if (!Objects.equals(getManifest(), classPath.toString().toString())) {
-                modifyManifest(classPath.toString().toString());
-                Bukkit.getServer().getConsoleSender().sendMessage("Reninciando para aplicar modificações");
-                System.exit(0);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        instance = this;
-        basePlugin = new CorePlugin(this);
-
-        MaterialUtil.INSTANCE.startMaterials();
-
-        basePlugin.startConfig("github.gilbertokpl.total.config.files");
-
-        if (MainConfig.moneyActivated) {
-            Bukkit.getServicesManager().register(Economy.class, new EconomyHolder(), instance, ServicePriority.Highest);
-        }
-    }
-
-    @Override
-    public void onEnable() {
-        basePlugin.start(
-                "github.gilbertokpl.total.commands",
-                "github.gilbertokpl.total.listeners",
-                "github.gilbertokpl.total.cache.local",
-                java.util.Arrays.asList(
-                        KitsDataSQL.INSTANCE,
-                        PlayerDataSQL.INSTANCE,
-                        SpawnDataSQL.INSTANCE,
-                        WarpsDataSQL.INSTANCE,
-                        LoginDataSQL.INSTANCE,
-                        VipDataSQL.INSTANCE,
-                        VipKeysSQL.INSTANCE,
-                        ShopDataSQL.INSTANCE
-                )
-        );
-
-        permission = Bukkit.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
-
-        InternalLoader.INSTANCE.start(
-                MainConfig.announcementsListAnnounce,
-                LangConfig.deathmessagesCauseReplacer,
-                LangConfig.deathmessagesEntityReplacer
-        );
-
-        MainUtil.INSTANCE.startInventories();
-
-        if (Bukkit.getBukkitVersion().contains("1.5.2") || Bukkit.getVersion().contains("1.5.2")) {
-            lowVersion = true;
-        }
-
-        Discord.INSTANCE.startBot();
-
-        if (MainConfig.discordbotConnectDiscordChat) {
-            Discord.INSTANCE.sendDiscordMessage(LangConfig.discordchatServerStart, true);
-        }
-
-        ClearItemsLoop.INSTANCE.start();
-
-        PluginLoop.INSTANCE.start();
-
-        instance.getServer().getLogger().setFilter(new Filter());
-    }
-
-    @Override
-    public void onDisable() {
-        for (Player p : basePlugin.getReflection().getPlayers()) {
-            if (MainConfig.playtimeActivated) {
-                if (PlayerData.INSTANCE.getPlayTimeCache().get(p) != null) {
-                    long time = PlayerData.INSTANCE.getPlayTimeCache().get(p) != null ? PlayerData.INSTANCE.getPlayTimeCache().get(p) : 0L;
-                    long timePlayed = PlayerData.INSTANCE.getPlaytimeLocal().get(p) != null ? PlayerData.INSTANCE.getPlayTimeCache().get(p) : 0L;
-
-                    long newTime = time + (System.currentTimeMillis() - timePlayed);
-
-                    if (time > 94608000000L) {
-                        newTime = time;
-                    }
-
-                    if (newTime > 94608000000L) {
-                        newTime = 518400000L;
-                    }
-
-                    PlayerData.INSTANCE.getPlayTimeCache().set(p, newTime);
-                } else {
-                    PlayerData.INSTANCE.getPlayTimeCache().set(p, 0L);
-                }
-                PlayerData.INSTANCE.getPlaytimeLocal().set(p, 0L);
-            }
-        }
-
-        MainUtil.INSTANCE.consoleMessage(ColorUtil.YELLOW.getColor() + LangConfig.generalSaveDataMessage + ColorUtil.RESET.getColor());
-        basePlugin.stop();
-        MainUtil.INSTANCE.consoleMessage(ColorUtil.YELLOW.getColor() + LangConfig.generalSaveDataSuccess + ColorUtil.RESET.getColor());
-
-        TaskUtil.INSTANCE.disable();
-
-        if (MainConfig.discordbotConnectDiscordChat) {
-            Discord.INSTANCE.sendDiscordMessage(LangConfig.discordchatServerClose, true);
+            return json.get("tag_name").getAsString();
         }
     }
 

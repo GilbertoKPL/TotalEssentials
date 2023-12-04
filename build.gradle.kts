@@ -7,7 +7,7 @@ plugins {
 
 val base = "github.gilbertokpl.library"
 
-version = "1.1"
+version = "1.1.1"
 
 
 repositories {
@@ -107,6 +107,8 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
+
+    compileOnly("com.google.code.gson:gson:2.10.1")
 
 }
 
