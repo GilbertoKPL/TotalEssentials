@@ -91,26 +91,31 @@ internal object PlayerUtil {
     }
 
     fun checkPlayer(address: String): List<String> {
-        if (address.contains("127.0.0.1")) return listOf(
-            "País: Local",
-            "Estado: Local",
-            "Cidade: Local",
-            "false"
-        )
-        val result = JSONObject(
-            IOUtils.toString(
-                URL("http://ip-api.com/json$address?fields=status,country,regionName,city,hosting,query"),
-                "UTF-8"
+        try {
+            if (address.contains("127.0.0.1")) return listOf(
+                "País: Local",
+                "Estado: Local",
+                "Cidade: Local",
+                "false"
             )
-        )
-        if (!(result["status"]?.equals("fail"))!!) {
-            return listOf(
-                "País: ${result.get("country")}",
-                "Estado: ${result.get("regionName")}",
-                "Cidade: ${result.get("city")}",
-                "${result.get("hosting")}"
+            val result = JSONObject(
+                IOUtils.toString(
+                    URL("http://ip-api.com/json$address?fields=status,country,regionName,city,hosting,query"),
+                    "UTF-8"
+                )
             )
+            if (!(result["status"]?.equals("fail"))!!) {
+                return listOf(
+                    "País: ${result.get("country")}",
+                    "Estado: ${result.get("regionName")}",
+                    "Cidade: ${result.get("city")}",
+                    "${result.get("hosting")}"
+                )
+            }
+        } catch (e : Exception) {
+            return listOf("Erro API").toList()
         }
+
         return listOf("Erro API").toList()
     }
 

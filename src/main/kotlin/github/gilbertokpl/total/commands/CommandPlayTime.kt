@@ -33,6 +33,8 @@ class CommandPlayTime : github.gilbertokpl.core.external.command.CommandCreator(
 
         val playerName = if (args.isEmpty() && s is Player) s.name else args[0]
 
+        if (args.isEmpty() && s !is Player) return false
+
         val playerTimeMillis = PlayerData.playtimeLocal[playerName] ?: 0L
 
         val playerTime = ((PlayerData.playTimeCache[playerName])

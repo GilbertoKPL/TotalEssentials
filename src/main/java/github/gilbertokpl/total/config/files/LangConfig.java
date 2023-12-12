@@ -1089,6 +1089,21 @@ public class LangConfig implements DefaultLang {
     )
     public static String VipsList;
 
+    @Values(
+            {
+                    @Value(value = "%prefix%&cEle não tem este vip ativo!", lang = LangTypes.PT_BR),
+                    @Value(value = "'", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsRemoveNoVip;
+
+    @Values(
+            {
+                    @Value(value = "%prefix%&aVip Removido com sucesso!", lang = LangTypes.PT_BR),
+                    @Value(value = "'", lang = LangTypes.EN_US)
+            }
+    )
+    public static String VipsRemove;
 
     //nicks
     @Values(

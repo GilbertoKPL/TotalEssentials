@@ -30,6 +30,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             usage = listOf(
                 "totalessentials.commands.vip.admin_/vip list",
                 "totalessentials.commands.vip.admin_/vip criar <vipName> <vipGroup>",
+                "totalessentials.commands.vip.admin_/vip remover <player> <vipName>",
                 "totalessentials.commands.vip.admin_/vip discrole <vipName> <roleID>",
                 "totalessentials.commands.vip.admin_/vip gerarkey <vipName> <days>",
                 "totalessentials.commands.vip.admin_/vip dar <player> <vipName> <days> <items,true/false>",
@@ -70,6 +71,33 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             for (i in VipData.vipPrice.getMap()) {
                 s.sendMessage(LangConfig.VipsList.replace("%vip%", i.key))
             }
+            return false
+        }
+
+        if (args[0].lowercase() == "remover" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
+
+            if (!PlayerData.checkIfPlayerExist(args[1])) {
+                s.sendMessage(LangConfig.generalPlayerNotExist)
+                return false
+            }
+
+            if (!VipData.vipExists(args[2])) {
+                s.sendMessage(LangConfig.VipsNotExist)
+                return false
+            }
+
+            val cache = PlayerData.vipCache[args[1]] ?: return true
+
+            if (cache[args[2]] == null) {
+                s.sendMessage(LangConfig.VipsRemoveNoVip)
+                return false
+            }
+
+            cache.remove(args[2])
+
+            VipUtil.updateCargo(args[1])
+            s.sendMessage(LangConfig.VipsRemove)
+
             return false
         }
 
@@ -121,7 +149,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                         "%time%",
                         TotalEssentialsJava.basePlugin.getTime().convertMillisToString(vipTime * 86400000, false)
                     )
-                    .replace("%vip%", args[2]),
+                    .replace("%vip%", vipName),
                 true
             )
 
@@ -133,7 +161,7 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
                         "%time%",
                         TotalEssentialsJava.basePlugin.getTime().convertMillisToString(vipTime * 86400000, false)
                     )
-                    .replace("%vip%", args[2])
+                    .replace("%vip%", vipName)
             )
 
             return false

@@ -8,12 +8,16 @@ import org.bukkit.World
 import org.bukkit.entity.Item
 
 object WorldUtil {
+
+    private var inUse = false
     fun clearItems() {
         var time = 30000L
 
         val waitTime = ((time / 3) / 1000)
 
         TotalEssentialsJava.basePlugin.getTask().async {
+            if (inUse) return@async
+            inUse = true
             for (a in 0..(time / 10000)) {
 
                 if (time >= 10000) {
@@ -40,12 +44,13 @@ object WorldUtil {
                     val t = world.entities
                     for (e in 0 until t.size) {
                         val i = t[e]
-                        if (i is Item && !MainConfig.clearitemsItemsNotClear.contains(i.itemStack.type.name.lowercase())) {
+                        if (i is Item && !MainConfig.clearitemsItemsNotClear.any { it.equals(i.itemStack.type.name.lowercase(), ignoreCase = true) }) {
                             i.remove()
                         }
                     }
                 }
             }
+            inUse = false
         }
     }
 

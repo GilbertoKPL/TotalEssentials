@@ -33,6 +33,7 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
         val encrypt = TotalEssentialsJava.basePlugin.getEncrypt()
 
         if (s is Player && LoginData.doesPlayerExist(s) && LoginData.isPlayerLoggedIn(s)) {
+
             val password = encrypt.decrypt(LoginData.password[s]!!)
 
             if (password == args[0]) {

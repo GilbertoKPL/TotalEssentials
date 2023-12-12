@@ -30,7 +30,8 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
                 "/total reload",
                 "/total host",
                 "/total plugin <load/unload/reload> <pluginName>",
-                "C_/total reset"
+                "C_/total reset",
+                "P_/total id"
             )
         )
     }
@@ -173,6 +174,13 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
             }
             return false
         }
+
+        if (args[0].lowercase() == "id" && s is Player) {
+            s.sendMessage(s.itemInHand.type.name.lowercase())
+            return false
+        }
+
+
         return true
     }
 }
