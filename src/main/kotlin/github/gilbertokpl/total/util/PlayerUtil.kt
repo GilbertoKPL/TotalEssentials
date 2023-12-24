@@ -6,12 +6,14 @@ import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import org.apache.commons.io.IOUtils
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.net.URL
+import java.nio.charset.StandardCharsets
 
 
 internal object PlayerUtil {
@@ -92,32 +94,55 @@ internal object PlayerUtil {
 
     fun checkPlayer(address: String): List<String> {
         try {
-            if (address.contains("127.0.0.1")) return listOf(
-                "País: Local",
-                "Estado: Local",
-                "Cidade: Local",
-                "false"
-            )
-            val result = JSONObject(
-                IOUtils.toString(
-                    URL("http://ip-api.com/json$address?fields=status,country,regionName,city,hosting,query"),
-                    "UTF-8"
-                )
-            )
-            if (!(result["status"]?.equals("fail"))!!) {
+            if (address.contains("127.0.0.1")) {
                 return listOf(
-                    "País: ${result.get("country")}",
-                    "Estado: ${result.get("regionName")}",
-                    "Cidade: ${result.get("city")}",
-                    "${result.get("hosting")}"
+                    "País: Local",
+                    "Estado: Local",
+                    "Cidade: Local",
+                    "false"
                 )
             }
-        } catch (e : Exception) {
-            return listOf("Erro API").toList()
+
+            val apiUrl = URL("http://ip-api.com/json$address?fields=status,country,regionName,city,hosting")
+            apiUrl.openStream().use { inputStream ->
+                BufferedReader(InputStreamReader(inputStream, StandardCharsets.UTF_8)).use { reader ->
+                    val jsonContent = StringBuilder()
+
+                    var line: String?
+                    while (reader.readLine().also { line = it } != null) {
+                        jsonContent.append(line)
+                    }
+
+                    // Analisar o JSON manualmente
+                    val jsonString = jsonContent.toString()
+                    if (!jsonString.contains("\"status\":\"fail\"")) {
+                        val countryIndex = jsonString.indexOf("\"country\":\"") + 11
+                        val regionIndex = jsonString.indexOf("\"regionName\":\"") + 13
+                        val cityIndex = jsonString.indexOf("\"city\":\"") + 8
+                        val hostingIndex = jsonString.indexOf("\"hosting\":\"") + 10
+
+                        val country = jsonString.substring(countryIndex, jsonString.indexOf("\"", countryIndex))
+                        val region = jsonString.substring(regionIndex, jsonString.indexOf("\"", regionIndex))
+                        val city = jsonString.substring(cityIndex, jsonString.indexOf("\"", cityIndex))
+                        val hosting = jsonString.substring(hostingIndex, jsonString.indexOf("\"", hostingIndex))
+
+                        return listOf(
+                            "País: $country",
+                            "Estado: $region",
+                            "Cidade: $city",
+                            hosting
+                        )
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
-        return listOf("Erro API").toList()
+        return listOf("Erro API")
     }
+
+
 
     fun shopTeleport(p: Player, shop: String) {
         val loc = ShopData.shopLocation[shop] ?: return

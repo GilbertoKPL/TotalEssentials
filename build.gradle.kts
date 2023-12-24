@@ -62,7 +62,7 @@ dependencies {
     }
 
     //Mysql with MariaDB driver database
-    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.1.4") {
+    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.3.2") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -98,17 +98,10 @@ dependencies {
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("commons-io:commons-io:2.15.1") {
-        exclude("org.slf4j", "slf4j-api")
-        exclude("org.slf4j", "jcl-over-slf4j")
-    }
-
     compileOnly("org.json:json:20231013") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
-
-    compileOnly("com.google.code.gson:gson:2.10.1")
 
 }
 

@@ -96,6 +96,14 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
             cache.remove(args[2])
 
             VipUtil.updateCargo(args[1])
+            TotalEssentialsJava.permission.playerRemoveGroup(VipUtil.world, args[1], VipData.vipGroup[args[2]])
+            VipData.vipQuantity[args[2]] = (VipData.vipQuantity[args[2]] ?: 0) - 1
+            PlayerData.discordCache[args[1]]?.let { VipData.vipDiscord[args[2]]?.let { it1 ->
+                Discord.removeUserRole(it,
+                    it1
+                )
+            } }
+
             s.sendMessage(LangConfig.VipsRemove)
 
             return false

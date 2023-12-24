@@ -1,7 +1,5 @@
 package github.gilbertokpl.total;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import github.gilbertokpl.core.external.CorePlugin;
 import github.gilbertokpl.total.cache.internal.InternalLoader;
 import github.gilbertokpl.total.cache.local.PlayerData;
@@ -14,16 +12,12 @@ import github.gilbertokpl.total.discord.Discord;
 import github.gilbertokpl.total.util.*;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -31,9 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Objects;
 import java.util.jar.*;
 
@@ -43,9 +35,6 @@ public class TotalEssentialsJava extends JavaPlugin {
     public static CorePlugin basePlugin;
     public static Permission permission;
     public static boolean lowVersion = false;
-    private final List<String> dependency = Collections.singletonList(
-            "https://github.com/GilbertoKPL/TotalEssentials/releases/download/1.1.1/TotalEssentials-lib-1.1.1.jar"
-    );
 
     public static TotalEssentialsJava getInstance() {
         return instance;
@@ -63,61 +52,70 @@ public class TotalEssentialsJava extends JavaPlugin {
         return lowVersion;
     }
 
-    public static Boolean start = false;
+    public static Boolean update = false;
+    public static Boolean libModify = false;
+
+    public static String jarPath = null;
 
     @Override
     public void onLoad() {
 
-        //lib Checker
+        String version;
 
-        StringBuilder classPath = new StringBuilder();
+        //update
 
-        for (String depend : dependency) {
-            String[] split = depend.split("/");
-            String name = split[split.length - 1];
-            String path = "plugins/TotalEssentials/lib/";
-            String newPath = path + name;
+        try {
+            version = getLatestVersion("GilbertoKPL", "TotalEssentials");
 
-            File file = new File(newPath);
-
-            classPath.append(newPath.replace("plugins/", "")).append(" ");
-
-            if (!file.exists()) {
-                Bukkit.getServer().getConsoleSender().sendMessage("Baixando dependencia = %dependency%.".replace("%dependency%", name));
-                downloadArchive(depend, newPath);
+            if (!Objects.equals(version, this.getDescription().getVersion())) {
+                System.out.println("Existe uma nova versão disponivel = " + version + " baixando...");
+                jarPath = "plugins/TotalEssentials-" + version +".jar";
+                boolean archive = downloadArchive("https://github.com/GilbertoKPL/TotalEssentials/releases/download/"+ version +"/TotalEssentials-" + version +".jar", jarPath);
+                if (archive) {
+                    new File("plugins/TotalEssentials-" + this.getDescription().getVersion() +".jar").deleteOnExit();
+                    update = true;
+                }
             }
 
+        } catch (IOException ignored) {
+            version = this.getDescription().getVersion();
+        }
+
+        //lib Checker
+
+        String classPath;
+
+        String depend = "https://github.com/GilbertoKPL/TotalEssentials/releases/download/"+version+"/TotalEssentials-lib-"+version+".jar";
+        String[] split = depend.split("/");
+        String name = split[split.length - 1];
+        String pathLib = "plugins/TotalEssentials/lib/";
+        String newPath = pathLib + name;
+
+        File file = new File(newPath);
+
+        classPath = newPath.replace("plugins/", "");
+
+        if (!file.exists()) {
+            Bukkit.getServer().getConsoleSender().sendMessage("Baixando dependencia = %dependency%.".replace("%dependency%", name));
+            downloadArchive(depend, newPath);
+            libModify = true;
         }
 
         try {
-            if (!Objects.equals(getManifest(), classPath.toString().toString())) {
-                modifyManifest(classPath.toString().toString());
-                Bukkit.getServer().getConsoleSender().sendMessage("Reninciando para aplicar modificações");
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "restart");
-                start = true;
+            if (update || !Objects.equals(getManifest(), classPath)) {
+                modifyManifest(classPath);
+                update = true;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        //update
-
-        try {
-            String version = getLatestVersion("GilbertoKPL", "TotalEssentials");
-
-            if (!Objects.equals(version, this.getDescription().getVersion())) {
-               System.out.println("Existe uma nova versão disponivel = " + version + " baixando...");
-                boolean archive = downloadArchive("https://github.com/GilbertoKPL/TotalEssentials/releases/download/"+ version +"/TotalEssentials-" + version +".jar", "plugins/TotalEssentials-" + version +".jar");
-
-                if (archive) {
-                    new File("plugins/TotalEssentials-" + this.getDescription().getVersion() +".jar").deleteOnExit();
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "restart");
-                    start = true;
-                    System.out.println("Reninciando para aplicar configurações!");
-                }
-            }
-
-        } catch (IOException ignored) {}
+        if (update || libModify) {
+            update = true;
+            Bukkit.getServer().getConsoleSender().sendMessage("Reninciando para aplicar modificações");
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "restart");
+            return;
+        }
 
 
         instance = this;
@@ -135,7 +133,7 @@ public class TotalEssentialsJava extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        if (start) return;
+        if (update) return;
 
         basePlugin.start(
                 "github.gilbertokpl.total.commands",
@@ -183,7 +181,7 @@ public class TotalEssentialsJava extends JavaPlugin {
     @Override
     public void onDisable() {
 
-        if (start) return;
+        if (update) return;
 
         for (Player p : basePlugin.getReflection().getPlayers()) {
             if (MainConfig.playtimeActivated) {
@@ -304,6 +302,16 @@ public class TotalEssentialsJava extends JavaPlugin {
     }
 
     public static String JarPath() {
+
+        if (jarPath != null) {
+            File file = new File(jarPath);
+            try {
+                return file.getCanonicalPath();
+            } catch (Exception e) {
+                e.fillInStackTrace();
+            }
+        }
+
         Class<?> currentClass = TotalEssentialsJava.class;
         CodeSource codeSource = currentClass.getProtectionDomain().getCodeSource();
 
@@ -326,12 +334,18 @@ public class TotalEssentialsJava extends JavaPlugin {
         String apiUrl = "https://api.github.com/repos/" + owner + "/" + repo + "/releases/latest";
         URL url = new URL(apiUrl);
 
-        try (InputStream inputStream = url.openConnection().getInputStream()) {
-            String jsonContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+        try (InputStream inputStream = url.openStream()) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            StringBuilder jsonContent = new StringBuilder();
 
-            JsonObject json = JsonParser.parseString(jsonContent).getAsJsonObject();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonContent.append(line);
+            }
 
-            return json.get("tag_name").getAsString();
+            int startIndex = jsonContent.indexOf("\"tag_name\":\"") + 12;
+            int endIndex = jsonContent.indexOf("\"", startIndex);
+            return jsonContent.substring(startIndex, endIndex);
         }
     }
 

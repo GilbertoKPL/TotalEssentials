@@ -102,6 +102,67 @@ public class MainConfig implements DefaultConfig {
     public static String databaseSqlPassword = "!essentialsk123";
 
 
+    //stackMobs
+
+    @PrimaryComments(
+            {
+                    @PrimaryComment(primaryAnnotations = "Configurações do StackMobs", lang = LangTypes.PT_BR),
+                    @PrimaryComment(primaryAnnotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    @Comments(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), O Stackamobs será ativado.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean stackmobsActivated = false;
+    @Comments(
+            {
+                    @Comment(annotations = "Lista de mobs que irão estocar.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static List<Integer> stackmobsStackList = Collections.singletonList(54);
+    @Comments(
+            {
+                    @Comment(annotations = "dar replace no nome do mob.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static List<String> stackmobsNameReplacer = Collections.singletonList("54:Zumbi");
+
+    @Comments(
+            {
+                    @Comment(annotations = "Raio que ira estocar.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static Integer stackmobsRadius = 10;
+
+    @Comments(
+            {
+                    @Comment(annotations = "Quantidade máxima.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static Integer stackmobsMax = 200;
+    @Comments(
+            {
+                    @Comment(annotations = "Lista de mobs que irão estocar.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String stackmobsNameTag = "&6&l%name% %quantity%X";
+    @Comments(
+            {
+                    @Comment(annotations = "Lista de mobs que irão estocar.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static List<String> stackmobsBlockedWorlds = Collections.singletonList("Spawn");
+
+
     //Commands
 
     @PrimaryComments(
