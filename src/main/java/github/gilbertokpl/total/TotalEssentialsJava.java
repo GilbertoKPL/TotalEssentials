@@ -3,7 +3,7 @@ package github.gilbertokpl.total;
 import github.gilbertokpl.core.external.CorePlugin;
 import github.gilbertokpl.total.cache.internal.InternalLoader;
 import github.gilbertokpl.total.cache.local.PlayerData;
-import github.gilbertokpl.total.cache.loop.ClearItemsLoop;
+import github.gilbertokpl.total.cache.loop.ClearEntitiesLoop;
 import github.gilbertokpl.total.cache.loop.PluginLoop;
 import github.gilbertokpl.total.cache.sql.*;
 import github.gilbertokpl.total.config.files.LangConfig;
@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.jar.*;
@@ -93,6 +94,7 @@ public class TotalEssentialsJava extends JavaPlugin {
 
         File file = new File(newPath);
 
+
         classPath = newPath.replace("plugins/", "");
 
         if (!file.exists()) {
@@ -107,7 +109,7 @@ public class TotalEssentialsJava extends JavaPlugin {
                 update = true;
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Bukkit.getServer().getLogger().severe("Você está utilizando Windowns Algumas funcionalidades do plugin não irão funcionar!");
         }
 
         if (update || libModify) {
@@ -151,7 +153,12 @@ public class TotalEssentialsJava extends JavaPlugin {
                 )
         );
 
-        permission = Bukkit.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
+        try {
+            permission = Bukkit.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
+        }
+        catch (NoClassDefFoundError e) {
+            instance.getLogger().severe("Falta instalar VAULT, o addon de VIP não ira funcionar direito!");
+        }
 
         InternalLoader.INSTANCE.start(
                 MainConfig.announcementsListAnnounce,
@@ -171,7 +178,7 @@ public class TotalEssentialsJava extends JavaPlugin {
             Discord.INSTANCE.sendDiscordMessage(LangConfig.discordchatServerStart, true);
         }
 
-        ClearItemsLoop.INSTANCE.start();
+        ClearEntitiesLoop.INSTANCE.start();
 
         PluginLoop.INSTANCE.start();
 
@@ -185,24 +192,25 @@ public class TotalEssentialsJava extends JavaPlugin {
 
         for (Player p : basePlugin.getReflection().getPlayers()) {
             if (MainConfig.playtimeActivated) {
-                if (PlayerData.INSTANCE.getPlayTimeCache().get(p) != null) {
-                    long time = PlayerData.INSTANCE.getPlayTimeCache().get(p) != null ? PlayerData.INSTANCE.getPlayTimeCache().get(p) : 0L;
-                    long timePlayed = PlayerData.INSTANCE.getPlaytimeLocal().get(p) != null ? PlayerData.INSTANCE.getPlayTimeCache().get(p) : 0L;
+                long currentTimeMillis = System.currentTimeMillis();
 
-                    long newTime = time + (System.currentTimeMillis() - timePlayed);
+                Long playTimeCacheValue = PlayerData.INSTANCE.getPlayTimeCache().get(p);
+                long time = (playTimeCacheValue != null) ? playTimeCacheValue : 0L;
 
-                    if (time > 94608000000L) {
-                        newTime = time;
-                    }
+                Long playtimeLocalValue = PlayerData.INSTANCE.getPlaytimeLocal().get(p);
+                long timePlayed = (playtimeLocalValue != null) ? playtimeLocalValue : 0L;
 
-                    if (newTime > 94608000000L) {
-                        newTime = 518400000L;
-                    }
+                long newTime = time + (currentTimeMillis - timePlayed);
 
-                    PlayerData.INSTANCE.getPlayTimeCache().set(p, newTime);
-                } else {
-                    PlayerData.INSTANCE.getPlayTimeCache().set(p, 0L);
+                if (time > 94608000000L) {
+                    newTime = time;
                 }
+
+                if (newTime > 94608000000L) {
+                    newTime = 518400000L;
+                }
+
+                PlayerData.INSTANCE.getPlayTimeCache().set(p, newTime);
                 PlayerData.INSTANCE.getPlaytimeLocal().set(p, 0L);
             }
         }

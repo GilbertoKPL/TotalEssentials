@@ -19,7 +19,7 @@ object WarpData : CacheBase {
     }
 
     fun getWarpList(player: Player?): List<String> {
-        val warpNames = warpLocation.getMap().keys.toList()
+        val warpNames = warpLocation.getMap().filterValues { it != null }.keys.toList()
         return if (player == null) {
             warpNames
         } else {

@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.commands
 
+import github.gilbertokpl.core.external.cache.Cache
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.TotalEssentialsJava
@@ -31,7 +32,8 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
                 "/total host",
                 "/total plugin <load/unload/reload> <pluginName>",
                 "C_/total reset",
-                "P_/total id"
+                "P_/total id",
+                "/total save"
             )
         )
     }
@@ -180,7 +182,11 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
             return false
         }
 
-
+        if (args[0].lowercase() == "save") {
+            TotalEssentialsJava.basePlugin.getCache().save()
+            s.sendMessage("salvo")
+            return false
+        }
         return true
     }
 }

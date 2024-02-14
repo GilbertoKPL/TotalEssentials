@@ -21,7 +21,7 @@ internal object EditKit {
     )
 
     private val CLOCK_ITEM = ItemUtil.item(
-        MaterialUtil["clock"] ?: Material.WATCH,
+        MaterialUtil["clock"] ?: Material.CLOCK,
         LangConfig.kitsEditKitInventoryTimeName,
         LangConfig.kitsEditKitInventoryTimeLore
     )

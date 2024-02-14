@@ -362,13 +362,17 @@ class InventoryClick : Listener {
             if (oldMeta.hasDisplayName()) {
                 val oldName = oldMeta.displayName.replace("§", "")
                 if (name == oldName) {
-                    meta.displayName = oldMeta.displayName
+                    try {
+                        ItemUtil.setDisplayName(meta, oldMeta.displayName)
+                    } catch (e: NoSuchMethodError) {
+                        meta.setDisplayName(oldMeta.displayName)
+                    }
                     item.itemMeta = meta
                     e.currentItem = item
                     return
                 }
             }
-            meta.displayName = PermissionUtil.colorPermission(e.whoClicked as Player, name)
+            ItemUtil.setDisplayName(meta, PermissionUtil.colorPermission(e.whoClicked as Player, name))
             item.itemMeta = meta
             e.currentItem = item
         }

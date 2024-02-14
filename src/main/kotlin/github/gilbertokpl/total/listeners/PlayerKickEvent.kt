@@ -11,7 +11,6 @@ class PlayerKickEvent : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun kick(e: PlayerKickEvent) {
         if (TotalEssentialsJava.lowVersion) {
-            e.leaveMessage = null
         }
     }
 }

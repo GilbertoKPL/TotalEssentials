@@ -39,7 +39,11 @@ internal object Kit {
 
             val meta = item.itemMeta
             item.amount = 1
-            meta?.displayName = itemName
+            try {
+                ItemUtil.setDisplayName(meta, itemName)
+            } catch (e : NoSuchMethodError) {
+                meta?.setDisplayName(itemName)
+            }
             if (meta != null) {
                 meta.lore = LangConfig.kitsInventoryItemsLore.map { it.replace("%realname%", kit.key) }
             }

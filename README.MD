@@ -2,7 +2,7 @@
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/5113aa86f46b45caa40bdfd8508bcd3e)](https://www.codacy.com/gh/GilbertoKPL/TotalEssentials/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=GilbertoKPL/TotalEssentials&amp;utm_campaign=Badge_Grade)
 
-* A core system for minecraft server that supports most versions (1.5.2 - 1.19.2), using only database as a storage
+* A core system for minecraft server that supports most versions (1.5.2 - 1.20.2), using only database as a storage
   medium and various built-in commands / systems, which can be disabled at any time.
 
 # Bstats
@@ -58,7 +58,7 @@
 | /changepass                  | change pass of account.                                                                         | totalessentials.commands.changepass  |
 | /vip                         | vip system.                                                                                     | totalessentials.commands.vip         |
 | /shop and /loja              | players shops.                                                                                  | totalessentials.commands.shop        |
-| /clearitems                  | clear all items in server (with config).                                                        | totalessentials.commands.clearitems  |
+| /clearentities               | clear all items in server (with config).                                                        | totalessentials.commands.clearitems  |
 
 ## Permission Color
 
@@ -144,7 +144,12 @@ To use in chat, commands, signs etc.
 
 ## TODO List
 
-- [ ] Add support of version Checker for a Windows.
+- [ X ] Add support of version Checker for a Windows.
+- [ X ] Add Support to H2 DataBase.
+- [ X ] Create CacheSQL to more powerful speed.
+- [ X ] Create reload system.
+- [ X ] Create auto config system with comments.
+- [ X ] Create auto lang system with comments.
 
 # Discord
 

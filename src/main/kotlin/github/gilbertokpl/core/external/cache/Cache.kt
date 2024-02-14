@@ -124,24 +124,28 @@ class Cache(core: CorePlugin) {
             }
         }
         Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
-            try {
-                transaction(corePlugin.sql) {
-                    for (i in toByteUpdate) {
-                        try {
-                            i.update()
-                        } catch (e: Exception) {
-                            Bukkit.getServer().shutdown()
-                            e.printStackTrace()
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                Bukkit.getServer().shutdown()
-                e.printStackTrace()
-            }
+            save()
         }, 5, 5, TimeUnit.MINUTES)
     }
 
     val toByteUpdate = ArrayList<CacheBuilder<*>>()
+
+    fun save() {
+        try {
+            transaction(corePlugin.sql) {
+                for (i in toByteUpdate) {
+                    try {
+                        i.update()
+                    } catch (e: Exception) {
+                        Bukkit.getServer().shutdown()
+                        e.printStackTrace()
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Bukkit.getServer().shutdown()
+            e.printStackTrace()
+        }
+    }
 
 }

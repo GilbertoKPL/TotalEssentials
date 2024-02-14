@@ -32,7 +32,11 @@ object Shop {
             val meta = item.itemMeta
 
             item.amount = 1
-            meta?.displayName = name
+            try {
+                ItemUtil.setDisplayName(meta, name)
+            } catch (e : NoSuchMethodError) {
+                meta?.setDisplayName(name)
+            }
 
             val checkIfIsOpen = ShopData.shopOpen[shop.key] ?: false
 

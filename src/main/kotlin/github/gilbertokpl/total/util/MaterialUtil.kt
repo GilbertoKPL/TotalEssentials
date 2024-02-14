@@ -17,6 +17,7 @@ internal object MaterialUtil {
             materialHelper(listOf("SOIL", "SOUL_SOIL"))
         material["head"] =
             materialHelper(listOf("PLAYER_HEAD", "SKULL_ITEM"))
+
     }
 
     private fun materialHelper(material: List<String>): Material {

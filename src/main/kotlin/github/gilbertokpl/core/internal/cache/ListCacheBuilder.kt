@@ -37,9 +37,10 @@ internal class ListCacheBuilder<K, V>(
         if (override) {
             hashMap[entity.lowercase()] = value
             toUpdate.add(entity.lowercase())
-        } else {
-            set(entity, value)
+            return
         }
+        set(entity, value)
+        return
     }
 
     override operator fun set(entity: String, value: ArrayList<V>) {
@@ -74,26 +75,29 @@ internal class ListCacheBuilder<K, V>(
     }
 
     private fun save(list: List<String>) {
-        val currentHash = hashMap
+
+        if (toUpdate.isEmpty()) return
+
+        val existingRows = table.select { primaryColumn inList toUpdate }.toList().associateBy { it[primaryColumn] }
 
         for (i in list) {
-            val tab = table.select { primaryColumn eq i }
             toUpdate.remove(i)
-            val value = currentHash[i]
+            val value = hashMap[i]
 
-            if (tab.empty()) {
-                if (value == null) continue
-                table.insert {
-                    it[primaryColumn] = i
-                    it[column] = classConvert.convertToDatabase(value)
+            if (value == null) {
+                existingRows[i]?.let { row ->
+                    table.deleteWhere { primaryColumn eq row[primaryColumn] }
                 }
             } else {
-                if (value == null) {
-                    table.deleteWhere { primaryColumn eq i }
-                    continue
-                }
-                table.update({ primaryColumn eq i }) {
-                    it[column] = classConvert.convertToDatabase(value)
+                if (existingRows[i] == null) {
+                    table.insert {
+                        it[primaryColumn] = i
+                        it[column] = classConvert.convertToDatabase(value)
+                    }
+                } else {
+                    table.update({ primaryColumn eq i }) {
+                        it[column] = classConvert.convertToDatabase(value)
+                    }
                 }
             }
         }

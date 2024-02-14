@@ -8,10 +8,14 @@ import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.GameMode
 import org.bukkit.Location
+import org.bukkit.entity.Item
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.lang.reflect.Field
 import java.net.URL
 import java.nio.charset.StandardCharsets
 
@@ -186,6 +190,35 @@ internal object PlayerUtil {
             LangConfig.generalTimeToTeleport.replace("%local%", locationName).replace("%time%", time.toString())
         )
 
+    }
+
+    var usage = false
+    fun setDisplayName(p: Player, nick: String?) {
+        if (!usage) {
+            try {
+                p.setDisplayName(nick)
+                return
+            } catch (e: NoSuchMethodError) {
+                usage = true
+            }
+        }
+        val field: Field = Player::class.java.getDeclaredField("displayName")
+        field.isAccessible = true
+        field.set(p, nick)
+    }
+    private var usage1 = false
+    fun setItemInMainHand(p: Player, item : ItemStack?) {
+        if (!usage1) {
+            try {
+                p.setItemInHand(item)
+                return
+            } catch (e: NoSuchMethodError) {
+                usage1 = true
+            }
+        }
+        val field: Field = Player::class.java.getDeclaredField("itemInHand")
+        field.isAccessible = true
+        field.set(p, item)
     }
 
 }

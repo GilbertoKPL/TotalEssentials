@@ -47,7 +47,7 @@ internal class InternalReflection(private val corePlugin: CorePlugin) {
         val bukkitCommandMap: Field = Bukkit.getServer().javaClass.getDeclaredField("commandMap")
         bukkitCommandMap.isAccessible = true
         val commandMap: CommandMap = bukkitCommandMap.get(Bukkit.getServer()) as CommandMap
-        commandMap.register("lunarFrame", command)
+        commandMap.register("TotalEssentials", command)
     }
 
     fun nameFieldHelper(field: Field): String {

@@ -91,7 +91,11 @@ object Playtime {
         val item = ItemStack(MaterialUtil["head"]!!, 1, SkullType.PLAYER.ordinal.toShort())
         val meta = item.itemMeta
 
-        meta?.displayName = playerName
+        try {
+            ItemUtil.setDisplayName(meta, playerName)
+        } catch (e : NoSuchMethodError) {
+            meta?.setDisplayName(playerName)
+        }
 
         val itemLore = ArrayList<String>(playtimeInventoryItemsLore.size)
 

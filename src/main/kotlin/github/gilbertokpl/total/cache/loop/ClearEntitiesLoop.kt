@@ -5,8 +5,8 @@ import github.gilbertokpl.total.util.TaskUtil
 import github.gilbertokpl.total.util.WorldUtil
 import java.util.concurrent.TimeUnit
 
-object ClearItemsLoop {
-    private val CLEAR_ITEMS_INTERVAL_MINUTES = MainConfig.clearitemsTime.toLong()
+object ClearEntitiesLoop {
+    private val CLEAR_ITEMS_INTERVAL_MINUTES = MainConfig.clearentitiesTime.toLong()
     fun start() {
         TaskUtil.getInternalExecutor().scheduleWithFixedDelay(
             ::clearItems,
@@ -17,6 +17,6 @@ object ClearItemsLoop {
     }
 
     private fun clearItems() {
-        WorldUtil.clearItems()
+        WorldUtil.clearEntities()
     }
 }

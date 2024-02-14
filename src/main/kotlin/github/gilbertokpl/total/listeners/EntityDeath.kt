@@ -44,9 +44,10 @@ class EntityDeath : Listener {
         try {
             val entityId = livingEntity.type.typeId.toInt()
 
-            val newEntity = livingEntity.world.spawnEntity(livingEntity.location, EntityType.fromId(entityId))
+            val newEntity = EntityType.fromId(entityId)
+                ?.let { livingEntity.world.spawnEntity(livingEntity.location, it) }
 
-            newEntity.setMetadata("mob_id", FixedMetadataValue(instance, entityId))
+            newEntity?.setMetadata("mob_id", FixedMetadataValue(instance, entityId))
 
             var name = livingEntity.toString().replace("Craft", "")
             MainConfig.stackmobsNameReplacer
@@ -54,7 +55,9 @@ class EntityDeath : Listener {
                     name = it
                 }
 
-            StackMobsUtil.mobCreate(newEntity, stackSize - 1, name)
+            if (newEntity != null) {
+                StackMobsUtil.mobCreate(newEntity, stackSize - 1, name)
+            }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

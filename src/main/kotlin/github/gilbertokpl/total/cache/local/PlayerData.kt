@@ -79,7 +79,7 @@ object PlayerData : CacheBase {
         val nick = nickCache[p]
 
         if (nick != "" && nick != p.displayName && p.hasPermission("totalessentials.commands.nick")) {
-            p.displayName = nick
+            PlayerUtil.setDisplayName(p, nick)
         }
 
         val gameModeName = PlayerUtil.getGameModeNumber(gameModeCache[p].toString())

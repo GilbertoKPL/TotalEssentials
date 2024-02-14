@@ -5,6 +5,7 @@ import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 internal class LocationCacheBuilder(
     private val table: Table,
@@ -55,31 +56,33 @@ internal class LocationCacheBuilder(
     }
 
     private fun save(list: List<String>) {
-        val currentHash = hashMap
+
+        if (toUpdate.isEmpty()) return
+
+        val existingRows = table.select { primaryColumn inList toUpdate }.toList().associateBy { it[primaryColumn] }
 
         for (i in list) {
             toUpdate.remove(i)
-            val tab = table.select { primaryColumn eq i }
-            val value = currentHash[i]
+            val value = hashMap[i]
 
-            if (tab.empty()) {
-                if (value == null) continue
-                table.insert {
-                    it[primaryColumn] = i
-                    it[column] = classConvert.convertToDatabase(value)
+            if (value == null) {
+                existingRows[i]?.let { row ->
+                    table.deleteWhere { primaryColumn eq row[primaryColumn] }
                 }
             } else {
-                if (value == null) {
-                    table.update({ primaryColumn eq i }) {
-                        it[column] = ""
+                if (existingRows[i] == null) {
+                    table.insert {
+                        it[primaryColumn] = i
+                        it[column] = classConvert.convertToDatabase(value)
                     }
-                    continue
-                }
-                table.update({ primaryColumn eq i }) {
-                    it[column] = classConvert.convertToDatabase(value)
+                } else {
+                    table.update({ primaryColumn eq i }) {
+                        it[column] = classConvert.convertToDatabase(value)
+                    }
                 }
             }
         }
+
     }
 
     override fun load() {

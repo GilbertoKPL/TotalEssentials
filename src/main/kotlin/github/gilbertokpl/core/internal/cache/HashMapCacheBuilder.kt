@@ -35,16 +35,19 @@ internal class HashMapCacheBuilder<T, V, K>(
     override fun set(entity: String, value: HashMap<V, K>, override: Boolean) {
         if (override) {
             hashMap[entity.lowercase()] = value
-        } else {
-            set(entity, value)
+            toUpdate.add(entity.lowercase())
+            return
         }
+        set(entity, value)
+        return
     }
 
     override operator fun set(entity: String, value: HashMap<V, K>) {
+
         val ent = hashMap[entity.lowercase()] ?: HashMap()
         ent.putAll(value)
         hashMap[entity.lowercase()] = ent
-        toUpdate += entity.lowercase()
+        toUpdate.add(entity.lowercase())
     }
 
     override fun remove(entity: Player, value: V) {
@@ -55,7 +58,7 @@ internal class HashMapCacheBuilder<T, V, K>(
         val ent = hashMap[entity.lowercase()] ?: return
         ent.remove(value)
         hashMap[entity.lowercase()] = ent
-        toUpdate += entity.lowercase()
+        toUpdate.add(entity.lowercase())
     }
 
     override fun remove(entity: Player) {
@@ -64,30 +67,33 @@ internal class HashMapCacheBuilder<T, V, K>(
 
     override fun remove(entity: String) {
         hashMap[entity.lowercase()] = null
-        toUpdate += entity.lowercase()
+        toUpdate.add(entity.lowercase())
     }
 
     private fun save(list: List<String>) {
-        val currentHash = hashMap
+
+        if (toUpdate.isEmpty()) return
+
+        val existingRows = table.select { primaryColumn inList toUpdate }.toList().associateBy { it[primaryColumn] }
 
         for (i in list) {
             toUpdate.remove(i)
-            val tab = table.select { primaryColumn eq i }
-            val value = currentHash[i]
+            val value = hashMap[i]
 
-            if (tab.empty()) {
-                if (value == null) continue
-                table.insert {
-                    it[primaryColumn] = i
-                    it[column] = classConvert.convertToDatabase(value)
+            if (value == null) {
+                existingRows[i]?.let { row ->
+                    table.deleteWhere { primaryColumn eq row[primaryColumn] }
                 }
             } else {
-                if (value == null) {
-                    table.deleteWhere { primaryColumn eq i }
-                    continue
-                }
-                table.update({ primaryColumn eq i }) {
-                    it[column] = classConvert.convertToDatabase(value)
+                if (existingRows[i] == null) {
+                    table.insert {
+                        it[primaryColumn] = i
+                        it[column] = classConvert.convertToDatabase(value)
+                    }
+                } else {
+                    table.update({ primaryColumn eq i }) {
+                        it[column] = classConvert.convertToDatabase(value)
+                    }
                 }
             }
         }

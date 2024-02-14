@@ -4,6 +4,7 @@ import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.PlayerUtil
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -43,11 +44,7 @@ class CommandHat : github.gilbertokpl.core.external.command.CommandCreator("hat"
 
         p.inventory.helmet = itemHand
 
-        try {
-            p.inventory.itemInMainHand = helmet
-        } catch (e: NoSuchMethodError) {
-            p.itemInHand = helmet
-        }
+        PlayerUtil.setItemInMainHand(p, helmet)
 
 
         p.sendMessage(LangConfig.hatSuccess)

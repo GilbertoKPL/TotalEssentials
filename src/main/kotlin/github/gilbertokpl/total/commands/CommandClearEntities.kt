@@ -6,26 +6,26 @@ import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.WorldUtil
 import org.bukkit.command.CommandSender
 
-class CommandClearItems : github.gilbertokpl.core.external.command.CommandCreator("clearitems") {
+class CommandClearEntities : github.gilbertokpl.core.external.command.CommandCreator("clearentities") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("limparchao"),
-            active = MainConfig.clearitemsActivated,
+            active = MainConfig.clearentitiesActivated,
             target = CommandTarget.ALL,
             countdown = 0,
-            permission = "totalessentials.commands.clearitems",
+            permission = "totalessentials.commands.clearentities",
             minimumSize = 0,
             maximumSize = 0,
             usage = listOf(
-                "/limpachao",
+                "/limparchao",
             )
         )
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        WorldUtil.clearItems()
+        WorldUtil.clearEntities()
 
         return false
     }

@@ -7,8 +7,11 @@ import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
+import java.lang.reflect.Field
 
 internal object ItemUtil {
 
@@ -164,6 +167,21 @@ internal object ItemUtil {
         return true
     }
 
+    var usage = false
+    fun setDisplayName(meta: ItemMeta?, name: String) {
+        if (!usage) {
+            try {
+                meta?.setDisplayName(name)
+                return
+            } catch (e: NoSuchMethodError) {
+                usage = true
+            }
+        }
+        val field: Field = ItemMeta::class.java.getDeclaredField("displayName")
+        field.isAccessible = true
+        field.set(meta, name)
+    }
+
     fun item(material: Material, name: String, lore: List<String>, effect: Boolean = false): ItemStack {
         val item = ItemStack(material)
         if (effect) {
@@ -174,7 +192,12 @@ internal object ItemUtil {
         }
         val meta = item.itemMeta
         meta?.lore = lore
-        meta?.displayName = name
+        try {
+            setDisplayName(meta, name)
+        }
+        catch (e : NoSuchMethodError) {
+            meta?.setDisplayName(name)
+        }
         if (effect) {
             try {
                 meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)
@@ -194,7 +217,12 @@ internal object ItemUtil {
             }
         }
         val meta = item.itemMeta
-        meta?.displayName = name
+        try {
+            setDisplayName(meta, name)
+        }
+        catch (e : NoSuchMethodError) {
+            meta?.setDisplayName(name)
+        }
         if (effect) {
             try {
                 meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)

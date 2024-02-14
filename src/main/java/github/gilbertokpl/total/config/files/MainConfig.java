@@ -286,10 +286,10 @@ public class MainConfig implements DefaultConfig {
     )
     public static Boolean craftActivated = true;
 
-    //clearItemsCommand
+    //clearEntitiesCommand
     @PrimaryComments(
             {
-                    @PrimaryComment(primaryAnnotations = "Configurações dos comandos kits", lang = LangTypes.PT_BR),
+                    @PrimaryComment(primaryAnnotations = "Configurações dos comando clear items", lang = LangTypes.PT_BR),
                     @PrimaryComment(primaryAnnotations = "Kit command settings", lang = LangTypes.EN_US)
             }
     )
@@ -299,28 +299,28 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "If enabled (true), The command will be actived.", lang = LangTypes.EN_US)
             }
     )
-    public static Boolean clearitemsActivated = true;
+    public static Boolean clearentitiesActivated = true;
     @Comments(
             {
                     @Comment(annotations = "Lista de mundos para limpar o chão.", lang = LangTypes.PT_BR),
                     @Comment(annotations = "", lang = LangTypes.EN_US)
             }
     )
-    public static List<String> clearitemsWorlds = Collections.singletonList("world");
+    public static List<String> clearentitiesWorlds = Collections.singletonList("world");
     @Comments(
             {
                     @Comment(annotations = "Lista de items para não excluir em material, para pegar o material > /material.", lang = LangTypes.PT_BR),
                     @Comment(annotations = "", lang = LangTypes.EN_US)
             }
     )
-    public static List<String> clearitemsItemsNotClear = Collections.singletonList("dirt");
+    public static List<String> clearentitiesItemsNotClear = Collections.singletonList("dirt");
     @Comments(
             {
                     @Comment(annotations = "Tempo em minutos para executar um limpar chão", lang = LangTypes.PT_BR),
                     @Comment(annotations = "", lang = LangTypes.EN_US)
             }
     )
-    public static Integer clearitemsTime = 10;
+    public static Integer clearentitiesTime = 10;
 
     //kitCommand
     @PrimaryComments(
@@ -364,6 +364,14 @@ public class MainConfig implements DefaultConfig {
             }
     )
     public static Boolean kitsEquipArmorInCatch = true;
+
+    @Comments(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), será enviado ao player os kits disponiveis para pegar ao logar.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "jkl", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean kitsSendAvailableKitsOnLogin = true;
 
     //homeCommand
     @PrimaryComments(

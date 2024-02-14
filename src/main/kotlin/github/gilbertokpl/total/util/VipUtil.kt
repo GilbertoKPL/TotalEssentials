@@ -88,7 +88,6 @@ object VipUtil {
         var value = 0
 
         for (i in sequence) {
-            println(i)
             value += 1
             if (i == currentGroup) {
                 break

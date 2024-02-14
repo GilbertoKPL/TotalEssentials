@@ -81,7 +81,6 @@ class EntityDamageEntity : Listener {
                 val field: Field = EntityDamageEvent::class.java.getDeclaredField("damage")
                 field.isAccessible = true
                 damage = field.getDouble(e)
-                println(damage)
             } catch (ex: NoSuchFieldException) {
                 damage = e.damage
                 entityHealth = entity.health
@@ -102,9 +101,6 @@ class EntityDamageEntity : Listener {
                 method.isAccessible = true
 
                 val maxHealth = (method.invoke(entity) as Int)
-
-                println(maxHealth)
-
                 val method1: Method = Damageable::class.java.getDeclaredMethod("setHealth", Int::class.javaPrimitiveType)
                 method1.isAccessible = true
                 method1.invoke(entity, maxHealth)

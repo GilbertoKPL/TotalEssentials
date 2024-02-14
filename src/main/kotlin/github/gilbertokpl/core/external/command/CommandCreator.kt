@@ -3,11 +3,11 @@ package github.gilbertokpl.core.external.command
 import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.core.external.command.interfaces.CommandBase
 import github.gilbertokpl.core.internal.command.InternalCommand
-import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.command.defaults.BukkitCommand
 import org.bukkit.entity.Player
 
-abstract class CommandCreator(name: String) : Command(name), CommandBase {
+abstract class CommandCreator(name: String) : BukkitCommand(name), CommandBase {
 
     private val internalCommand: InternalCommand = InternalCommand(this)
 

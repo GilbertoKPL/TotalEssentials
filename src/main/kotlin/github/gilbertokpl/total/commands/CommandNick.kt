@@ -7,6 +7,7 @@ import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.MainUtil
 import github.gilbertokpl.total.util.PermissionUtil
+import github.gilbertokpl.total.util.PlayerUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -57,7 +58,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
 
                 PlayerData.nickCache[s] = ""
 
-                s.displayName = s.name
+                PlayerUtil.setDisplayName(s, s.name)
 
                 s.sendMessage(LangConfig.nicksRemovedSuccess)
                 return false
@@ -116,7 +117,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
             }
             PlayerData.nickCache[p] = ""
 
-            p.displayName = p.name
+            PlayerUtil.setDisplayName(p, p.name)
 
             s.sendMessage(LangConfig.nicksRemovedOtherSuccess)
             p.sendMessage(LangConfig.nicksRemovedOtherPlayerSuccess)
@@ -148,7 +149,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
                 return true
             }
         }
-        player.displayName = newNick
+        PlayerUtil.setDisplayName(player, newNick)
         PlayerData.nickCache[player] = newNick
         return false
     }

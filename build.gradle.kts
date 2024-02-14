@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.22"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 val base = "github.gilbertokpl.library"
 
-version = "1.1.1"
+version = "1.1.2"
 
 
 repositories {
@@ -29,7 +29,7 @@ dependencies {
     compileOnly(fileTree(mapOf("dir" to "$buildDir\\..\\localjar", "include" to listOf("*.jar"))))
 
     //spigot
-    compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") {
+    compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT") {
         exclude("commons-lang", "commons-lang")
         exclude("commons-io", "commons-io")
         exclude("org.yaml", "snakeyaml")
@@ -39,17 +39,17 @@ dependencies {
 
 
     //exposed
-    compileOnly("org.jetbrains.exposed:exposed-core:0.45.0") {
+    compileOnly("org.jetbrains.exposed:exposed-core:0.47.0") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-dao:0.45.0") {
+    compileOnly("org.jetbrains.exposed:exposed-dao:0.47.0") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.45.0") {
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.47.0") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -82,23 +82,23 @@ dependencies {
     }
 
     //host info
-    compileOnly("com.github.oshi:oshi-core:6.4.8") {
+    compileOnly("com.github.oshi:oshi-core:6.4.12") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.21") {
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("net.dv8tion:JDA:5.0.0-beta.18") {
+    compileOnly("net.dv8tion:JDA:5.0.0-beta.20") {
         exclude("club.minnced","opus-java")
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.json:json:20231013") {
+    compileOnly("org.json:json:20240205") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -109,6 +109,15 @@ tasks.shadowJar {
     archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
     destinationDirectory.set(File("$projectDir/jar/plugins"))
 
+    manifest {
+        attributes(
+            "Plugin-Version" to project.version.toString(),
+            "Plugin-Creator" to "Gilberto",
+            "Plugin-Name" to "EssentialsK",
+            "Plugin-Github" to "https://github.com/GilbertoKPL/TotalEssentials",
+            "Class-Path" to "TotalEssentials/lib/TotalEssentials-lib-1.1.1.jar"
+        )
+    }
 
 
     //relocate all libs
