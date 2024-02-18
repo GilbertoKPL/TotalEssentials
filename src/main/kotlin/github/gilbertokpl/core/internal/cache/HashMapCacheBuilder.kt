@@ -6,6 +6,9 @@ import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.json.JSONObject
+import java.io.File
+import java.sql.SQLIntegrityConstraintViolationException
 
 internal class HashMapCacheBuilder<T, V, K>(
     private val table: Table,
@@ -15,7 +18,8 @@ internal class HashMapCacheBuilder<T, V, K>(
 ) : CacheBuilderV2<HashMap<V, K>, V> {
 
     private val hashMap = HashMap<String, HashMap<V, K>?>()
-    private val toUpdate = mutableListOf<String>()
+    private var toUpdate = JSONObject()
+    private var jsonPath = ""
 
     override fun getMap(): Map<String, HashMap<V, K>?> {
         return hashMap.toMap()
@@ -36,7 +40,7 @@ internal class HashMapCacheBuilder<T, V, K>(
     override fun set(entity: String, value: HashMap<V, K>, override: Boolean) {
         if (override) {
             hashMap[entity.lowercase()] = value
-            toUpdate.add(entity.lowercase())
+            toUpdate.put(entity.lowercase(), classConvert.convertToDatabase(value))
             return
         }
         set(entity, value)
@@ -44,11 +48,8 @@ internal class HashMapCacheBuilder<T, V, K>(
     }
 
     override operator fun set(entity: String, value: HashMap<V, K>) {
-
-        val ent = hashMap[entity.lowercase()] ?: HashMap()
-        ent.putAll(value)
-        hashMap[entity.lowercase()] = ent
-        toUpdate.add(entity.lowercase())
+        hashMap[entity.lowercase()] = value
+        toUpdate.put(entity.lowercase(), classConvert.convertToDatabase(value))
     }
 
     override fun remove(entity: Player, value: V) {
@@ -59,7 +60,7 @@ internal class HashMapCacheBuilder<T, V, K>(
         val ent = hashMap[entity.lowercase()] ?: return
         ent.remove(value)
         hashMap[entity.lowercase()] = ent
-        toUpdate.add(entity.lowercase())
+        toUpdate.put(entity.lowercase(), classConvert.convertToDatabase(ent))
     }
 
     override fun remove(entity: Player) {
@@ -68,14 +69,16 @@ internal class HashMapCacheBuilder<T, V, K>(
 
     override fun remove(entity: String) {
         hashMap[entity.lowercase()] = null
-        toUpdate.add(entity.lowercase())
+        toUpdate.put(entity.lowercase(), emptyMap<V, K>())
     }
 
-    private fun save(list: List<String>) {
+    private fun save(list: Set<String>) {
+        if (toUpdate.isEmpty) {
+            saveJson()
+            return
+        }
 
-        if (toUpdate.isEmpty()) return
-
-        val existingRows = table.select { primaryColumn inList toUpdate }.toList().associateBy { it[primaryColumn] }
+        val existingRows = table.select { primaryColumn inList toUpdate.keySet() }.toList().associateBy { it[primaryColumn] }
 
         for (i in list) {
             toUpdate.remove(i)
@@ -87,9 +90,15 @@ internal class HashMapCacheBuilder<T, V, K>(
                 }
             } else {
                 if (existingRows[i] == null) {
-                    table.insert {
-                        it[primaryColumn] = i
-                        it[column] = classConvert.convertToDatabase(value)
+                    try {
+                        table.insert {
+                            it[primaryColumn] = i
+                            it[column] = classConvert.convertToDatabase(value)
+                        }
+                    } catch (sql : SQLIntegrityConstraintViolationException) {
+                        table.update({ primaryColumn eq i }) {
+                            it[column] = classConvert.convertToDatabase(value)
+                        }
                     }
                 } else {
                     table.update({ primaryColumn eq i }) {
@@ -98,19 +107,43 @@ internal class HashMapCacheBuilder<T, V, K>(
                 }
             }
         }
+        saveJson()
     }
 
     override fun update() {
-        save(toUpdate.toList())
+        save(toUpdate.keySet())
     }
 
     override fun load(corePlugin: CorePlugin) {
-        for (i in table.selectAll()) {
-            hashMap[i[primaryColumn]] = classConvert.convertToCache(i[column]) ?: HashMap()
+        jsonPath = "./${corePlugin.mainPath}/sql/internal/HashMapCacheBuilder-${column.name.lowercase()}.json"
+
+        for (row in table.selectAll()) {
+            hashMap[row[primaryColumn]] = classConvert.convertToCache(row[column])
+        }
+
+        val file = File(jsonPath)
+
+        if (file.exists()) {
+            toUpdate = JSONObject(file.readText())
+
+            toUpdate.keys().forEach { key ->
+                val value = classConvert.convertToCache(toUpdate[key] as T)
+                hashMap[key.lowercase()] = value
+            }
+        } else {
+            File("./${corePlugin.mainPath}/sql/internal").mkdirs()
         }
     }
 
     override fun unload() {
-        save(toUpdate.toList())
+        save(toUpdate.keySet())
+    }
+
+    private fun saveJson() {
+        if (toUpdate.isEmpty) {
+            File(jsonPath).delete()
+        } else {
+            File(jsonPath).writeText(toUpdate.toString())
+        }
     }
 }
