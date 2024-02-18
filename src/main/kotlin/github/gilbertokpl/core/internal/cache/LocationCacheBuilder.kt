@@ -1,5 +1,6 @@
 package github.gilbertokpl.core.internal.cache
 
+import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.core.external.cache.convert.SerializerBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import org.bukkit.Location
@@ -85,7 +86,7 @@ internal class LocationCacheBuilder(
 
     }
 
-    override fun load() {
+    override fun load(corePlugin: CorePlugin) {
         for (i in table.selectAll()) {
             val location = classConvert.convertToCache(i[column]) ?: continue
             hashMap[i[primaryColumn]] = location

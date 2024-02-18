@@ -113,9 +113,9 @@ tasks.shadowJar {
         attributes(
             "Plugin-Version" to project.version.toString(),
             "Plugin-Creator" to "Gilberto",
-            "Plugin-Name" to "EssentialsK",
+            "Plugin-Name" to "TotalEssentials",
             "Plugin-Github" to "https://github.com/GilbertoKPL/TotalEssentials",
-            "Class-Path" to "TotalEssentials/lib/TotalEssentials-lib-1.1.1.jar"
+            "Class-Path" to "TotalEssentials/lib/TotalEssentials-lib-1.1.2.jar"
         )
     }
 

@@ -1,5 +1,6 @@
 package github.gilbertokpl.core.internal.cache
 
+import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.core.external.cache.convert.SerializerBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
 import org.bukkit.entity.Player
@@ -103,7 +104,7 @@ internal class HashMapCacheBuilder<T, V, K>(
         save(toUpdate.toList())
     }
 
-    override fun load() {
+    override fun load(corePlugin: CorePlugin) {
         for (i in table.selectAll()) {
             hashMap[i[primaryColumn]] = classConvert.convertToCache(i[column]) ?: HashMap()
         }

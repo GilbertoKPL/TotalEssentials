@@ -1,12 +1,13 @@
 package github.gilbertokpl.core.external.cache.interfaces
 
+import github.gilbertokpl.core.external.CorePlugin
 import org.bukkit.entity.Player
 
 interface CacheBuilder<T> {
 
     fun update()
 
-    fun load()
+    fun load(corePlugin: CorePlugin)
 
     fun unload()
 

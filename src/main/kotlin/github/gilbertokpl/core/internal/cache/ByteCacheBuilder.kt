@@ -1,9 +1,13 @@
 package github.gilbertokpl.core.internal.cache
 
+import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.json.JSONObject
+import java.io.File
+import java.nio.file.Files
 
 internal class ByteCacheBuilder<T>(
     private val table: Table,
@@ -12,7 +16,9 @@ internal class ByteCacheBuilder<T>(
 ) : CacheBuilder<T> {
 
     private val hashMap = mutableMapOf<String, T?>()
-    private val toUpdate = mutableListOf<String>()
+
+    private var toUpdate = JSONObject()
+    private var jsonPath = ""
 
     override fun getMap(): Map<String, T?> {
         return hashMap.toMap()
@@ -28,7 +34,8 @@ internal class ByteCacheBuilder<T>(
 
     override fun set(entity: String, value: T) {
         hashMap[entity.lowercase()] = value
-        toUpdate.add(entity.lowercase())
+        toUpdate.put(entity.lowercase(), value)
+        saveJson()
     }
 
     override fun set(entity: String, value: T, override: Boolean) {
@@ -45,15 +52,16 @@ internal class ByteCacheBuilder<T>(
 
     override fun remove(entity: String) {
         hashMap[entity.lowercase()] = null
-        toUpdate.add(entity.lowercase())
+        toUpdate.put(entity.lowercase(), "")
+        saveJson()
     }
 
-    private fun save(list: List<String>) {
-        if (toUpdate.isEmpty()) return
-        val existingRows = table.select { primaryColumn inList toUpdate }.toList().associateBy { it[primaryColumn] }
+    private fun save(list: Set<String>) {
+        if (toUpdate.isEmpty) return
+        val existingRows = table.select { primaryColumn inList toUpdate.keySet() }.toList().associateBy { it[primaryColumn] }
 
         for (i in list) {
-            if (i in toUpdate) {
+            if (i in toUpdate.keySet()) {
                 toUpdate.remove(i)
                 val value = hashMap[i]
 
@@ -75,19 +83,43 @@ internal class ByteCacheBuilder<T>(
                 }
             }
         }
+        saveJson()
     }
 
     override fun update() {
-        save(toUpdate.toList())
+        save(toUpdate.keySet())
     }
 
-    override fun load() {
+    override fun load(corePlugin: CorePlugin) {
+        jsonPath = "./${corePlugin.mainPath}/sql/internal/ByteCacheBuilder.json"
+
+        val file = File(jsonPath)
+
+        if (file.exists()) {
+            toUpdate = JSONObject(file.readText())
+
+            for (i in toUpdate.toMap()) {
+                hashMap[i.key] = if (i.value == "") null else i.value as T
+            }
+        } else {
+            File("./${corePlugin.mainPath}/sql/internal").mkdirs()
+        }
+
         for (i in table.selectAll()) {
             hashMap[i[primaryColumn]] = i[column]
         }
     }
 
     override fun unload() {
-        save(toUpdate.toList())
+        save(toUpdate.keySet())
+    }
+
+    private fun saveJson() {
+        if (toUpdate.isEmpty) {
+            File(jsonPath).delete()
+        }
+        else {
+            File(jsonPath).writeText(toUpdate.toString())
+        }
     }
 }

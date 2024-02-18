@@ -1,5 +1,6 @@
 package github.gilbertokpl.core.internal.cache
 
+import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import org.bukkit.entity.Player
 
@@ -10,7 +11,7 @@ class SimpleCacheBuilder<T> : CacheBuilder<T> {
         TODO("Not yet implemented")
     }
 
-    override fun load() {
+    override fun load(corePlugin: CorePlugin) {
         TODO("Not yet implemented")
     }
 
