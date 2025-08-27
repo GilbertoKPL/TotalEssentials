@@ -1,8 +1,9 @@
 name: TotalEssentials
-version: 1.1.9
+version: 1.2.0
 main: github.gilbertokpl.total.TotalEssentialsJava
 author: Gilberto
 api-version: 1.13
+folia-supported: true
 softdepend:
   - Vault
   - Multiverse-Core

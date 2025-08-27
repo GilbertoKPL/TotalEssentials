@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
@@ -26,30 +27,29 @@ class CommandEchest : github.gilbertokpl.core.external.command.CommandCreator("e
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+        val player = s as Player
+
+        // --------------------------------------------------------
+        // Open own Ender Chest
+        // --------------------------------------------------------
         if (args.isEmpty()) {
-            s.sendMessage(LangConfig.echestSuccess)
-            val inv = (s as Player).enderChest
-            s.openInventory(inv)
+            player.sendMessage(LangConfig.echestSuccess)
+            player.openInventory(player.enderChest)
             return false
         }
 
-        //admin
-        if (s.hasPermission("totalessentials.commands.ec.other")) {
-            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
-                s.sendMessage(LangConfig.generalPlayerNotOnline)
-                return false
-            }
+        // --------------------------------------------------------
+        // Admin opening another player's Ender Chest
+        // --------------------------------------------------------
+        if (!player.hasPermission("totalessentials.commands.ec.other")) return true
 
-            s.sendMessage(
-                LangConfig.echestOtherSuccess.replace(
-                    "%player%",
-                    p.name
-                )
-            )
-            val inv = p.enderChest
-            (s as Player).openInventory(inv)
+        val targetPlayer = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
+            player.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
-        return true
+
+        player.sendMessage(LangConfig.echestOtherSuccess.replace("%player%", targetPlayer.name))
+        player.openInventory(targetPlayer.enderChest)
+        return false
     }
 }

@@ -66,7 +66,7 @@ object Playtime {
         val totalTime = time + if (t1 != 0L) System.currentTimeMillis() - t1 else 0L
 
         return LangConfig.playtimeInventoryItemsLore.map {
-            it.replace("%time%", TotalEssentialsJava.basePlugin.getTime().convertMillisToString(totalTime, true))
+            it.replace("%time%", TotalEssentialsJava.getBasePlugin().getTime().convertMillisToString(totalTime, true))
         }
     }
 
@@ -89,6 +89,6 @@ object Playtime {
     }
 
     private fun createPlaytimeInventory(page: Int): Inventory {
-        return TotalEssentialsJava.instance.server.createInventory(null, 36, "§ePLAYTIME $page")
+        return TotalEssentialsJava.getInstance().server.createInventory(null, 36, "§ePLAYTIME $page")
     }
 }

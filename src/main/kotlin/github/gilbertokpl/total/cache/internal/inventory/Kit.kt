@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.cache.internal.inventory
 
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.internal.Data.kitInventoryCache
 import github.gilbertokpl.total.cache.internal.Data.kitItemCache
 import github.gilbertokpl.total.cache.local.KitsData
@@ -30,9 +31,11 @@ internal object Kit {
         var inventory = createKitsInventory(currentPage)
 
         val sortedKits = kitWeight.getMap()
+            .filterValues { it != null }
             .toList()
             .sortedByDescending { (_, value) -> value }
             .toMap()
+
 
         sortedKits.forEach { (kitKey, _) ->
             val kitName = kitFakeName[kitKey]?.takeIf { it.isNotEmpty() } ?: kitKey
@@ -83,7 +86,7 @@ internal object Kit {
     }
 
     fun openKitInventory(kit: String, guiNumber: String, player: Player) {
-        val inventory = github.gilbertokpl.total.TotalEssentialsJava.instance.server.createInventory(
+        val inventory = TotalEssentialsJava.getInstance().server.createInventory(
             null, 45, "§eKit $kit $guiNumber"
         )
         val kitItems = KitsData.kitItems[kit] ?: emptyList()
@@ -118,7 +121,7 @@ internal object Kit {
             } else {
                 val remainingTime = timeAll - System.currentTimeMillis()
                 val lore = LangConfig.kitsGetIconLoreTime.map {
-                    it.replace("%time%", github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getTime().convertMillisToString(remainingTime, MainConfig.kitsUseShortTime))
+                    it.replace("%time%", TotalEssentialsJava.getBasePlugin().getTime().convertMillisToString(remainingTime, MainConfig.kitsUseShortTime))
                 }
                 ItemUtil.item(Material.ARROW, LangConfig.kitsGetIconNotCatch, lore, true)
             }
@@ -128,7 +131,7 @@ internal object Kit {
     }
 
     private fun createKitsInventory(page: Int): Inventory {
-        return github.gilbertokpl.total.TotalEssentialsJava.instance.server.createInventory(null, 36, "§eKits $page")
+        return TotalEssentialsJava.getInstance().server.createInventory(null, 36, "§eKits $page")
     }
 
     private fun createBackItem(currentPage: Int): ItemStack {

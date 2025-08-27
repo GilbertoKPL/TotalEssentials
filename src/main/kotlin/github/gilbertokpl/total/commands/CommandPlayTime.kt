@@ -24,22 +24,24 @@ class CommandPlayTime : github.gilbertokpl.core.external.command.CommandCreator(
             maximumSize = 1,
             usage = listOf(
                 "/playtime",
-                "/playtime <player>",
+                "/playtime <player>"
             )
         )
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
+        // determine target player name
         val playerName = if (args.isEmpty() && s is Player) s.name else args[0]
 
+        // only player can run without args
         if (args.isEmpty() && s !is Player) return false
 
         val playerTimeMillis = PlayerData.playtimeLocal[playerName] ?: 0L
+        val playerTime = (PlayerData.playTimeCache[playerName] ?: 0L) +
+                if (playerTimeMillis != 0L) System.currentTimeMillis() - playerTimeMillis else 0L
 
-        val playerTime = ((PlayerData.playTimeCache[playerName])
-            ?: 0L) + if (playerTimeMillis != 0L) (System.currentTimeMillis() - playerTimeMillis) else 0L
-
+        // open GUI if self player and no args
         if (args.isEmpty() && s is Player) {
             Data.playTimeInventoryCache[1].also {
                 it ?: run {
@@ -51,25 +53,31 @@ class CommandPlayTime : github.gilbertokpl.core.external.command.CommandCreator(
             return false
         }
 
+        // reset huge times if run from console with "fix"
         if (args[0].lowercase() == "fix" && s !is Player) {
-
-            for (i in PlayerData.playTimeCache.getMap()) {
-                if (i.value!! > 31557600000) {
-                    PlayerData.playTimeCache[i.key] = 0
+            for ((key, value) in PlayerData.playTimeCache.getMap()) {
+                if (value!! > 31_557_600_000) { // 1 year in millis
+                    PlayerData.playTimeCache[key] = 0
                 }
             }
-
             return true
         }
 
+        // check if player exists
         if (!PlayerData.checkIfPlayerExists(args[0])) {
             s.sendMessage(LangConfig.generalPlayerNotExist)
             return false
         }
 
+        // send playtime message
         s.sendMessage(
-            LangConfig.playtimeMessage.replace("%player%", args[0])
-                .replace("%time%", TotalEssentialsJava.basePlugin.getTime().convertMillisToString(playerTime, false))
+            LangConfig.playtimeMessage
+                .replace("%player%", args[0])
+                .replace(
+                    "%time%",
+                    TotalEssentialsJava.getBasePlugin().getTime()
+                        .convertMillisToString(playerTime, false)
+                )
         )
 
         return false

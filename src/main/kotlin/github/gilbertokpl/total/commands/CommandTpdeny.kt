@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.internal.DataTeleport
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -12,7 +13,7 @@ class CommandTpdeny : github.gilbertokpl.core.external.command.CommandCreator("t
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf(""),
+            aliases = listOf(),
             active = MainConfig.tpaActivated,
             target = CommandTarget.PLAYER,
             countdown = 0,
@@ -23,24 +24,27 @@ class CommandTpdeny : github.gilbertokpl.core.external.command.CommandCreator("t
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val p = DataTeleport.getTpa(s as Player) ?: run {
-            s.sendMessage(LangConfig.tpaNotAnyRequestToDeny)
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
+        if (sender !is Player) return false
+        val player = sender
+
+        val tpaSender = DataTeleport.getTpa(player) ?: run {
+            player.sendMessage(LangConfig.tpaNotAnyRequestToDeny)
             return false
         }
 
-        DataTeleport.remove(p)
+        // Remove o pedido de teleporte
+        DataTeleport.remove(tpaSender)
 
-        s.sendMessage(LangConfig.tpaRequestDeny.replace("%player%", p.name))
+        player.sendMessage(LangConfig.tpaRequestDeny.replace("%player%", tpaSender.name))
 
-        if (github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(p.name) != null) {
-            p.sendMessage(
-                LangConfig.tpaRequestOtherDeny.replace(
-                    "%player%",
-                    s.name
-                )
+        // Verifica se o outro jogador ainda está online antes de enviar mensagem
+        TotalEssentialsJava.getInstance().server.getPlayer(tpaSender.name)?.let { otherPlayer ->
+            otherPlayer.sendMessage(
+                LangConfig.tpaRequestOtherDeny.replace("%player%", player.name)
             )
         }
+
         return false
     }
 }

@@ -54,7 +54,7 @@ internal object Discord {
         }
 
         if (hashTextChannel[chatID] == null) {
-            TotalEssentialsJava.basePlugin.getTask().async {
+            TotalEssentialsJava.getBasePlugin().getTask().async {
                 val newChat = setupDiscordChat(chatID) ?: throw ChatDoesNotExist()
 
                 hashTextChannel[chatID] = newChat

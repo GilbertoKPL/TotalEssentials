@@ -25,20 +25,29 @@ class CommandEditKit : github.gilbertokpl.core.external.command.CommandCreator("
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        //check length of kit name
-        if (args[0].length > 16) {
-            s.sendMessage(LangConfig.kitsNameLength)
+        val kitName = args[0].lowercase()
+        val player = s as Player
+
+        // --------------------------------------------------------
+        // Check length of kit name
+        // --------------------------------------------------------
+        if (kitName.length > 16) {
+            player.sendMessage(LangConfig.kitsNameLength)
             return false
         }
 
-        //check if not exist
-        if (!KitsData.checkIfExist(args[0])) {
-            s.sendMessage(LangConfig.kitsNotExist)
+        // --------------------------------------------------------
+        // Check if kit exists
+        // --------------------------------------------------------
+        if (!KitsData.checkIfExist(kitName)) {
+            player.sendMessage(LangConfig.kitsNotExist)
             return false
         }
 
-        //open inventory
-        editKitGui(s as Player, args[0].lowercase())
+        // --------------------------------------------------------
+        // Open edit kit GUI
+        // --------------------------------------------------------
+        editKitGui(player, kitName)
         return false
     }
 }

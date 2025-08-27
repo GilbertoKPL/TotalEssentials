@@ -48,7 +48,7 @@ internal class InternalConfig(private val corePlugin: CorePlugin) {
                     NewConfig(
                         cl,
                         instance,
-                        File(corePlugin.mainPath, "${values.name}.yml"),
+                        File(corePlugin.mainPath.replace(".paper-remapped/", ""), "${values.name}.yml"),
                         null
                     ),
                     true
@@ -93,7 +93,7 @@ internal class InternalConfig(private val corePlugin: CorePlugin) {
                 NewConfig(
                     cl,
                     instance,
-                    File(corePlugin.mainPath, "${values?.name}.yml"),
+                    File(corePlugin.mainPath.replace(".paper-remapped/", ""), "${values?.name}.yml"),
                     null
                 ),
                 null

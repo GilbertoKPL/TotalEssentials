@@ -70,8 +70,8 @@ public class LangConfig implements DefaultLang {
     public static String generalPlayerExist;
     @Values(
             {
-                    @Value(value = "&9[EssentialsK Ajuda]", lang = LangTypes.PT_BR),
-                    @Value(value = "&9[EssentialsK Help]", lang = LangTypes.EN_US)
+                    @Value(value = "&9[TotalEssentials Ajuda]", lang = LangTypes.PT_BR),
+                    @Value(value = "&9[TotalEssentials Help]", lang = LangTypes.EN_US)
             }
     )
     public static String generalCommandsUsage;
@@ -1952,11 +1952,25 @@ public class LangConfig implements DefaultLang {
     public static String moneyMessageOther;
     @Values(
             {
-                    @Value(value = "$ ", lang = LangTypes.PT_BR),
-                    @Value(value = "$ ", lang = LangTypes.EN_US)
+                    @Value(value = "$", lang = LangTypes.PT_BR),
+                    @Value(value = "$", lang = LangTypes.EN_US)
             }
     )
     public static String moneySymbol;
+    @Values(
+            {
+                    @Value(value = "Real", lang = LangTypes.PT_BR),
+                    @Value(value = "Dollar", lang = LangTypes.EN_US)
+            }
+    )
+    public static String moneySuffixSingular;
+    @Values(
+            {
+                    @Value(value = "Reais", lang = LangTypes.PT_BR),
+                    @Value(value = "Dollars", lang = LangTypes.EN_US)
+            }
+    )
+    public static String moneySuffixPlural;
     @Values(
             {
                     @Value(value = "%prefix%&cVocê pagou %unity% %money% para %player%.", lang = LangTypes.PT_BR),

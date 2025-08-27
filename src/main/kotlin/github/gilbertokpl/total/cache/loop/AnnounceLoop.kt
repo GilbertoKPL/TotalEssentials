@@ -28,7 +28,7 @@ internal object AnnounceLoop {
     }
 
     private fun sendAnnouncement() {
-        val onlinePlayers = TotalEssentialsJava.basePlugin.getReflection().getPlayers()
+        val onlinePlayers = TotalEssentialsJava.getBasePlugin().getReflection().getPlayers()
         val announcement = InternalLoader.announcementsListAnnounce.getOrDefault(currentAnnouncementIndex, "")
 
         onlinePlayers.forEach { player ->

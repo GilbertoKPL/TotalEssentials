@@ -3,11 +3,14 @@ package github.gilbertokpl.core.internal.cache
 import github.gilbertokpl.core.external.cache.convert.SerializerBase
 import github.gilbertokpl.core.external.cache.interfaces.CacheBuilder
 import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.update
 import java.util.concurrent.locks.ReentrantLock
 
 internal class LocationCacheBuilder(
@@ -97,7 +100,7 @@ internal class LocationCacheBuilder(
                     val value = hashMap[i] ?: continue
                     if (i !in existingKeys) {
                         val newValue = classConvert.convertToDatabase(value)
-                        TotalEssentialsJava.basePlugin.logger.log("Setando valor da entidade: $i, coluna: $column, valor: $newValue")
+                        TotalEssentialsJava.getBasePlugin().logger.log("Setando valor da entidade: $i, coluna: $column, valor: $newValue")
                         table.insert {
                             it[primaryColumn] = i
                             it[column] = newValue
@@ -105,7 +108,7 @@ internal class LocationCacheBuilder(
                         existingKeys.add(i)
                     } else {
                         val newValue = classConvert.convertToDatabase(value)
-                        TotalEssentialsJava.basePlugin.logger.log("Setando valor da entidade: $i, coluna: $column, valor: $newValue")
+                        TotalEssentialsJava.getBasePlugin().logger.log("Setando valor da entidade: $i, coluna: $column, valor: $newValue")
                         table.update({ primaryColumn eq i }) {
                             it[column] = newValue
                         }

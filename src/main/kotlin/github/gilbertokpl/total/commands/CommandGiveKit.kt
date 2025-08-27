@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -19,47 +20,39 @@ class CommandGiveKit : github.gilbertokpl.core.external.command.CommandCreator("
             permission = "totalessentials.commands.givekit",
             minimumSize = 2,
             maximumSize = 2,
-            usage = listOf(
-                "/givekit <playerName> <kitName>"
-            )
+            usage = listOf("/givekit <playerName> <kitName>")
         )
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        //check length of kit name
+
+        // Verifica tamanho do nome do jogador
         if (args[0].length > 16) {
             s.sendMessage(LangConfig.kitsNameLength)
             return false
         }
 
-
-        //check if not exist
+        // Verifica se o kit existe
         if (!KitsData.checkIfExist(args[1])) {
             s.sendMessage(LangConfig.kitsNotExist)
             return false
         }
 
-        //check if player not exist
-        val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
+        // Pega o jogador online
+        val p = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
             s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
-        //give kit
+        // Dá o kit ao jogador
         ItemUtil.giveKit(p, KitsData.kitItems[args[1]]!!, true, drop = true)
 
         val fakeName = KitsData.kitFakeName[args[1]]!!
 
-        s.sendMessage(
-            LangConfig.kitsGiveKitMessageOther.replace("%kit%", fakeName)
-                .replace("%player%", p.name)
-        )
-        p.sendMessage(
-            LangConfig.kitsGiveKitMessage.replace(
-                "%kit%",
-                fakeName
-            )
-        )
+        // Mensagens para executor e jogador
+        s.sendMessage(LangConfig.kitsGiveKitMessageOther.replace("%kit%", fakeName).replace("%player%", p.name))
+        p.sendMessage(LangConfig.kitsGiveKitMessage.replace("%kit%", fakeName))
+
         return false
     }
 }

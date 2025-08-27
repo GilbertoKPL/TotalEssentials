@@ -1,6 +1,7 @@
 package github.gilbertokpl.total.cache.sql
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
+
 
 object LoginDataSQL : Table() {
     val player = varchar("player", 16)

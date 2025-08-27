@@ -20,35 +20,33 @@ class CommandHat : github.gilbertokpl.core.external.command.CommandCreator("hat"
             permission = "totalessentials.commands.hat",
             minimumSize = 0,
             maximumSize = 0,
-            usage = listOf(
-                "/hat"
-            )
+            usage = listOf("/hat")
         )
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
         val p = s as Player
 
+        // Get item in main hand
         val itemHand = try {
             p.inventory.itemInMainHand
         } catch (e: NoSuchMethodError) {
             p.itemInHand
         }
 
+        // Check if the hand is empty
         if (itemHand.type == Material.AIR) {
             p.sendMessage(LangConfig.hatNotFound)
             return false
         }
 
+        // Swap helmet with the item in hand
         val helmet = p.inventory.helmet
-
         p.inventory.helmet = itemHand
-
         PlayerUtil.setItemInMainHand(p, helmet)
 
-
+        // Notify player
         p.sendMessage(LangConfig.hatSuccess)
-
         return false
     }
 }

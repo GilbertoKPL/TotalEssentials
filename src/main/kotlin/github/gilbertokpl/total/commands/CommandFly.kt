@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -27,72 +28,65 @@ class CommandFly : github.gilbertokpl.core.external.command.CommandCreator("fly"
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+        val senderPlayer = s as? Player
 
-        if (args.isEmpty() && s !is Player) {
-            return true
-        }
-
-        //admin
+        // --------------------------------------------------------
+        // Fly another player
+        // --------------------------------------------------------
         if (args.size == 1) {
-
-            //check perms
-            if (s is Player && !s.hasPermission("totalessentials.commands.fly.other")) {
-                s.sendMessage(LangConfig.generalNotPerm)
+            if (senderPlayer != null && !senderPlayer.hasPermission("totalessentials.commands.fly.other")) {
+                senderPlayer.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
-            //check if player is online
-            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
+            val target = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
-            if (switchFly(p)) {
-                p.sendMessage(LangConfig.flyOtherActive)
-                s.sendMessage(
-                    LangConfig.flyActivatedOther.replace(
-                        "%player",
-                        p.name
-                    )
-                )
+            val enabled = switchFly(target)
+
+            if (enabled) {
+                target.sendMessage(LangConfig.flyOtherActive)
+                s.sendMessage(LangConfig.flyActivatedOther.replace("%player", target.name))
             } else {
-                p.sendMessage(LangConfig.flyOtherDisable)
-                s.sendMessage(
-                    LangConfig.flyDisabledOther.replace(
-                        "%player",
-                        p.name
-                    )
-                )
+                target.sendMessage(LangConfig.flyOtherDisable)
+                s.sendMessage(LangConfig.flyDisabledOther.replace("%player", target.name))
             }
 
             return false
         }
 
-        if (MainConfig.flyDisabledWorlds.contains((s as Player).location.world!!.name.lowercase())) {
-            s.sendMessage(LangConfig.flyDisabledWorld)
+        // --------------------------------------------------------
+        // Fly self
+        // --------------------------------------------------------
+        if (senderPlayer == null) return true
+
+        val worldName = senderPlayer.location.world!!.name.lowercase()
+        if (MainConfig.flyDisabledWorlds.contains(worldName)) {
+            senderPlayer.sendMessage(LangConfig.flyDisabledWorld)
             return false
         }
 
-        if (switchFly(s)) {
-            s.sendMessage(LangConfig.flyActive)
+        if (switchFly(senderPlayer)) {
+            senderPlayer.sendMessage(LangConfig.flyActive)
         } else {
-            s.sendMessage(LangConfig.flyDisable)
+            senderPlayer.sendMessage(LangConfig.flyDisable)
         }
+
         return false
     }
 
     private fun switchFly(player: Player): Boolean {
-        val newValue = PlayerData.flyCache[player]?.not() ?: return false
-
+        val newValue = PlayerData.flyCache[player]?.not() ?: false
         PlayerData.flyCache[player] = newValue
 
         if (newValue) {
             player.allowFlight = true
             player.isFlying = true
         } else {
-            //desbug gamemode
             val gm = PlayerData.gameModeCache[player]
-            if (gm != 1 && gm != 3) {
+            if (gm != 1 && gm != 3) { // survival/adventure
                 player.allowFlight = false
                 player.isFlying = false
             }

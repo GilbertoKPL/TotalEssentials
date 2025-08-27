@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.util
 
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.config.files.LangConfig
 import org.bukkit.Bukkit
 import org.bukkit.command.*
@@ -43,7 +44,7 @@ internal object PluginUtil {
             for (f in pluginDir.listFiles()!!) {
                 if (f.name.endsWith(".jar")) try {
                     val desc: PluginDescriptionFile =
-                        github.gilbertokpl.total.TotalEssentialsJava.instance.pluginLoader.getPluginDescription(f)
+                        TotalEssentialsJava.getInstance().pluginLoader.getPluginDescription(f)
                     if (desc.name.equals(name, ignoreCase = true)) {
                         pluginFile = f
                         break

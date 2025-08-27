@@ -24,16 +24,17 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
             minimumSize = 2,
             maximumSize = 2,
             usage = listOf(
-                "P_/registrar <senha> <senha>",
-                "totalessentials.commands.register.other_/registrar <player> <senha>",
+                "P_/registrar <password> <password>",
+                "totalessentials.commands.register.other_/registrar <player> <password>"
             )
         )
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        val encrypt = TotalEssentialsJava.basePlugin.getEncrypt()
+        val encrypt = TotalEssentialsJava.getBasePlugin().getEncrypt()
 
+        // self register
         if (s is Player && !LoginData.doesPlayerExist(s)) {
 
             val vpn = PlayerData.playerInfo[s]?.get(3) ?: false
@@ -43,29 +44,27 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
                 return false
             }
 
+            // check passwords match
             if (args[0] != args[1]) {
                 s.sendMessage(LangConfig.authDifferentPasswords)
                 return false
             }
 
+            // check password length
             if (args[0].length >= 16) {
                 s.sendMessage(LangConfig.authPasswordMaxLength)
                 return false
             }
-
             if (args[0].length < 5) {
                 s.sendMessage(LangConfig.authPasswordMinLength)
                 return false
             }
 
+            // check max registrations per IP
             var quant = 0
-
             val playerAddress = s.address?.address.toString()
-
             for (i in LoginData.ipAddress.getMap().values) {
-                if (i == playerAddress) {
-                    quant += 1
-                }
+                if (i == playerAddress) quant += 1
             }
 
             if (quant >= MainConfig.authMaxRegister) {
@@ -79,6 +78,7 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
 
             s.sendMessage(LangConfig.authRegisterSuccess)
 
+            // send Discord message
             val message = LangConfig.discordchatSendPlayerLocale
                 .replace("%player%", s.name)
                 .replace("%ip%", playerAddress)
@@ -86,17 +86,15 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
                 .replace("%state%", info?.get(1) ?: "none")
                 .replace("%city%", info?.get(2) ?: "none")
 
-
             if (MainConfig.discordbotConnectRegisterChat) {
                 Discord.sendDiscordMessage(message, MainConfig.discordbotIdRegisterChat, false)
             }
 
             return false
-
         }
 
-        @Suppress("USELESS_IS_CHECK")
-        if (s is Player && LoginData.isPlayerLoggedIn(s) && s.hasPermission("totalessentials.commands.register.other") || s is CommandSender) {
+        // admin register for others
+        if ((s is Player && LoginData.isPlayerLoggedIn(s) && s.hasPermission("totalessentials.commands.register.other")) || s !is Player) {
             if (LoginData.doesPlayerExist(args[0])) {
                 s.sendMessage(LangConfig.generalPlayerExist)
                 return false
@@ -107,13 +105,9 @@ class CommandRegister : github.gilbertokpl.core.external.command.CommandCreator(
             s.sendMessage(LangConfig.authOtherRegister.replace("%player%", args[0].lowercase()))
 
             val p = Bukkit.getPlayer(args[0]) ?: return false
-
             LoginData.isLoggedIn[p] = true
-
             p.sendMessage(LangConfig.authLoggedIn)
-
         }
-
 
         return false
     }

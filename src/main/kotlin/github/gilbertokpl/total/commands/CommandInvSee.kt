@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -20,30 +21,30 @@ class CommandInvSee : github.gilbertokpl.core.external.command.CommandCreator("i
             permission = "totalessentials.commands.invsee",
             minimumSize = 1,
             maximumSize = 1,
-            usage = listOf(
-                "/invsee <playerName>",
-            )
+            usage = listOf("/invsee <playerName>")
         )
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        //check if player is same
+        // prevent seeing own inventory
         if (args[0].equals(s.name.lowercase(), ignoreCase = true)) {
             s.sendMessage(LangConfig.invseeSameName)
             return false
         }
 
-        val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0])
+        // get target player
+        val target = TotalEssentialsJava.getInstance().server.getPlayer(args[0])
 
-        //check if player is online and not op
-        if (p == null || p.isOp && !(s as Player).isOp || p.gameMode != GameMode.SURVIVAL) {
+        // check if player is online, not OP (if executor is not OP), and in survival mode
+        if (target == null || target.isOp && (s as Player).isOp.not() || target.gameMode != GameMode.SURVIVAL) {
             s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
-        PlayerData.inInvSee[s as Player] = p
-        s.openInventory(p.inventory)
+        // open inventory
+        PlayerData.inInvSee[s as Player] = target
+        s.openInventory(target.inventory)
 
         return false
     }

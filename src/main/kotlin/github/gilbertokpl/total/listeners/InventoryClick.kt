@@ -119,7 +119,7 @@ class InventoryClick : Listener {
                     return false
                 }
 
-                p.inventory.addItem(e.currentItem)
+                p.inventory.addItem(e.currentItem ?: return false)
 
                 e.currentItem = ItemStack(Material.AIR)
 

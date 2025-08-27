@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -28,75 +29,56 @@ class CommandVanish : github.gilbertokpl.core.external.command.CommandCreator("v
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-
-        if (args.isEmpty() && s !is Player) {
-            return true
-        }
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
         if (args.size == 1) {
 
-            //check perms
-            if (s is Player && !s.hasPermission("totalessentials.commands.vanish.other")) {
-                s.sendMessage(LangConfig.generalNotPerm)
+            if (sender is Player && !sender.hasPermission("totalessentials.commands.vanish.other")) {
+                sender.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
-            //check if player is online
-            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
-                s.sendMessage(LangConfig.generalPlayerNotOnline)
+            val target = TotalEssentialsJava.getInstance().server.getPlayer(args[0])
+            if (target == null) {
+                sender.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
-            if (switchVanish(p)) {
-                p.sendMessage(LangConfig.vanishOtherActive)
-                s.sendMessage(
-                    LangConfig.vanishActivatedOther.replace(
-                        "%player%",
-                        p.name
-                    )
-                )
+            val isActive = toggleVanish(target)
+            if (isActive) {
+                target.sendMessage(LangConfig.vanishOtherActive)
+                sender.sendMessage(LangConfig.vanishActivatedOther.replace("%player%", target.name))
             } else {
-                p.sendMessage(LangConfig.vanishOtherDisable)
-                s.sendMessage(
-                    LangConfig.vanishDisabledOther.replace(
-                        "%player%",
-                        p.name
-                    )
-                )
+                target.sendMessage(LangConfig.vanishOtherDisable)
+                sender.sendMessage(LangConfig.vanishDisabledOther.replace("%player%", target.name))
             }
 
             return false
         }
 
-        if (switchVanish(s as Player)) {
-            s.sendMessage(LangConfig.vanishActive)
-        } else {
-            s.sendMessage(LangConfig.vanishDisable)
-        }
+        if (sender !is Player) return true
+
+        val isActive = toggleVanish(sender)
+        sender.sendMessage(if (isActive) LangConfig.vanishActive else LangConfig.vanishDisable)
         return false
     }
 
-    private fun switchVanish(player: Player): Boolean {
-
-        val newValue = PlayerData.vanishCache[player]!!.not()
-
+    private fun toggleVanish(player: Player): Boolean {
+        val current = PlayerData.vanishCache[player] ?: false
+        val newValue = !current
         PlayerData.vanishCache[player] = newValue
 
         if (newValue) {
             player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
-            github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection().getPlayers().forEach {
-                @Suppress("DEPRECATION")
+            TotalEssentialsJava.getBasePlugin().getReflection().getPlayers().forEach {
                 if (!it.hasPermission("totalessentials.commands.vanish") &&
-                    !it.hasPermission("totalessentials.bypass.vanish")
-                ) {
+                    !it.hasPermission("totalessentials.bypass.vanish")) {
                     it.hidePlayer(player)
                 }
             }
         } else {
             player.removePotionEffect(PotionEffectType.INVISIBILITY)
-            github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection().getPlayers().forEach {
-                @Suppress("DEPRECATION")
+            TotalEssentialsJava.getBasePlugin().getReflection().getPlayers().forEach {
                 it.showPlayer(player)
             }
         }

@@ -97,9 +97,9 @@ public class MainConfig implements DefaultConfig {
     )
     public static String databaseSqlIp = "localhost";
     public static String databaseSqlPort = "3306";
-    public static String databaseSqlUsername = "!u0_essentialsk";
-    public static String databaseSqlDatabase = "!s0_essentialsk";
-    public static String databaseSqlPassword = "!essentialsk123";
+    public static String databaseSqlUsername = "!u0_TotalEssentials";
+    public static String databaseSqlDatabase = "!s0_TotalEssentials";
+    public static String databaseSqlPassword = "!TotalEssentials123";
 
 
     //stackMobs
@@ -279,7 +279,7 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "List of worlds blocked from saving in the back, use the world name example: world.", lang = LangTypes.EN_US)
             }
     )
-    public static List<String> backDisabledWorlds = Collections.singletonList("essentialsk");
+    public static List<String> backDisabledWorlds = Collections.singletonList("TotalEssentials");
 
     //craftCommand
     @PrimaryComments(
@@ -417,7 +417,7 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "List of worlds blocked from using sethome, use world name example: world.", lang = LangTypes.EN_US)
             }
     )
-    public static List<String> homesBlockWorlds = Collections.singletonList("essentialsk");
+    public static List<String> homesBlockWorlds = Collections.singletonList("TotalEssentials");
 
     //warpCommand
     @PrimaryComments(
@@ -638,7 +638,7 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "List of blocked nicks.", lang = LangTypes.EN_US)
             }
     )
-    public static List<String> nicksBlockedNicks = Collections.singletonList("essentialsk");
+    public static List<String> nicksBlockedNicks = Collections.singletonList("TotalEssentials");
 
     //onlineCommand
     @PrimaryComments(
@@ -957,7 +957,7 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "List of announcements to be sent, variables -> %players_online%.", lang = LangTypes.EN_US)
             }
     )
-    public static List<String> announcementsListAnnounce = Arrays.asList("&eSeu servidor está utilizando EssentiasK obrigado por utilizar.",
+    public static List<String> announcementsListAnnounce = Arrays.asList("&eSeu servidor está utilizando TotalEssentials obrigado por utilizar.",
             "&9Obrigado por utilizar meu plugin!", "&3No servidor tem %players_online% players online!");
 
     //messages

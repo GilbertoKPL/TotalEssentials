@@ -1,13 +1,14 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "2.1.10"
-    id("com.gradleup.shadow") version "9.0.0-beta10"
+    kotlin("jvm") version "2.2.10"
+    id("com.gradleup.shadow") version "9.0.2"
 }
 
 val base = "github.gilbertokpl.library"
 
-version = "1.1.9"
+version = "1.2.0"
 
 
 repositories {
@@ -16,12 +17,18 @@ repositories {
     maven("https://m2.dv8tion.net/releases")
     maven("https://maven.elmakers.com/repository/")
     maven("https://jitpack.io")
+    maven("https://repo.codemc.io/repository/creatorfromhell/")
 }
 
 dependencies {
 
     //vault
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1") {
+        exclude("org.bukkit", "bukkit")
+        exclude("org.slf4j", "jcl-over-slf4j")
+    }
+
+    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.15") {
         exclude("org.bukkit", "bukkit")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -29,7 +36,7 @@ dependencies {
     compileOnly(fileTree(mapOf("dir" to "$buildDir\\..\\localjar", "include" to listOf("*.jar"))))
 
     //spigot
-    compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT") {
+    compileOnly("org.spigotmc:spigot-api:1.21.8-R0.1-SNAPSHOT") {
         exclude("commons-lang", "commons-lang")
         exclude("commons-io", "commons-io")
         exclude("org.yaml", "snakeyaml")
@@ -37,19 +44,18 @@ dependencies {
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-
     //exposed
-    compileOnly("org.jetbrains.exposed:exposed-core:0.60.0") {
+    compileOnly("org.jetbrains.exposed:exposed-core:1.0.0-beta-5") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-dao:0.60.0") {
+    compileOnly("org.jetbrains.exposed:exposed-dao:1.0.0-beta-5") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.60.0") {
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-5") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -62,7 +68,7 @@ dependencies {
     }
 
     //Mysql with MariaDB driver database
-    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.2") {
+    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.5") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -73,7 +79,7 @@ dependencies {
     }
 
     //remove all connections of slf4
-    compileOnly("org.slf4j:slf4j-nop:2.0.13")
+    compileOnly("org.slf4j:slf4j-nop:2.0.17")
 
     //simple yaml to help in yaml
     compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.7.3") {
@@ -82,23 +88,23 @@ dependencies {
     }
 
     //host info
-    compileOnly("com.github.oshi:oshi-core:6.7.0") {
+    compileOnly("com.github.oshi:oshi-core:6.8.3") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10") {
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.10") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("net.dv8tion:JDA:5.3.0") {
+    compileOnly("net.dv8tion:JDA:5.6.1") {
         exclude("club.minnced","opus-java")
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.json:json:20240303") {
+    compileOnly("org.json:json:20250517") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -115,7 +121,7 @@ tasks.shadowJar {
             "Plugin-Creator" to "Gilberto",
             "Plugin-Name" to "TotalEssentials",
             "Plugin-Github" to "https://github.com/GilbertoKPL/TotalEssentials",
-            "Class-Path" to "TotalEssentials/lib/TotalEssentials-lib-$version.jar"
+            "Class-Path" to "TotalEssentials/lib/TotalEssentials-lib-$version.jar ../TotalEssentials/lib/TotalEssentials-lib-$version.jar"
         )
     }
 
@@ -148,6 +154,5 @@ java {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
 }

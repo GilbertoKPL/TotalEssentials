@@ -6,6 +6,7 @@ import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.FoliaUtil.teleportSafe
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -26,24 +27,29 @@ class CommandBack : CommandCreator("back") {
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        val p = s as Player
+        val player = s as Player
 
-        val loc = PlayerData.backLocation[p] ?: run {
-            p.sendMessage(LangConfig.backNotToBack)
+        // Get last back location
+        val lastLocation = PlayerData.backLocation[player] ?: run {
+            player.sendMessage(LangConfig.backNotToBack)
             return false
         }
 
-        if (MainConfig.backDisabledWorlds.contains(loc.world!!.name.lowercase())) {
-            p.sendMessage(LangConfig.backNotToBack)
-            PlayerData.backLocation[p.name] = null
+        // Check if world is disabled for back command
+        val worldName = lastLocation.world?.name?.lowercase()
+        if (worldName == null || MainConfig.backDisabledWorlds.contains(worldName)) {
+            player.sendMessage(LangConfig.backNotToBack)
+            PlayerData.backLocation[player] = null
             return false
         }
 
-        p.teleport(loc)
+        // Teleport safely
+        player.teleportSafe(lastLocation)
 
-        PlayerData.backLocation[p.name] = null
+        // Clear back location
+        PlayerData.backLocation[player] = null
 
-        p.sendMessage(LangConfig.backSuccess)
+        player.sendMessage(LangConfig.backSuccess)
         return false
     }
 }

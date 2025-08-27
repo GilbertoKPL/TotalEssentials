@@ -27,41 +27,30 @@ class CommandAnnounce : CommandCreator("announce") {
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val name = if (s !is Player) {
-            "Console"
-        } else {
-            s.name
-        }
 
-        val msg = StringBuilder()
-        for (arg in args) {
-            msg.append(arg).append(" ")
-        }
+        // Determine sender name
+        val name = if (s is Player) s.name else "Console"
 
-        val p = if (s is Player) {
-            s
-        } else {
-            null
-        }
+        // Combine all arguments into a single message
+        val rawMessage = args.joinToString(" ")
 
-        val newMessage = PermissionUtil.colorPermission(p, msg.toString())
+        // Apply color permissions if sender is a player
+        val p = s as? Player
+        val coloredMessage = PermissionUtil.colorPermission(p, rawMessage)
 
-        MainUtil.serverMessage(
-            LangConfig.announceSendAnnounce
-                .replace("%name%", name)
-                .replace("%message%", newMessage)
-        )
+        // Format the final message
+        val formattedMessage = LangConfig.announceSendAnnounce
+            .replace("%name%", name)
+            .replace("%message%", coloredMessage)
 
+        // Send message to server
+        MainUtil.serverMessage(formattedMessage)
 
-        Discord.sendDiscordMessage(
-            LangConfig.announceSendAnnounce
-                .replace("%name%", name)
-                .replace("%message%", newMessage)
-                .replace(Regex("§[0-9]|§[a-zA-Z]"), ""), true
-        )
-
+        // Remove color codes and send to Discord
+        val discordMessage = formattedMessage.replace(Regex("§[0-9a-fk-or]"), "")
+        Discord.sendDiscordMessage(discordMessage, true)
 
         return false
     }
-
 }
+

@@ -1,18 +1,17 @@
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.core.external.task.SynchronizationContext
+import github.gilbertokpl.core.internal.task.dispatcher
 import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.FoliaUtil.teleportSafe
+import kotlinx.coroutines.withContext
 import org.bukkit.GameMode
 import org.bukkit.Location
-import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
-import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.reflect.Field
@@ -23,18 +22,18 @@ import java.nio.charset.StandardCharsets
 internal object PlayerUtil {
 
     fun sendAllMessage(message: String) {
-        for (p in TotalEssentialsJava.basePlugin.getReflection().getPlayers()) {
+        for (p in TotalEssentialsJava.getBasePlugin().getReflection().getPlayers()) {
             p.sendMessage(message)
         }
     }
 
     fun sendMessage(player: String, message: String) {
-        val p = TotalEssentialsJava.instance.server.getPlayerExact(player.lowercase()) ?: return
+        val p = TotalEssentialsJava.getInstance().server.getPlayerExact(player.lowercase()) ?: return
         p.sendMessage(message)
     }
 
     fun getIntOnlinePlayers(vanish: Boolean): Int {
-        var amount = TotalEssentialsJava.basePlugin.getReflection().getPlayers()
+        var amount = TotalEssentialsJava.getBasePlugin().getReflection().getPlayers()
         if (!vanish) {
             amount = amount.filter {
                 PlayerData.vanishCache[it] != null && !PlayerData.vanishCache[it]!!
@@ -161,7 +160,7 @@ internal object PlayerUtil {
 
     fun teleportWithTime(p: Player, location: Location, time: Int, message: String?, locationName: String) {
         if (p.hasPermission("totalessentials.bypass.teleport") || time == 0) {
-            p.teleport(location)
+            p.teleportSafe(location)
             if (message != null) {
                 p.sendMessage(message)
             }
@@ -174,13 +173,18 @@ internal object PlayerUtil {
             return
         }
 
-        TotalEssentialsJava.basePlugin.getTask().async {
-            waitFor(time.toLong() * 20)
+        val task = TotalEssentialsJava.getBasePlugin().getTask()
+
+        task.async {
+            task.waitSeconds(time.toLong())
             try {
-                switchContext(SynchronizationContext.SYNC)
-                PlayerData.inTeleport[p] = false
-                p.teleport(location)
-                p.sendMessage(message)
+                withContext(TotalEssentialsJava.getBasePlugin()!!.plugin.dispatcher(async = false)) {
+                    PlayerData.inTeleport[p] = false
+                    p.teleportSafe(location)
+                    if (message != null) {
+                        p.sendMessage(message)
+                    }
+                }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }

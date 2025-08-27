@@ -10,16 +10,14 @@ import github.gilbertokpl.total.util.VipUtil
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.Table
 
 object PlayerData : CacheBase {
     override var table: Table = PlayerDataSQL
     override var primaryColumn: Column<String> = PlayerDataSQL.playerTable
 
-    private val ins = TotalEssentialsJava.basePlugin.getCache()
+    private val ins = TotalEssentialsJava.getBasePlugin().getCache()
 
     val kitsCache = ins.hashMap(this, PlayerDataSQL.kitsTable, KitSerializer())
     val homeCache = ins.hashMap(this, PlayerDataSQL.homeTable, HomeSerializer())
@@ -60,7 +58,7 @@ object PlayerData : CacheBase {
 
     fun createNewPlayerData(entity: String) {
         val defaultLocation = SpawnData.spawnLocation["spawn"]
-            ?: Location(TotalEssentialsJava.instance.server.getWorld("world"), 1.0, 1.0, 1.0)
+            ?: Location(TotalEssentialsJava.getInstance()?.server?.getWorld("world"), 1.0, 1.0, 1.0)
 
         kitsCache[entity] = hashMapOf()
         homeCache[entity] = hashMapOf()
@@ -98,15 +96,19 @@ object PlayerData : CacheBase {
         }
 
         vanishCache[p]?.takeIf { it }?.let {
-            p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
-            TotalEssentialsJava.basePlugin.getReflection().getPlayers().forEach { otherPlayer ->
-                otherPlayer.player?.takeIf { !it.hasPermission("totalessentials.commands.vanish") && !it.hasPermission("totalessentials.bypass.vanish") }
+            //p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
+            TotalEssentialsJava.getBasePlugin().getReflection().getPlayers().forEach { otherPlayer ->
+                otherPlayer.player?.takeIf {
+                    !it.hasPermission("totalessentials.commands.vanish") && !it.hasPermission(
+                        "totalessentials.bypass.vanish"
+                    )
+                }
                     ?.hidePlayer(p)
             }
         }
 
         lightCache[p]?.takeIf { it }?.let {
-            p.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 1))
+            //p.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 1))
         }
 
         flyCache[p]?.takeIf { it }?.let {
@@ -128,8 +130,8 @@ object PlayerData : CacheBase {
 
         commandCache[p]?.takeIf { it.isNotEmpty() }?.let { commands ->
             commands.split(" -").forEach { command ->
-                TotalEssentialsJava.instance.server.dispatchCommand(
-                    TotalEssentialsJava.instance.server.consoleSender,
+                TotalEssentialsJava.getInstance().server.dispatchCommand(
+                    TotalEssentialsJava.getInstance().server.consoleSender,
                     command
                 )
             }
@@ -139,7 +141,7 @@ object PlayerData : CacheBase {
 
         if (MainConfig.vanishActivated) {
             if (!p.hasPermission("totalessentials.commands.vanish") && !p.hasPermission("totalessentials.bypass.vanish")) {
-                TotalEssentialsJava.basePlugin.getReflection().getPlayers().forEach { otherPlayer ->
+                TotalEssentialsJava.getBasePlugin().getReflection().getPlayers().forEach { otherPlayer ->
                     vanishCache[otherPlayer]?.takeIf { it }?.let {
                         p.hidePlayer(otherPlayer)
                     }

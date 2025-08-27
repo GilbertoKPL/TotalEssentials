@@ -3,7 +3,7 @@ package github.gilbertokpl.total.cache.internal
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.v1.jdbc.Database
 
 internal object Data {
 

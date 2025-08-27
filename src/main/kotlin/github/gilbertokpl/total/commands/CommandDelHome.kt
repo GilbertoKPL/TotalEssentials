@@ -5,6 +5,7 @@ import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import org.bukkit.Location
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -28,52 +29,57 @@ class CommandDelHome : github.gilbertokpl.core.external.command.CommandCreator("
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        //admin
-        if (args[0].contains(":") && s.hasPermission("totalessentials.commands.delhome.other")) {
-            val split = args[0].split(":")
+        val arg = args[0]
 
-            val pName = split[0].lowercase()
+        // --------------------------------------------------------
+        // Admin removing another player's home
+        // --------------------------------------------------------
+        if (arg.contains(":") && s.hasPermission("totalessentials.commands.delhome.other")) {
+            val (pNameRaw, homeNameRaw) = arg.split(":").let { it[0].lowercase() to it.getOrNull(1)?.lowercase() }
 
-            val playerData = PlayerData.homeCache[pName] ?: run {
+            val playerHomes = PlayerData.homeCache[pNameRaw] ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotExist)
                 return false
             }
 
-            if (split.size < 2) {
+            // If no specific home is provided, list homes
+            if (homeNameRaw == null) {
                 s.sendMessage(
-                    LangConfig.homesOtherList.replace("%player%", pName)
-                        .replace("%list%", PlayerData.homeCache[pName].toString())
+                    LangConfig.homesOtherList.replace("%player%", pNameRaw)
+                        .replace("%list%", playerHomes.toString())
                 )
                 return false
             }
 
-            if (!playerData.contains(split[1])) {
+            // Check if home exists
+            if (!playerHomes.contains(homeNameRaw)) {
                 s.sendMessage(LangConfig.homesNameDontExist)
                 return false
             }
 
-            PlayerData.homeCache.remove(pName, split[1])
-
+            // Remove home
+            PlayerData.homeCache.remove(pNameRaw, homeNameRaw)
             s.sendMessage(
-                LangConfig.homesOtherRemoved.replace("%player%", pName)
-                    .replace("%home%", split[1])
+                LangConfig.homesOtherRemoved.replace("%player%", pNameRaw)
+                    .replace("%home%", homeNameRaw)
             )
             return false
         }
 
-        val p = s as Player
+        // --------------------------------------------------------
+        // Player removing own home
+        // --------------------------------------------------------
+        val player = s as Player
+        val homeName = arg.lowercase()
+        val playerHomes = PlayerData.homeCache[player] ?: emptyMap()
 
-        val nameHome = args[0].lowercase()
-
-        //check if home don't exist
-        if (!(PlayerData.homeCache[p] ?: return false).contains(nameHome)) {
-            p.sendMessage(LangConfig.homesNameDontExist)
+        if (!playerHomes.contains(homeName)) {
+            player.sendMessage(LangConfig.homesNameDontExist)
             return false
         }
 
-        PlayerData.homeCache.remove(p, nameHome)
-
-        p.sendMessage(LangConfig.homesRemoved.replace("%home%", nameHome))
+        PlayerData.homeCache.remove(player, homeName)
+        player.sendMessage(LangConfig.homesRemoved.replace("%home%", homeName))
         return false
     }
 }

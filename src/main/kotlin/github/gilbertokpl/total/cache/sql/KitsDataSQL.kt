@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.cache.sql
 
 import github.gilbertokpl.total.config.files.MainConfig
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 
 object KitsDataSQL : Table("KitsData" + MainConfig.databaseManager) {
     val kitNameTable = varchar("kitName", 16)

@@ -1,18 +1,19 @@
 package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.serializer.LocationSerializer
 import github.gilbertokpl.total.cache.sql.ShopDataSQL
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.Table
 
 object ShopData : CacheBase {
     override var table: Table = ShopDataSQL
     override var primaryColumn: Column<String> = ShopDataSQL.playerTable
 
-    private val cache = github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getCache()
+    private val cache = TotalEssentialsJava.getBasePlugin().getCache()
 
     val shopVisits = cache.integer(this, ShopDataSQL.visits)
     val shopLocation = cache.location(this, ShopDataSQL.location, LocationSerializer())

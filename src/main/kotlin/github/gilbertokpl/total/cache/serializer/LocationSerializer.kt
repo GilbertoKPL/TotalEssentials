@@ -1,6 +1,7 @@
 package github.gilbertokpl.total.cache.serializer
 
 import github.gilbertokpl.core.external.cache.convert.SerializerBase
+import github.gilbertokpl.total.TotalEssentialsJava
 import org.bukkit.Location
 
 class LocationSerializer : SerializerBase<Location?, String> {
@@ -20,10 +21,10 @@ class LocationSerializer : SerializerBase<Location?, String> {
             val z = parts.getOrElse(2) { "0.0" }.toDouble()
             val worldName = parts.getOrElse(3) { "world" }
             val w = try {
-                github.gilbertokpl.total.TotalEssentialsJava.instance.server.getWorld(worldName)
+                TotalEssentialsJava.getInstance().server.getWorld(worldName)
             } catch (e: Throwable) {
                 e.printStackTrace()
-                github.gilbertokpl.total.TotalEssentialsJava.instance.server.getWorld("world")
+                TotalEssentialsJava.getInstance().server.getWorld("world")
             }
             val pitch = parts.getOrElse(4) { "0.0" }.toFloat()
             val yaw = parts.getOrElse(5) { "0.0" }.toFloat()

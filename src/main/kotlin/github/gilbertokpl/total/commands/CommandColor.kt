@@ -23,45 +23,48 @@ class CommandColor : github.gilbertokpl.core.external.command.CommandCreator("co
             usage = listOf(
                 "/cor list",
                 "/cor set <&cor>",
-                "/cor remover",
+                "/cor remover"
             )
         )
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        if (args[0].lowercase() == "list") {
-            s.sendMessage(
-                LangConfig.colorSendList.replace(
-                    "%colors%",
-                    TotalEssentialsJava.basePlugin.getColor().list(s as Player).toString()
-                )
-            )
-            return false
-        }
+        val player = s as? Player ?: return false
 
-        if (args[0].lowercase() == "remover") {
-            PlayerData.colorCache[s as Player] = ""
-            s.sendMessage(LangConfig.colorRemove)
-            return false
-        }
+        when (args[0].lowercase()) {
 
-        if (args[0].lowercase() == "set" && args.size == 2) {
-
-            val color = args[1].toCharArray()
-
-            if (color.size == 2 && s.hasPermission("totalessentials.color.${args[1]}") && color[0].toString()
-                    .contains("&") || color.size == 2 && s.hasPermission("totalessentials.color.*") && color[0].toString()
-                    .contains("&")
-            ) {
-                PlayerData.colorCache[s as Player] = args[1].replace("&", "§")
-                s.sendMessage(LangConfig.colorSet.replace("%color%", args[1].replace("&", "§") + "cor"))
+            "list" -> {
+                val colors = TotalEssentialsJava.getBasePlugin().getColor().list(player).toString()
+                player.sendMessage(LangConfig.colorSendList.replace("%colors%", colors))
                 return false
             }
-            s.sendMessage(LangConfig.colorNotSet)
-            return false
-        }
 
-        return true
+            "remover" -> {
+                PlayerData.colorCache[player] = ""
+                player.sendMessage(LangConfig.colorRemove)
+                return false
+            }
+
+            "set" -> {
+                if (args.size != 2) return true
+
+                val colorCode = args[1]
+                val hasPermission = player.hasPermission("totalessentials.color.${colorCode}") ||
+                        player.hasPermission("totalessentials.color.*")
+
+                if (colorCode.length == 2 && colorCode.startsWith("&") && hasPermission) {
+                    val formattedColor = colorCode.replace("&", "§")
+                    PlayerData.colorCache[player] = formattedColor
+                    player.sendMessage(LangConfig.colorSet.replace("%color%", "$formattedColor cor"))
+                } else {
+                    player.sendMessage(LangConfig.colorNotSet)
+                }
+
+                return false
+            }
+
+            else -> return true
+        }
     }
 }

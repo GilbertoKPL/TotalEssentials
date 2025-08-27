@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
@@ -27,56 +28,51 @@ class CommandHeal : github.gilbertokpl.core.external.command.CommandCreator("hea
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        if (args.isEmpty() && s !is Player) {
-            return true
-        }
+        if (args.isEmpty() && s !is Player) return true
 
         if (args.size == 1) {
-
-            //check perms
+            // Check permission for other player
             if (s is Player && !s.hasPermission("totalessentials.commands.heal.other")) {
                 s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
-            //check if player exist
-            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
+            // Get target player
+            val p = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
-            if (MainConfig.healNeedHealBelow && github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection()
-                    .getHealth(p) >= MAX_PLAYER_HEAL
+            // Check if target needs healing
+            if (MainConfig.healNeedHealBelow &&
+                TotalEssentialsJava.getBasePlugin().getReflection().getHealth(p) >= MAX_PLAYER_HEAL
             ) {
                 s.sendMessage(LangConfig.healOtherFullMessage)
                 return false
             }
 
-            github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection().setHealth(p, 20)
+            // Heal target
+            TotalEssentialsJava.getBasePlugin().getReflection().setHealth(p, MAX_PLAYER_HEAL)
             p.sendMessage(LangConfig.healOtherMessage)
-            s.sendMessage(
-                LangConfig.healSuccessOtherMessage.replace(
-                    "%player%",
-                    p.name
-                )
-            )
-
+            s.sendMessage(LangConfig.healSuccessOtherMessage.replace("%player%", p.name))
             return false
         }
 
-        if (MainConfig.healNeedHealBelow && github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection()
-                .getHealth(s as Player) >= MAX_PLAYER_HEAL
+        // Check if sender needs healing
+        if (MainConfig.healNeedHealBelow &&
+            TotalEssentialsJava.getBasePlugin().getReflection().getHealth(s as Player) >= MAX_PLAYER_HEAL
         ) {
             s.sendMessage(LangConfig.healFullMessage)
             return false
         }
 
-        github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getReflection().setHealth(s as Player, MAX_PLAYER_HEAL)
+        // Heal sender
+        TotalEssentialsJava.getBasePlugin().getReflection().setHealth(s as Player, MAX_PLAYER_HEAL)
         s.sendMessage(LangConfig.healMessage)
         return false
     }
 
     companion object {
-        private const val MAX_PLAYER_HEAL = 20
+        private const val MAX_PLAYER_HEAL = 20 // Maximum health
     }
 }

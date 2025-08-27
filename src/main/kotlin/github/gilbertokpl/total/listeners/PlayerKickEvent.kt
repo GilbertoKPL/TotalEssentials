@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerKickEvent
 class PlayerKickEvent : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun kick(e: PlayerKickEvent) {
-        if (TotalEssentialsJava.lowVersion) {
+        if (TotalEssentialsJava.isLowVersion()) {
         }
     }
 }

@@ -7,15 +7,15 @@ import github.gilbertokpl.core.external.task.Task
 import github.gilbertokpl.core.external.utils.*
 import github.gilbertokpl.core.internal.events.Events
 import github.gilbertokpl.core.internal.utils.FileLogger
+import github.gilbertokpl.total.TotalEssentialsJava
 import org.bukkit.plugin.Plugin
-import org.jetbrains.exposed.sql.Table
-import java.io.File
+import org.jetbrains.exposed.v1.core.Table
 
 class CorePlugin(pl: Plugin) {
 
     val plugin = pl
 
-    lateinit var sql: org.jetbrains.exposed.sql.Database
+    lateinit var sql: org.jetbrains.exposed.v1.jdbc.Database
 
     private lateinit var configPackageReload: String
 
@@ -46,7 +46,7 @@ class CorePlugin(pl: Plugin) {
     private val valueInstance = Value(this)
 
     //deobf
-    private val taskInstance = Task(this)
+    private val taskInstance = Task(TotalEssentialsJava.getInstance())
 
     //obf
     private val hostInstance = Host(this)
@@ -64,8 +64,8 @@ class CorePlugin(pl: Plugin) {
     lateinit var logger: FileLogger
 
     fun startConfig(configPackage: String) {
-        mainPath = plugin.dataFolder.path
-        langPath = plugin.dataFolder.path + "/lang/"
+        mainPath = plugin.dataFolder.path.replace(".paper-remapped/", "")
+        langPath = plugin.dataFolder.path + "/lang/".replace(".paper-remapped/", "")
         configPackageReload = configPackage
         getConfig().start(configPackage)
     }

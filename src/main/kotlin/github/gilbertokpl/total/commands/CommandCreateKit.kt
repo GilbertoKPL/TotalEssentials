@@ -25,38 +25,48 @@ class CommandCreateKit : github.gilbertokpl.core.external.command.CommandCreator
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        //check length of kit name
-        if (args[0].length > 16) {
+        val kitName = args[0]
+
+        // --------------------------------------------------------
+        // Validate kit name length
+        // --------------------------------------------------------
+        if (kitName.length > 16) {
             s.sendMessage(LangConfig.kitsNameLength)
             return false
         }
 
-        //check if kit name do not contain special
-        if (MainUtil.checkSpecialCharacters(args[0])) {
+        // --------------------------------------------------------
+        // Validate special characters
+        // --------------------------------------------------------
+        if (MainUtil.checkSpecialCharacters(kitName)) {
             s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
 
-        //check if exist
-        if (KitsData.checkIfExist(args[0])) {
+        // --------------------------------------------------------
+        // Check if kit already exists
+        // --------------------------------------------------------
+        if (KitsData.checkIfExist(kitName)) {
             s.sendMessage(LangConfig.kitsExist)
             return false
         }
 
-        //create cache and sql
-        KitsData.createNewKitData(args[0])
+        // --------------------------------------------------------
+        // Create kit in cache and database
+        // --------------------------------------------------------
+        KitsData.createNewKitData(kitName)
 
-        //send message
+        // --------------------------------------------------------
+        // Notify player
+        // --------------------------------------------------------
         s.sendMessage(
-            LangConfig.kitsCreateKitSuccess.replace(
-                "%kit%",
-                args[0].lowercase()
-            )
+            LangConfig.kitsCreateKitSuccess.replace("%kit%", kitName.lowercase())
         )
 
-        //update inventoy
+        // --------------------------------------------------------
+        // Update kit inventory
+        // --------------------------------------------------------
         Kit.setup()
-
 
         return false
     }

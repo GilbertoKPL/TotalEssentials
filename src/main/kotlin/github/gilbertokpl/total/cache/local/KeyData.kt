@@ -1,16 +1,17 @@
 package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.sql.VipKeysSQL
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.Table
 import java.util.*
 
 object KeyData : CacheBase {
     override var table: Table = VipKeysSQL
     override var primaryColumn: Column<String> = VipKeysSQL.vipKey
 
-    private val ins = github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getCache()
+    private val ins = TotalEssentialsJava.getBasePlugin().getCache()
 
     val vipName = ins.string(this, VipKeysSQL.vipName)
     val vipTime = ins.long(this, VipKeysSQL.vipTime)

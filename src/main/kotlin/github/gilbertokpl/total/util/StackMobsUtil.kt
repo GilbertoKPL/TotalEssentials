@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.total.TotalEssentialsJava.instance
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.Location
 import org.bukkit.entity.Entity
@@ -44,7 +44,7 @@ object StackMobsUtil {
 
         val nome = MainConfig.stackmobsNameTag.replace("%name%", getEntityName(target))
             .replace("%quantity%", stackSize.toString())
-        target.setMetadata("stack", FixedMetadataValue(instance, stackSize))
+        target.setMetadata("stack", FixedMetadataValue(TotalEssentialsJava.getInstance(), stackSize))
         target.customName = nome
         target.isCustomNameVisible = true
 
@@ -58,8 +58,8 @@ object StackMobsUtil {
     fun mobCreate(entity: Entity, quantity: Int, name: String) {
         if (entity !is LivingEntity) return
 
-        entity.setMetadata("stack", FixedMetadataValue(instance, quantity))
-        entity.setMetadata("DeathQuantity", FixedMetadataValue(instance, 1))
+        entity.setMetadata("stack", FixedMetadataValue(TotalEssentialsJava.getInstance(), quantity))
+        entity.setMetadata("DeathQuantity", FixedMetadataValue(TotalEssentialsJava.getInstance(), 1))
 
         val customName = MainConfig.stackmobsNameTag.replace("%name%", name).replace("%quantity%", quantity.toString())
 
@@ -73,8 +73,8 @@ object StackMobsUtil {
         val customName = MainConfig.stackmobsNameTag.replace("%name%", getEntityName(entity))
             .replace("%quantity%", quantity.toString())
 
-        entity.setMetadata("stack", FixedMetadataValue(instance, quantity))
-        entity.setMetadata("DeathQuantity", FixedMetadataValue(instance, deathQuantity))
+        entity.setMetadata("stack", FixedMetadataValue(TotalEssentialsJava.getInstance(), quantity))
+        entity.setMetadata("DeathQuantity", FixedMetadataValue(TotalEssentialsJava.getInstance(), deathQuantity))
 
         entity.customName = customName
         entity.isCustomNameVisible = true

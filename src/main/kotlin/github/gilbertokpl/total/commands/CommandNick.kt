@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -31,123 +32,100 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
         )
     }
 
-
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        //check if is 1
+        // single argument (self nick)
         if (args.size == 1 && s is Player) {
 
-            //check if nickname do not contain special
             if (MainUtil.checkSpecialCharacters(args[0])) {
                 s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
                 return false
             }
 
-            //check length of name
             if (args[0].length > 16) {
                 s.sendMessage(LangConfig.nicksNameLength)
                 return false
             }
 
-            if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
-                //check if is empty
+            if (args[0].lowercase() in listOf("remove", "remover")) {
                 if (PlayerData.nickCache[s] == "") {
                     s.sendMessage(LangConfig.nicksAlreadyOriginal)
                     return false
                 }
-
                 PlayerData.nickCache[s] = ""
-
                 PlayerUtil.setDisplayName(s, s.name)
-
                 s.sendMessage(LangConfig.nicksRemovedSuccess)
                 return false
             }
 
             val toCheck = args[0].replace(Regex("&[0-9,a-f]"), "").lowercase()
-
             if (MainConfig.nicksBlockedNicks.contains(toCheck)) {
                 s.sendMessage(LangConfig.nicksBlocked)
                 return false
             }
 
             val nick = PermissionUtil.colorPermission(s, args[0])
-
             if (setNick(nick, s)) {
                 s.sendMessage(LangConfig.nicksExist)
                 return false
             }
 
             s.sendMessage(LangConfig.nicksSuccess.replace("%nick%", nick))
-
             return false
         }
 
+        // two arguments (other player)
         if (args.size != 2) return true
 
-        //check if nickname do not contain . or - to not bug
         if (MainUtil.checkSpecialCharacters(args[1])) {
             s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
 
-        //check length of name
         if (args[1].length > 16) {
             s.sendMessage(LangConfig.kitsNameLength)
             return false
         }
 
-        //check perm
         if (s is Player && !s.hasPermission("totalessentials.commands.nick.other")) {
             s.sendMessage(LangConfig.generalNotPerm)
             return false
         }
 
-        //check if player exist
-        val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
+        val p = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
             s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
-        if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
-            //check if is empty
+        if (args[1].lowercase() in listOf("remove", "remover")) {
             if (PlayerData.nickCache[p] == "") {
                 s.sendMessage(LangConfig.nicksAlreadyOriginalOther)
                 return false
             }
             PlayerData.nickCache[p] = ""
-
             PlayerUtil.setDisplayName(p, p.name)
-
             s.sendMessage(LangConfig.nicksRemovedOtherSuccess)
             p.sendMessage(LangConfig.nicksRemovedOtherPlayerSuccess)
             return false
         }
 
         val nick = args[1].replace("&", "§")
-
         setNick(nick, p, true)
 
         s.sendMessage(LangConfig.nickOtherSuccess.replace("%nick%", nick))
-        p.sendMessage(
-            LangConfig.nicksOtherPlayerSuccess.replace(
-                "%nick%",
-                nick
-            )
-        )
+        p.sendMessage(LangConfig.nicksOtherPlayerSuccess.replace("%nick%", nick))
+
         return false
     }
 
+    // set nickname
     private fun setNick(newNick: String, player: Player, other: Boolean = false): Boolean {
         if (!other) {
             val exist = PlayerData.nickCache.getMap().map { it.value }.contains(newNick.lowercase())
-
             if (!MainConfig.nicksCanPlayerHaveSameNick &&
                 !player.hasPermission("totalessentials.bypass.nickblockednicks") &&
                 exist
-            ) {
-                return true
-            }
+            ) return true
         }
         PlayerUtil.setDisplayName(player, newNick)
         PlayerData.nickCache[player] = newNick

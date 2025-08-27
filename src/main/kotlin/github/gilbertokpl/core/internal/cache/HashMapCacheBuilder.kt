@@ -5,8 +5,13 @@ import github.gilbertokpl.core.external.cache.interfaces.CacheBuilderV2
 import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.update
 import java.util.concurrent.locks.ReentrantLock
 
 internal class HashMapCacheBuilder<T, V, K>(
@@ -114,21 +119,21 @@ internal class HashMapCacheBuilder<T, V, K>(
 
                     if (value == null) {
                         existingRows[i]?.let { row ->
-                            TotalEssentialsJava.basePlugin.logger.log("Removendo Entidade chamada: $i, coluna: $column")
+                            TotalEssentialsJava.getBasePlugin().logger.log("Removendo Entidade chamada: $i, coluna: $column")
                             table.deleteWhere { primaryColumn eq row[primaryColumn] }
                         }
                     } else {
                         if (i !in existingKeys) {
                             table.insert {
                                 val newValue = classConvert.convertToDatabase(value)
-                                TotalEssentialsJava.basePlugin.logger.log("Setando valor da entidade: $i, coluna: $column, valor: $newValue")
+                                TotalEssentialsJava.getBasePlugin().logger.log("Setando valor da entidade: $i, coluna: $column, valor: $newValue")
                                 it[primaryColumn] = i
                                 it[column] = newValue
                             }
                             existingKeys.add(i)
                         } else {
                             val newValue = classConvert.convertToDatabase(value)
-                            TotalEssentialsJava.basePlugin.logger.log("Atualizando valor da entidade: $i, coluna: $column, valor: $newValue")
+                            TotalEssentialsJava.getBasePlugin().logger.log("Atualizando valor da entidade: $i, coluna: $column, valor: $newValue")
                             table.update({ primaryColumn eq i }) {
                                 it[column] = newValue
                             }
@@ -165,7 +170,7 @@ internal class HashMapCacheBuilder<T, V, K>(
             val value = hashMap[i[primaryColumn].lowercase()] ?: continue
             if (classConvert.convertToCache(i[column]) != value) {
                 val name = i[primaryColumn]
-                TotalEssentialsJava.basePlugin.logger.log("Novo Erro encontrado da entidade: $name, coluna: $column, setando novo valor: $value")
+                TotalEssentialsJava.getBasePlugin().logger.log("Novo Erro encontrado da entidade: $name, coluna: $column, setando novo valor: $value")
                 set(name, value)
             }
         }

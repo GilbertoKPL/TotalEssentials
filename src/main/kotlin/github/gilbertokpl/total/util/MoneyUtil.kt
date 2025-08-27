@@ -2,6 +2,8 @@ package github.gilbertokpl.total.util
 
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
+import github.gilbertokpl.total.config.files.LangConfig.moneySuffixPlural
+import github.gilbertokpl.total.config.files.LangConfig.moneySuffixSingular
 import github.gilbertokpl.total.config.files.MainConfig
 import net.milkbowl.vault.economy.EconomyResponse
 import java.text.DecimalFormat
@@ -73,7 +75,7 @@ object MoneyUtil {
 
     fun formatNumberInWords(number: Double): String {
         val suffixes = listOf(
-            "",
+            moneySuffixSingular,
             "mil",
             "milhão",
             "bilhão",
@@ -85,7 +87,7 @@ object MoneyUtil {
             "octilhão"
         )
         val pluralSuffixes = listOf(
-            "",
+            moneySuffixPlural,
             "mil",
             "milhões",
             "bilhões",

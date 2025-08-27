@@ -4,9 +4,10 @@ import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.core.external.command.CommandCreator
 import github.gilbertokpl.core.external.config.types.ObjectTypes
 import org.bukkit.Bukkit
-import org.bukkit.command.Command
 import org.bukkit.command.CommandMap
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.plugin.Plugin
 import org.simpleyaml.configuration.file.YamlFile
 import java.lang.reflect.Field
 import java.nio.file.FileSystems
@@ -43,12 +44,57 @@ internal class InternalReflection(private val corePlugin: CorePlugin) {
         return classes
     }
 
-    fun bukkitCommandRegister(command: Command) {
-        val bukkitCommandMap: Field = Bukkit.getServer().javaClass.getDeclaredField("commandMap")
-        bukkitCommandMap.isAccessible = true
-        val commandMap: CommandMap = bukkitCommandMap.get(Bukkit.getServer()) as CommandMap
-        commandMap.register("TotalEssentials", command)
+
+    fun bukkitCommandRegister(cmd: CommandCreator) {
+        val register = {
+            try {
+                val bukkitCommand = object : org.bukkit.command.Command(
+                    cmd.name,
+                    cmd.commandUsage.toString(),
+                    cmd.commandUsage.toString(),
+                    cmd.aliases.toList()
+                ) {
+                    override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
+                        return cmd.execute(sender, label, args)
+                    }
+                }
+
+                // pega CommandMap via reflexão
+                val commandMapField = Bukkit.getServer().javaClass.getDeclaredField("commandMap")
+                commandMapField.isAccessible = true
+                val commandMap = commandMapField.get(Bukkit.getServer()) as CommandMap
+
+                commandMap.register("TotalEssentials", bukkitCommand)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        // 🔥 Usa Folia se disponível, senão Bukkit normal
+        val scheduler = foliaSchedulerExecute
+        if (scheduler != null) {
+            scheduler(corePlugin.plugin, Runnable { register() })
+        } else {
+            Bukkit.getScheduler().runTask(corePlugin.plugin, Runnable { register() })
+        }
     }
+
+    private val foliaSchedulerExecute: ((Plugin, Runnable) -> Unit)? by lazy {
+        try {
+            val server = Bukkit.getServer()
+            val schedulerClass = server.javaClass.getMethod("getGlobalRegionScheduler")
+            val scheduler = schedulerClass.invoke(server)
+            val executeMethod = scheduler.javaClass.getMethod("execute", Plugin::class.java, Runnable::class.java)
+
+            return@lazy { plugin: Plugin, task: Runnable ->
+                executeMethod.invoke(scheduler, plugin, task)
+            }
+        } catch (_: Throwable) {
+            return@lazy null
+        }
+    }
+
 
     fun nameFieldHelper(field: Field): String {
         val nameField = field.name.split("(?=\\p{Upper})".toRegex())
@@ -90,21 +136,36 @@ internal class InternalReflection(private val corePlugin: CorePlugin) {
 
     fun registerCommandByPackage(packageName: String) {
         val listClass = getClasses(packageName)
+
         for (cl in listClass) {
-            val instance = cl.getDeclaredConstructor().newInstance() as CommandCreator
-            instance.basePlugin = corePlugin
-            instance.aliases = instance.commandPattern().aliases
-            instance.active = instance.commandPattern().active
-            instance.target = instance.commandPattern().target
-            instance.permission = instance.commandPattern().permission
-            instance.commandUsage = instance.commandPattern().usage
-            instance.countdown = instance.commandPattern().countdown
-            instance.minimumSize = instance.commandPattern().minimumSize
-            instance.maximumSize = instance.commandPattern().maximumSize
-            if (!instance.commandPattern().active) continue
-            bukkitCommandRegister(instance)
+            try {
+                val instance = cl.getDeclaredConstructor().newInstance() as CommandCreator
+
+                // aplica padrões do commandPattern
+                instance.basePlugin = corePlugin
+                instance.commandPattern().let { pattern ->
+                    instance.aliases = pattern.aliases
+                    instance.active = pattern.active
+                    instance.target = pattern.target
+                    instance.permission = pattern.permission
+                    instance.commandUsage = pattern.usage
+                    instance.countdown = pattern.countdown
+                    instance.minimumSize = pattern.minimumSize
+                    instance.maximumSize = pattern.maximumSize
+                }
+
+                if (!instance.active) continue
+
+                // aqui entra o registro seguro compatível com Paper + Folia
+                bukkitCommandRegister(instance)
+
+            } catch (e: Exception) {
+                Bukkit.getLogger().warning("Falha ao registrar comando da classe ${cl.name}: ${e.message}")
+                e.printStackTrace()
+            }
         }
     }
+
 
     fun getPlayers(): List<Player> {
         if (getPlayersList == null) {

@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -29,30 +30,30 @@ class CommandSetWarp : github.gilbertokpl.core.external.command.CommandCreator("
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        //check length of warp name
+
+        // check warp name length
         if (args[0].length > 16) {
             s.sendMessage(LangConfig.warpsNameLength)
             return false
         }
 
-        //check if warp name do not contain special
+        // check for special characters
         if (MainUtil.checkSpecialCharacters(args[0])) {
             s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
 
-        //check if exist
+        // check if warp already exists
         if (WarpData.checkIfWarpExist(args[0])) {
             s.sendMessage(LangConfig.warpsNameAlreadyExist)
             return false
         }
 
-        //check if a command have a location
+        // create warp from command location
         if (args.size == 5) {
-            //check location
             val loc = try {
                 Location(
-                    github.gilbertokpl.total.TotalEssentialsJava.instance.server.getWorld(args[1]),
+                    TotalEssentialsJava.getInstance().server.getWorld(args[1]),
                     args[2].toDouble(),
                     args[3].toDouble(),
                     args[4].toDouble()
@@ -62,30 +63,17 @@ class CommandSetWarp : github.gilbertokpl.core.external.command.CommandCreator("
             }
 
             WarpData.warpLocation[args[0]] = loc
-
-            s.sendMessage(
-                LangConfig.warpsCreated.replace(
-                    "%warp%",
-                    args[0].lowercase()
-                )
-            )
-
+            s.sendMessage(LangConfig.warpsCreated.replace("%warp%", args[0].lowercase()))
             return false
         }
 
+        // create warp at player location
         if (args.size == 1 && s is Player) {
             WarpData.warpLocation[args[0]] = s.location
-
-            s.sendMessage(
-                LangConfig.warpsCreated.replace(
-                    "%warp%",
-                    args[0].lowercase()
-                )
-            )
+            s.sendMessage(LangConfig.warpsCreated.replace("%warp%", args[0].lowercase()))
             return false
         }
 
-        //return true to send command usage
         return true
     }
 }

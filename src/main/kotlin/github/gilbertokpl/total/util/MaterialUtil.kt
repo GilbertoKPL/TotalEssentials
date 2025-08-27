@@ -8,6 +8,7 @@ internal object MaterialUtil {
 
     operator fun get(mat: String) = material[mat.lowercase()]
 
+
     fun startMaterials() {
         material["glass"] =
             materialHelper(listOf("STAINED_GLASS_PANE", "THIN_GLASS", "YELLOW_STAINED_GLASS"))
@@ -19,6 +20,7 @@ internal object MaterialUtil {
             materialHelper(listOf("PLAYER_HEAD", "SKULL_ITEM"))
 
     }
+
 
     private fun materialHelper(material: List<String>): Material {
         var mat = Material.AIR

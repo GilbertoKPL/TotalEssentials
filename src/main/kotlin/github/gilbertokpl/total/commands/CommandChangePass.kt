@@ -24,76 +24,65 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
             maximumSize = 2,
             usage = listOf(
                 "P_/mudarsenha <antigaSenha> <senha>",
-                "totalessentials.commands.changepass.other_/mudarsenha <player> <senha>",
+                "totalessentials.commands.changepass.other_/mudarsenha <player> <senha>"
             )
         )
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val encrypt = TotalEssentialsJava.basePlugin.getEncrypt()
+        val encrypt = TotalEssentialsJava.getBasePlugin().getEncrypt()
 
+        // --------------------------------------------------------
+        // Case 1: Sender is a player and changing own password
+        // --------------------------------------------------------
         if (s is Player && LoginData.doesPlayerExist(s) && LoginData.isPlayerLoggedIn(s)) {
+            val currentPassword = encrypt.decrypt(LoginData.password[s] ?: "")
 
-            val password = encrypt.decrypt(LoginData.password[s]!!)
-
-            if (password == args[0]) {
+            // Correct old password
+            if (currentPassword == args[0]) {
                 LoginData.password[s] = encrypt.encrypt(args[1])
                 s.sendMessage(LangConfig.authChangePass)
                 return false
             }
 
-            if (s.hasPermission("totalessentials.commands.changepass.other") && !LoginData.doesPlayerExist(args[0])) {
-                s.sendMessage(LangConfig.generalPlayerNotExist)
-                return false
+            // Attempt to change another player's password
+            if (s.hasPermission("totalessentials.commands.changepass.other")) {
+                return changeOtherPassword(s, args[0], args[1])
             }
 
-            if (s.hasPermission("totalessentials.commands.changepass.other") && LoginData.doesPlayerExist(args[0])) {
-
-                LoginData.values[args[0]] = 0
-
-                LoginData.password[args[0]] = encrypt.encrypt(args[1])
-
-                LoginData.ipAddress[args[0]] = "127.0.0.1"
-
-                LoginData.isLoggedIn[args[0]] = false
-
-                s.sendMessage(LangConfig.authOtherChangePass.replace("%player%", args[0]))
-
-                val p = Bukkit.getPlayer(args[0])
-
-                if (p != null) {
-                    LoginUtil.loginMessage(p)
-                }
-
-                return false
-            }
-
+            // Incorrect own password
             s.sendMessage(LangConfig.authIncorrectPassword)
-
             return false
         }
 
-        if (!LoginData.doesPlayerExist(args[0])) {
-            s.sendMessage(LangConfig.generalPlayerNotExist)
+        // --------------------------------------------------------
+        // Case 2: Changing password of another player as console or admin
+        // --------------------------------------------------------
+        return changeOtherPassword(s, args[0], args[1])
+    }
+
+    // --------------------------------------------------------
+    // Function to handle changing password of another player
+    // --------------------------------------------------------
+    private fun changeOtherPassword(sender: CommandSender, targetName: String, newPassword: String): Boolean {
+        val encrypt = TotalEssentialsJava.getBasePlugin().getEncrypt()
+
+        if (!LoginData.doesPlayerExist(targetName)) {
+            sender.sendMessage(LangConfig.generalPlayerNotExist)
             return false
         }
 
-        LoginData.values[args[0]] = 0
+        // Reset player login values
+        LoginData.values[targetName] = 0
+        LoginData.password[targetName] = encrypt.encrypt(newPassword)
+        LoginData.ipAddress[targetName] = "127.0.0.1"
+        LoginData.isLoggedIn[targetName] = false
 
-        LoginData.password[args[0]] = encrypt.encrypt(args[1])
+        // Notify player if online
+        Bukkit.getPlayer(targetName)?.let { LoginUtil.loginMessage(it) }
 
-        LoginData.ipAddress[args[0]] = "127.0.0.1"
-
-        LoginData.isLoggedIn[args[0]] = false
-
-        val p = Bukkit.getPlayer(args[0])
-
-        if (p != null) {
-            LoginUtil.loginMessage(p)
-        }
-
-        s.sendMessage(LangConfig.authOtherChangePass.replace("%player%", args[0]))
-
+        // Notify sender
+        sender.sendMessage(LangConfig.authOtherChangePass.replace("%player%", targetName))
         return false
     }
 }

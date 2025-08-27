@@ -33,7 +33,7 @@ class CommandLogin : github.gilbertokpl.core.external.command.CommandCreator("lo
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        val encrypt = TotalEssentialsJava.basePlugin.getEncrypt()
+        val encrypt = TotalEssentialsJava.getBasePlugin().getEncrypt()
 
         if (s is Player && LoginData.doesPlayerExist(s) && !LoginData.isPlayerLoggedIn(s)) {
 

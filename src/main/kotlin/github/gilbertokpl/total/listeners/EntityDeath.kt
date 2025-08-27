@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.TotalEssentialsJava.instance
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.StackMobsUtil
 import org.bukkit.entity.EntityType
@@ -47,7 +47,7 @@ class EntityDeath : Listener {
             val newEntity = EntityType.fromId(entityId)
                 ?.let { livingEntity.world.spawnEntity(livingEntity.location, it) }
 
-            newEntity?.setMetadata("mob_id", FixedMetadataValue(instance, entityId))
+            newEntity?.setMetadata("mob_id", FixedMetadataValue(TotalEssentialsJava.getInstance(), entityId))
 
             var name = livingEntity.toString().replace("Craft", "")
             MainConfig.stackmobsNameReplacer

@@ -1,7 +1,8 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.core.external.task.SynchronizationContext
+
 import github.gilbertokpl.total.TotalEssentialsJava
+
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.SpawnData
@@ -26,15 +27,18 @@ class PlayerJoin : Listener {
         handleAuthentication(player, address)
         SpawnData.teleportToSpawn(player)
 
-        TotalEssentialsJava.basePlugin.getTask().async {
+        val task = TotalEssentialsJava.getBasePlugin().getTask()
+
+        task.async {
             handlePlaytime(player)
             initializePlayerData(player)
             sendMessages(player)
             VipUtil.checkVip(player.name.lowercase())
             handleAntiVpn(player, address)
 
-            switchContext(SynchronizationContext.SYNC)
-            PlayerData.applyPlayerSettings(player)
+            task.sync {
+                PlayerData.applyPlayerSettings(player)
+            }
         }
     }
 

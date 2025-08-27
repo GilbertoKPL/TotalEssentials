@@ -3,7 +3,6 @@ package github.gilbertokpl.core.external.utils
 import github.gilbertokpl.core.external.CorePlugin
 import github.gilbertokpl.core.external.config.types.ObjectTypes
 import github.gilbertokpl.core.internal.utils.InternalReflection
-import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import org.simpleyaml.configuration.file.YamlFile
 import java.lang.reflect.Field
@@ -13,10 +12,6 @@ class Reflection(core: CorePlugin) {
 
     fun getClasses(packageName: String): List<Class<*>> {
         return reflectionInstance.getClasses(packageName)
-    }
-
-    fun bukkitCommandRegister(command: Command) {
-        reflectionInstance.bukkitCommandRegister(command)
     }
 
     fun nameFieldHelper(field: Field): String {

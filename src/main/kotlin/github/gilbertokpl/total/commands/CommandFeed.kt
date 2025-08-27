@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
@@ -26,48 +27,49 @@ class CommandFeed : github.gilbertokpl.core.external.command.CommandCreator("fee
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+        val senderPlayer = s as? Player
 
-        if (args.isEmpty() && s !is Player) {
-            return true
-        }
-
+        // --------------------------------------------------------
+        // Feed another player
+        // --------------------------------------------------------
         if (args.size == 1) {
-
-            //check perms
-            if (s is Player && !s.hasPermission("totalessentials.commands.feed.other")) {
-                s.sendMessage(LangConfig.generalNotPerm)
+            // Check permission
+            if (senderPlayer != null && !senderPlayer.hasPermission("totalessentials.commands.feed.other")) {
+                senderPlayer.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
-            //check if player exist
-            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
+            // Get target player
+            val targetPlayer = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
-            if (p.foodLevel >= MAX_PLAYER_FOOD && MainConfig.feedNeedEatBelow) {
+            // Check if target player is already full
+            if (targetPlayer.foodLevel >= MAX_PLAYER_FOOD && MainConfig.feedNeedEatBelow) {
                 s.sendMessage(LangConfig.feedOtherFullMessage)
                 return false
             }
 
-            p.foodLevel = MAX_PLAYER_FOOD
-            p.sendMessage(LangConfig.feedOtherMessage)
-            s.sendMessage(
-                LangConfig.feedSuccessOtherMessage.replace(
-                    "%player%",
-                    p.name
-                )
-            )
-
+            // Feed target player
+            targetPlayer.foodLevel = MAX_PLAYER_FOOD
+            targetPlayer.sendMessage(LangConfig.feedOtherMessage)
+            s.sendMessage(LangConfig.feedSuccessOtherMessage.replace("%player%", targetPlayer.name))
             return false
         }
 
-        if ((s as Player).foodLevel >= MAX_PLAYER_FOOD && MainConfig.feedNeedEatBelow) {
-            s.sendMessage(LangConfig.feedFullMessage)
+        // --------------------------------------------------------
+        // Feed self
+        // --------------------------------------------------------
+        if (senderPlayer == null) return true
+
+        if (senderPlayer.foodLevel >= MAX_PLAYER_FOOD && MainConfig.feedNeedEatBelow) {
+            senderPlayer.sendMessage(LangConfig.feedFullMessage)
             return false
         }
-        s.foodLevel = MAX_PLAYER_FOOD
-        s.sendMessage(LangConfig.feedMessage)
+
+        senderPlayer.foodLevel = MAX_PLAYER_FOOD
+        senderPlayer.sendMessage(LangConfig.feedMessage)
         return false
     }
 

@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.internal.DataTeleport
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -19,46 +20,50 @@ class CommandTpa : github.gilbertokpl.core.external.command.CommandCreator("tpa"
             permission = "totalessentials.commands.tpa",
             minimumSize = 1,
             maximumSize = 1,
-            usage = listOf(
-                "/tpa <playerName>"
-            )
+            usage = listOf("/tpa <playerName>")
         )
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+        if (s !is Player) return false
 
-        //check if player is same
-        if (args[0].lowercase() == s.name.lowercase()) {
+        val targetName = args[0]
+
+        // Não pode enviar TPA para si mesmo
+        if (s.name.equals(targetName, ignoreCase = true)) {
             s.sendMessage(LangConfig.tpaSameName)
             return false
         }
 
-        //check if player is online
-        val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
+        // Checa se o player destino está online
+        val target = TotalEssentialsJava.getInstance().server.getPlayer(targetName) ?: run {
             s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
-        //check if player already send
-        if (DataTeleport.checkTpa(s as Player)) {
+        // Checa se já existe request enviado
+        if (DataTeleport.checkTpa(s)) {
             s.sendMessage(LangConfig.tpaAlreadySend)
             return false
         }
 
-        //check if player has telepot request
-        if (DataTeleport.checkOtherTpa(p)) {
+        // Checa se target já tem request pendente
+        if (DataTeleport.checkOtherTpa(target)) {
             s.sendMessage(LangConfig.tpaAlreadyInAccept)
             return false
         }
-        val time = MainConfig.tpaTimeToAccept
 
-        DataTeleport.createNewTpa(s, p, time)
+        val timeToAccept = MainConfig.tpaTimeToAccept
 
-        s.sendMessage(LangConfig.tpaSuccess.replace("%player%", p.name))
-        p.sendMessage(
-            LangConfig.tpaOtherReceived.replace("%player%", s.name)
-                .replace("%time%", time.toString())
+        DataTeleport.createNewTpa(s, target, timeToAccept)
+
+        s.sendMessage(LangConfig.tpaSuccess.replace("%player%", target.name))
+        target.sendMessage(
+            LangConfig.tpaOtherReceived
+                .replace("%player%", s.name)
+                .replace("%time%", timeToAccept.toString())
         )
+
         return false
     }
 }

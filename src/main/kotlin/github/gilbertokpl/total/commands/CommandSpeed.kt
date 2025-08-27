@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -30,100 +31,68 @@ class CommandSpeed : github.gilbertokpl.core.external.command.CommandCreator("sp
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        //check if is 1
+        // Single argument: set own speed or remove
         if (args.size == 1 && s is Player) {
-
-            if (args[0].lowercase() == "remove" || args[0].lowercase() == "remover") {
+            if (args[0].equals("remove", true) || args[0].equals("remover", true)) {
                 clearSpeed(s)
                 s.sendMessage(LangConfig.speedRemove)
                 return false
             }
 
-            //check int
-            try {
-                args[0].toInt()
-            } catch (e: Throwable) {
-                return true
-            }
+            val speed = args[0].toIntOrNull() ?: return true
 
-            //check if number is 0-10
-            if (args[0].toInt() > 10 || args[0].toInt() < 0) {
+            if (speed !in 0..10) {
                 s.sendMessage(LangConfig.speedIncorrectValue)
                 return false
             }
 
-            setSpeed(args[0].toInt(), s)
-            s.sendMessage(
-                LangConfig.speedSuccess.replace(
-                    "%value%",
-                    args[0]
-                )
-            )
-
-
+            setSpeed(speed, s)
+            s.sendMessage(LangConfig.speedSuccess.replace("%value%", speed.toString()))
             return false
         }
 
+        // Two arguments: set/remove speed for another player
         if (args.size != 2) return true
 
-        //check perm
         if (s is Player && !s.hasPermission("totalessentials.commands.speed.other")) {
             s.sendMessage(LangConfig.generalNotPerm)
             return false
         }
 
-        //check if player exist
-        val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
+        val target = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
             s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
-        if (args[1].lowercase() == "remove" || args[0].lowercase() == "remover") {
-            clearSpeed(p)
-            s.sendMessage(
-                LangConfig.speedRemoveOther.replace(
-                    "%player%",
-                    p.name
-                )
-            )
-            p.sendMessage(LangConfig.speedOtherRemove)
+        if (args[1].equals("remove", true) || args[1].equals("remover", true)) {
+            clearSpeed(target)
+            s.sendMessage(LangConfig.speedRemoveOther.replace("%player%", target.name))
+            target.sendMessage(LangConfig.speedOtherRemove)
             return false
         }
 
-        //check if number is 0-10
-        if (args[1].toInt() > 10 || args[1].toInt() < 0) {
+        val speed = args[1].toIntOrNull() ?: return true
+
+        if (speed !in 0..10) {
             s.sendMessage(LangConfig.speedIncorrectValue)
             return false
         }
 
-        setSpeed(args[1].toInt(), p)
-
-        s.sendMessage(
-            LangConfig.speedSuccessOther.replace(
-                "%player%",
-                p.name
-            ).replace("%value%", args[1])
-        )
-        p.sendMessage(
-            LangConfig.speedOtherSuccess.replace(
-                "%value%",
-                args[1]
-            )
-        )
+        setSpeed(speed, target)
+        s.sendMessage(LangConfig.speedSuccessOther.replace("%player%", target.name).replace("%value%", speed.toString()))
+        target.sendMessage(LangConfig.speedOtherSuccess.replace("%value%", speed.toString()))
         return false
     }
 
-    private fun setSpeed(vel: Int, player: Player) {
-        PlayerData.speedCache[player] = vel
-
-        player.walkSpeed = (vel * 0.1).toFloat()
-        player.flySpeed = (vel * 0.1).toFloat()
+    private fun setSpeed(speed: Int, player: Player) {
+        PlayerData.speedCache[player] = speed
+        player.walkSpeed = (speed * 0.1f)
+        player.flySpeed = (speed * 0.1f)
     }
 
     private fun clearSpeed(player: Player) {
         PlayerData.speedCache[player] = 1
-
-        player.walkSpeed = 0.2F
-        player.flySpeed = 0.1F
+        player.walkSpeed = 0.2f
+        player.flySpeed = 0.1f
     }
 }

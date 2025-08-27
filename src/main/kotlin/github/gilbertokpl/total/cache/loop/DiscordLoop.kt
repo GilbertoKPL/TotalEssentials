@@ -22,15 +22,15 @@ object DiscordLoop {
 
         TaskUtil.getInternalExecutor().scheduleWithFixedDelay({
             val online = PlayerUtil.getIntOnlinePlayers(false)
-            val onlineTime = TotalEssentialsJava.basePlugin.getTime().getOnlineTime()
-            val currentTime = TotalEssentialsJava.basePlugin.getTime().getCurrentDate()
+            val onlineTime = TotalEssentialsJava.getBasePlugin().getTime().getOnlineTime()
+            val currentTime = TotalEssentialsJava.getBasePlugin().getTime().getCurrentDate()
 
             Discord.jda?.getTextChannelById(MainConfig.discordbotIdDiscordChat)?.manager?.setTopic(
                 LangConfig.discordchatDiscordTopic
                     .replace("%online%", online.toString())
                     .replace(
                         "%online_time%",
-                        TotalEssentialsJava.basePlugin.getTime().convertMillisToString(onlineTime, true)
+                        TotalEssentialsJava.getBasePlugin().getTime().convertMillisToString(onlineTime, true)
                     )
                     .replace("%time%", currentTime)
             )?.queue()

@@ -5,6 +5,7 @@ import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.FoliaUtil.teleportSafe
 import github.gilbertokpl.total.util.PlayerUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -74,7 +75,7 @@ class CommandHome : github.gilbertokpl.core.external.command.CommandCreator("hom
                 return false
             }
 
-            p.teleport(loc)
+            p.teleportSafe(loc)
 
 
             p.sendMessage(

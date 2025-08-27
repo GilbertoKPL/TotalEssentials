@@ -15,7 +15,7 @@ import github.gilbertokpl.total.util.VipUtil.checkVip
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("total") {
 
@@ -41,159 +41,136 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        if (args[0].lowercase() == "plugin") {
-            if (args.size == 1 || args.size == 2) return true
+        if (args.isEmpty()) return true
 
-            if (args[1].lowercase() == "load") {
-                s.sendMessage(PluginUtil.load(args[2]))
-                return false
-            }
-
-            val pl = PluginUtil.getPluginByName(args[2]) ?: run {
-                s.sendMessage(LangConfig.generalPluginNotFound)
-                return false
-            }
-
-            when (args[1].lowercase()) {
-                "unload" -> s.sendMessage(PluginUtil.unload(pl))
-                "reload" -> PluginUtil.reload(pl, s)
-                else -> return true
-            }
-            return false
-        }
-
-        if (args[0].lowercase() == "reload") {
-            if (TotalEssentialsJava.basePlugin.reloadConfig()) {
-                s.sendMessage(
-                    LangConfig.generalConfigReload
-                )
-            }
-            return false
-        }
-
-        if (args[0].lowercase() == "reset" && args.size == 1 && s !is Player) {
-
-            if (MainConfig.generalResetList.size == 1 && MainConfig.generalResetList[0] == "0") {
-                s.sendMessage(LangConfig.generalResetMessageNotSet)
-                return false
-            }
-
-            TotalEssentialsJava.basePlugin.getTask().async {
-                val token = KeyData.generateRandomString()
-                for (i in MainConfig.generalResetList) {
-                    val id = i.toLongOrNull() ?: continue
-                    if (!Discord.sendDiscordMessage(
-                            id,
-                            LangConfig.generalResetDiscordMessage.replace("%value%", token)
-                        )
-                    ) {
-                        s.sendMessage(LangConfig.VipsDiscordUserIdNotExist)
-                    }
-                }
-                Data.tokenReset = token
-            }
-
-            s.sendMessage(LangConfig.generalResetMessage)
-            return false
-        }
-
-        if (args[0].lowercase() == "reset" && args.size == 2 && s !is Player) {
-
-            if (args[1].contains(Data.tokenReset)) {
-                for (players in PlayerData.vipCache.getMap()) {
-
-                    PlayerData.commandCache[players.key, ""] = true
-
-                    PlayerData.vipItems[players.key, ArrayList<ItemStack>()] = true
-
-                    if (players.value.isNullOrEmpty()) continue
-
-                    val p = PlayerData.vipCache[players.key] ?: continue
-
-                    if (checkVip(players.key)) {
-                        continue
-                    }
-
-                    for (vips in p) {
-                        val vipItems = VipData.vipItems[vips.key]!!
-
-                        var commands = PlayerData.commandCache[players.key] ?: ""
-
-                        for (c in (VipData.vipCommands[vips.key] ?: ArrayList())) {
-                            commands += if (commands == "") c.replace(
-                                "%player%",
-                                players.key
-                            ) else "-" + c.replace("%player%", players.key)
+        when (args[0].lowercase()) {
+            "plugin" -> {
+                if (args.size < 3) return true
+                when (args[1].lowercase()) {
+                    "load" -> s.sendMessage(PluginUtil.load(args[2]))
+                    "unload", "reload" -> {
+                        val pl = PluginUtil.getPluginByName(args[2]) ?: run {
+                            s.sendMessage(LangConfig.generalPluginNotFound)
+                            return false
                         }
-
-                        PlayerData.commandCache[players.key, commands] = true
-
-                        PlayerData.vipItems[players.key, vipItems] = true
+                        if (args[1].lowercase() == "unload") s.sendMessage(PluginUtil.unload(pl))
+                        else PluginUtil.reload(pl, s)
                     }
+                    else -> return true
                 }
-
-                TotalEssentialsJava.basePlugin.getTask().async {
-                    try {
-                        transaction(basePlugin?.sql) {
-                            for (i in basePlugin?.getCache()?.toByteUpdate!!) {
-                                try {
-                                    i.update()
-                                } catch (e: Exception) {
-                                    println(e)
-                                }
-                            }
-                        }
-                    } catch (e: Exception) {
-                        println(e)
-                    }
-                }
-
-                Data.tokenReset = ""
                 return false
             }
-            return false
-        }
 
-        if (args[0].lowercase() == "host") {
-            s.sendMessage(LangConfig.generalHostWait)
-            //sendhostinfo
-            val host = basePlugin!!.getHost().getHost()
-            LangConfig.generalHostConfig.forEach {
-                s.sendMessage(
-                    it.replace("%ip%", host.ipAddress)
-                        .replace("%os%", host.osName)
-                        .replace("%os_version%", host.osVersion)
-                        .replace("%cpu_name%", host.cpuName)
-                        .replace("%cpu_clock_min%", host.cpuClockMin)
-                        .replace("%cpu_clock_max%", host.cpuClockMax)
-                        .replace("%cores%", host.cpuCores)
-                        .replace("%cores_server%", host.cpuAvailable)
-                        .replace(
-                            "%cpu_usage%", host.cpuUsage
-                        )
-                        .replace("%used_mem%", host.memoryAllUsage)
-                        .replace("%used_server_mem%", host.memoryServerUsage)
-                        .replace("%max_mem%", host.memoryMax)
-                        .replace("%max_server_mem%", host.memoryServerMax)
-                        .replace("%gpu%", host.gpuName)
-                        .replace("%name_hd%", host.diskName)
-                        .replace("%used_hd%", host.diskUsage)
-                        .replace("%max_hd%", host.diskMax)
-                )
+            "reload" -> {
+                if (TotalEssentialsJava.getBasePlugin().reloadConfig()) {
+                    s.sendMessage(LangConfig.generalConfigReload)
+                }
+                return false
             }
-            return false
-        }
 
-        if (args[0].lowercase() == "id" && s is Player) {
-            s.sendMessage(s.itemInHand.type.name.lowercase())
-            return false
-        }
+            "reset" -> {
+                if (s is Player) return false // reset is console only
+                if (args.size == 1) return resetGenerateToken(s)
+                if (args.size == 2) return resetExecute(args[1])
+            }
 
-        if (args[0].lowercase() == "save") {
-            TotalEssentialsJava.basePlugin.getCache().save()
-            s.sendMessage("salvo")
-            return false
+            "host" -> {
+                sendHostInfo(s)
+                return false
+            }
+
+            "id" -> {
+                if (s is Player) s.sendMessage(s.itemInHand.type.name.lowercase())
+                return false
+            }
+
+            "save" -> {
+                TotalEssentialsJava.getBasePlugin().getCache().save()
+                s.sendMessage("Salvo!")
+                return false
+            }
         }
         return true
+    }
+
+    private fun resetGenerateToken(s: CommandSender): Boolean {
+        if (MainConfig.generalResetList.firstOrNull() == "0") {
+            s.sendMessage(LangConfig.generalResetMessageNotSet)
+            return false
+        }
+
+        TotalEssentialsJava.getBasePlugin().getTask().async {
+            val token = KeyData.generateRandomString()
+            for (idString in MainConfig.generalResetList) {
+                val id = idString.toLongOrNull() ?: continue
+                if (!Discord.sendDiscordMessage(id, LangConfig.generalResetDiscordMessage.replace("%value%", token))) {
+                    s.sendMessage(LangConfig.VipsDiscordUserIdNotExist)
+                }
+            }
+            Data.tokenReset = token
+        }
+
+        s.sendMessage(LangConfig.generalResetMessage)
+        return false
+    }
+
+    private fun resetExecute(providedToken: String): Boolean {
+        if (!providedToken.contains(Data.tokenReset)) return false
+
+        for ((playerName, vips) in PlayerData.vipCache.getMap()) {
+
+            PlayerData.commandCache[playerName, ""] = true
+            PlayerData.vipItems[playerName, ArrayList<ItemStack>()] = true
+
+            if (vips.isNullOrEmpty()) continue
+
+            if (checkVip(playerName)) continue
+
+            for ((vipName, _) in vips) {
+                val vipItems = VipData.vipItems[vipName] ?: continue
+                val commands = VipData.vipCommands[vipName]?.joinToString("-") { it.replace("%player%", playerName) } ?: ""
+                PlayerData.commandCache[playerName, commands] = true
+                PlayerData.vipItems[playerName, vipItems] = true
+            }
+        }
+
+        TotalEssentialsJava.getBasePlugin().getTask().async {
+            try {
+                transaction(TotalEssentialsJava.getBasePlugin().sql) {
+                    TotalEssentialsJava.getBasePlugin().getCache().toByteUpdate.forEach {
+                        try { it.update() } catch (e: Exception) { println(e) }
+                    }
+                }
+            } catch (e: Exception) { println(e) }
+        }
+
+        Data.tokenReset = ""
+        return false
+    }
+
+    private fun sendHostInfo(s: CommandSender) {
+        s.sendMessage(LangConfig.generalHostWait)
+        val host = TotalEssentialsJava.getBasePlugin().getHost().getHost()
+        LangConfig.generalHostConfig.forEach { line ->
+            s.sendMessage(
+                line.replace("%ip%", host.ipAddress)
+                    .replace("%os%", host.osName)
+                    .replace("%os_version%", host.osVersion)
+                    .replace("%cpu_name%", host.cpuName)
+                    .replace("%cpu_clock_min%", host.cpuClockMin)
+                    .replace("%cpu_clock_max%", host.cpuClockMax)
+                    .replace("%cores%", host.cpuCores)
+                    .replace("%cores_server%", host.cpuAvailable)
+                    .replace("%cpu_usage%", host.cpuUsage)
+                    .replace("%used_mem%", host.memoryAllUsage)
+                    .replace("%used_server_mem%", host.memoryServerUsage)
+                    .replace("%max_mem%", host.memoryMax)
+                    .replace("%max_server_mem%", host.memoryServerMax)
+                    .replace("%gpu%", host.gpuName)
+                    .replace("%name_hd%", host.diskName)
+                    .replace("%used_hd%", host.diskUsage)
+                    .replace("%max_hd%", host.diskMax)
+            )
+        }
     }
 }

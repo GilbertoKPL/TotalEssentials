@@ -2,8 +2,10 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.FoliaUtil.teleportSafe
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -24,12 +26,12 @@ class CommandTphere : github.gilbertokpl.core.external.command.CommandCreator("t
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
         // check if player is online
-        val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
+        val p = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
             s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
-        p.teleport((s as Player).location)
+        p.teleportSafe((s as Player).location)
 
         p.sendMessage(
             LangConfig.tphereTeleportedOtherSuccess

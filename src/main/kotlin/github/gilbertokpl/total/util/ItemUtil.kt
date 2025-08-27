@@ -1,13 +1,12 @@
 package github.gilbertokpl.total.util
 
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.KitsData
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.Material
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
-import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
@@ -35,7 +34,7 @@ internal object ItemUtil {
             p.sendMessage(
                 LangConfig.kitsGetMessage.replace(
                     "%time%",
-                    github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getTime().convertMillisToString(
+                    TotalEssentialsJava.getBasePlugin().getTime().convertMillisToString(
                         remainingTime,
                         MainConfig.kitsUseShortTime
                     )
@@ -186,7 +185,10 @@ internal object ItemUtil {
         val item = ItemStack(material)
         if (effect) {
             try {
-                item.addUnsafeEnchantment(Enchantment.LUCK, 1)
+                val en = EnchantUtil["LUKE"]
+                if (en != null) {
+                    item.addUnsafeEnchantment(en, 1)
+                }
             } catch (ignored: NoSuchFieldError) {
             }
         }
@@ -212,7 +214,10 @@ internal object ItemUtil {
         val item = ItemStack(material)
         if (effect) {
             try {
-                item.addUnsafeEnchantment(Enchantment.LUCK, 1)
+                val en = EnchantUtil["LUKE"]
+                if (en != null) {
+                    item.addUnsafeEnchantment(en, 1)
+                }
             } catch (ignored: NoSuchFieldError) {
             }
         }

@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.cache.internal.inventory
 
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.util.ItemUtil
@@ -37,7 +38,7 @@ internal object EditKit {
     }
 
     fun editKitGui(player: Player, kit: String) {
-        val inventory = github.gilbertokpl.total.TotalEssentialsJava.instance.server
+        val inventory = TotalEssentialsJava.getInstance().server
             .createInventory(null, EDIT_KIT_INVENTORY_SIZE, "§eEditKit $kit")
         Data.editKitItemCache.forEach { (slot, item) ->
             inventory.setItem(slot, item)
@@ -46,7 +47,7 @@ internal object EditKit {
     }
 
     fun editKitGuiItems(player: Player, kit: String, items: List<ItemStack>) {
-        val inventory = github.gilbertokpl.total.TotalEssentialsJava.instance.server
+        val inventory = TotalEssentialsJava.getInstance().server
             .createInventory(null, EDIT_KIT_ITEMS_INVENTORY_SIZE, kit)
         items.forEach { item ->
             inventory.addItem(item)

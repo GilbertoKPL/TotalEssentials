@@ -12,13 +12,13 @@ object LoginUtil {
     fun loginMessage(player: Player) {
         TaskUtil.getInternalExecutor().scheduleWithFixedDelay({
             if (!player.isOnline || LoginData.isPlayerLoggedIn(player)) {
-                Thread.currentThread().stop()
+                Thread.currentThread().interrupt()
             }
             if ((MainConfig.authMaxAttempts + 1) == LoginData.values[player]) {
-                Bukkit.getScheduler().runTask(TotalEssentialsJava.instance, Runnable {
+                Bukkit.getScheduler().runTask(TotalEssentialsJava.getInstance(), Runnable {
                     player.kickPlayer(LangConfig.authKickMessageTime)
                 })
-                Thread.currentThread().stop()
+                Thread.currentThread().interrupt()
             }
             if (LoginData.doesPlayerExist(player)) {
                 player.sendMessage(LangConfig.authLoginMessage)

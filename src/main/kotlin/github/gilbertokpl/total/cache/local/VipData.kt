@@ -1,18 +1,19 @@
 package github.gilbertokpl.total.cache.local
 
 import github.gilbertokpl.core.external.cache.interfaces.CacheBase
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.serializer.CommandsSerializer
 import github.gilbertokpl.total.cache.serializer.ItemSerializer
 import github.gilbertokpl.total.cache.sql.VipDataSQL
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.Table
 
 object VipData : CacheBase {
     override var table: Table = VipDataSQL
     override var primaryColumn: Column<String> = VipDataSQL.vipName
 
-    private val cache = github.gilbertokpl.total.TotalEssentialsJava.basePlugin.getCache()
+    private val cache = TotalEssentialsJava.getBasePlugin().getCache()
 
     val vipItems = cache.list(this, VipDataSQL.vipItems, ItemSerializer())
     val vipPrice = cache.integer(this, VipDataSQL.vipPrice)

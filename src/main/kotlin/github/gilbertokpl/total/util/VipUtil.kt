@@ -4,134 +4,140 @@ import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.cache.local.VipData
 import github.gilbertokpl.total.discord.Discord
+import net.milkbowl.vault.permission.Permission
 import org.bukkit.World
 
 object VipUtil {
 
+    // Optional world context
     val world: World? = null
 
+    // =========================================================
+    // Check expired VIPs and remove them
+    // =========================================================
     fun checkVip(entity: String): Boolean {
         val vips = PlayerData.vipCache[entity] ?: return false
+        val toRemove = mutableListOf<String>()
+        var hasExpired = false
 
-        val toExclude = ArrayList<String>()
-
-        var delet = false
-
-        for (v in vips) {
-            if (v.value < System.currentTimeMillis()) {
-                delet = true
-                toExclude.add(v.key)
+        // Collect expired VIP keys
+        for ((vipKey, expiry) in vips) {
+            if (expiry < System.currentTimeMillis()) {
+                hasExpired = true
+                toRemove.add(vipKey)
             }
         }
 
-        for (t in toExclude) {
-            PlayerData.vipCache.remove(entity, t)
-            TotalEssentialsJava.permission.playerRemoveGroup(world, entity, VipData.vipGroup[t])
-            VipData.vipQuantity[t] = (VipData.vipQuantity[t] ?: 0) - 1
-            Discord.removeUserRole(PlayerData.discordCache[entity] ?: continue, VipData.vipDiscord[t] ?: continue)
+        val perm = TotalEssentialsJava.getPermission()
+
+        // Remove expired VIPs
+        for (vipKey in toRemove) {
+            PlayerData.vipCache.remove(entity, vipKey)
+
+            if (perm is Permission) {
+                perm.playerRemoveGroup(world, entity, VipData.vipGroup[vipKey])
+            } else if (perm is net.milkbowl.vault2.permission.Permission) {
+                perm.playerRemoveGroup(world, entity, VipData.vipGroup[vipKey])
+            }
+
+            VipData.vipQuantity[vipKey] = (VipData.vipQuantity[vipKey] ?: 0) - 1
+            val token = PlayerData.discordCache[entity] ?: continue
+            val roleID = VipData.vipDiscord[vipKey] ?: continue
+            Discord.removeUserRole(token, roleID)
         }
 
-        if (toExclude.isNotEmpty()) {
+        if (toRemove.isNotEmpty()) {
             updateCargo(entity)
         }
-        return delet
+
+        return hasExpired
     }
 
+    // =========================================================
+    // Update VIP group for player
+    // =========================================================
     fun updateCargo(entity: String, newVip: String? = null, execute: Boolean = true): String? {
-
         val vips = PlayerData.vipCache[entity] ?: return null
+        val sequence = vips.keys.toList()
+        val size = sequence.size
 
-        val size = vips.size
-
-        val sequence = ArrayList<String>()
-
+        val perm = TotalEssentialsJava.getPermission()
         var currentGroup: String? = null
 
-        for (v in vips) {
-            sequence.add(v.key)
-        }
-
-        for (g in sequence) {
-            val group = VipData.vipGroup[g] ?: continue
-            if (TotalEssentialsJava.permission.playerInGroup(world, entity, group)) {
-                currentGroup = g
+        // Check current VIP group
+        for (vipKey in sequence) {
+            val group = VipData.vipGroup[vipKey] ?: continue
+            if ((perm as? Permission)?.playerInGroup(world, entity, group) == true ||
+                (perm as? net.milkbowl.vault2.permission.Permission)?.playerInGroup(world, entity, group) == true) {
+                currentGroup = vipKey
                 break
             }
         }
 
+        // No current group assigned
         if (currentGroup == null) {
             if (newVip != null) {
-                TotalEssentialsJava.permission.playerAddGroup(world, entity, VipData.vipGroup[newVip])
-
-                if (execute) {
-                    for (c in (VipData.vipCommands[newVip] ?: ArrayList())) {
-                        TotalEssentialsJava.instance.server.dispatchCommand(
-                            TotalEssentialsJava.instance.server.consoleSender,
-                            c.replace("%player%", entity)
-                        )
-                    }
-                }
-
-                VipData.vipQuantity[newVip] = (VipData.vipQuantity[newVip] ?: 0) + 1
-
-                val token = PlayerData.discordCache[entity]
-                val roleID = VipData.vipDiscord[newVip]
-                if (token != null && roleID != null && token != 0L) {
-                    Discord.addUserRole(token, roleID)
-                }
+                addVip(entity, newVip, perm, execute)
                 return null
-            }
-            if (size > 0) {
-                val newGroup = vips.keys.first()
-                TotalEssentialsJava.permission.playerAddGroup(world, entity, VipData.vipGroup[newGroup])
-                return newGroup
+            } else if (size > 0) {
+                val firstGroup = sequence.first()
+                addVip(entity, firstGroup, perm, execute = false)
+                return firstGroup
             }
             return null
         }
 
-        var value = 0
+        // Determine next group in sequence
+        var value = sequence.indexOf(currentGroup) + 1
+        if (size < (value + 1)) value = 1
 
-        for (i in sequence) {
-            value += 1
-            if (i == currentGroup) {
-                break
-            }
-        }
+        removeVipGroup(entity, currentGroup, perm)
 
-        if (size < (value + 1)) {
-            value = 1
-        } else {
-            value += 1
-        }
-
-        TotalEssentialsJava.permission.playerRemoveGroup(world, entity, VipData.vipGroup[currentGroup])
-
+        // Assign new VIP if provided
         if (newVip != null) {
-            TotalEssentialsJava.permission.playerAddGroup(world, entity, VipData.vipGroup[newVip])
-
-            if (execute) {
-                for (c in (VipData.vipCommands[newVip] ?: ArrayList())) {
-                    TotalEssentialsJava.instance.server.dispatchCommand(
-                        TotalEssentialsJava.instance.server.consoleSender,
-                        c.replace("%player%", entity)
-                    )
-                }
-            }
-
-            VipData.vipQuantity[newVip] = (VipData.vipQuantity[newVip] ?: 0) + 1
-
-            val token = PlayerData.discordCache[entity]
-            val roleID = VipData.vipDiscord[newVip]
-            if (token != null && roleID != null && token != 0L) {
-                Discord.addUserRole(token, roleID)
-            }
+            addVip(entity, newVip, perm, execute)
             return null
         }
 
-        TotalEssentialsJava.permission.playerAddGroup(world, entity, VipData.vipGroup[sequence[value - 1]])
-
-        return sequence[value - 1]
-
+        // Assign next VIP in sequence
+        val nextVip = sequence[value - 1]
+        addVip(entity, nextVip, perm, execute = false)
+        return nextVip
     }
 
+    // =========================================================
+    // Add VIP group and execute commands/roles
+    // =========================================================
+    private fun addVip(entity: String, vipKey: String, perm: Any?, execute: Boolean) {
+        val group = VipData.vipGroup[vipKey] ?: return
+
+        if (perm is Permission) perm.playerAddGroup(world, entity, group)
+        else if (perm is net.milkbowl.vault2.permission.Permission) perm.playerAddGroup(world, entity, group)
+
+        if (execute) {
+            for (command in VipData.vipCommands[vipKey] ?: emptyList()) {
+                TotalEssentialsJava.getInstance().server.dispatchCommand(
+                    TotalEssentialsJava.getInstance().server.consoleSender,
+                    command.replace("%player%", entity)
+                )
+            }
+        }
+
+        VipData.vipQuantity[vipKey] = (VipData.vipQuantity[vipKey] ?: 0) + 1
+
+        val token = PlayerData.discordCache[entity]
+        val roleID = VipData.vipDiscord[vipKey]
+        if (token != null && roleID != null && token != 0L) {
+            Discord.addUserRole(token, roleID)
+        }
+    }
+
+    // =========================================================
+    // Remove VIP group from player
+    // =========================================================
+    private fun removeVipGroup(entity: String, vipKey: String, perm: Any?) {
+        val group = VipData.vipGroup[vipKey] ?: return
+        if (perm is Permission) perm.playerRemoveGroup(world, entity, group)
+        else if (perm is net.milkbowl.vault2.permission.Permission) perm.playerRemoveGroup(world, entity, group)
+    }
 }

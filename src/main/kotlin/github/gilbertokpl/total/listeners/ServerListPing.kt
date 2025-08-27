@@ -22,7 +22,7 @@ class ServerListPing : Listener {
     }
 
     private fun motd(e: ServerListPingEvent) {
-        val motd = if (TotalEssentialsJava.instance.server.hasWhitelist()) {
+        val motd = if (TotalEssentialsJava.getInstance().server.hasWhitelist()) {
             MainUtil.getRandom(MainConfig.motdListMotdWhitelist).replace(
                 "%players_online%",
                 PlayerUtil.getIntOnlinePlayers(false).toString()

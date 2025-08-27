@@ -4,10 +4,10 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import github.gilbertokpl.core.external.CorePlugin
 import org.bukkit.Bukkit
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.sql.SQLTransientConnectionException
 
 internal class InternalDatabase(private val corePlugin: CorePlugin) {
@@ -17,7 +17,7 @@ internal class InternalDatabase(private val corePlugin: CorePlugin) {
 
             val database = when (corePlugin.getConfig().configs().databaseType.lowercase()) {
                 "h2" -> {
-                    val databasePath = "./${corePlugin.mainPath}/sql/H2database"
+                    val databasePath = "./${corePlugin.mainPath}/sql/H2database".replace(".paper-remapped/", "")
                     Database.connect("jdbc:h2:$databasePath", "org.h2.Driver")
                 }
 
@@ -40,7 +40,7 @@ internal class InternalDatabase(private val corePlugin: CorePlugin) {
                 }
 
                 else -> {
-                    val databasePath = "./${corePlugin.mainPath}/sql/H2database"
+                    val databasePath = "./${corePlugin.mainPath}/sql/H2database".replace(".paper-remapped/", "")
                     Database.connect("jdbc:h2:$databasePath", "org.h2.Driver")
                 }
             }

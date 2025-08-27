@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -28,85 +29,73 @@ class CommandGamemode : github.gilbertokpl.core.external.command.CommandCreator(
         )
     }
 
-
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val playerGameMode = PlayerUtil.getGameModeNumber(args[0])
+        val senderPlayer = s as? Player
+        val targetGameMode = PlayerUtil.getGameModeNumber(args[0])
 
-        if (args.size == 1 && s is Player) {
-
-            //check if player is in same gamemode
-            if (s.gameMode == playerGameMode) {
-                s.sendMessage(LangConfig.gamemodeSameGamemode)
+        // --------------------------------------------------------
+        // Set gamemode self
+        // --------------------------------------------------------
+        if (args.size == 1 && senderPlayer != null) {
+            if (senderPlayer.gameMode == targetGameMode) {
+                senderPlayer.sendMessage(LangConfig.gamemodeSameGamemode)
                 return false
             }
 
-            setGamemode(playerGameMode, s)
-
-            s.sendMessage(
-                LangConfig.gamemodeUseSuccess.replace(
-                    "%gamemode%",
-                    playerGameMode.name.lowercase()
-                )
+            applyGamemode(senderPlayer, targetGameMode)
+            senderPlayer.sendMessage(
+                LangConfig.gamemodeUseSuccess.replace("%gamemode%", targetGameMode.name.lowercase())
             )
             return false
         }
 
+        // --------------------------------------------------------
+        // Set gamemode another player
+        // --------------------------------------------------------
         if (args.size == 2) {
-
-            //check perms
-            if (s is Player && !s.hasPermission("totalessentials.commands.gamemode.other")) {
-                s.sendMessage(LangConfig.generalNotPerm)
+            if (senderPlayer != null && !senderPlayer.hasPermission("totalessentials.commands.gamemode.other")) {
+                senderPlayer.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
-            //check if player exist
-            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[1]) ?: run {
+            val target = TotalEssentialsJava.getInstance().server.getPlayer(args[1]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
-            //check if player is in same gamemode
-            if (p.gameMode == playerGameMode) {
+            if (target.gameMode == targetGameMode) {
                 s.sendMessage(LangConfig.gamemodeSameOtherGamemode)
                 return false
             }
 
-            setGamemode(playerGameMode, p)
+            applyGamemode(target, targetGameMode)
 
-            p.sendMessage(
-                LangConfig.gamemodeUseOtherSuccess.replace(
-                    "%gamemode%",
-                    playerGameMode.name.lowercase()
-                )
+            target.sendMessage(
+                LangConfig.gamemodeUseOtherSuccess.replace("%gamemode%", targetGameMode.name.lowercase())
             )
+
             s.sendMessage(
-                LangConfig.gamemodeSuccessOtherMessage.replace(
-                    "%player%",
-                    p.name
-                ).replace(
-                    "%gamemode%",
-                    playerGameMode.name.lowercase()
-                )
+                LangConfig.gamemodeSuccessOtherMessage
+                    .replace("%player%", target.name)
+                    .replace("%gamemode%", targetGameMode.name.lowercase())
             )
+
             return false
         }
 
         return true
     }
 
-    private fun setGamemode(gm: GameMode, player: Player) {
-
-        val gamemodeNumber = PlayerUtil.getNumberGameMode(gm)
-
-        PlayerData.gameModeCache[player] = gamemodeNumber
+    private fun applyGamemode(player: Player, gm: GameMode) {
+        val gmNumber = PlayerUtil.getNumberGameMode(gm)
+        PlayerData.gameModeCache[player] = gmNumber
 
         player.gameMode = gm
 
-        //desbug fly on set gamemode 0
-        if (gm == GameMode.SURVIVAL && PlayerData.flyCache[player]!!) {
+        // Corrige bug de fly no gamemode survival
+        if (gm == GameMode.SURVIVAL && PlayerData.flyCache[player] == true) {
             player.allowFlight = true
             player.isFlying = true
         }
-
     }
 }

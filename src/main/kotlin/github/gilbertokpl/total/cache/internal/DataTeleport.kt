@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.cache.internal
 
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.util.TaskUtil
 import org.bukkit.entity.Player
@@ -44,9 +45,9 @@ internal data class DataTeleport(
                     if (senderData?.wait == true) {
                         tpaData.remove(pSender)
 
-                        github.gilbertokpl.total.TotalEssentialsJava.instance.server.scheduler.runTask(
-                            github.gilbertokpl.total.TotalEssentialsJava.instance
-                        ) { BukkitRunnable ->
+                        TotalEssentialsJava.getInstance().server.scheduler.runTask(
+                            TotalEssentialsJava.getInstance()
+                        ) { _ ->
                             pSender.sendMessage(
                                 LangConfig.tpaRequestOtherDenyTime.replace(
                                     "%player%",

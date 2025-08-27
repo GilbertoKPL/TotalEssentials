@@ -13,8 +13,7 @@ import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class
-CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
+class CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -34,12 +33,10 @@ CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-
         val p = s as Player
 
+        // open own shop GUI
         if (args.isEmpty()) {
-
-
             val inventory = Data.shopInventoryCache[1] ?: run {
                 s.sendMessage(LangConfig.shopNotExistShop)
                 return false
@@ -54,58 +51,59 @@ CommandShop : github.gilbertokpl.core.external.command.CommandCreator("shop") {
             }
 
             p.openInventory(inventory)
-
             return false
         }
 
+        // toggle own shop open/close
         if (args[0].equals("trocar", true) && p.hasPermission("totalessentials.commands.shop.set")) {
             if (!ShopData.checkIfShopExists(p.name.lowercase())) {
                 s.sendMessage(LangConfig.shopNotCreated)
                 return false
             }
-            val bol = ShopData.shopOpen[p]!!
 
-            ShopData.shopOpen[p] = bol.not()
+            val currentState = ShopData.shopOpen[p]!!
+            ShopData.shopOpen[p] = !currentState
 
-            val checkIfIsOpen = if (bol.not()) {
-                LangConfig.shopOpen
-            } else {
-                LangConfig.shopClosed
-            }
+            val statusText = if (!currentState) LangConfig.shopOpen else LangConfig.shopClosed
+            p.sendMessage(LangConfig.shopSwitchMessage.replace("%open%", statusText))
 
-            p.sendMessage(LangConfig.shopSwitchMessage.replace("%open%", checkIfIsOpen))
             Shop.setup()
             return false
         }
 
+        // set or update own shop
         if (args[0].equals("setar", true) && p.hasPermission("totalessentials.commands.shop.set")) {
             s.sendMessage(LangConfig.shopCreateShopSuccess)
+
             if (ShopData.checkIfShopExists(p.name.lowercase())) {
                 ShopData.shopLocation[p] = p.location
-                return false
+            } else {
+                ShopData.createNewShop(p.location, p)
             }
-            ShopData.createNewShop(p.location, p)
+
             Shop.setup()
             return false
         }
 
-        //check if not exist
+        // check if target shop exists
         if (!ShopData.checkIfShopExists(args[0])) {
             s.sendMessage(LangConfig.shopNotExist)
             return false
         }
 
+        // check if target shop is open
         if (ShopData.shopOpen[args[0].lowercase()] == false) {
             s.sendMessage(LangConfig.shopClosedMessage)
             return false
         }
 
+        // increment visit count if visiting other player
         if (args[0].lowercase() != p.name.lowercase()) {
             ShopData.shopVisits[args[0]] = ShopData.shopVisits[args[0]]!!.plus(1)
         }
 
+        // teleport player to the shop
         PlayerUtil.shopTeleport(p, args[0])
-
         return false
     }
 }

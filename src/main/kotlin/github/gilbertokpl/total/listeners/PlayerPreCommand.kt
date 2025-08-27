@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.listeners
 
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -15,7 +16,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 class PlayerPreCommand : Listener {
 
     private val chat = try {
-        github.gilbertokpl.total.TotalEssentialsJava.instance.server.servicesManager.getRegistration(Chat::class.java)?.provider
+        TotalEssentialsJava.getInstance().server.servicesManager.getRegistration(Chat::class.java)?.provider
     } catch (c: NoClassDefFoundError) {
         null
     }

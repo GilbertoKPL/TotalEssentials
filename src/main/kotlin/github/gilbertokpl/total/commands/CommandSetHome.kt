@@ -32,10 +32,9 @@ class CommandSetHome : github.gilbertokpl.core.external.command.CommandCreator("
 
         val nameHome = args[0].lowercase()
 
-        //admin
+        // admin set home for others
         if (args[0].contains(":") && s.hasPermission("totalessentials.commands.sethome.other")) {
             val split = args[0].split(":")
-
             val pName = split[0]
 
             if (!PlayerData.checkIfPlayerExists(pName)) {
@@ -64,25 +63,24 @@ class CommandSetHome : github.gilbertokpl.core.external.command.CommandCreator("
                 LangConfig.homesOtherCreated.replace("%player%", pName)
                     .replace("%home%", split[1])
             )
-
-            return false
-        }
-
-        //check if home name do not contain . or - to not bug
-        if (MainUtil.checkSpecialCharacters(nameHome)) {
-            s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
-            return false
-        }
-
-        //check length of home name
-        if (nameHome.length > 16) {
-            s.sendMessage(LangConfig.homesNameLength)
             return false
         }
 
         s as Player
 
-        //update limit
+        // check invalid characters
+        if (MainUtil.checkSpecialCharacters(nameHome)) {
+            s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
+            return false
+        }
+
+        // check name length
+        if (nameHome.length > 16) {
+            s.sendMessage(LangConfig.homesNameLength)
+            return false
+        }
+
+        // update home limit if needed
         if (!s.hasPermission("totalessentials.commands.sethome." + PlayerData.homeLimitCache[s])) {
             PlayerData.homeLimitCache[s] = PermissionUtil.getNumberPermission(
                 s,
@@ -91,7 +89,7 @@ class CommandSetHome : github.gilbertokpl.core.external.command.CommandCreator("
             )
         }
 
-        //check limit of homes
+        // check if home limit reached
         if (PlayerData.homeCache[s]!!.size >= PlayerData.homeLimitCache[s]!! &&
             !s.hasPermission("totalessentials.bypass.homelimit")
         ) {
@@ -104,15 +102,15 @@ class CommandSetHome : github.gilbertokpl.core.external.command.CommandCreator("
             return false
         }
 
-        //check if world is blocked
-        if (MainConfig.homesBlockWorlds.contains(s.world.name.lowercase()) && !s.hasPermission(
-                "totalessentials.bypass.homeblockedworlds"
-            )
+        // check blocked worlds
+        if (MainConfig.homesBlockWorlds.contains(s.world.name.lowercase()) &&
+            !s.hasPermission("totalessentials.bypass.homeblockedworlds")
         ) {
             s.sendMessage(LangConfig.homesBlockedWorld)
             return false
         }
 
+        // set home
         PlayerData.homeCache[s] = hashMapOf(nameHome to s.location)
         s.sendMessage(LangConfig.homesCreated.replace("%home%", nameHome))
 

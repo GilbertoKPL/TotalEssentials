@@ -5,6 +5,7 @@ import github.gilbertokpl.core.external.command.annotations.CommandPattern
 import github.gilbertokpl.total.cache.local.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.FoliaUtil.teleportSafe
 import github.gilbertokpl.total.util.PlayerUtil
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
@@ -62,7 +63,7 @@ class CommandWarp : github.gilbertokpl.core.external.command.CommandCreator("war
                 return false
             }
 
-            newPlayer.teleport(WarpData.warpLocation[warpName]!!)
+            newPlayer.teleportSafe(WarpData.warpLocation[warpName]!!)
 
             newPlayer.sendMessage(
                 LangConfig.warpsTeleportedOtherMessage.replace(

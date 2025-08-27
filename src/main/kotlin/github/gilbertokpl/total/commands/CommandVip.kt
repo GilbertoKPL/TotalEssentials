@@ -12,10 +12,15 @@ import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
 import github.gilbertokpl.total.util.PlayerUtil
 import github.gilbertokpl.total.util.VipUtil
+import net.milkbowl.vault.permission.Permission
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
+/**
+ * Handles all VIP-related commands.
+ * Includes admin commands (create/remove VIPs) and player commands (use VIP keys, view time, manage items).
+ */
 class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip") {
 
     override fun commandPattern(): CommandPattern {
@@ -51,424 +56,345 @@ class CommandVip : github.gilbertokpl.core.external.command.CommandCreator("vip"
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+        if (args.isEmpty()) return true
 
-        if (args[0].lowercase() == "criar" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
-            if (VipData.vipExists(args[1])) {
+        val subCommand = args[0].lowercase()
+        val perm = TotalEssentialsJava.getPermission()
+
+        /**
+         * ------------------------------
+         * ADMIN VIP COMMANDS
+         * ------------------------------
+         */
+
+        // CREATE VIP
+        if (subCommand == "criar" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
+            val vipName = args[1]
+            val vipGroup = args[2]
+
+            if (VipData.vipExists(vipName)) {
                 s.sendMessage(LangConfig.VipsExist)
                 return false
             }
-            if (TotalEssentialsJava.permission.groups.contains(args[2])) {
-                VipData.createNewVip(args[1], args[2])
-                s.sendMessage(LangConfig.VipsCreateNew.replace("%vip%", args[1]))
-                return false
+
+            val groupExists = when (perm) {
+                is Permission -> perm.groups.contains(vipGroup)
+                is net.milkbowl.vault2.permission.Permission -> perm.groups.contains(vipGroup)
+                else -> false
             }
-            s.sendMessage(LangConfig.VipsGroupNotExist)
+
+            if (groupExists) {
+                VipData.createNewVip(vipName, vipGroup)
+                s.sendMessage(LangConfig.VipsCreateNew.replace("%vip%", vipName))
+            } else {
+                s.sendMessage(LangConfig.VipsGroupNotExist)
+            }
             return false
         }
 
-        if (args[0].lowercase() == "list" && args.size == 1 && s.hasPermission("totalessentials.commands.vip.admin")) {
+        // LIST VIPs
+        if (subCommand == "list" && args.size == 1 && s.hasPermission("totalessentials.commands.vip.admin")) {
             s.sendMessage(LangConfig.VipsListMessage)
-            for (i in VipData.vipPrice.getMap()) {
-                s.sendMessage(LangConfig.VipsList.replace("%vip%", i.key))
+            VipData.vipPrice.getMap().forEach { (vip, _) ->
+                s.sendMessage(LangConfig.VipsList.replace("%vip%", vip))
             }
             return false
         }
 
-        if (args[0].lowercase() == "remover" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
+        // REMOVE VIP from a player
+        if (subCommand == "remover" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
+            val playerName = args[1]
+            val vipName = args[2]
 
-            if (!PlayerData.checkIfPlayerExists(args[1])) {
+            if (!PlayerData.checkIfPlayerExists(playerName)) {
                 s.sendMessage(LangConfig.generalPlayerNotExist)
                 return false
             }
 
-            if (!VipData.vipExists(args[2])) {
+            if (!VipData.vipExists(vipName)) {
                 s.sendMessage(LangConfig.VipsNotExist)
                 return false
             }
 
-            val cache = PlayerData.vipCache[args[1]] ?: return true
-
-            if (cache[args[2]] == null) {
+            val cache = PlayerData.vipCache[playerName] ?: return true
+            if (cache[vipName] == null) {
                 s.sendMessage(LangConfig.VipsRemoveNoVip)
                 return false
             }
 
-            cache.remove(args[2])
+            cache.remove(vipName)
+            VipUtil.updateCargo(playerName)
 
-            VipUtil.updateCargo(args[1])
-            TotalEssentialsJava.permission.playerRemoveGroup(VipUtil.world, args[1], VipData.vipGroup[args[2]])
-            VipData.vipQuantity[args[2]] = (VipData.vipQuantity[args[2]] ?: 0) - 1
-            PlayerData.discordCache[args[1]]?.let { VipData.vipDiscord[args[2]]?.let { it1 ->
-                Discord.removeUserRole(it,
-                    it1
-                )
-            } }
+            when (perm) {
+                is Permission -> perm.playerRemoveGroup(VipUtil.world, playerName, VipData.vipGroup[vipName])
+                is net.milkbowl.vault2.permission.Permission -> perm.playerRemoveGroup(VipUtil.world, playerName, VipData.vipGroup[vipName])
+            }
+
+            VipData.vipQuantity[vipName] = (VipData.vipQuantity[vipName] ?: 0) - 1
+
+            PlayerData.discordCache[playerName]?.let { discordId ->
+                VipData.vipDiscord[vipName]?.let { roleId ->
+                    Discord.removeUserRole(discordId, roleId)
+                }
+            }
 
             s.sendMessage(LangConfig.VipsRemove)
-
             return false
         }
 
-        if (args[0].lowercase() == "gerarkey" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
-            val time = args[2].toLongOrNull() ?: return true
+        // GENERATE VIP KEY
+        if (subCommand == "gerarkey" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
+            val vipName = args[1]
+            val days = args[2].toLongOrNull() ?: return true
 
-            if (VipData.vipExists(args[1])) {
-                val key = KeyData.genNewVipKey(args[1], time)
+            if (VipData.vipExists(vipName)) {
+                val key = KeyData.genNewVipKey(vipName, days)
                 s.sendMessage(LangConfig.VipsCreateNewKey.replace("%key%", key))
             }
             return false
         }
 
-        if (s is Player && args[0].lowercase() == "usarkey" && args.size == 2) {
+        // ASSIGN VIP to player with optional items
+        if (subCommand == "dar" && args.size == 5 && s.hasPermission("totalessentials.commands.vip.admin")) {
+            val playerName = args[1]
+            val vipName = args[2]
+            val days = args[3].toLongOrNull() ?: return true
+            val giveItems = args[4].toBooleanStrictOrNull() ?: return true
 
-            if (!KeyData.checkIfKeyExist(args[1])) {
-                s.sendMessage(LangConfig.VipsKeyNotExist)
+            if (!VipData.vipExists(vipName)) {
+                s.sendMessage(LangConfig.VipsNotExist)
                 return false
             }
 
-            val vipName = KeyData.vipName[args[1]] ?: return true
+            if (!PlayerData.checkIfPlayerExists(playerName)) {
+                PlayerData.createNewPlayerData(playerName.lowercase())
+            }
 
-            val vipItems = VipData.vipItems[vipName]!!
-
-            if ((54 - (PlayerData.vipItems[s]?.size ?: 0)) <= vipItems.size.toLong()) {
+            val existingItems = PlayerData.vipItems[playerName]?.size ?: 0
+            val vipItemSize = VipData.vipItems[vipName]?.size ?: 0
+            if ((90 - existingItems) <= vipItemSize) {
                 s.sendMessage(LangConfig.VipsClearItemsInventory)
                 return false
             }
 
-            val vipTime = KeyData.vipTime[args[1]] ?: return true
+            val currentVipTime = PlayerData.vipCache[playerName]?.get(vipName) ?: 0L
+            val millisVipTime = if (currentVipTime == 0L) System.currentTimeMillis() + days * 86_400_000 else currentVipTime + days * 86_400_000
 
-            val millisVipTime = vipTime * 86400000 + System.currentTimeMillis()
+            PlayerData.vipCache[playerName] = hashMapOf(vipName to millisVipTime)
 
-            PlayerData.vipCache[s] = hashMapOf(vipName to millisVipTime)
+            if (giveItems) PlayerData.vipItems[playerName] = VipData.vipItems[vipName]!!
 
-            KeyData.remove(args[1])
+            s.sendMessage(LangConfig.VipsActivate.replace("%vip%", vipName).replace("%days%", days.toString()))
 
-            VipUtil.updateCargo(s.name.lowercase(), vipName, true)
+            PlayerUtil.sendAllMessage(
+                LangConfig.VipsActivateMessage
+                    .replace("%player%", playerName)
+                    .replace("%time%", TotalEssentialsJava.getBasePlugin().getTime().convertMillisToString(days * 86_400_000, false))
+                    .replace("%vip%", vipName)
+            )
 
-            PlayerData.vipItems[s] = vipItems
-
-            s.sendMessage(LangConfig.VipsActivate.replace("%vip%", vipName).replace("%days%", vipTime.toString()))
-
+            VipUtil.updateCargo(playerName, vipName, giveItems)
 
             Discord.sendDiscordMessage(
                 LangConfig.VipsDiscordActivateMessage
-                    .replace("%player%", args[1])
-                    .replace(
-                        "%time%",
-                        TotalEssentialsJava.basePlugin.getTime().convertMillisToString(vipTime * 86400000, false)
-                    )
+                    .replace("%player%", playerName)
+                    .replace("%time%", TotalEssentialsJava.getBasePlugin().getTime().convertMillisToString(days * 86_400_000, false))
                     .replace("%vip%", vipName),
                 true
             )
 
-
-            PlayerUtil.sendAllMessage(
-                LangConfig.VipsActivateMessage
-                    .replace("%player%", args[1])
-                    .replace(
-                        "%time%",
-                        TotalEssentialsJava.basePlugin.getTime().convertMillisToString(vipTime * 86400000, false)
-                    )
-                    .replace("%vip%", vipName)
-            )
-
             return false
-
         }
 
-        if (args[0].lowercase() == "discrole" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
+        // ASSIGN Discord role to VIP
+        if (subCommand == "discrole" && args.size == 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
+            val vipName = args[1]
+            val roleId = args[2].toLongOrNull() ?: return false
 
-            val role = args[2].toLongOrNull() ?: return false
-
-            if (!VipData.vipExists(args[1])) {
+            if (!VipData.vipExists(vipName)) {
                 s.sendMessage(LangConfig.VipsNotExist)
                 return false
             }
 
-            if (!Discord.checkIfRoleIdExist(role)) {
+            if (!Discord.checkIfRoleIdExist(roleId)) {
                 s.sendMessage(LangConfig.VipsDiscordRoleError)
                 return false
             }
 
-            VipData.vipDiscord[args[1]] = role
+            VipData.vipDiscord[vipName] = roleId
             s.sendMessage(LangConfig.VipsDiscordRoleActivate)
             return false
-
         }
 
-        if (args[0].lowercase() == "comando" && args.size >= 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
-
-            if (!VipData.vipExists(args[1])) {
+        // MANAGE VIP commands (add/remove/list)
+        if (subCommand == "comando" && args.size >= 3 && s.hasPermission("totalessentials.commands.vip.admin")) {
+            val vipName = args[1]
+            if (!VipData.vipExists(vipName)) {
                 s.sendMessage(LangConfig.VipsNotExist)
                 return false
             }
 
-            if (args[2].lowercase() == "add" && args.size > 3) {
-
-                val msg = StringBuilder()
-                for (arg in args) {
-                    msg.append(arg).append(" ")
+            when (args[2].lowercase()) {
+                "add" -> {
+                    val command = args.drop(3).joinToString(" ")
+                    VipData.vipCommands[vipName] = arrayListOf(command)
+                    s.sendMessage(LangConfig.VipsCommandsAdd)
                 }
-
-                VipData.vipCommands[args[1]] = arrayListOf(msg.split("add ")[1])
-                s.sendMessage(LangConfig.VipsCommandsAdd)
-                return false
-            }
-
-            if (args[2].lowercase() == "remove" && args.size > 3) {
-                val msg = StringBuilder()
-                for (arg in args) {
-                    msg.append(arg).append(" ")
+                "remove" -> {
+                    val command = args.drop(3).joinToString(" ")
+                    VipData.vipCommands.remove(vipName, command)
+                    s.sendMessage(LangConfig.VipsCommandsRemove)
                 }
-
-                VipData.vipCommands.remove(args[1], msg.split("remove ")[1])
-                s.sendMessage(LangConfig.VipsCommandsRemove)
-                return false
-            }
-
-            if (args[2].lowercase() == "list") {
-                s.sendMessage(LangConfig.VipsCommandsListMessage)
-                for (c in VipData.vipCommands[args[1]]!!) {
-                    s.sendMessage(LangConfig.VipsCommandsList.replace("%command%", c))
+                "list" -> {
+                    s.sendMessage(LangConfig.VipsCommandsListMessage)
+                    VipData.vipCommands[vipName]?.forEach { cmd ->
+                        s.sendMessage(LangConfig.VipsCommandsList.replace("%command%", cmd))
+                    }
                 }
-                return false
-            }
-
-        }
-
-        if (s is Player && args[0].lowercase() == "itens" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin") ||
-            s is Player && args[0].lowercase() == "items" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")
-        ) {
-
-            if (!VipData.vipExists(args[1])) {
-                s.sendMessage(LangConfig.VipsNotExist)
-                return false
-            }
-
-            val inv = TotalEssentialsJava.instance.server.createInventory(null, 54, "§eVipEditItens " + args[1])
-
-            for (i in VipData.vipItems[args[1]]!!) {
-                inv.addItem(i)
-            }
-
-            Data.playerVipEdit[s] = args[1]
-
-            s.openInventory(inv)
-            return false
-        }
-
-        if (s is Player && args[0].lowercase() == "itens" && args.size == 1 ||
-            s is Player && args[0].lowercase() == "items" && args.size == 1
-        ) {
-
-            val inv = TotalEssentialsJava.instance.server.createInventory(
-                null,
-                if ((PlayerData.vipItems[s]?.size ?: 54) > 54) 90 else 54,
-                "§eVipItens"
-            )
-
-            for (i in PlayerData.vipItems[s] ?: emptyList()) {
-                inv.addItem(i)
-            }
-
-            s.openInventory(inv)
-
-            return false
-        }
-
-        if (args[0].lowercase() == "tempo" && args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")) {
-
-            if (!PlayerData.checkIfPlayerExists(args[1])) {
-                s.sendMessage(LangConfig.generalPlayerNotExist)
-                return false
-            }
-
-            val cache = PlayerData.vipCache[args[1]]
-
-            if (cache.isNullOrEmpty()) {
-                s.sendMessage(LangConfig.VipsTimeNoVip)
-                return false
-            }
-            s.sendMessage(LangConfig.VipsTimeFirstOtherMessage.replace("%player%", args[1]))
-            for (i in cache) {
-                s.sendMessage(
-                    LangConfig.VipsTimeMessage.replace("%vipName%", i.key).replace(
-                        "%vipTime%",
-                        TotalEssentialsJava.basePlugin.getTime()
-                            .convertMillisToString(i.value - System.currentTimeMillis(), false)
-                    )
-                )
             }
             return false
         }
 
-        if (args.size == 1 && args[0].lowercase() == "tempo" && s is Player) {
-            val cache = PlayerData.vipCache[s]
+        /**
+         * ------------------------------
+         * PLAYER VIP COMMANDS
+         * ------------------------------
+         */
 
-            if (cache.isNullOrEmpty()) {
-                s.sendMessage(LangConfig.VipsTimeNoVip)
-                return false
+        // VIEW or EDIT VIP ITEMS
+        if (s is Player && (subCommand == "itens" || subCommand == "items")) {
+            val vipName = args.getOrNull(1)
+
+            val inventory = if (vipName != null && s.hasPermission("totalessentials.commands.vip.admin")) {
+                if (!VipData.vipExists(vipName)) {
+                    s.sendMessage(LangConfig.VipsNotExist)
+                    return false
+                }
+                val inv = TotalEssentialsJava.getInstance().server.createInventory(null, 54, "§eVipEditItens $vipName")
+                VipData.vipItems[vipName]?.forEach { inv.addItem(it) }
+                Data.playerVipEdit[s] = vipName
+                inv
+            } else {
+                val playerItems = PlayerData.vipItems[s] ?: emptyList()
+                val size = if (playerItems.size > 54) 90 else 54
+                val inv = TotalEssentialsJava.getInstance().server.createInventory(null, size, "§eVipItens")
+                playerItems.forEach { inv.addItem(it) }
+                inv
             }
 
-            s.sendMessage(LangConfig.VipsTimeFirstMessage)
+            s.openInventory(inventory)
+            return false
+        }
 
-            for (i in cache) {
-                s.sendMessage(
-                    LangConfig.VipsTimeMessage.replace("%vipName%", i.key).replace(
-                        "%vipTime%",
-                        TotalEssentialsJava.basePlugin.getTime()
-                            .convertMillisToString(i.value - System.currentTimeMillis(), false)
-                    )
-                )
+        // VIEW VIP TIME
+        if (subCommand == "tempo") {
+            if (s is Player && args.size == 1) {
+                val cache = PlayerData.vipCache[s]
+                if (cache.isNullOrEmpty()) {
+                    s.sendMessage(LangConfig.VipsTimeNoVip)
+                    return false
+                }
+                s.sendMessage(LangConfig.VipsTimeFirstMessage)
+                cache.forEach { (vip, time) ->
+                    s.sendMessage(LangConfig.VipsTimeMessage.replace("%vipName%", vip).replace("%vipTime%", TotalEssentialsJava.getBasePlugin().getTime().convertMillisToString(time - System.currentTimeMillis(), false)))
+                }
+            } else if (args.size == 2 && s.hasPermission("totalessentials.commands.vip.admin")) {
+                val targetPlayer = args[1]
+                if (!PlayerData.checkIfPlayerExists(targetPlayer)) {
+                    s.sendMessage(LangConfig.generalPlayerNotExist)
+                    return false
+                }
+                val cache = PlayerData.vipCache[targetPlayer]
+                if (cache.isNullOrEmpty()) {
+                    s.sendMessage(LangConfig.VipsTimeNoVip)
+                    return false
+                }
+                s.sendMessage(LangConfig.VipsTimeFirstOtherMessage.replace("%player%", targetPlayer))
+                cache.forEach { (vip, time) ->
+                    s.sendMessage(LangConfig.VipsTimeMessage.replace("%vipName%", vip).replace("%vipTime%", TotalEssentialsJava.getBasePlugin().getTime().convertMillisToString(time - System.currentTimeMillis(), false)))
+                }
             }
             return false
         }
 
-        if (args[0].lowercase() == "mudar" && args.size == 1 && s is Player) {
+        // SWITCH VIP
+        if (subCommand == "mudar" && s is Player && args.size == 1) {
             val vipName = VipUtil.updateCargo(s.name.lowercase()) ?: return false
             s.sendMessage(LangConfig.VipsSwitch.replace("%vipName%", vipName))
             return false
         }
 
-        if (args[0].lowercase() == "dar" && args.size == 5 && s.hasPermission("totalessentials.commands.vip.admin")) {
+        // DISCORD COMMANDS (linking and token usage)
+        if (s is Player) {
+            when (subCommand) {
+                "discord" -> {
+                    val discordId = args.getOrNull(1)?.toLongOrNull() ?: return true
+                    TotalEssentialsJava.getBasePlugin().getTask().async {
+                        val token = KeyData.generateRandomString()
+                        if (Discord.sendDiscordMessage(discordId, LangConfig.VipsDiscordMessage.replace("%value%", token))) {
+                            Data.tokenVip[token] = discordId
+                            s.sendMessage(LangConfig.VipsDiscordLocalMessage)
+                        } else s.sendMessage(LangConfig.VipsDiscordUserIdNotExist)
+                    }
+                    return false
+                }
+                "token" -> {
+                    val token = args.getOrNull(1) ?: return true
+                    val discordId = Data.tokenVip[token] ?: run {
+                        s.sendMessage(LangConfig.VipsDiscordTokenError)
+                        return false
+                    }
+                    s.sendMessage(LangConfig.VipsDiscordTokenActivate)
 
-            if (args[4].toBooleanStrictOrNull() == null) {
-                return true
-            }
+                    // Remove previous roles
+                    PlayerData.discordCache[s]?.let { oldId ->
+                        VipData.vipDiscord.getMap().forEach { (_, role) ->
+                            Discord.removeUserRole(oldId, role ?: return@forEach)
+                        }
+                    }
 
-            if (args[3].toLongOrNull() == null) {
-                return true
-            }
+                    PlayerData.discordCache[s] = discordId
 
-            if (!VipData.vipExists(args[2])) {
-                s.sendMessage(LangConfig.VipsNotExist)
-                return false
-            }
+                    // Remove all VIP roles and add new ones
+                    VipData.vipDiscord.getMap().forEach { (_, role) ->
+                        Discord.removeUserRole(discordId, role ?: return@forEach)
+                    }
+                    PlayerData.vipCache[s]?.forEach { (vip, _) ->
+                        Discord.addUserRole(discordId, VipData.vipDiscord[vip] ?: return@forEach)
+                    }
 
-            if (!PlayerData.checkIfPlayerExists(args[1])) {
-                PlayerData.createNewPlayerData(args[1].lowercase())
-            }
-
-            if ((90 - (PlayerData.vipItems[args[1]]?.size ?: 0)) <= (VipData.vipItems[args[2]]?.size?.toLong() ?: 0)) {
-                s.sendMessage(LangConfig.VipsClearItemsInventory)
-                return false
-            }
-
-            val mv = PlayerData.vipCache[args[1]]?.get(args[2]) ?: 0L
-
-            val millisVipTime = if (mv == 0L) {
-                (args[3].toLong() * 86400000) + System.currentTimeMillis()
-            } else {
-                mv + args[3].toLong() * 86400000
-            }
-
-            PlayerData.vipCache[args[1]] = hashMapOf(args[2] to millisVipTime)
-
-            if (args[4].toBoolean()) {
-                PlayerData.vipItems[args[1]] = VipData.vipItems[args[2]]!!
-            }
-
-            s.sendMessage(LangConfig.VipsActivate.replace("%vip%", args[2]).replace("%days%", args[3]))
-
-            PlayerUtil.sendAllMessage(
-                LangConfig.VipsActivateMessage
-                    .replace("%player%", args[1])
-                    .replace(
-                        "%time%",
-                        TotalEssentialsJava.basePlugin.getTime()
-                            .convertMillisToString(args[3].toLong() * 86400000, false)
-                    )
-                    .replace("%vip%", args[2])
-            )
-
-            VipUtil.updateCargo(args[1], args[2], args[4].toBoolean())
-
-            Discord.sendDiscordMessage(
-                LangConfig.VipsDiscordActivateMessage
-                    .replace("%player%", args[1])
-                    .replace(
-                        "%time%",
-                        TotalEssentialsJava.basePlugin.getTime()
-                            .convertMillisToString(args[3].toLong() * 86400000, false)
-                    )
-                    .replace("%vip%", args[2]),
-                true
-            )
-
-            return false
-        }
-
-        if (args[0].lowercase() == "discord" && args.size == 2 && s is Player) {
-            val id = args[1].toLongOrNull() ?: return true
-            TotalEssentialsJava.basePlugin.getTask().async {
-                val token = KeyData.generateRandomString()
-                if (Discord.sendDiscordMessage(id, LangConfig.VipsDiscordMessage.replace("%value%", token))) {
-                    Data.tokenVip[token] = id
-                    s.sendMessage(LangConfig.VipsDiscordLocalMessage)
-                } else {
-                    s.sendMessage(LangConfig.VipsDiscordUserIdNotExist)
+                    Data.tokenVip.remove(token)
+                    return false
                 }
             }
-            return false
         }
 
-        if (args[0].lowercase() == "token" && args.size == 2 && s is Player) {
-            val id = Data.tokenVip[args[1]] ?: run {
-                s.sendMessage(LangConfig.VipsDiscordTokenError)
-                return false
-            }
-            s.sendMessage(LangConfig.VipsDiscordTokenActivate)
-
-            if (PlayerData.discordCache[s] != 0L) {
-                for (v in VipData.vipDiscord.getMap()) {
-                    Discord.removeUserRole(PlayerData.discordCache[s]!!, v.value ?: 0)
+        // ADMIN ONLY: ADD TIME TO ALL VIPs
+        if (subCommand == "timeadd" && s !is Player && args.size == 2) {
+            val addTime = args[1].toLongOrNull()?.times(86_400_000) ?: return true
+            PlayerData.vipCache.getMap().forEach { (playerName, vipMap) ->
+                vipMap?.forEach { (vipName, time) ->
+                    PlayerData.vipCache[playerName]?.set(vipName, time + addTime)
                 }
             }
 
-            PlayerData.discordCache[s] = id
-
-            for (v in VipData.vipDiscord.getMap()) {
-                Discord.removeUserRole(id, v.value ?: continue)
-            }
-
-            for (v in PlayerData.vipCache[s]!!) {
-                Discord.addUserRole(id, VipData.vipDiscord[v.key] ?: continue)
-            }
-
-            Data.tokenVip.remove(args[1])
-
-            return false
-        }
-
-        if (s !is Player && args[0].lowercase() == "timeadd" && args.size == 2) {
-            var int = args[1].toLongOrNull() ?: return true
-            int *= 86400000
-
-            for (players in PlayerData.vipCache.getMap()) {
-                val p = PlayerData.vipCache[players.key] ?: continue
-                for (vips in p) {
-                    PlayerData.vipCache[players.key]?.set(vips.key, vips.value + int)
-                }
-            }
-
-            TotalEssentialsJava.basePlugin.getTask().async {
+            TotalEssentialsJava.getBasePlugin().getTask().async {
                 try {
                     transaction(basePlugin?.sql) {
                         for (i in basePlugin?.getCache()?.toByteUpdate!!) {
-                            try {
-                                i.update()
-                            } catch (e: Exception) {
-                                println(e)
-                            }
+                            try { i.update() } catch (_: Exception) {}
                         }
                     }
-                } catch (e: Exception) {
-                    println(e)
-                }
+                } catch (_: Exception) {}
             }
             return false
         }
 
+        /**
+         * ------------------------------
+         * IF COMMAND DOES NOT MATCH
+         * ------------------------------
+         */
         return true
     }
 }

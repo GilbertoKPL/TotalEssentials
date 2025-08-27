@@ -6,6 +6,7 @@ import github.gilbertokpl.total.cache.local.SpawnData
 import github.gilbertokpl.total.cache.local.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.FoliaUtil.teleportSafe
 import github.gilbertokpl.total.util.TaskUtil
 import java.util.concurrent.TimeUnit
 
@@ -19,7 +20,7 @@ object AntiAfkLoop {
     }
 
     private fun checkPlayersAfk() {
-        for (player in TotalEssentialsJava.basePlugin.getReflection().getPlayers()) {
+        for (player in TotalEssentialsJava.getBasePlugin().getReflection().getPlayers()) {
             if (player.hasPermission("totalessentials.bypass.antiafk")) {
                 continue
             }
@@ -32,7 +33,7 @@ object AntiAfkLoop {
                 if (warp == null) {
                     SpawnData.teleportToSpawn(player)
                 } else {
-                    player.teleport(warp)
+                    player.teleportSafe(warp)
                 }
 
                 PlayerData.afk[player] = 1

@@ -24,26 +24,31 @@ class CommandDelKit : github.gilbertokpl.core.external.command.CommandCreator("d
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+        val kitName = args[0]
 
-        //check if not exist
-        if (!KitsData.checkIfExist(args[0])) {
+        // --------------------------------------------------------
+        // Check if kit exists
+        // --------------------------------------------------------
+        if (!KitsData.checkIfExist(kitName)) {
             s.sendMessage(LangConfig.kitsNotExist)
             return false
         }
 
-        //delete kit
-        KitsData.delete(args[0])
+        // --------------------------------------------------------
+        // Delete kit from cache and database
+        // --------------------------------------------------------
+        KitsData.delete(kitName)
 
-        //send message
+        // --------------------------------------------------------
+        // Notify player
+        // --------------------------------------------------------
         s.sendMessage(
-            LangConfig.kitsDelKitSuccess.replace(
-                "%kit%",
-                args[0].lowercase()
-            )
+            LangConfig.kitsDelKitSuccess.replace("%kit%", kitName.lowercase())
         )
 
-        //update inventory
-
+        // --------------------------------------------------------
+        // Update kit inventory
+        // --------------------------------------------------------
         Kit.setup()
 
         return false

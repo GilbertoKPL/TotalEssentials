@@ -21,15 +21,13 @@ class CommandKit : github.gilbertokpl.core.external.command.CommandCreator("kit"
             permission = "totalessentials.commands.kit",
             minimumSize = 0,
             maximumSize = 1,
-            usage = listOf(
-                "/kit",
-                "/kit <kitName>"
-            )
+            usage = listOf("/kit", "/kit <kitName>")
         )
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
+        // if sender is not player or menu kits disabled, show kit list
         if (s !is Player || (args.isEmpty() && !MainConfig.kitsMenuKit)) {
             s.sendMessage(
                 LangConfig.kitsList.replace(
@@ -40,9 +38,8 @@ class CommandKit : github.gilbertokpl.core.external.command.CommandCreator("kit"
             return false
         }
 
-        //send gui
+        // open GUI if no argument
         if (args.isEmpty()) {
-
             Data.kitInventoryCache[1].also {
                 it ?: run {
                     s.sendMessage(LangConfig.kitsNotExistKits)
@@ -53,8 +50,9 @@ class CommandKit : github.gilbertokpl.core.external.command.CommandCreator("kit"
             return false
         }
 
-        //check if not exist
-        if (!KitsData.checkIfExist(args[0].lowercase())) {
+        // check if kit exists
+        val kitName = args[0].lowercase()
+        if (!KitsData.checkIfExist(kitName)) {
             s.sendMessage(
                 LangConfig.kitsList.replace(
                     "%kits%",
@@ -64,8 +62,8 @@ class CommandKit : github.gilbertokpl.core.external.command.CommandCreator("kit"
             return false
         }
 
-        //give kit
-        ItemUtil.pickupKit(s, args[0].lowercase())
+        // give kit
+        ItemUtil.pickupKit(s, kitName)
         return false
     }
 }

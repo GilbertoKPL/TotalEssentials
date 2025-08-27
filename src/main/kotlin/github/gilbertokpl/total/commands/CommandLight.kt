@@ -2,6 +2,7 @@ package github.gilbertokpl.total.commands
 
 import github.gilbertokpl.core.external.command.CommandTarget
 import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.total.TotalEssentialsJava
 import github.gilbertokpl.total.cache.local.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -30,41 +31,37 @@ class CommandLight : github.gilbertokpl.core.external.command.CommandCreator("li
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        if (args.isEmpty() && s !is Player) {
-            return true
-        }
+        // if sender is not player and no args, do nothing
+        if (args.isEmpty() && s !is Player) return true
 
+        // admin toggle for other players
         if (args.size == 1) {
 
-            //check perms
+            // check permission
             if (s is Player && !s.hasPermission("totalessentials.commands.light.other")) {
                 s.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
-            //check if player exist
-            val p = github.gilbertokpl.total.TotalEssentialsJava.instance.server.getPlayer(args[0]) ?: run {
+            // check if target player exists
+            val p = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
+            // toggle light
             if (switchLight(p)) {
                 p.sendMessage(LangConfig.lightOtherActive)
-                s.sendMessage(
-                    LangConfig.lightActivatedOther
-                        .replace("%player%", p.name.lowercase())
-                )
+                s.sendMessage(LangConfig.lightActivatedOther.replace("%player%", p.name.lowercase()))
             } else {
                 p.sendMessage(LangConfig.lightOtherDisable)
-                s.sendMessage(
-                    LangConfig.lightDisabledOther
-                        .replace("%player%", p.name.lowercase())
-                )
+                s.sendMessage(LangConfig.lightDisabledOther.replace("%player%", p.name.lowercase()))
             }
 
             return false
         }
 
+        // toggle light for self
         if (switchLight(s as Player)) {
             s.sendMessage(LangConfig.lightActive)
         } else {
@@ -74,10 +71,9 @@ class CommandLight : github.gilbertokpl.core.external.command.CommandCreator("li
         return false
     }
 
+    // toggles night vision effect
     private fun switchLight(player: Player): Boolean {
-
         val newValue = PlayerData.lightCache[player]?.not() ?: return false
-
         PlayerData.lightCache[player] = newValue
 
         if (newValue) {

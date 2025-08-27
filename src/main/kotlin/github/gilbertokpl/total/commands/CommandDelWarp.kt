@@ -23,25 +23,33 @@ class CommandDelWarp : github.gilbertokpl.core.external.command.CommandCreator("
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        //check length of warp name
-        if (args[0].length > 16) {
+        val warpName = args[0].lowercase()
+
+        // --------------------------------------------------------
+        // Check length of warp name
+        // --------------------------------------------------------
+        if (warpName.length > 16) {
             s.sendMessage(LangConfig.warpsNameLength)
             return false
         }
 
-        if (!WarpData.checkIfWarpExist(args[0])) {
+        // --------------------------------------------------------
+        // Check if warp exists
+        // --------------------------------------------------------
+        if (!WarpData.checkIfWarpExist(warpName)) {
             s.sendMessage(LangConfig.warpsNameDontExist)
             return false
         }
 
-        WarpData.deleteWarp(args[0].lowercase())
+        // --------------------------------------------------------
+        // Delete warp
+        // --------------------------------------------------------
+        WarpData.deleteWarp(warpName)
 
-        s.sendMessage(
-            LangConfig.warpsRemoved.replace(
-                "%warp%",
-                args[0].lowercase()
-            )
-        )
+        // --------------------------------------------------------
+        // Notify player
+        // --------------------------------------------------------
+        s.sendMessage(LangConfig.warpsRemoved.replace("%warp%", warpName))
 
         return false
     }

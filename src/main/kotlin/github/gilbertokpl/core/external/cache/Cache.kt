@@ -9,8 +9,8 @@ import github.gilbertokpl.core.internal.cache.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
