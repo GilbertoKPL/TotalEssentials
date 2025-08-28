@@ -124,18 +124,24 @@ public class TotalEssentialsJava extends JavaPlugin {
 
     private void initUpdateAndDependencies() {
         String version;
+
+        boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
+
         try {
-            if (publicVer) {
+            if (publicVer && !isWindows) {
                 version = getLatestVersion("GilbertoKPL", "TotalEssentials");
                 if (!Objects.equals(version, this.getDescription().getVersion())) {
-                    System.out.println("Nova versão disponível = " + version + " baixando...");
-                    jarPath = "plugins/TotalEssentials-" + version + ".jar";
+                    Bukkit.getConsoleSender().sendMessage("§eNova versão disponível = " + version + " baixando...");
+                    jarPath = "plugins" + File.separator + "TotalEssentials-" + version + ".jar";
+
                     boolean archive = downloadArchive(
-                            "https://github.com/GilbertoKPL/TotalEssentials/releases/download/" + version + "/TotalEssentials-" + version + ".jar",
+                            "https://github.com/GilbertoKPL/TotalEssentials/releases/download/"
+                                    + version + "/TotalEssentials-" + version + ".jar",
                             jarPath
                     );
+
                     if (archive) {
-                        new File("plugins/TotalEssentials-" + this.getDescription().getVersion() + ".jar")
+                        new File("plugins" + File.separator + "TotalEssentials-" + this.getDescription().getVersion() + ".jar")
                                 .deleteOnExit();
                         update = true;
                     }
@@ -147,32 +153,33 @@ public class TotalEssentialsJava extends JavaPlugin {
             version = this.getDescription().getVersion();
         }
 
-        // dependency lib check
         String depend = "https://github.com/GilbertoKPL/TotalEssentials/releases/download/"
                 + version + "/TotalEssentials-lib-" + version + ".jar";
         String[] split = depend.split("/");
         String name = split[split.length - 1];
 
-        String pathLib = "plugins/TotalEssentials/lib/";
-        String pathLib2 = " ../plugins/TotalEssentials/lib/";
-        String newPath = pathLib + name + pathLib2 + name;
+        String pathLib = this.getDataFolder().getPath()
+                .replace(".paper-remapped" + File.separator, "")
+                + File.separator + "lib" + File.separator;
+
+        String newPath = pathLib + name;
 
         File file = new File(newPath);
-        String classPath = newPath.replace("plugins/", "");
+        String classPath = newPath.replace("plugins" + File.separator, "");
 
         if (!file.exists()) {
-            Bukkit.getConsoleSender().sendMessage("Baixando dependência = " + name);
+            Bukkit.getConsoleSender().sendMessage("§eBaixando dependência = " + name);
             downloadArchive(depend, newPath);
             libModify = true;
         }
 
         try {
-            if (update || !Objects.equals(getManifest(), classPath)) {
+            if ((update && !isWindows) || !Objects.equals(getManifest(), classPath)) {
                 modifyManifest(classPath);
                 update = true;
             }
         } catch (IOException e) {
-            Bukkit.getLogger().severe("Você está utilizando Windows. Algumas funcionalidades não irão funcionar!");
+            Bukkit.getLogger().severe("§cVocê está utilizando Windows. Algumas funcionalidades podem não funcionar!");
         }
     }
 

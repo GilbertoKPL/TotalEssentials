@@ -2,7 +2,7 @@
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/5113aa86f46b45caa40bdfd8508bcd3e)](https://www.codacy.com/gh/GilbertoKPL/TotalEssentials/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=GilbertoKPL/TotalEssentials&amp;utm_campaign=Badge_Grade)
 
-* A core system for minecraft server that supports most versions (1.5.2 - 1.20.2), using only database as a storage
+* A core system for minecraft server that supports most versions (1.5.2 - 1.21.8) and Folia, using only database as a storage
   medium and various built-in commands / systems, which can be disabled at any time.
 
 # Bstats
