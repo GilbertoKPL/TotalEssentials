@@ -1,16 +1,17 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.GameMode
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandInvSee : github.gilbertokpl.core.external.command.CommandCreator("invsee") {
+class CommandInvSee : CommandCreator("invsee") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -34,7 +35,7 @@ class CommandInvSee : github.gilbertokpl.core.external.command.CommandCreator("i
         }
 
         // get target player
-        val target = TotalEssentialsJava.getInstance().server.getPlayer(args[0])
+        val target = TotalEssentials.getInstance().server.getPlayer(args[0])
 
         // check if player is online, not OP (if executor is not OP), and in survival mode
         if (target == null || target.isOp && (s as Player).isOp.not() || target.gameMode != GameMode.SURVIVAL) {

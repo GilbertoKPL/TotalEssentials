@@ -1,12 +1,12 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.cache.local.LoginData
-import github.gilbertokpl.total.cache.local.PlayerData
-import github.gilbertokpl.total.cache.local.SpawnData
+import github.gilbertokpl.total.cache.data.LoginData
+import github.gilbertokpl.total.cache.data.PlayerData
+import github.gilbertokpl.total.cache.data.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
-import github.gilbertokpl.total.util.MainUtil
+import github.gilbertokpl.total.util.ServerUtil
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -20,56 +20,47 @@ class PlayerLeave : Listener {
 
         LoginData.isLoggedIn[e.player] = false
 
+        // Handle back location
         if (MainConfig.backActivated) {
             try {
                 setBackLocation(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
         }
+
+        // Handle leave messages
         try {
-            if (!PlayerData.vanishCache[e.player]!! && !e.player.hasPermission("*")) {
+            val isVanished = PlayerData.vanishCache[e.player] ?: false
+            if (!isVanished && !e.player.hasPermission("*")) {
                 if (MainConfig.messagesLeaveMessage) {
-                    MainUtil.serverMessage(
-                        LangConfig.messagesLeaveMessage
-                            .replace("%player%", e.player.name)
+                    ServerUtil.serverMessage(
+                        LangConfig.messagesLeaveMessage.replace("%player%", e.player.name)
                     )
                 }
-                if (MainConfig.discordbotSendLeaveMessage) {
-                    sendLeaveEmbed(e)
-                }
+                if (MainConfig.discordbotSendLeaveMessage) sendLeaveEmbed(e)
             }
-        } catch (e: Throwable) {
-            e.printStackTrace()
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
         }
+
+        // Handle playtime
         try {
             if (MainConfig.playtimeActivated) {
-                if (PlayerData.playTimeCache[e.player] != null) {
+                val lastLoginTime = PlayerData.playtimeLocal[e.player] ?: System.currentTimeMillis()
+                val previousTime = PlayerData.playTimeCache[e.player] ?: 0L
 
-                    val time = PlayerData.playTimeCache[e.player] ?: 0L
+                var totalTime = previousTime + (System.currentTimeMillis() - lastLoginTime)
 
-                    val timePlayed = PlayerData.playtimeLocal[e.player] ?: return
+                // Optional safety cap, avoid arbitrary resets
+                if (totalTime > 94608000000) totalTime = 94608000000
 
-                    var newTime = time + (System.currentTimeMillis() - timePlayed)
-
-                    if (time > 94608000000) {
-                        newTime = time
-                    }
-
-                    if (newTime > 94608000000) {
-                        newTime = 518400000
-                    }
-
-                    PlayerData.playTimeCache[e.player] = newTime
-                } else {
-                    PlayerData.playTimeCache[e.player] = 0L
-                }
-                PlayerData.playtimeLocal[e.player] = 0L
+                PlayerData.playTimeCache[e.player] = totalTime
+                PlayerData.playtimeLocal[e.player] = System.currentTimeMillis() // Reset to now
             }
-        } catch (e: Throwable) {
-            e.printStackTrace()
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
         }
-
     }
 
     private fun setBackLocation(e: PlayerQuitEvent) {

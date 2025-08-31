@@ -1,15 +1,18 @@
 package github.gilbertokpl.total.listeners
 
 
-import github.gilbertokpl.total.TotalEssentialsJava
-
-import github.gilbertokpl.total.cache.local.LoginData
-import github.gilbertokpl.total.cache.local.PlayerData
-import github.gilbertokpl.total.cache.local.SpawnData
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.LoginData
+import github.gilbertokpl.total.cache.data.PlayerData
+import github.gilbertokpl.total.cache.data.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
-import github.gilbertokpl.total.util.*
+import github.gilbertokpl.total.login.CoreLogin
+import github.gilbertokpl.total.util.ServerUtil
+import github.gilbertokpl.total.util.PermissionUtil
+import github.gilbertokpl.total.util.PlayerUtil
+import github.gilbertokpl.total.vip.CoreVip
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -27,13 +30,13 @@ class PlayerJoin : Listener {
         handleAuthentication(player, address)
         SpawnData.teleportToSpawn(player)
 
-        val task = TotalEssentialsJava.getBasePlugin().getTask()
+        val task = TotalEssentials.getCore().getTask()
 
         task.async {
             handlePlaytime(player)
             initializePlayerData(player)
             sendMessages(player)
-            VipUtil.checkVip(player.name.lowercase())
+            CoreVip.checkVip(player.name.lowercase())
             handleAntiVpn(player, address)
 
             task.sync {
@@ -55,7 +58,7 @@ class PlayerJoin : Listener {
             player.sendMessage(LangConfig.authAutoLogin)
             LoginData.isLoggedIn[player] = true
         } else {
-            LoginUtil.loginMessage(player)
+            CoreLogin.loginMessage(player)
         }
     }
 
@@ -82,7 +85,7 @@ class PlayerJoin : Listener {
         if (player.hasPermission("*")) return
 
         if (MainConfig.messagesLoginMessage) {
-            MainUtil.serverMessage(
+            ServerUtil.serverMessage(
                 LangConfig.messagesEnterMessage.replace("%player%", player.name)
             )
         }

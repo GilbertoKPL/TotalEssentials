@@ -1,17 +1,18 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.LoginData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.LoginUtil
+import github.gilbertokpl.total.login.CoreLogin
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreator("changepass") {
+class CommandChangePass : CommandCreator("changepass") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -30,7 +31,7 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
     }
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val encrypt = TotalEssentialsJava.getBasePlugin().getEncrypt()
+        val encrypt = TotalEssentials.getCore().getEncrypt()
 
         // --------------------------------------------------------
         // Case 1: Sender is a player and changing own password
@@ -65,7 +66,7 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
     // Function to handle changing password of another player
     // --------------------------------------------------------
     private fun changeOtherPassword(sender: CommandSender, targetName: String, newPassword: String): Boolean {
-        val encrypt = TotalEssentialsJava.getBasePlugin().getEncrypt()
+        val encrypt = TotalEssentials.getCore().getEncrypt()
 
         if (!LoginData.doesPlayerExist(targetName)) {
             sender.sendMessage(LangConfig.generalPlayerNotExist)
@@ -79,7 +80,7 @@ class CommandChangePass : github.gilbertokpl.core.external.command.CommandCreato
         LoginData.isLoggedIn[targetName] = false
 
         // Notify player if online
-        Bukkit.getPlayer(targetName)?.let { LoginUtil.loginMessage(it) }
+        Bukkit.getPlayer(targetName)?.let { CoreLogin.loginMessage(it) }
 
         // Notify sender
         sender.sendMessage(LangConfig.authOtherChangePass.replace("%player%", targetName))

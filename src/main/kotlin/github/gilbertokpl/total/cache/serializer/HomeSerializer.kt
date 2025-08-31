@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.cache.serializer
 
-import github.gilbertokpl.core.external.cache.convert.SerializerBase
+import github.gilbertokpl.core.cache.convert.SerializerBase
 import org.bukkit.Location
 
 internal class HomeSerializer : SerializerBase<HashMap<String, Location>, String> {

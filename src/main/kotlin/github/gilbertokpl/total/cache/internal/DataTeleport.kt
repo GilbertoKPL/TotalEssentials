@@ -1,11 +1,8 @@
 package github.gilbertokpl.total.cache.internal
 
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
-import github.gilbertokpl.total.util.TaskUtil
 import org.bukkit.entity.Player
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 
 internal data class DataTeleport(
     val p: Player,
@@ -33,33 +30,31 @@ internal data class DataTeleport(
             return tpaData.entries.find { it.value.otherPlayer == p }?.key
         }
 
+
         fun createNewTpa(pSender: Player, pReceived: Player, time: Int) {
+            val task = TotalEssentials.getCore().getTask()
+
             val dataTeleport = DataTeleport(pSender, pReceived, true)
             tpaData[pSender] = dataTeleport
 
-            CompletableFuture.runAsync({
-                try {
-                    TimeUnit.SECONDS.sleep(time.toLong())
+            task.async {
+                task.waitSeconds(time.toLong())
 
-                    val senderData = tpaData[pSender]
-                    if (senderData?.wait == true) {
-                        tpaData.remove(pSender)
+                val senderData = tpaData[pSender]
+                if (senderData?.wait == true) {
+                    tpaData.remove(pSender)
 
-                        TotalEssentialsJava.getInstance().server.scheduler.runTask(
-                            TotalEssentialsJava.getInstance()
-                        ) { _ ->
-                            pSender.sendMessage(
-                                LangConfig.tpaRequestOtherDenyTime.replace(
-                                    "%player%",
-                                    pReceived.name
-                                )
-                            )
-                        }
+                    task.sync {
+                        pSender.sendMessage(
+                            LangConfig.tpaRequestOtherDenyTime.replace("%player%", pReceived.name)
+                        )
+                        pReceived.sendMessage(
+                            LangConfig.tpaRequestDeny.replace("%player%", pSender.name)
+                        )
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
-            }, TaskUtil.getInternalExecutor())
+            }
         }
+
     }
 }

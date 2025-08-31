@@ -1,12 +1,12 @@
 package github.gilbertokpl.total.discord
 
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.core.utils.ConsoleColorUtil
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.exceptions.*
 import github.gilbertokpl.total.discord.listeners.ChatDiscordEvent
-import github.gilbertokpl.total.util.ColorUtil
-import github.gilbertokpl.total.util.MainUtil
+import github.gilbertokpl.total.util.ServerUtil
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
@@ -15,7 +15,6 @@ import net.dv8tion.jda.api.exceptions.ContextException
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.cache.CacheFlag
-import net.dv8tion.jda.internal.utils.JDALogger
 import org.bukkit.Bukkit
 import java.awt.Color
 import javax.security.auth.login.LoginException
@@ -54,7 +53,7 @@ internal object Discord {
         }
 
         if (hashTextChannel[chatID] == null) {
-            TotalEssentialsJava.getBasePlugin().getTask().async {
+            TotalEssentials.getCore().getTask().async {
                 val newChat = setupDiscordChat(chatID) ?: throw ChatDoesNotExist()
 
                 hashTextChannel[chatID] = newChat
@@ -203,8 +202,8 @@ internal object Discord {
         val jda = jda
 
         if (jda == null && MainConfig.discordbotConnectDiscordChat) {
-            MainUtil.consoleMessage(
-                ColorUtil.YELLOW.color + LangConfig.discordchatNoToken + ColorUtil.RESET.color
+            ServerUtil.consoleMessage(
+                ConsoleColorUtil.YELLOW.color + LangConfig.discordchatNoToken + ConsoleColorUtil.RESET.color
             )
             throw BotIsNotInitialized()
         }
@@ -238,8 +237,8 @@ internal object Discord {
         val jda = getJdaCheck()
         val newChat =
             jda.getTextChannelById(chatID) ?: run {
-                MainUtil.consoleMessage(
-                    ColorUtil.YELLOW.color + LangConfig.discordchatNoChatId + ColorUtil.RESET.color
+                ServerUtil.consoleMessage(
+                    ConsoleColorUtil.YELLOW.color + LangConfig.discordchatNoChatId + ConsoleColorUtil.RESET.color
                 )
                 return null
             }

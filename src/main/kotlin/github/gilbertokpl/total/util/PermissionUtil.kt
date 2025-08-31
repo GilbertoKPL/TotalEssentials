@@ -1,50 +1,48 @@
+
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.total.TotalEssentials
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+
 
 internal object PermissionUtil {
     private const val MAX_HOME_VALUE = 1000
 
-    fun getNumberPermission(player: Player, permission: String, default: Int): Int {
-        var newAmount = 0
+    fun getNumberPermission(player: Player?, permission: String, default: Int): Int {
+        if (player == null || !player.isOnline) return default
 
-        if (TotalEssentialsJava.isLowVersion()) {
-            for (i in 0..MAX_HOME_VALUE) {
-                if (player.hasPermission(permission + i) && newAmount <= i) {
-                    newAmount = i
-                }
-            }
-        } else {
-            player.effectivePermissions
-                .filter { it.permission.contains(permission) }
-                .forEach {
-                    val int = try {
-                        it.permission.split(".").last().toInt()
-                    } catch (e: NumberFormatException) {
-                        0
+        return try {
+            val maxValue = if (TotalEssentials.isLowVersion()) {
+                (0..MAX_HOME_VALUE)
+                    .filter { player.hasPermission("$permission$it") }
+                    .maxOrNull() ?: 0
+            } else {
+                player.effectivePermissions
+                    .asSequence()
+                    .mapNotNull {
+                        val perm = it.permission
+                        if (perm.startsWith(permission)) perm.substringAfterLast(".").toIntOrNull() else null
                     }
-                    newAmount = maxOf(newAmount, int)
-                }
-        }
-
-        return if (newAmount == 0) {
+                    .maxOrNull() ?: 0
+            }
+            if (maxValue == 0) default else maxValue
+        } catch (ex: Exception) {
+            Bukkit.getLogger().severe("[TotalEssentials] Error while checking permission for ${player.name}: ${ex.message}")
             default
-        } else {
-            newAmount
         }
     }
 
-    fun colorPermission(p: Player?, message: String): String {
+    fun colorPermission(player: Player?, message: String): String {
         if (!message.contains("&") && !message.contains("#")) return message
 
-        if (p == null) {
-            return TotalEssentialsJava.getBasePlugin().getColor().rgbHex(null, message)
-        }
+        val colorApi = TotalEssentials.getCore().getColor()
 
-        if (p.hasPermission("totalessentials.color.*")) {
-            return TotalEssentialsJava.getBasePlugin().getColor().rgbHex(p, message)
+        return when {
+            player == null -> colorApi.rgbHex(null, message)
+            player.hasPermission("totalessentials.color.*") -> colorApi.rgbHex(player, message)
+            else -> colorApi.color(player, message)
         }
-        return TotalEssentialsJava.getBasePlugin().getColor().color(p, message)
     }
 }
+

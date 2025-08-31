@@ -1,11 +1,11 @@
 package github.gilbertokpl.total.listeners
 
+import github.gilbertokpl.total.cache.data.KitsData
+import github.gilbertokpl.total.cache.data.PlayerData
+import github.gilbertokpl.total.cache.data.VipData
+import github.gilbertokpl.total.cache.data.test.LimitData
 import github.gilbertokpl.total.cache.internal.Data
-import github.gilbertokpl.total.cache.internal.inventory.Kit
-import github.gilbertokpl.total.cache.local.KitsData
-import github.gilbertokpl.total.cache.local.test.LimitData
-import github.gilbertokpl.total.cache.local.PlayerData
-import github.gilbertokpl.total.cache.local.VipData
+import github.gilbertokpl.total.cache.inventory.Kit
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil

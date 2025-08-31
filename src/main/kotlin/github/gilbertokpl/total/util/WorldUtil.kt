@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.Bukkit
@@ -18,7 +18,7 @@ object WorldUtil {
         var time = 30000L
         val waitTime = ((time / 3) / 1000)
 
-        val task = TotalEssentialsJava.getBasePlugin().getTask()
+        val task = TotalEssentials.getCore().getTask()
 
         task.async {
             if (inUse) return@async
@@ -29,7 +29,7 @@ object WorldUtil {
                     PlayerUtil.sendAllMessage(
                         LangConfig.ClearitemsMessage.replace(
                             "%time%",
-                            TotalEssentialsJava.getBasePlugin().getTime().convertMillisToString(time, false)
+                            TotalEssentials.getCore().getTime().convertMillisToString(time, false)
                         )
                     )
                     time -= 10000
@@ -39,7 +39,7 @@ object WorldUtil {
 
                 task.sync {
                     PlayerUtil.sendAllMessage(LangConfig.ClearitemsFinishMessage)
-                    clearWorldEntities(TotalEssentialsJava.getBasePlugin().plugin)
+                    clearWorldEntities(TotalEssentials.getCore().plugin)
                 }
             }
             inUse = false
@@ -47,7 +47,7 @@ object WorldUtil {
     }
 
     private fun clearWorldEntities(plugin: Plugin) {
-        val server = TotalEssentialsJava.getInstance().server
+        val server = TotalEssentials.getInstance().server
 
         val regionSchedulerMethod = try {
             Bukkit::class.java.getMethod("getRegionScheduler")

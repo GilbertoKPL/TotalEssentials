@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.cache.serializer
 
-import github.gilbertokpl.core.external.cache.convert.SerializerBase
-import github.gilbertokpl.total.cache.local.KitsData
+import github.gilbertokpl.core.cache.convert.SerializerBase
+import github.gilbertokpl.total.cache.data.KitsData
 
 internal class KitSerializer : SerializerBase<HashMap<String, Long>, String> {
     override fun convertToDatabase(hash: HashMap<String, Long>): String {

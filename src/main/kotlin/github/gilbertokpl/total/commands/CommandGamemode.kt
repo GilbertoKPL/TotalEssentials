@@ -1,9 +1,10 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil
@@ -11,7 +12,7 @@ import org.bukkit.GameMode
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandGamemode : github.gilbertokpl.core.external.command.CommandCreator("gamemode") {
+class CommandGamemode : CommandCreator("gamemode") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -58,7 +59,7 @@ class CommandGamemode : github.gilbertokpl.core.external.command.CommandCreator(
                 return false
             }
 
-            val target = TotalEssentialsJava.getInstance().server.getPlayer(args[1]) ?: run {
+            val target = TotalEssentials.getInstance().server.getPlayer(args[1]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }

@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.KitsData
-import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.KitsData
+import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.Material
@@ -34,7 +34,7 @@ internal object ItemUtil {
             p.sendMessage(
                 LangConfig.kitsGetMessage.replace(
                     "%time%",
-                    TotalEssentialsJava.getBasePlugin().getTime().convertMillisToString(
+                    TotalEssentials.getCore().getTime().convertMillisToString(
                         remainingTime,
                         MainConfig.kitsUseShortTime
                     )
@@ -185,7 +185,7 @@ internal object ItemUtil {
         val item = ItemStack(material)
         if (effect) {
             try {
-                val en = EnchantUtil["LUKE"]
+                val en = EnchantUtil["luck"]
                 if (en != null) {
                     item.addUnsafeEnchantment(en, 1)
                 }
@@ -214,7 +214,7 @@ internal object ItemUtil {
         val item = ItemStack(material)
         if (effect) {
             try {
-                val en = EnchantUtil["LUKE"]
+                val en = EnchantUtil["luck"]
                 if (en != null) {
                     item.addUnsafeEnchantment(en, 1)
                 }

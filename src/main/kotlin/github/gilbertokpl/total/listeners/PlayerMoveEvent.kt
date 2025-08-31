@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.cache.local.LoginData
-import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.total.cache.data.LoginData
+import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

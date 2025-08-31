@@ -1,6 +1,6 @@
 name: TotalEssentials
-version: 1.2.0
-main: github.gilbertokpl.total.TotalEssentialsJava
+version: 1.2.1
+main: github.gilbertokpl.total.TotalEssentials
 author: Gilberto
 api-version: 1.13
 folia-supported: true

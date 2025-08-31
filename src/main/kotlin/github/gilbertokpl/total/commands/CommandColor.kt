@@ -1,15 +1,16 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandColor : github.gilbertokpl.core.external.command.CommandCreator("color") {
+class CommandColor : CommandCreator("color") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -35,7 +36,7 @@ class CommandColor : github.gilbertokpl.core.external.command.CommandCreator("co
         when (args[0].lowercase()) {
 
             "list" -> {
-                val colors = TotalEssentialsJava.getBasePlugin().getColor().list(player).toString()
+                val colors = TotalEssentials.getCore().getColor().list(player).toString()
                 player.sendMessage(LangConfig.colorSendList.replace("%colors%", colors))
                 return false
             }

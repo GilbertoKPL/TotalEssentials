@@ -1,10 +1,10 @@
 package github.gilbertokpl.total.config.files;
 
 
-import github.gilbertokpl.core.external.config.annotations.Value;
-import github.gilbertokpl.core.external.config.annotations.Values;
-import github.gilbertokpl.core.external.config.def.DefaultLang;
-import github.gilbertokpl.core.external.config.types.LangTypes;
+import github.gilbertokpl.core.config.annotations.Value;
+import github.gilbertokpl.core.config.annotations.Values;
+import github.gilbertokpl.core.config.def.DefaultLang;
+import github.gilbertokpl.core.config.types.LangTypes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -205,14 +205,14 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&aEnviado código ao discord do dono, apenas pegar e dar /e reset [código].", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aSent the code to the owner's Discord, just take it and run /e reset [code].", lang = LangTypes.EN_US)
             }
     )
     public static String generalResetMessage;
     @Values(
             {
                     @Value(value = "%prefix%&cNão tem nenhum dono setado na config.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cNo owner is set in the config.", lang = LangTypes.EN_US)
             }
     )
     public static String generalResetMessageNotSet;
@@ -220,7 +220,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "Utilize o comando '/e reset %value%' para resetar as informações do servidor.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "Use the command '/e reset %value%' to reset the server information.", lang = LangTypes.EN_US)
             }
     )
     public static String generalResetDiscordMessage;
@@ -316,7 +316,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cVocê logou com VPN, por favor desative!", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cYou logged in using a VPN, please disable it!", lang = LangTypes.EN_US)
             }
     )
     public static String authVpn;
@@ -458,7 +458,8 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&aÚltimo ip logado : %ip%!", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aLast logged IP: %ip%!", lang = LangTypes.EN_US)
+
             }
     )
     public static String authIpMessage;
@@ -468,7 +469,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "&cEste grupo não existe no servidor", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "&cThis group does not exist on the server", lang = LangTypes.EN_US)
             }
     )
     public static String limitGroupDoNotExist;
@@ -479,17 +480,19 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "&eTempo Jogado:|&e%time%", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "&ePlaytime:|&e%time%", lang = LangTypes.EN_US)
             }
     )
     public static List<String> playtimeInventoryItemsLore;
+
     @Values(
             {
                     @Value(value = "&ePlayer: &f%player%", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "&ePlayer: &f%player%", lang = LangTypes.EN_US)
             }
     )
     public static String playtimeInventoryItemsName;
+
     @Values(
             {
                     @Value(value = "&eVoltar página", lang = LangTypes.PT_BR),
@@ -508,55 +511,61 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&e%player% jogou por %time%", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&e%player% played for %time%", lang = LangTypes.EN_US)
             }
     )
     public static String playtimeMessage;
 
-    //shop
+// shop
 
     @Values(
             {
                     @Value(value = "&aAberto", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "&aOpen", lang = LangTypes.EN_US)
             }
     )
     public static String shopOpen;
+
     @Values(
             {
                     @Value(value = "&cFechado", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "&cClosed", lang = LangTypes.EN_US)
             }
     )
     public static String shopClosed;
+
     @Values(
             {
                     @Value(value = "%prefix%&cEssa loja não existe.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cThis shop does not exist.", lang = LangTypes.EN_US)
             }
     )
     public static String shopNotExist;
+
     @Values(
             {
                     @Value(value = "%prefix%&eSua loja foi setada com sucesso.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eYour shop has been set successfully.", lang = LangTypes.EN_US)
             }
     )
     public static String shopCreateShopSuccess;
+
     @Values(
             {
                     @Value(value = "%open%|&eVisitas -> %visits%|&eClique para ir a loja", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%open%|&eVisits -> %visits%|&eClick to go to the shop", lang = LangTypes.EN_US)
             }
     )
     public static List<String> shopInventoryItemsLore;
+
     @Values(
             {
                     @Value(value = "&eLoja do &f%player%", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "&e%player%'s Shop", lang = LangTypes.EN_US)
             }
     )
     public static String shopInventoryItemsName;
+
     @Values(
             {
                     @Value(value = "&eVoltar página", lang = LangTypes.PT_BR),
@@ -574,35 +583,39 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&eNenhuma loja criada ainda.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eNo shop has been created yet.", lang = LangTypes.EN_US)
             }
     )
     public static String shopNotExistShop;
+
     @Values(
             {
                     @Value(value = "%prefix%&aVocê foi teleportado para a loja do %player%.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aYou have been teleported to %player%'s shop.", lang = LangTypes.EN_US)
             }
     )
     public static String shopTeleport;
+
     @Values(
             {
                     @Value(value = "%prefix%&cEssa loja se encontra fechada!.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cThis shop is currently closed!", lang = LangTypes.EN_US)
             }
     )
     public static String shopClosedMessage;
+
     @Values(
             {
                     @Value(value = "%prefix%&eVocê mudou o estado da para %open%&e.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eYou changed the status to %open%&e.", lang = LangTypes.EN_US)
             }
     )
     public static String shopSwitchMessage;
+
     @Values(
             {
                     @Value(value = "%prefix%&cVocê precisa criar uma loja primeiro!.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cYou need to create a shop first!", lang = LangTypes.EN_US)
             }
     )
     public static String shopNotCreated;
@@ -610,7 +623,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "&aSetar sua loja nesta posição.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "&aSet your shop at this position.", lang = LangTypes.EN_US)
             }
     )
     public static String shopLoreSet;
@@ -618,7 +631,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "&aAo cliar aqui você mudará o estado de sua loja!.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "&aClicking here will change the status of your shop!", lang = LangTypes.EN_US)
             }
     )
     public static String shopLoreSwitch;
@@ -870,35 +883,39 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&eVocê criou um novo vip! '%vip%'.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eYou created a new VIP! '%vip%'.", lang = LangTypes.EN_US)
             }
     )
     public static String VipsCreateNew;
+
     @Values(
             {
                     @Value(value = "%prefix%&aVocê criou uma key vip! '%key%'.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aYou created a VIP key! '%key%'.", lang = LangTypes.EN_US)
             }
     )
     public static String VipsCreateNewKey;
+
     @Values(
             {
                     @Value(value = "%prefix%&cEsse grupo não existe.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cThis group does not exist.", lang = LangTypes.EN_US)
             }
     )
     public static String VipsGroupNotExist;
+
     @Values(
             {
                     @Value(value = "%prefix%&cEssa key não existe, tente outra!", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cThis key does not exist, try another!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsKeyNotExist;
+
     @Values(
             {
                     @Value(value = "%prefix%&aVocê ativou o %vip% de %days% dias com sucesso!", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aYou successfully activated the %vip% for %days% days!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsActivate;
@@ -906,7 +923,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cEsse Vip já existe!", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cThis VIP already exists!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsExist;
@@ -914,10 +931,11 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cEsse Vip não existe!", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cThis VIP does not exist!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsNotExist;
+
 
     @Values(
             {
@@ -938,14 +956,15 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "Utilize o comando '/vip token %value%' para ativar a integração com o discord do servidor", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "Use the command '/vip token %value%' to activate the server's Discord integration", lang = LangTypes.EN_US)
             }
     )
     public static String VipsDiscordMessage;
+
     @Values(
             {
                     @Value(value = "%prefix%&eUtilize o comando '/vip token <token>' para ativar a integração, o token foi enviado ao seu discord.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eUse the command '/vip token <token>' to activate the integration, the token was sent to your Discord.", lang = LangTypes.EN_US)
             }
     )
     public static String VipsDiscordLocalMessage;
@@ -953,7 +972,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cEsse token não existe.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cThis token does not exist.", lang = LangTypes.EN_US)
             }
     )
     public static String VipsDiscordTokenError;
@@ -961,7 +980,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&aVocê ativou a integração com sucesso.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aYou have successfully activated the integration.", lang = LangTypes.EN_US)
             }
     )
     public static String VipsDiscordTokenActivate;
@@ -969,7 +988,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cEsse grupo não existe no discord.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cThis group does not exist on Discord.", lang = LangTypes.EN_US)
             }
     )
     public static String VipsDiscordRoleError;
@@ -977,7 +996,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&aVocê acabou de setar o id do grupo do vip.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aYou have just set the VIP group's ID.", lang = LangTypes.EN_US)
             }
     )
     public static String VipsDiscordRoleActivate;
@@ -985,7 +1004,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cEsse userid não existe.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cThis user ID does not exist.", lang = LangTypes.EN_US)
             }
     )
     public static String VipsDiscordUserIdNotExist;
@@ -993,7 +1012,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "O %player% acabou de ativar o vip %vip% por %time%!", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%player% has just activated the VIP %vip% for %time%!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsDiscordActivateMessage;
@@ -1001,7 +1020,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&aO %player% acabou de ativar o vip %vip% por %time%!", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&a%player% has just activated the VIP %vip% for %time%!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsActivateMessage;
@@ -1009,7 +1028,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&aItems do vip %vip% atualizados com sucesso!", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aVIP %vip% items updated successfully!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsUpdateItems;
@@ -1017,7 +1036,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cTire todos items do inventario '/vip items' para pegar esse vip.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cRemove all items from the '/vip items' inventory to claim this VIP.", lang = LangTypes.EN_US)
             }
     )
     public static String VipsClearItemsInventory;
@@ -1025,7 +1044,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cEsse player já tem items no '/vip items' por isso ele não pode receber esse vip.", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cThis player already has items in '/vip items', so they cannot receive this VIP.", lang = LangTypes.EN_US)
             }
     )
     public static String VipsClearItemsOtherInventory;
@@ -1033,10 +1052,11 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&eLista de comandos:", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eCommand list:", lang = LangTypes.EN_US)
             }
     )
     public static String VipsCommandsListMessage;
+
     @Values(
             {
                     @Value(value = "&9> '&e%command%&9'", lang = LangTypes.PT_BR),
@@ -1056,7 +1076,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&aComando retirado!", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aCommand removed!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsCommandsRemove;
@@ -1064,14 +1084,15 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&eTempo dos vips:!", lang = LangTypes.PT_BR),
-                    @Value(value = "'", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eVIP times:!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsTimeFirstMessage;
+
     @Values(
             {
                     @Value(value = "%prefix%&eTempo dos vips do %player%:!", lang = LangTypes.PT_BR),
-                    @Value(value = "'", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eVIP times of %player%:!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsTimeFirstOtherMessage;
@@ -1079,7 +1100,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cVocê atualmente não tem nenhum vip ativo!", lang = LangTypes.PT_BR),
-                    @Value(value = "'", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cYou currently do not have any active VIPs!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsTimeNoVip;
@@ -1087,10 +1108,11 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&eLista de vips:", lang = LangTypes.PT_BR),
-                    @Value(value = "not lang", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eVIP list:", lang = LangTypes.EN_US)
             }
     )
     public static String VipsListMessage;
+
     @Values(
             {
                     @Value(value = "&9> '&e%vip%&9'", lang = LangTypes.PT_BR),
@@ -1102,7 +1124,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cEle não tem este vip ativo!", lang = LangTypes.PT_BR),
-                    @Value(value = "'", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cThey do not have this VIP active!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsRemoveNoVip;
@@ -1110,10 +1132,11 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&aVip Removido com sucesso!", lang = LangTypes.PT_BR),
-                    @Value(value = "'", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aVIP successfully removed!", lang = LangTypes.EN_US)
             }
     )
     public static String VipsRemove;
+
 
     //nicks
     @Values(
@@ -1901,17 +1924,17 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cVocê foi teleportado para o spawn por inatividade!", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cYou were teleported to spawn due to inactivity!", lang = LangTypes.EN_US)
             }
     )
     public static String antiafkMessage;
 
-    //clearitems
+//clearitems
 
     @Values(
             {
                     @Value(value = "%prefix%&cLimpando o chão em %time%", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cClearing ground in %time%", lang = LangTypes.EN_US)
             }
     )
     public static String ClearitemsMessage;
@@ -1919,17 +1942,17 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cChão Limpo!", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cGround cleared!", lang = LangTypes.EN_US)
             }
     )
     public static String ClearitemsFinishMessage;
 
-    //material
+//material
 
     @Values(
             {
                     @Value(value = "%prefix%&aNome do material: %material%", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&aMaterial name: %material%", lang = LangTypes.EN_US)
             }
     )
     public static String MaterialName;
@@ -2214,7 +2237,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "Player: %player%, IP: %ip%, País: %country%, Estado: %state%, Cidade: %city%.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "Player: %player%, IP: %ip%, Country: %country%, State: %state%, City: %city%.", lang = LangTypes.EN_US)
             }
     )
     public static String discordchatSendPlayerLocale;
@@ -2222,7 +2245,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "Trocou ip -> Player: %player%, IP: %ip%, País: %country%, Estado: %state%, Cidade: %city%.", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "Changed IP -> Player: %player%, IP: %ip%, Country: %country%, State: %state%, City: %city%.", lang = LangTypes.EN_US)
             }
     )
     public static String discordchatSendPlayerLocalAtt;
@@ -2230,7 +2253,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&eLista de cores disponíveis: %colors%", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eAvailable colors list: %colors%", lang = LangTypes.EN_US)
             }
     )
     public static String colorSendList;
@@ -2238,7 +2261,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&eCor setada com sucesso! : %color%", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&eColor successfully set! : %color%", lang = LangTypes.EN_US)
             }
     )
     public static String colorSet;
@@ -2246,7 +2269,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cVocê não tem permissão para utilizar essa cor!", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cYou do not have permission to use this color!", lang = LangTypes.EN_US)
             }
     )
     public static String colorNotSet;
@@ -2254,7 +2277,7 @@ public class LangConfig implements DefaultLang {
     @Values(
             {
                     @Value(value = "%prefix%&cVocê acabou de remover a sua cor do chat!", lang = LangTypes.PT_BR),
-                    @Value(value = "", lang = LangTypes.EN_US)
+                    @Value(value = "%prefix%&cYou just removed your chat color!", lang = LangTypes.EN_US)
             }
     )
     public static String colorRemove;

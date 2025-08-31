@@ -1,13 +1,13 @@
 package github.gilbertokpl.total.cache.loop
 
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.PlayerData
-import github.gilbertokpl.total.cache.local.SpawnData
-import github.gilbertokpl.total.cache.local.WarpData
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.PlayerData
+import github.gilbertokpl.total.cache.data.SpawnData
+import github.gilbertokpl.total.cache.data.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.FoliaUtil.teleportSafe
-import github.gilbertokpl.total.util.TaskUtil
+import github.gilbertokpl.total.util.PlayerUtil.teleportSafe
+
 import java.util.concurrent.TimeUnit
 
 object AntiAfkLoop {
@@ -15,12 +15,12 @@ object AntiAfkLoop {
     private val TIME_TO_EXECUTE = MainConfig.antiafkTimeToExecute
 
     fun start() {
-        TaskUtil.getInternalExecutor()
+        TotalEssentials.getCore().getTask().getInternalExecutor()
             .scheduleWithFixedDelay(::checkPlayersAfk, TIME_TO_CHECK_MINUTES, TIME_TO_CHECK_MINUTES, TimeUnit.MINUTES)
     }
 
     private fun checkPlayersAfk() {
-        for (player in TotalEssentialsJava.getBasePlugin().getReflection().getPlayers()) {
+        for (player in TotalEssentials.getCore().getReflection().getPlayers()) {
             if (player.hasPermission("totalessentials.bypass.antiafk")) {
                 continue
             }

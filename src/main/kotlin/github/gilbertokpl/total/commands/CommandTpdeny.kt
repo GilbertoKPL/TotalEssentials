@@ -1,15 +1,16 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.internal.DataTeleport
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandTpdeny : github.gilbertokpl.core.external.command.CommandCreator("tpdeny") {
+class CommandTpdeny : CommandCreator("tpdeny") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -39,7 +40,7 @@ class CommandTpdeny : github.gilbertokpl.core.external.command.CommandCreator("t
         player.sendMessage(LangConfig.tpaRequestDeny.replace("%player%", tpaSender.name))
 
         // Verifica se o outro jogador ainda está online antes de enviar mensagem
-        TotalEssentialsJava.getInstance().server.getPlayer(tpaSender.name)?.let { otherPlayer ->
+        TotalEssentials.getInstance().server.getPlayer(tpaSender.name)?.let { otherPlayer ->
             otherPlayer.sendMessage(
                 LangConfig.tpaRequestOtherDeny.replace("%player%", player.name)
             )

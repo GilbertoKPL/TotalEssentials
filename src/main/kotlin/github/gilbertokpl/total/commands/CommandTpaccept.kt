@@ -1,18 +1,19 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.core.internal.task.dispatcher
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.task.bukkit.dispatcher
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.internal.DataTeleport
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.FoliaUtil.teleportSafe
+import github.gilbertokpl.total.util.PlayerUtil.teleportSafe
 import kotlinx.coroutines.withContext
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandTpaccept : github.gilbertokpl.core.external.command.CommandCreator("tpaccept") {
+class CommandTpaccept : CommandCreator("tpaccept") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -36,7 +37,7 @@ class CommandTpaccept : github.gilbertokpl.core.external.command.CommandCreator(
             return false
         }
 
-        val target = TotalEssentialsJava.getInstance().server.getPlayer(tpaPlayer.name) ?: run {
+        val target = TotalEssentials.getInstance().server.getPlayer(tpaPlayer.name) ?: run {
             player.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
@@ -58,7 +59,7 @@ class CommandTpaccept : github.gilbertokpl.core.external.command.CommandCreator(
         val time = MainConfig.tpaTimeToTeleport
         target.sendMessage(LangConfig.tpaRequestOtherAccepted.replace("%player%", player.name).replace("%time%", time.toString()))
 
-        val task = TotalEssentialsJava.getBasePlugin().getTask()
+        val task = TotalEssentials.getCore().getTask()
         task.async {
             task.waitSeconds(time.toLong() * 50L)
             try {

@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.PlayerData
-import github.gilbertokpl.total.cache.local.SpawnData
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.PlayerData
+import github.gilbertokpl.total.cache.data.SpawnData
 import github.gilbertokpl.total.config.files.MainConfig
 import kotlinx.coroutines.delay
 import org.bukkit.event.EventHandler
@@ -20,7 +20,7 @@ class PlayerRespawn : Listener {
     }
 
     private fun playerData(e: PlayerRespawnEvent) {
-        val task = TotalEssentialsJava.getBasePlugin().getTask()
+        val task = TotalEssentials.getCore().getTask()
         task.async {
             delay(20)
             task.sync {

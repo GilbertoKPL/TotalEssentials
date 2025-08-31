@@ -1,11 +1,11 @@
 package github.gilbertokpl.total.cache.loop
 
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
 import github.gilbertokpl.total.util.PlayerUtil
-import github.gilbertokpl.total.util.TaskUtil
+
 import java.util.concurrent.TimeUnit
 
 object DiscordLoop {
@@ -20,17 +20,17 @@ object DiscordLoop {
 
         start = true
 
-        TaskUtil.getInternalExecutor().scheduleWithFixedDelay({
+        TotalEssentials.getCore().getTask().getInternalExecutor().scheduleWithFixedDelay({
             val online = PlayerUtil.getIntOnlinePlayers(false)
-            val onlineTime = TotalEssentialsJava.getBasePlugin().getTime().getOnlineTime()
-            val currentTime = TotalEssentialsJava.getBasePlugin().getTime().getCurrentDate()
+            val onlineTime = TotalEssentials.getCore().getTime().getOnlineTime()
+            val currentTime = TotalEssentials.getCore().getTime().getCurrentDate()
 
             Discord.jda?.getTextChannelById(MainConfig.discordbotIdDiscordChat)?.manager?.setTopic(
                 LangConfig.discordchatDiscordTopic
                     .replace("%online%", online.toString())
                     .replace(
                         "%online_time%",
-                        TotalEssentialsJava.getBasePlugin().getTime().convertMillisToString(onlineTime, true)
+                        TotalEssentials.getCore().getTime().convertMillisToString(onlineTime, true)
                     )
                     .replace("%time%", currentTime)
             )?.queue()

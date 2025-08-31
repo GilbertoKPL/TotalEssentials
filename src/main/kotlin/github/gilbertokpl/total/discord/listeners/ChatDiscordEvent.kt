@@ -2,7 +2,7 @@ package github.gilbertokpl.total.discord.listeners
 
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.MainUtil
+import github.gilbertokpl.total.util.ServerUtil
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import java.util.concurrent.TimeUnit
@@ -26,7 +26,7 @@ class ChatDiscordEvent : ListenerAdapter() {
                     }
                     return
                 }
-                MainUtil.serverMessage(
+                ServerUtil.serverMessage(
                     LangConfig.discordchatDiscordToServerPattern
                         .replace("%player%", e.author.name)
                         .replace("%message%", msg)

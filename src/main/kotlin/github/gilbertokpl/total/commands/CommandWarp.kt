@@ -1,17 +1,18 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.cache.local.WarpData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.cache.data.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.FoliaUtil.teleportSafe
 import github.gilbertokpl.total.util.PlayerUtil
+import github.gilbertokpl.total.util.PlayerUtil.teleportSafe
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandWarp : github.gilbertokpl.core.external.command.CommandCreator("warp") {
+class CommandWarp : CommandCreator("warp") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(

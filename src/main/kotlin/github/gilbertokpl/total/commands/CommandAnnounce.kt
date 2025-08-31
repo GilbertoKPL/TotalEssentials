@@ -1,12 +1,12 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandCreator
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
-import github.gilbertokpl.total.util.MainUtil
+import github.gilbertokpl.total.util.ServerUtil
 import github.gilbertokpl.total.util.PermissionUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -44,7 +44,7 @@ class CommandAnnounce : CommandCreator("announce") {
             .replace("%message%", coloredMessage)
 
         // Send message to server
-        MainUtil.serverMessage(formattedMessage)
+        ServerUtil.serverMessage(formattedMessage)
 
         // Remove color codes and send to Discord
         val discordMessage = formattedMessage.replace(Regex("§[0-9a-fk-or]"), "")

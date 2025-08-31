@@ -1,18 +1,19 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.MainUtil
+import github.gilbertokpl.total.util.ServerUtil
 import github.gilbertokpl.total.util.PermissionUtil
 import github.gilbertokpl.total.util.PlayerUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nick") {
+class CommandNick : CommandCreator("nick") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -37,7 +38,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
         // single argument (self nick)
         if (args.size == 1 && s is Player) {
 
-            if (MainUtil.checkSpecialCharacters(args[0])) {
+            if (ServerUtil.checkSpecialCharacters(args[0])) {
                 s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
                 return false
             }
@@ -77,7 +78,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
         // two arguments (other player)
         if (args.size != 2) return true
 
-        if (MainUtil.checkSpecialCharacters(args[1])) {
+        if (ServerUtil.checkSpecialCharacters(args[1])) {
             s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
@@ -92,7 +93,7 @@ class CommandNick : github.gilbertokpl.core.external.command.CommandCreator("nic
             return false
         }
 
-        val p = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
+        val p = TotalEssentials.getInstance().server.getPlayer(args[0]) ?: run {
             s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }

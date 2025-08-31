@@ -1,14 +1,15 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandFeed : github.gilbertokpl.core.external.command.CommandCreator("feed") {
+class CommandFeed : CommandCreator("feed") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -40,7 +41,7 @@ class CommandFeed : github.gilbertokpl.core.external.command.CommandCreator("fee
             }
 
             // Get target player
-            val targetPlayer = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
+            val targetPlayer = TotalEssentials.getInstance().server.getPlayer(args[0]) ?: run {
                 s.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }

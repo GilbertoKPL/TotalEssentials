@@ -1,13 +1,14 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.cache.local.WarpData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.cache.data.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 
-class CommandDelWarp : github.gilbertokpl.core.external.command.CommandCreator("delwarp") {
+class CommandDelWarp : CommandCreator("delwarp") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(

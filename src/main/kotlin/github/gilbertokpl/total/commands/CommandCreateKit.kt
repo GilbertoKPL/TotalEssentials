@@ -1,15 +1,16 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.cache.internal.inventory.Kit
-import github.gilbertokpl.total.cache.local.KitsData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.cache.data.KitsData
+import github.gilbertokpl.total.cache.inventory.Kit
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.MainUtil
+import github.gilbertokpl.total.util.ServerUtil
 import org.bukkit.command.CommandSender
 
-class CommandCreateKit : github.gilbertokpl.core.external.command.CommandCreator("createkit") {
+class CommandCreateKit : CommandCreator("createkit") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -38,7 +39,7 @@ class CommandCreateKit : github.gilbertokpl.core.external.command.CommandCreator
         // --------------------------------------------------------
         // Validate special characters
         // --------------------------------------------------------
-        if (MainUtil.checkSpecialCharacters(kitName)) {
+        if (ServerUtil.checkSpecialCharacters(kitName)) {
             s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }

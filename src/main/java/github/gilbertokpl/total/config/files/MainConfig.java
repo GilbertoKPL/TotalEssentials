@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.config.files;
 
-import github.gilbertokpl.core.external.config.annotations.*;
-import github.gilbertokpl.core.external.config.def.DefaultConfig;
-import github.gilbertokpl.core.external.config.types.LangTypes;
+import github.gilbertokpl.core.config.annotations.*;
+import github.gilbertokpl.core.config.def.DefaultConfig;
+import github.gilbertokpl.core.config.types.LangTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

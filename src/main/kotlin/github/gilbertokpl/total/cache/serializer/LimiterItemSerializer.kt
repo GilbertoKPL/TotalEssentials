@@ -1,7 +1,6 @@
 package github.gilbertokpl.total.cache.serializer
 
-import github.gilbertokpl.core.external.cache.convert.SerializerBase
-import org.bukkit.Location
+import github.gilbertokpl.core.cache.convert.SerializerBase
 
 class LimiterItemSerializer : SerializerBase<HashMap<Int, Int>, String> {
     override fun convertToDatabase(hash: HashMap<Int, Int>): String {

@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.listeners
 
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.StackMobsUtil.handleSpawnWithinRange
+import github.gilbertokpl.total.stackmobs.CoreStackMobs.handleSpawnWithinRange
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.CreatureSpawnEvent

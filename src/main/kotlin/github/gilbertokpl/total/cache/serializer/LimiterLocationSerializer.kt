@@ -1,14 +1,14 @@
 package github.gilbertokpl.total.cache.serializer
 
-import github.gilbertokpl.core.external.cache.convert.SerializerBase
-import github.gilbertokpl.core.external.utils.Inventory
+import github.gilbertokpl.core.cache.convert.SerializerBase
+import github.gilbertokpl.core.utils.InventoryUtil
 import org.bukkit.Location
 import org.bukkit.inventory.ItemStack
 
 class LimiterLocationSerializer : SerializerBase<HashMap<ItemStack, ArrayList<Location>>, String> {
 
     private val locationSerializer = LocationSerializer()
-    private val itemSerializer = Inventory()
+    private val itemSerializer = InventoryUtil()
 
     override fun convertToDatabase(hash: HashMap<ItemStack, ArrayList<Location>>): String {
         val serializedLocations = hash.entries.joinToString("|") { entry ->

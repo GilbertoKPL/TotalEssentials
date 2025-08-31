@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.StackMobsUtil
+import github.gilbertokpl.total.stackmobs.CoreStackMobs
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
@@ -47,7 +47,7 @@ class EntityDeath : Listener {
             val newEntity = EntityType.fromId(entityId)
                 ?.let { livingEntity.world.spawnEntity(livingEntity.location, it) }
 
-            newEntity?.setMetadata("mob_id", FixedMetadataValue(TotalEssentialsJava.getInstance(), entityId))
+            newEntity?.setMetadata("mob_id", FixedMetadataValue(TotalEssentials.getInstance(), entityId))
 
             var name = livingEntity.toString().replace("Craft", "")
             MainConfig.stackmobsNameReplacer
@@ -56,7 +56,7 @@ class EntityDeath : Listener {
                 }
 
             if (newEntity != null) {
-                StackMobsUtil.mobCreate(newEntity, stackSize - 1, name)
+                CoreStackMobs.mobCreate(newEntity, stackSize - 1, name)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()

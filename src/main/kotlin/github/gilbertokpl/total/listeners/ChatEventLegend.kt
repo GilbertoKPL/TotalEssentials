@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.listeners
 
 import br.com.devpaulo.legendchat.api.events.ChatMessageEvent
-import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PermissionUtil
 import org.bukkit.event.EventHandler

@@ -8,7 +8,7 @@ plugins {
 
 val base = "github.gilbertokpl.library"
 
-version = "1.2.0"
+version = "1.2.1"
 
 
 repositories {
@@ -36,7 +36,7 @@ dependencies {
     compileOnly(fileTree(mapOf("dir" to "$buildDir\\..\\localjar", "include" to listOf("*.jar"))))
 
     //spigot
-    compileOnly("org.spigotmc:spigot-api:1.21.8-R0.1-SNAPSHOT") {
+    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT") {
         exclude("commons-lang", "commons-lang")
         exclude("commons-io", "commons-io")
         exclude("org.yaml", "snakeyaml")

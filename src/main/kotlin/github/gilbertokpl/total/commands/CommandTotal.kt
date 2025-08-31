@@ -1,23 +1,24 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.KeyData
+import github.gilbertokpl.total.cache.data.PlayerData
+import github.gilbertokpl.total.cache.data.VipData
 import github.gilbertokpl.total.cache.internal.Data
-import github.gilbertokpl.total.cache.local.KeyData
-import github.gilbertokpl.total.cache.local.PlayerData
-import github.gilbertokpl.total.cache.local.VipData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
 import github.gilbertokpl.total.util.PluginUtil
-import github.gilbertokpl.total.util.VipUtil.checkVip
+import github.gilbertokpl.total.vip.CoreVip.checkVip
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
-class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("total") {
+class CommandTotal : CommandCreator("total") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -62,7 +63,7 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
             }
 
             "reload" -> {
-                if (TotalEssentialsJava.getBasePlugin().reloadConfig()) {
+                if (TotalEssentials.getCore().reloadConfig()) {
                     s.sendMessage(LangConfig.generalConfigReload)
                 }
                 return false
@@ -85,7 +86,7 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
             }
 
             "save" -> {
-                TotalEssentialsJava.getBasePlugin().getCache().save()
+                TotalEssentials.getCore().getCache().save()
                 s.sendMessage("Salvo!")
                 return false
             }
@@ -99,7 +100,7 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
             return false
         }
 
-        TotalEssentialsJava.getBasePlugin().getTask().async {
+        TotalEssentials.getCore().getTask().async {
             val token = KeyData.generateRandomString()
             for (idString in MainConfig.generalResetList) {
                 val id = idString.toLongOrNull() ?: continue
@@ -134,10 +135,10 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
             }
         }
 
-        TotalEssentialsJava.getBasePlugin().getTask().async {
+        TotalEssentials.getCore().getTask().async {
             try {
-                transaction(TotalEssentialsJava.getBasePlugin().sql) {
-                    TotalEssentialsJava.getBasePlugin().getCache().toByteUpdate.forEach {
+                transaction(TotalEssentials.getCore().sql) {
+                    TotalEssentials.getCore().getCache().toByteUpdate.forEach {
                         try { it.update() } catch (e: Exception) { println(e) }
                     }
                 }
@@ -150,7 +151,7 @@ class CommandTotal : github.gilbertokpl.core.external.command.CommandCreator("to
 
     private fun sendHostInfo(s: CommandSender) {
         s.sendMessage(LangConfig.generalHostWait)
-        val host = TotalEssentialsJava.getBasePlugin().getHost().getHost()
+        val host = TotalEssentials.getCore().getHost().getHost()
         LangConfig.generalHostConfig.forEach { line ->
             s.sendMessage(
                 line.replace("%ip%", host.ipAddress)

@@ -1,17 +1,18 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.WarpData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.MainUtil
+import github.gilbertokpl.total.util.ServerUtil
 import org.bukkit.Location
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandSetWarp : github.gilbertokpl.core.external.command.CommandCreator("setwarp") {
+class CommandSetWarp : CommandCreator("setwarp") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -38,7 +39,7 @@ class CommandSetWarp : github.gilbertokpl.core.external.command.CommandCreator("
         }
 
         // check for special characters
-        if (MainUtil.checkSpecialCharacters(args[0])) {
+        if (ServerUtil.checkSpecialCharacters(args[0])) {
             s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
@@ -53,7 +54,7 @@ class CommandSetWarp : github.gilbertokpl.core.external.command.CommandCreator("
         if (args.size == 5) {
             val loc = try {
                 Location(
-                    TotalEssentialsJava.getInstance().server.getWorld(args[1]),
+                    TotalEssentials.getInstance().server.getWorld(args[1]),
                     args[2].toDouble(),
                     args[3].toDouble(),
                     args[4].toDouble()

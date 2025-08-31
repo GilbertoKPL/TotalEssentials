@@ -1,9 +1,10 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
@@ -11,7 +12,7 @@ import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-class CommandVanish : github.gilbertokpl.core.external.command.CommandCreator("vanish") {
+class CommandVanish : CommandCreator("vanish") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -38,7 +39,7 @@ class CommandVanish : github.gilbertokpl.core.external.command.CommandCreator("v
                 return false
             }
 
-            val target = TotalEssentialsJava.getInstance().server.getPlayer(args[0])
+            val target = TotalEssentials.getInstance().server.getPlayer(args[0])
             if (target == null) {
                 sender.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
@@ -70,7 +71,7 @@ class CommandVanish : github.gilbertokpl.core.external.command.CommandCreator("v
 
         if (newValue) {
             player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
-            TotalEssentialsJava.getBasePlugin().getReflection().getPlayers().forEach {
+            TotalEssentials.getCore().getReflection().getPlayers().forEach {
                 if (!it.hasPermission("totalessentials.commands.vanish") &&
                     !it.hasPermission("totalessentials.bypass.vanish")) {
                     it.hidePlayer(player)
@@ -78,7 +79,7 @@ class CommandVanish : github.gilbertokpl.core.external.command.CommandCreator("v
             }
         } else {
             player.removePotionEffect(PotionEffectType.INVISIBILITY)
-            TotalEssentialsJava.getBasePlugin().getReflection().getPlayers().forEach {
+            TotalEssentials.getCore().getReflection().getPlayers().forEach {
                 it.showPlayer(player)
             }
         }

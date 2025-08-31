@@ -1,16 +1,17 @@
 package github.gilbertokpl.total.cache.loop
 
-import github.gilbertokpl.total.cache.internal.inventory.Playtime
-import github.gilbertokpl.total.cache.internal.inventory.Shop
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.inventory.Playtime
+import github.gilbertokpl.total.cache.inventory.Shop
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.MoneyUtil
-import github.gilbertokpl.total.util.TaskUtil
+import github.gilbertokpl.total.economy.CoreMoney
+
 import java.util.concurrent.TimeUnit
 
 object PluginLoop {
 
     fun start() {
-        TaskUtil.getInternalExecutor().scheduleWithFixedDelay({
+        TotalEssentials.getCore().getTask().getInternalExecutor().scheduleWithFixedDelay({
             refreshMoney()
             setupShopInventory()
             setupPlaytimeInventory()
@@ -21,7 +22,7 @@ object PluginLoop {
     private fun refreshMoney() {
         if (MainConfig.moneyActivated) {
             try {
-                MoneyUtil.refreshTycoon()
+                CoreMoney.refreshTycoon()
             } catch (e: Exception) {
                 e.printStackTrace()
             }

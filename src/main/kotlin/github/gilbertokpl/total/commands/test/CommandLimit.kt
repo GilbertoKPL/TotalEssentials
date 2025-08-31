@@ -1,17 +1,18 @@
 package github.gilbertokpl.total.commands.test
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.test.LimitData
 import github.gilbertokpl.total.cache.internal.Data.limitPlayerEdit
-import github.gilbertokpl.total.cache.local.test.LimitData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandLimit : github.gilbertokpl.core.external.command.CommandCreator("limit") {
+class CommandLimit : CommandCreator("limit") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -35,7 +36,7 @@ class CommandLimit : github.gilbertokpl.core.external.command.CommandCreator("li
         }
         if (args[0].contains("edit", true) && s is Player && s.hasPermission("totalessentials.commands.limit.edit")) {
 
-            val perm = TotalEssentialsJava.getPermission()
+            val perm = TotalEssentials.getPermission()
 
             if (perm is Permission) {
                 if (!perm.groups.contains(args[1])) {
@@ -53,14 +54,14 @@ class CommandLimit : github.gilbertokpl.core.external.command.CommandCreator("li
             limitPlayerEdit[s] = args[1]
 
             val limit = LimitData.limitItems[args[1]]
-            val inv = TotalEssentialsJava.getInstance().server.createInventory(null, 54)
+            val inv = TotalEssentials.getInstance().server.createInventory(null, 54)
             if (limit != null) {
                 for (i in limit) {
                     inv.addItem(i)
                 }
             }
 
-            s.openInventory(TotalEssentialsJava.getInstance().server.createInventory(null, 54))
+            s.openInventory(TotalEssentials.getInstance().server.createInventory(null, 54))
         }
         return true
     }

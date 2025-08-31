@@ -1,15 +1,15 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.FoliaUtil.teleportSafe
-import org.bukkit.Bukkit
+import github.gilbertokpl.total.util.PlayerUtil.teleportSafe
 import org.bukkit.Location
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandTpchunk : github.gilbertokpl.core.external.command.CommandCreator("tpchunk") {
+class CommandTpchunk : CommandCreator("tpchunk") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(

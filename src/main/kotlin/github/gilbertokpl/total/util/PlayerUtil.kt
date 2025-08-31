@@ -1,12 +1,11 @@
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.core.internal.task.dispatcher
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.PlayerData
-import github.gilbertokpl.total.cache.local.ShopData
+import github.gilbertokpl.core.task.bukkit.dispatcher
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.PlayerData
+import github.gilbertokpl.total.cache.data.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.FoliaUtil.teleportSafe
 import kotlinx.coroutines.withContext
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -15,25 +14,44 @@ import org.bukkit.inventory.ItemStack
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 import java.net.URL
 import java.nio.charset.StandardCharsets
 
 
 internal object PlayerUtil {
 
+    private var teleportAsyncMethod: Method? = null
+    private var hasCheckedTeleport = false
+
+    fun Player.teleportSafe(location: Location) {
+        if (!hasCheckedTeleport) {
+            teleportAsyncMethod = try {
+                this.javaClass.getMethod("teleportAsync", Location::class.java)
+            } catch (_: Exception) {
+                null
+            }
+            hasCheckedTeleport = true
+        }
+
+        teleportAsyncMethod?.invoke(this, location) ?: run {
+            this.teleport(location)
+        }
+    }
+
     fun sendAllMessage(message: String) {
-        for (p in TotalEssentialsJava.getBasePlugin().getReflection().getPlayers()) {
+        for (p in TotalEssentials.getCore().getReflection().getPlayers()) {
             p.sendMessage(message)
         }
     }
 
     fun sendMessage(player: String, message: String) {
-        val p = TotalEssentialsJava.getInstance().server.getPlayerExact(player.lowercase()) ?: return
+        val p = TotalEssentials.getInstance().server.getPlayerExact(player.lowercase()) ?: return
         p.sendMessage(message)
     }
 
     fun getIntOnlinePlayers(vanish: Boolean): Int {
-        var amount = TotalEssentialsJava.getBasePlugin().getReflection().getPlayers()
+        var amount = TotalEssentials.getCore().getReflection().getPlayers()
         if (!vanish) {
             amount = amount.filter {
                 PlayerData.vanishCache[it] != null && !PlayerData.vanishCache[it]!!
@@ -173,12 +191,12 @@ internal object PlayerUtil {
             return
         }
 
-        val task = TotalEssentialsJava.getBasePlugin().getTask()
+        val task = TotalEssentials.getCore().getTask()
 
         task.async {
             task.waitSeconds(time.toLong())
             try {
-                withContext(TotalEssentialsJava.getBasePlugin()!!.plugin.dispatcher(async = false)) {
+                withContext(TotalEssentials.getCore()!!.plugin.dispatcher(async = false)) {
                     PlayerData.inTeleport[p] = false
                     p.teleportSafe(location)
                     if (message != null) {

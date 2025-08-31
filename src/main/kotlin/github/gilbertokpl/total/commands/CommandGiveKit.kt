@@ -1,15 +1,16 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.KitsData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.KitsData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.ItemUtil
 import org.bukkit.command.CommandSender
 
-class CommandGiveKit : github.gilbertokpl.core.external.command.CommandCreator("givekit") {
+class CommandGiveKit : CommandCreator("givekit") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -39,7 +40,7 @@ class CommandGiveKit : github.gilbertokpl.core.external.command.CommandCreator("
         }
 
         // Pega o jogador online
-        val p = TotalEssentialsJava.getInstance().server.getPlayer(args[0]) ?: run {
+        val p = TotalEssentials.getInstance().server.getPlayer(args[0]) ?: run {
             s.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }

@@ -1,15 +1,16 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.cache.internal.inventory.EditKit.editKitGui
-import github.gilbertokpl.total.cache.local.KitsData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.cache.data.KitsData
+import github.gilbertokpl.total.cache.inventory.EditKit.editKitGui
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandEditKit : github.gilbertokpl.core.external.command.CommandCreator("editkit") {
+class CommandEditKit : CommandCreator("editkit") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(

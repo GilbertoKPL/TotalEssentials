@@ -1,10 +1,11 @@
 package github.gilbertokpl.total.cache.internal
 
-import github.gilbertokpl.total.cache.internal.inventory.EditKit
-import github.gilbertokpl.total.cache.internal.inventory.Kit
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.inventory.EditKit
+import github.gilbertokpl.total.cache.inventory.Kit
 import github.gilbertokpl.total.cache.loop.AnnounceLoop
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.util.TaskUtil
+
 
 internal object InternalLoader {
 
@@ -22,7 +23,7 @@ internal object InternalLoader {
             if (newAnnounceMap != announcementsListAnnounce) {
                 announcementsListAnnounce = newAnnounceMap.toMutableMap()
                 if (MainConfig.announcementsEnabled) {
-                    TaskUtil.restartInternalExecutor()
+                    TotalEssentials.getCore().getTask().restartInternalExecutor()
                     AnnounceLoop.start(announce.size, MainConfig.announcementsTime)
                 }
             }

@@ -1,12 +1,13 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.WorldUtil
 import org.bukkit.command.CommandSender
 
-class CommandClearEntities : github.gilbertokpl.core.external.command.CommandCreator("clearentities") {
+class CommandClearEntities : CommandCreator("clearentities") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(

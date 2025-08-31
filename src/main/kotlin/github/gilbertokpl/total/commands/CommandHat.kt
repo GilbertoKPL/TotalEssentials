@@ -1,7 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil
@@ -9,7 +10,7 @@ import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandHat : github.gilbertokpl.core.external.command.CommandCreator("hat") {
+class CommandHat : CommandCreator("hat") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(

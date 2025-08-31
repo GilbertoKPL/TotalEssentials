@@ -1,10 +1,11 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.external.command.CommandTarget
-import github.gilbertokpl.core.external.command.annotations.CommandPattern
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.LoginData
-import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.core.command.annotations.CommandPattern
+import github.gilbertokpl.core.command.external.CommandCreator
+import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.LoginData
+import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
@@ -12,7 +13,7 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandLogin : github.gilbertokpl.core.external.command.CommandCreator("login") {
+class CommandLogin : CommandCreator("login") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
@@ -33,7 +34,7 @@ class CommandLogin : github.gilbertokpl.core.external.command.CommandCreator("lo
 
     override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        val encrypt = TotalEssentialsJava.getBasePlugin().getEncrypt()
+        val encrypt = TotalEssentials.getCore().getEncrypt()
 
         if (s is Player && LoginData.doesPlayerExist(s) && !LoginData.isPlayerLoggedIn(s)) {
 

@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.cache.loop
 
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.internal.InternalLoader
-import github.gilbertokpl.total.util.TaskUtil
+
 import java.util.concurrent.TimeUnit
 
 internal object AnnounceLoop {
@@ -19,7 +19,7 @@ internal object AnnounceLoop {
 
         maxAnnouncementIndex = maxAnnouncements - 1
 
-        TaskUtil.getInternalExecutor().scheduleWithFixedDelay(
+        TotalEssentials.getCore().getTask().getInternalExecutor().scheduleWithFixedDelay(
             ::sendAnnouncement,
             intervalInMinutes.toLong(),
             intervalInMinutes.toLong(),
@@ -28,7 +28,7 @@ internal object AnnounceLoop {
     }
 
     private fun sendAnnouncement() {
-        val onlinePlayers = TotalEssentialsJava.getBasePlugin().getReflection().getPlayers()
+        val onlinePlayers = TotalEssentials.getCore().getReflection().getPlayers()
         val announcement = InternalLoader.announcementsListAnnounce.getOrDefault(currentAnnouncementIndex, "")
 
         onlinePlayers.forEach { player ->

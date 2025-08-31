@@ -1,10 +1,10 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.TotalEssentialsJava
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.KitsData
+import github.gilbertokpl.total.cache.data.LoginData
 import github.gilbertokpl.total.cache.internal.Data
-import github.gilbertokpl.total.cache.internal.inventory.Kit
-import github.gilbertokpl.total.cache.local.KitsData
-import github.gilbertokpl.total.cache.local.LoginData
+import github.gilbertokpl.total.cache.inventory.Kit
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.event.EventHandler
@@ -42,11 +42,11 @@ class ChatEventAsync : Listener {
             if (split[0] == "time") {
                 e.isCancelled = true
                 val time =
-                    TotalEssentialsJava.getBasePlugin().getTime().convertStringToMillis(e.message)
+                    TotalEssentials.getCore().getTime().convertStringToMillis(e.message)
                 p.sendMessage(
                     LangConfig.kitsEditKitTime.replace(
                         "%time%",
-                        TotalEssentialsJava.getBasePlugin().getTime()
+                        TotalEssentials.getCore().getTime()
                             .convertMillisToString(
                                 time,
                                 MainConfig.kitsUseShortTime

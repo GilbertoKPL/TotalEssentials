@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.PlayerData
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil
@@ -23,7 +23,7 @@ class PlayerChangeWorld : Listener {
 
     private fun data(e: PlayerChangedWorldEvent) {
         val gm = PlayerUtil.getGameModeNumber(PlayerData.gameModeCache[e.player].toString())
-        val task = TotalEssentialsJava.getBasePlugin().getTask()
+        val task = TotalEssentials.getCore().getTask()
         task.async {
             task.waitSeconds(1)
             if (gm != e.player.gameMode) {

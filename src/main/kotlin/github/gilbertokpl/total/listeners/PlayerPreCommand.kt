@@ -1,11 +1,11 @@
 package github.gilbertokpl.total.listeners
 
-import github.gilbertokpl.total.TotalEssentialsJava
-import github.gilbertokpl.total.cache.local.LoginData
+import github.gilbertokpl.core.utils.ConsoleColorUtil
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.cache.data.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.Discord
-import github.gilbertokpl.total.util.ColorUtil
 import net.milkbowl.vault.chat.Chat
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 class PlayerPreCommand : Listener {
 
     private val chat = try {
-        TotalEssentialsJava.getInstance().server.servicesManager.getRegistration(Chat::class.java)?.provider
+        TotalEssentials.getInstance().server.servicesManager.getRegistration(Chat::class.java)?.provider
     } catch (c: NoClassDefFoundError) {
         null
     }
@@ -84,7 +84,7 @@ class PlayerPreCommand : Listener {
 
             if (chat == null) {
                 Bukkit.getConsoleSender().sendMessage(
-                    ColorUtil.YELLOW.color + LangConfig.generalVaultNotExist + ColorUtil.RESET.color
+                    ConsoleColorUtil.YELLOW.color + LangConfig.generalVaultNotExist + ConsoleColorUtil.RESET.color
                 )
                 return
             }
