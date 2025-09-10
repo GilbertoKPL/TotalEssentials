@@ -1,25 +1,23 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
-import github.gilbertokpl.core.task.bukkit.dispatcher
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.internal.DataTeleport
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil.teleportSafe
-import kotlinx.coroutines.withContext
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandTpaccept : CommandCreator("tpaccept") {
+class CommandTpaccept : CommandManager("tpaccept") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("back"),
             active = MainConfig.tpaActivated,
-            target = CommandTarget.PLAYER,
+            target = CommandTargetType.PLAYER,
             countdown = 0,
             permission = "totalessentials.commands.tpa",
             minimumSize = 0,
@@ -30,20 +28,19 @@ class CommandTpaccept : CommandCreator("tpaccept") {
 
     override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) return false
-        val player = sender
 
-        val tpaPlayer = DataTeleport.getTpa(player) ?: run {
-            player.sendMessage(LangConfig.tpaNotAnyRequest)
+        val tpaPlayer = DataTeleport.getTpa(sender) ?: run {
+            sender.sendMessage(LangConfig.tpaNotAnyRequest)
             return false
         }
 
         val target = TotalEssentials.getInstance().server.getPlayer(tpaPlayer.name) ?: run {
-            player.sendMessage(LangConfig.generalPlayerNotOnline)
+            sender.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
         // Mensagens de aceitação
-        player.sendMessage(LangConfig.tpaRequestAccepted.replace("%player%", target.name))
+        sender.sendMessage(LangConfig.tpaRequestAccepted.replace("%player%", target.name))
         val tpaCache = DataTeleport[target] ?: return false
         tpaCache.otherPlayer = null
         tpaCache.wait = false
@@ -51,21 +48,20 @@ class CommandTpaccept : CommandCreator("tpaccept") {
         // Teleporte imediato se bypass
         if (target.hasPermission("totalessentials.bypass.teleport")) {
             DataTeleport.remove(target)
-            target.sendMessage(LangConfig.tpaRequestOtherNoDelayAccepted.replace("%player%", player.name))
-            target.teleportSafe(player.location)
+            target.sendMessage(LangConfig.tpaRequestOtherNoDelayAccepted.replace("%player%", sender.name))
+            target.teleportSafe(sender.location)
             return false
         }
 
         val time = MainConfig.tpaTimeToTeleport
-        target.sendMessage(LangConfig.tpaRequestOtherAccepted.replace("%player%", player.name).replace("%time%", time.toString()))
+        target.sendMessage(LangConfig.tpaRequestOtherAccepted.replace("%player%", sender.name).replace("%time%", time.toString()))
 
         val task = TotalEssentials.getCore().getTask()
-        task.async {
-            task.waitSeconds(time.toLong() * 50L)
+        task.supplyLater(time.toLong()) {
             try {
-                withContext(basePlugin!!.plugin.dispatcher(async = false)) {
-                    DataTeleport.remove(target)
-                    target.teleportSafe(player.location)
+                DataTeleport.remove(target)
+                task.sync {
+                    target.teleportSafe(sender.location)
                 }
             } catch (ex: Throwable) {
                 ex.printStackTrace()

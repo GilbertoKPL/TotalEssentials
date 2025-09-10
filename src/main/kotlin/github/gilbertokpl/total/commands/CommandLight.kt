@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -12,13 +12,13 @@ import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-class CommandLight : CommandCreator("light") {
+class CommandLight : CommandManager("light") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("luz"),
             active = MainConfig.lightActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.light",
             minimumSize = 0,
@@ -30,43 +30,43 @@ class CommandLight : CommandCreator("light") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
         // if sender is not player and no args, do nothing
-        if (args.isEmpty() && s !is Player) return true
+        if (args.isEmpty() && sender !is Player) return true
 
         // admin toggle for other players
         if (args.size == 1) {
 
             // check permission
-            if (s is Player && !s.hasPermission("totalessentials.commands.light.other")) {
-                s.sendMessage(LangConfig.generalNotPerm)
+            if (sender is Player && !sender.hasPermission("totalessentials.commands.light.other")) {
+                sender.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
             // check if target player exists
             val p = TotalEssentials.getInstance().server.getPlayer(args[0]) ?: run {
-                s.sendMessage(LangConfig.generalPlayerNotOnline)
+                sender.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             // toggle light
             if (switchLight(p)) {
                 p.sendMessage(LangConfig.lightOtherActive)
-                s.sendMessage(LangConfig.lightActivatedOther.replace("%player%", p.name.lowercase()))
+                sender.sendMessage(LangConfig.lightActivatedOther.replace("%player%", p.name.lowercase()))
             } else {
                 p.sendMessage(LangConfig.lightOtherDisable)
-                s.sendMessage(LangConfig.lightDisabledOther.replace("%player%", p.name.lowercase()))
+                sender.sendMessage(LangConfig.lightDisabledOther.replace("%player%", p.name.lowercase()))
             }
 
             return false
         }
 
         // toggle light for self
-        if (switchLight(s as Player)) {
-            s.sendMessage(LangConfig.lightActive)
+        if (switchLight(sender as Player)) {
+            sender.sendMessage(LangConfig.lightActive)
         } else {
-            s.sendMessage(LangConfig.lightDisable)
+            sender.sendMessage(LangConfig.lightDisable)
         }
 
         return false

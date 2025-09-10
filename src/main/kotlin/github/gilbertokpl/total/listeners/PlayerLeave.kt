@@ -5,7 +5,7 @@ import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.cache.data.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.discord.Discord
+import github.gilbertokpl.total.discord.DiscordManager
 import github.gilbertokpl.total.util.ServerUtil
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -74,7 +74,7 @@ class PlayerLeave : Listener {
 
     private fun sendLeaveEmbed(e: PlayerQuitEvent) {
         if (MainConfig.discordbotSendLeaveMessage) {
-            Discord.sendDiscordMessage(
+            DiscordManager.sendDiscordMessage(
                 LangConfig.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name),
                 true
             )

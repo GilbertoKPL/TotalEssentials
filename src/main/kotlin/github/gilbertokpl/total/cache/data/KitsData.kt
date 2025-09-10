@@ -1,13 +1,13 @@
 package github.gilbertokpl.total.cache.data
 
-import github.gilbertokpl.core.cache.interfaces.CacheBase
+import github.gilbertokpl.core.cache.interfaces.ICache
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.serializer.ItemSerializer
 import github.gilbertokpl.total.cache.sql.KitsDataSQL
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.Table
 
-object KitsData : CacheBase {
+object KitsData : ICache {
     override var table: Table = KitsDataSQL
     override var primaryColumn: Column<String> = KitsDataSQL.kitNameTable
 

@@ -65,6 +65,7 @@ class BukkitDispatcher(val plugin: Plugin, val async: Boolean = false) : Corouti
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun runTaskLater(block: Runnable, delayTicks: Long): BukkitTask? {
         return if (foliaGlobalScheduler != null) {
             // Folia não tem runLater, você teria que adaptar com delay + coroutine
@@ -100,5 +101,3 @@ class BukkitDispatcher(val plugin: Plugin, val async: Boolean = false) : Corouti
         }
     }
 }
-
-fun Plugin.dispatcher(async: Boolean = false) = BukkitDispatcher(this, async)

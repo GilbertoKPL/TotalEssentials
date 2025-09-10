@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.KeyData
 import github.gilbertokpl.total.cache.data.PlayerData
@@ -10,21 +10,21 @@ import github.gilbertokpl.total.cache.data.VipData
 import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.discord.Discord
+import github.gilbertokpl.total.discord.DiscordManager
 import github.gilbertokpl.total.util.PluginUtil
-import github.gilbertokpl.total.vip.CoreVip.checkVip
+import github.gilbertokpl.total.vip.VipManager.checkVip
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
-class CommandTotal : CommandCreator("total") {
+class CommandTotal : CommandManager("total") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("system", "essentials", "s", "ks", "e"),
             active = true,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.total",
             minimumSize = 1,
@@ -40,7 +40,7 @@ class CommandTotal : CommandCreator("total") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
         if (args.isEmpty()) return true
 
@@ -48,14 +48,14 @@ class CommandTotal : CommandCreator("total") {
             "plugin" -> {
                 if (args.size < 3) return true
                 when (args[1].lowercase()) {
-                    "load" -> s.sendMessage(PluginUtil.load(args[2]))
+                    "load" -> sender.sendMessage(PluginUtil.load(args[2]))
                     "unload", "reload" -> {
                         val pl = PluginUtil.getPluginByName(args[2]) ?: run {
-                            s.sendMessage(LangConfig.generalPluginNotFound)
+                            sender.sendMessage(LangConfig.generalPluginNotFound)
                             return false
                         }
-                        if (args[1].lowercase() == "unload") s.sendMessage(PluginUtil.unload(pl))
-                        else PluginUtil.reload(pl, s)
+                        if (args[1].lowercase() == "unload") sender.sendMessage(PluginUtil.unload(pl))
+                        else PluginUtil.reload(pl, sender)
                     }
                     else -> return true
                 }
@@ -64,30 +64,30 @@ class CommandTotal : CommandCreator("total") {
 
             "reload" -> {
                 if (TotalEssentials.getCore().reloadConfig()) {
-                    s.sendMessage(LangConfig.generalConfigReload)
+                    sender.sendMessage(LangConfig.generalConfigReload)
                 }
                 return false
             }
 
             "reset" -> {
-                if (s is Player) return false // reset is console only
-                if (args.size == 1) return resetGenerateToken(s)
+                if (sender is Player) return false // reset is console only
+                if (args.size == 1) return resetGenerateToken(sender)
                 if (args.size == 2) return resetExecute(args[1])
             }
 
             "host" -> {
-                sendHostInfo(s)
+                sendHostInfo(sender)
                 return false
             }
 
             "id" -> {
-                if (s is Player) s.sendMessage(s.itemInHand.type.name.lowercase())
+                if (sender is Player) sender.sendMessage(sender.itemInHand.type.name.lowercase())
                 return false
             }
 
             "save" -> {
                 TotalEssentials.getCore().getCache().save()
-                s.sendMessage("Salvo!")
+                sender.sendMessage("Salvo!")
                 return false
             }
         }
@@ -104,7 +104,7 @@ class CommandTotal : CommandCreator("total") {
             val token = KeyData.generateRandomString()
             for (idString in MainConfig.generalResetList) {
                 val id = idString.toLongOrNull() ?: continue
-                if (!Discord.sendDiscordMessage(id, LangConfig.generalResetDiscordMessage.replace("%value%", token))) {
+                if (!DiscordManager.sendDiscordMessage(id, LangConfig.generalResetDiscordMessage.replace("%value%", token))) {
                     s.sendMessage(LangConfig.VipsDiscordUserIdNotExist)
                 }
             }
@@ -121,7 +121,7 @@ class CommandTotal : CommandCreator("total") {
         for ((playerName, vips) in PlayerData.vipCache.getMap()) {
 
             PlayerData.commandCache[playerName, ""] = true
-            PlayerData.vipItems[playerName, ArrayList<ItemStack>()] = true
+            PlayerData.vipItems[playerName, ArrayList()] = true
 
             if (vips.isNullOrEmpty()) continue
 

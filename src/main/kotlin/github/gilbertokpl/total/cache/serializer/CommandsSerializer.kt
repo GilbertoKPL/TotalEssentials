@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.cache.serializer
 
-import github.gilbertokpl.core.cache.convert.SerializerBase
+import github.gilbertokpl.core.cache.interfaces.ICacheSerializer
 
-internal class CommandsSerializer : SerializerBase<ArrayList<String>, String> {
+internal class CommandsSerializer : ICacheSerializer<ArrayList<String>, String> {
     override fun convertToDatabase(hash: ArrayList<String>): String {
         return hash.joinToString("|")
     }

@@ -20,45 +20,49 @@
 
 ## Commands
 
-| Command                      | Description                                                                                     | Permission                           |
-|------------------------------|-------------------------------------------------------------------------------------------------|--------------------------------------|
-| /total, /system, /essentials | Main command os plugin.                                                                         | totalessentials.commands.essentialsk |
-| /createkit and /criarkit     | Create a kit with an interface / GUI.                                                           | totalessentials.commands.createkit   |
-| /delkit                      | Delete kit with name.                                                                           | totalessentials.commands.delkit      |
-| /editkit and /editarkit      | Editkit a kit with an interface / GUI.                                                          | totalessentials.commands.editkit     |
-| /kit and /kits               | Create a kit with an interface / GUI see all kits through the interface / GUI and also get them | totalessentials.commands.kit         |
-| /givekit and /darkit         | Give kit to player.                                                                             | totalessentials.commands.givekit     |
-| /nick and /nome              | set nick in game.                                                                               | totalessentials.commands.nick        |
-| /sethome and /setarhome      | Set home of player with name.                                                                   | totalessentials.commands.sethome     |
-| /delhome and /deletarhome    | Del home of player.                                                                             | totalessentials.commands.delhome     |
-| /home and /h                 | Go to home of player.                                                                           | totalessentials.commands.home        |
-| /warp                        | go to warp location.                                                                            | totalessentials.commands.warp        |
-| /setwarp and /setarwarp      | Set determined warp in location.                                                                | totalessentials.commands.setwarp     |
-| /delwarp and /deletarwarp    | Delete warp with determined name.                                                               | totalessentials.commands.delwarp     |
-| /tp                          | Tp to other player or location.                                                                 | totalessentials.commands.tp          |
-| /tpa, /tpaccept and /tpadeny | Tp to other player or location.                                                                 | totalessentials.commands.tpa         |
-| /echest and /ec              | Open enderchest.                                                                                | totalessentials.commands.ec          |
-| /gamemode and /gm            | Switch gamemode.                                                                                | totalessentials.commands.gamemode    |
-| /vanish and /v               | Switch vanish.                                                                                  | totalessentials.commands.vanish      |
-| /feed and /comer             | Allow player to set max food.                                                                   | totalessentials.commands.feed        |
-| /heal and /h                 | Allow player to set max health.                                                                 | totalessentials.commands.heal        |
-| /light and /luz              | Switch light.                                                                                   | totalessentials.commands.light       |
-| /back                        | Back to old location.                                                                           | totalessentials.commands.back        |
-| /spawn                       | Go to spawn lo location.                                                                        | totalessentials.commands.spawn       |
-| /setspawn                    | Set Location of spawn.                                                                          | totalessentials.commands.setspawn    |
-| /announce and /anunciar      | Announce to all player.                                                                         | totalessentials.commands.announce    |
-| /craft                       | Open craft to player.                                                                           | totalessentials.commands.craft       |
-| /trash and /lixo             | Open trash to player.                                                                           | totalessentials.commands.trash       |
-| /speed                       | set speed of player.                                                                            | totalessentials.commands.speed       |
-| /hat                         | set hat of player.                                                                              | totalessentials.commands.hat         |
-| /fly                         | set fly of player.                                                                              | totalessentials.commands.fly         |
-| /invsee                      | see inventory of other player.                                                                  | totalessentials.commands.invsee      |
-| /login                       | log into your account.                                                                          | totalessentials.commands.login       |
-| /register                    | register account.                                                                               | totalessentials.commands.register    |
-| /changepass                  | change pass of account.                                                                         | totalessentials.commands.changepass  |
-| /vip                         | vip system.                                                                                     | totalessentials.commands.vip         |
-| /shop and /loja              | players shops.                                                                                  | totalessentials.commands.shop        |
-| /clearentities               | clear all items in server (with config).                                                        | totalessentials.commands.clearitems  |
+| Command                      | Description                                                         | Permission                             |
+|------------------------------|---------------------------------------------------------------------|----------------------------------------|
+| /total, /system, /essentials | Main command of the plugin.                                         | totalessentials.commands.essentials    |
+| /createkit, /criarkit        | Create a kit using an interface / GUI.                              | totalessentials.commands.createkit     |
+| /delkit                      | Delete a kit by name.                                               | totalessentials.commands.delkit        |
+| /editkit, /editarkit         | Edit an existing kit using an interface / GUI.                      | totalessentials.commands.editkit       |
+| /kit, /kits                  | View all kits through the interface / GUI and claim them.           | totalessentials.commands.kit           |
+| /givekit, /darkit            | Give a kit to a player.                                             | totalessentials.commands.givekit       |
+| /nick, /nome                 | Change the player’s nickname.                                       | totalessentials.commands.nick          |
+| /sethome, /setarhome         | Set a home at the current location.                                 | totalessentials.commands.sethome       |
+| /delhome, /deletarhome       | Delete a home.                                                      | totalessentials.commands.delhome       |
+| /home, /h                    | Teleport to a home.                                                 | totalessentials.commands.home          |
+| /warp                        | Teleport to a warp location.                                        | totalessentials.commands.warp          |
+| /setwarp, /setarwarp         | Set a warp at the current location.                                 | totalessentials.commands.setwarp       |
+| /delwarp, /deletarwarp       | Delete a warp by name.                                              | totalessentials.commands.delwarp       |
+| /tp                          | Teleport to another player or location.                             | totalessentials.commands.tp            |
+| /tpa, /tpaccept, /tpadeny    | Request to teleport to another player, and accept or deny requests. | totalessentials.commands.tpa           |
+| /echest, /ec                 | Open the Ender Chest.                                               | totalessentials.commands.ec            |
+| /gamemode, /gm               | Change the player’s gamemode.                                       | totalessentials.commands.gamemode      |
+| /vanish, /v                  | Toggle vanish mode.                                                 | totalessentials.commands.vanish        |
+| /feed, /comer                | Refill hunger.                                                      | totalessentials.commands.feed          |
+| /heal, /curar                | Restore health.                                                     | totalessentials.commands.heal          |
+| /light, /luz                 | Toggle personal light source.                                       | totalessentials.commands.light         |
+| /back                        | Return to the last location.                                        | totalessentials.commands.back          |
+| /spawn                       | Teleport to spawn.                                                  | totalessentials.commands.spawn         |
+| /setspawn                    | Set the spawn location.                                             | totalessentials.commands.setspawn      |
+| /announce, /anunciar         | Broadcast a message to all players.                                 | totalessentials.commands.announce      |
+| /craft                       | Open a crafting table.                                              | totalessentials.commands.craft         |
+| /trash, /lixo                | Open the trash GUI.                                                 | totalessentials.commands.trash         |
+| /speed                       | Set walking/flying speed.                                           | totalessentials.commands.speed         |
+| /hat, /chapeu                | Wear the item in hand as a hat.                                     | totalessentials.commands.hat           |
+| /fly                         | Enable or disable flight.                                           | totalessentials.commands.fly           |
+| /invsee                      | View another player’s inventory.                                    | totalessentials.commands.invsee        |
+| /login, /logar               | Log into your account.                                              | totalessentials.commands.login         |
+| /register, /registrar        | Register a new account.                                             | totalessentials.commands.register      |
+| /changepass                  | Change your account password.                                       | totalessentials.commands.changepass    |
+| /vip                         | Access VIP features.                                                | totalessentials.commands.vip           |
+| /shop, /loja                 | Access player shops.                                                | totalessentials.commands.shop          |
+| /clearentities               | Remove dropped items/entities from the server.                      | totalessentials.commands.clearentities |
+| /day, /dia                   | Set time to day in the world (or all worlds if console).            | totalessentials.commands.day           |
+| /night, /noite               | Set time to night in the world (or all worlds if console).          | totalessentials.commands.night         |
+| /thor, /raio, /lightning     | Summon lightning at a player or at the block you are looking at.    | totalessentials.commands.thor          |
+
 
 ## Permission Color
 
@@ -90,40 +94,41 @@ To use in chat, commands, signs etc.
 
 ## Other permissions
 
-| Permission                                         | Function                                            |
-|----------------------------------------------------|-----------------------------------------------------|
-| totalessentials.commands.sethome.(number of homes) | Set limit of homes to player                        |
-| totalessentials.commands.kit.(kit name)            | Allow the player to pick up the given kit           |
-| totalessentials.commands.warp.(warp name)          | Allow the player go to determined warp              |
-| totalessentials.commands.nick.other                | Allow the player rename other players               |
-| totalessentials.commands.ec.other                  | Allow the player open others enderChest             |
-| totalessentials.commands.gamemode.other            | Allow the player switch gamemode for other player   |
-| totalessentials.commands.heal.other                | Allow the player use heal for other players         |
-| totalessentials.commands.feed.other                | Allow the player use feed for other players         |
-| totalessentials.commands.vanish.other              | Allow the player use vanish to other player         |
-| totalessentials.commands.light.other               | Allow the player use light to other player          |
-| totalessentials.commands.home.other                | Allow the player go to other players homes          |
-| totalessentials.commands.delhome.other             | Allow the player delhome for other players          |
-| totalessentials.commands.sethome.other             | Allow the player sethome for other players          |
-| totalessentials.commands.spawn.other               | Allow the player telepot to spawn for other players |
-| totalessentials.commands.speed.other               | Allow the player set speed of other player          |
-| totalessentials.commands.login.other               | Allow the player login other player                 |
-| totalessentials.commands.register.other            | Allow the player register other player              |
-| totalessentials.commands.invsee.admin              | Allow the player see inventory of other player      |
-| totalessentials.bypass.teleport                    | Bypass time to teleport                             |
-| totalessentials.bypass.homelimit                   | Move itens of player.                               |
-| totalessentials.bypass.kitcatch                    | Bypass kit time limit                               |
-| totalessentials.bypass.vanish                      | Bypass the vanish                                   |
-| totalessentials.bypass.bed                         | Bypass the block bed                                |
-| totalessentials.bypass.vehicles                    | Bypass the block vehicles                           |
-| totalessentials.bypass.nametag                     | Bypass the block nametag                            |
-| totalessentials.bypass.netherceiling               | Bypass the block nether ceiling                     |
-| totalessentials.bypass.shiftcontainer              | Bypass the block shift in container                 |
-| totalessentials.bypass.opencontainer               | Bypass the block open container                     |
-| totalessentials.bypass.waitcommand                 | Bypass wait time to use command again               |
-| totalessentials.bypass.backblockedworlds           | Bypass blocked worlds of back                       |
-| totalessentials.bypass.homeblockedworlds           | Bypass blocked worlds of home                       |
-| totalessentials.bypass.nickblockednicks            | Bypass blocked nicks of nick                        |
+| Permission                                         | Function                                              |
+|----------------------------------------------------|-------------------------------------------------------|
+| totalessentials.commands.sethome.(number of homes) | Set the maximum number of homes for a player          |
+| totalessentials.commands.kit.(kit name)            | Allow the player to claim the specified kit           |
+| totalessentials.commands.warp.(warp name)          | Allow the player to teleport to the specified warp    |
+| totalessentials.commands.nick.other                | Allow the player to change another player’s nickname  |
+| totalessentials.commands.ec.other                  | Allow the player to open another player’s Ender Chest |
+| totalessentials.commands.gamemode.other            | Allow the player to change another player’s gamemode  |
+| totalessentials.commands.heal.other                | Allow the player to heal other players                |
+| totalessentials.commands.feed.other                | Allow the player to feed other players                |
+| totalessentials.commands.vanish.other              | Allow the player to toggle vanish for other players   |
+| totalessentials.commands.light.other               | Allow the player to toggle light for other players    |
+| totalessentials.commands.home.other                | Allow the player to teleport to other players’ homes  |
+| totalessentials.commands.delhome.other             | Allow the player to delete other players’ homes       |
+| totalessentials.commands.sethome.other             | Allow the player to set homes for other players       |
+| totalessentials.commands.spawn.other               | Allow the player to teleport other players to spawn   |
+| totalessentials.commands.speed.other               | Allow the player to change another player’s speed     |
+| totalessentials.commands.login.other               | Allow the player to log in another player             |
+| totalessentials.commands.register.other            | Allow the player to register another player           |
+| totalessentials.commands.invsee.admin              | Allow the player to view any player’s inventory       |
+| totalessentials.bypass.teleport                    | Bypass teleport delay                                 |
+| totalessentials.bypass.homelimit                   | Bypass the home limit restriction                     |
+| totalessentials.bypass.kitcatch                    | Bypass kit cooldown                                   |
+| totalessentials.bypass.vanish                      | Bypass vanish detection                               |
+| totalessentials.bypass.bed                         | Bypass blocked beds                                   |
+| totalessentials.bypass.vehicles                    | Bypass blocked vehicles                               |
+| totalessentials.bypass.nametag                     | Bypass blocked name tags                              |
+| totalessentials.bypass.netherceiling               | Bypass nether ceiling restriction                     |
+| totalessentials.bypass.shiftcontainer              | Bypass shift-click restrictions in containers         |
+| totalessentials.bypass.opencontainer               | Bypass blocked container opening                      |
+| totalessentials.bypass.waitcommand                 | Bypass command cooldown                               |
+| totalessentials.bypass.backblockedworlds           | Bypass blocked worlds for /back                       |
+| totalessentials.bypass.homeblockedworlds           | Bypass blocked worlds for /home                       |
+| totalessentials.bypass.nickblockednicks            | Bypass nickname restrictions                          |
+
 
 ## Resources ( Internal )
 
@@ -153,4 +158,4 @@ To use in chat, commands, signs etc.
 
 # Discord
 
-* Gilberto#8778
+* _gilberto_

@@ -4,7 +4,7 @@ import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.inventory.Playtime
 import github.gilbertokpl.total.cache.inventory.Shop
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.economy.CoreMoney
+import github.gilbertokpl.total.economy.MoneyManager
 
 import java.util.concurrent.TimeUnit
 
@@ -22,7 +22,7 @@ object PluginLoop {
     private fun refreshMoney() {
         if (MainConfig.moneyActivated) {
             try {
-                CoreMoney.refreshTycoon()
+                MoneyManager.refreshTycoon()
             } catch (e: Exception) {
                 e.printStackTrace()
             }

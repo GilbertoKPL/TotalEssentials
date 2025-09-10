@@ -43,10 +43,12 @@ internal object ItemUtil {
             return
         }
 
-        //send kit to player
+        //send kit to player (sempre clona antes de entregar)
+        val clonedItems = KitsData.kitItems[kit]!!.map { it.clone() }.toMutableList()
+
         if (giveKit(
                 p,
-                KitsData.kitItems[kit]!!,
+                clonedItems,
                 MainConfig.kitsEquipArmorInCatch,
                 MainConfig.kitsDropItemsInCatch
             )
@@ -56,7 +58,7 @@ internal object ItemUtil {
                 LangConfig.kitsGetSuccess.replace(
                     "%kit%",
                     KitsData.kitFakeName[kit].let {
-                        if (it == "" || it == null) kit else it
+                        if (it.isNullOrEmpty()) kit else it
                     }
                 )
             )
@@ -64,29 +66,17 @@ internal object ItemUtil {
     }
 
     fun giveKit(p: Player, items: MutableList<ItemStack>, armorAutoEquip: Boolean, drop: Boolean = false): Boolean {
-        //bug armored check error
         val inv = p.inventory
-
         val itemsInternal = ArrayList<ItemStack>()
-
-        var inventorySpace = 0
-
-        for (i in 0..35) {
-            if (inv.getItem(i) == null) {
-                inventorySpace += 1
-            }
-        }
+        var inventorySpace = (0..35).count { inv.getItem(it) == null }
 
         val armor = ArrayList<String>()
-
         val itemsArmorInternal = HashMap<String, ItemStack>()
 
         //check if player has space in Armor contents
         if (armorAutoEquip) {
             fun helper(to: ItemStack?, name: String) {
-                if (to == null) {
-                    armor.add(name)
-                }
+                if (to == null) armor.add(name)
             }
             helper(inv.helmet, "HELMET")
             helper(inv.chestplate, "CHESTPLATE")
@@ -96,9 +86,10 @@ internal object ItemUtil {
 
         //check if item is armor
         for (i in items) {
+            val itemClone = i.clone() // <- aqui garante cópia
             if (armorAutoEquip) {
                 var bolArmor = false
-                val split = i.type.name.split("_")
+                val split = itemClone.type.name.split("_")
                 split.forEach {
                     if ((it.contains("HELMET") ||
                                 it.contains("CHESTPLATE") ||
@@ -106,13 +97,13 @@ internal object ItemUtil {
                                 it.contains("BOOTS")) && armor.contains(it)
                     ) {
                         armor.remove(it)
-                        itemsArmorInternal[it] = i
+                        itemsArmorInternal[it] = itemClone
                         bolArmor = true
                     }
                 }
                 if (bolArmor) continue
             }
-            itemsInternal.add(i)
+            itemsInternal.add(itemClone)
         }
 
         //drop itens if full
@@ -126,13 +117,11 @@ internal object ItemUtil {
                 p.world.dropItem(p.location, i)
             }
         } else {
-            //check if inventory is full and add item
             if (inventorySpace >= itemsInternal.size) {
                 for (i in itemsInternal) {
                     p.inventory.addItem(i)
                 }
             } else {
-                //send message if inventory is full
                 p.sendMessage(
                     LangConfig.kitsGetNoSpace.replace(
                         "%slots%",
@@ -145,21 +134,11 @@ internal object ItemUtil {
 
         if (armorAutoEquip) {
             for (i in itemsArmorInternal) {
-                if (i.key == "HELMET") {
-                    inv.helmet = i.value
-                    continue
-                }
-                if (i.key == "CHESTPLATE") {
-                    inv.chestplate = i.value
-                    continue
-                }
-                if (i.key == "LEGGINGS") {
-                    inv.leggings = i.value
-                    continue
-                }
-                if (i.key == "BOOTS") {
-                    inv.boots = i.value
-                    continue
+                when (i.key) {
+                    "HELMET" -> inv.helmet = i.value
+                    "CHESTPLATE" -> inv.chestplate = i.value
+                    "LEGGINGS" -> inv.leggings = i.value
+                    "BOOTS" -> inv.boots = i.value
                 }
             }
         }

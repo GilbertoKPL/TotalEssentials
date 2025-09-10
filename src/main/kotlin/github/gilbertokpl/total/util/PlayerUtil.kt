@@ -1,12 +1,12 @@
 package github.gilbertokpl.total.util
 
-import github.gilbertokpl.core.task.bukkit.dispatcher
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.PlayerData
+import github.gilbertokpl.total.cache.data.PlayerData.playTimeCache
+import github.gilbertokpl.total.cache.data.PlayerData.playtimeLocal
 import github.gilbertokpl.total.cache.data.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import kotlinx.coroutines.withContext
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -76,6 +76,29 @@ internal object PlayerUtil {
                     0
                 }
             }
+        }
+    }
+
+    fun savePlaytime() {
+        for (p in TotalEssentials.getCore().getReflection().getPlayers()) {
+            if (!MainConfig.playtimeActivated) continue
+
+            val now = System.currentTimeMillis()
+
+            val timeCache = playTimeCache.get(p)
+            val time = if (timeCache != null) timeCache else 0L
+
+            val startCache = playtimeLocal.get(p)
+            val start = if (startCache != null) startCache else now
+
+            var newTime = time + (now - start)
+
+            // Limitar o tempo total sem resetar para valores pequenos
+            val maxTime = 94608000000L // 3 anos em ms
+            if (newTime > maxTime) newTime = maxTime
+
+            playTimeCache.set(p, newTime)
+            playtimeLocal.set(p, now)
         }
     }
 
@@ -193,11 +216,10 @@ internal object PlayerUtil {
 
         val task = TotalEssentials.getCore().getTask()
 
-        task.async {
-            task.waitSeconds(time.toLong())
+        task.supplyLater(time.toLong()) {
             try {
-                withContext(TotalEssentials.getCore()!!.plugin.dispatcher(async = false)) {
-                    PlayerData.inTeleport[p] = false
+                PlayerData.inTeleport[p] = false
+                task.sync {
                     p.teleportSafe(location)
                     if (message != null) {
                         p.sendMessage(message)

@@ -1,0 +1,150 @@
+package github.gilbertokpl.core.cache.builder
+
+import github.gilbertokpl.core.cache.interfaces.ICacheSerializer
+import github.gilbertokpl.core.cache.interfaces.ICacheBuilder
+import github.gilbertokpl.total.TotalEssentials
+import github.gilbertokpl.total.config.files.MainConfig
+import org.bukkit.Location
+import org.bukkit.entity.Player
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.update
+import java.util.concurrent.locks.ReentrantLock
+
+internal class LocationBuilder(
+    private val table: Table,
+    private val primaryColumn: Column<String>,
+    private val column: Column<String>,
+    private val classConvert: ICacheSerializer<Location?, String>
+) : ICacheBuilder<Location?> {
+
+    private val hashMap = HashMap<String, Location?>()
+    private val toUpdate = mutableSetOf<String>()
+    private val lock = ReentrantLock()
+
+    override fun getMap(): Map<String, Location?> {
+        lock.lock()
+        return try {
+            hashMap.toMap()
+        } finally {
+            lock.unlock()
+        }
+    }
+
+    override operator fun get(entity: String): Location? {
+        lock.lock()
+        return try {
+            hashMap[entity.lowercase()]
+        } finally {
+            lock.unlock()
+        }
+    }
+
+    override operator fun get(entity: Player): Location? {
+        return get(entity.name)
+    }
+
+    override operator fun set(entity: Player, value: Location?) {
+        set(entity.name, value)
+    }
+
+    override fun set(entity: String, value: Location?, override: Boolean) {
+        set(entity, value)
+    }
+
+    override operator fun set(entity: String, value: Location?) {
+        lock.lock()
+        try {
+            hashMap[entity.lowercase()] = value
+            toUpdate.add(entity.lowercase())
+        } finally {
+            lock.unlock()
+        }
+    }
+
+    override fun remove(entity: Player) {
+        remove(entity.name)
+    }
+
+    override fun remove(entity: String) {
+        lock.lock()
+        try {
+            hashMap[entity.lowercase()] = null
+            toUpdate.add(entity.lowercase())
+        } finally {
+            lock.unlock()
+        }
+    }
+
+    override fun update() {
+        save(toUpdate.toList())
+    }
+
+    private fun save(list: List<String>) {
+        lock.lock()
+        try {
+            if (toUpdate.isEmpty()) return
+
+            val existingRows = table.selectAll()
+                .where { primaryColumn inList toUpdate }
+                .toList()
+                .associateBy { it[primaryColumn] }
+
+            val existingKeys = existingRows.keys.toMutableSet()
+
+            for (i in list) {
+                if (i in toUpdate) {
+                    toUpdate.remove(i)
+                    val value = hashMap[i] ?: continue
+                    if (i !in existingKeys) {
+                        val newValue = classConvert.convertToDatabase(value)
+                        TotalEssentials.getCore().logger.log("Setando valor da entidade: $i, coluna: $column, valor: $newValue")
+                        table.insert {
+                            it[primaryColumn] = i
+                            it[column] = newValue
+                        }
+                        existingKeys.add(i)
+                    } else {
+                        val newValue = classConvert.convertToDatabase(value)
+                        TotalEssentials.getCore().logger.log("Setando valor da entidade: $i, coluna: $column, valor: $newValue")
+                        table.update({ primaryColumn eq i }) {
+                            it[column] = newValue
+                        }
+
+                    }
+                }
+            }
+        } finally {
+            lock.unlock()
+        }
+    }
+
+    override fun load() {
+        lock.lock()
+        try {
+            table.selectAll().forEach { row ->
+                val location = classConvert.convertToCache(row[column]) ?: return@forEach
+
+                val primaryKey = row[primaryColumn]
+
+                if (column.name == "Back" &&
+                    MainConfig.backDisabledWorlds.any { disabledWorld ->
+                        location.world?.name.equals(disabledWorld, ignoreCase = true)
+                    }
+                ) {
+                    hashMap[primaryKey] = null
+                    toUpdate.add(primaryKey)
+                } else {
+                    hashMap[primaryKey] = location
+                }
+            }
+        } finally {
+            lock.unlock()
+        }
+    }
+
+    override fun unload() {
+        update()
+    }
+}

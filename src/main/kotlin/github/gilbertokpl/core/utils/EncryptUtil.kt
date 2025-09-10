@@ -1,6 +1,6 @@
 package github.gilbertokpl.core.utils
 
-import github.gilbertokpl.core.serializator.AES
+import github.gilbertokpl.core.internal.serializator.AES
 
 class EncryptUtil {
     private val encryptInstance = AES()

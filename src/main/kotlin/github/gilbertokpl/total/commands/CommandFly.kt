@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -10,13 +10,13 @@ import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandFly : CommandCreator("fly") {
+class CommandFly : CommandManager("fly") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("voar"),
             active = MainConfig.flyActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.fly",
             minimumSize = 0,
@@ -28,8 +28,8 @@ class CommandFly : CommandCreator("fly") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val senderPlayer = s as? Player
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
+        val senderPlayer = sender as? Player
 
         // --------------------------------------------------------
         // Fly another player
@@ -41,7 +41,7 @@ class CommandFly : CommandCreator("fly") {
             }
 
             val target = TotalEssentials.getInstance().server.getPlayer(args[0]) ?: run {
-                s.sendMessage(LangConfig.generalPlayerNotOnline)
+                sender.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
@@ -49,10 +49,10 @@ class CommandFly : CommandCreator("fly") {
 
             if (enabled) {
                 target.sendMessage(LangConfig.flyOtherActive)
-                s.sendMessage(LangConfig.flyActivatedOther.replace("%player", target.name))
+                sender.sendMessage(LangConfig.flyActivatedOther.replace("%player", target.name))
             } else {
                 target.sendMessage(LangConfig.flyOtherDisable)
-                s.sendMessage(LangConfig.flyDisabledOther.replace("%player", target.name))
+                sender.sendMessage(LangConfig.flyDisabledOther.replace("%player", target.name))
             }
 
             return false

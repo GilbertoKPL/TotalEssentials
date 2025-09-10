@@ -87,7 +87,7 @@ internal object PluginUtil {
             try {
                 val pluginsField: Field = Bukkit.getPluginManager().javaClass.getDeclaredField("plugins")
                 pluginsField.isAccessible = true
-                plugins = pluginsField.get(pluginManager) as MutableList<Plugin?>
+                (pluginsField.get(pluginManager) as MutableList<Plugin?>).also { plugins = it }
                 val lookupNamesField: Field = Bukkit.getPluginManager().javaClass.getDeclaredField("lookupNames")
                 lookupNamesField.isAccessible = true
                 names = lookupNamesField.get(pluginManager) as MutableMap<String?, Plugin?>
@@ -113,7 +113,7 @@ internal object PluginUtil {
         pluginManager.disablePlugin(plugin)
         if (plugins != null && plugins.contains(plugin)) plugins.remove(plugin)
         if (names != null && names.containsKey(name)) names.remove(name)
-        if (listeners != null && reloadlisteners) {
+        if (listeners != null) {
             for (set in listeners.values) {
                 val it = set.iterator()
                 while (it.hasNext()) {

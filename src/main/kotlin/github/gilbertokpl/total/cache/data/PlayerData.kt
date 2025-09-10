@@ -1,19 +1,19 @@
 package github.gilbertokpl.total.cache.data
 
-import github.gilbertokpl.core.cache.interfaces.CacheBase
+import github.gilbertokpl.core.cache.interfaces.ICache
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.serializer.*
 import github.gilbertokpl.total.cache.sql.PlayerDataSQL
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil
-import github.gilbertokpl.total.vip.CoreVip
+import github.gilbertokpl.total.vip.VipManager
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.Table
 
-object PlayerData : CacheBase {
+object PlayerData : ICache {
     override var table: Table = PlayerDataSQL
     override var primaryColumn: Column<String> = PlayerDataSQL.playerTable
 
@@ -136,7 +136,7 @@ object PlayerData : CacheBase {
                 )
             }
             commandCache[p] = ""
-            CoreVip.updateCargo(p.name.lowercase())
+            VipManager.updateCargo(p.name.lowercase())
         }
 
         if (MainConfig.vanishActivated) {

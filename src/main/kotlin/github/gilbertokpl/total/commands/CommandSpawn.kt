@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -12,13 +12,13 @@ import github.gilbertokpl.total.util.PlayerUtil.teleportSafe
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandSpawn : CommandCreator("spawn") {
+class CommandSpawn : CommandManager("spawn") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf(""),
             active = MainConfig.spawnActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.spawn",
             minimumSize = 0,
@@ -30,13 +30,13 @@ class CommandSpawn : CommandCreator("spawn") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        if (args.isEmpty() && s !is Player) return true
+        if (args.isEmpty() && sender !is Player) return true
 
         val spawnLocation = SpawnData.spawnLocation["spawn"] ?: run {
-            if (s !is Player || s.hasPermission("*")) {
-                s.sendMessage(LangConfig.spawnNotSet)
+            if (sender !is Player || sender.hasPermission("*")) {
+                sender.sendMessage(LangConfig.spawnNotSet)
             }
             return false
         }
@@ -44,27 +44,27 @@ class CommandSpawn : CommandCreator("spawn") {
         // Teleport another player
         if (args.size == 1) {
 
-            if (s is Player && !s.hasPermission("totalessentials.commands.spawn.other")) {
-                s.sendMessage(LangConfig.generalNotPerm)
+            if (sender is Player && !sender.hasPermission("totalessentials.commands.spawn.other")) {
+                sender.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
             val target = TotalEssentials.getInstance().server.getPlayer(args[0]) ?: run {
-                s.sendMessage(LangConfig.generalPlayerNotOnline)
+                sender.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             target.teleportSafe(spawnLocation)
             target.sendMessage(LangConfig.spawnOtherMessage)
-            s.sendMessage(
+            sender.sendMessage(
                 LangConfig.spawnSuccessOtherMessage.replace("%player%", target.name)
             )
             return false
         }
 
         // Teleport self
-        if (s is Player) {
-            PlayerUtil.teleportWithTime(s, spawnLocation, MainConfig.spawnTimeToTeleport, LangConfig.spawnMessage, "spawn")
+        if (sender is Player) {
+            PlayerUtil.teleportWithTime(sender, spawnLocation, MainConfig.spawnTimeToTeleport, LangConfig.spawnMessage, "spawn")
         }
 
         return false

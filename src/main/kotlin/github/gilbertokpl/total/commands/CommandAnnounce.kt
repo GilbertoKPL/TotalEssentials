@@ -1,23 +1,23 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.discord.Discord
+import github.gilbertokpl.total.discord.DiscordManager
 import github.gilbertokpl.total.util.ServerUtil
 import github.gilbertokpl.total.util.PermissionUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandAnnounce : CommandCreator("announce") {
+class CommandAnnounce : CommandManager("announce") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("anunciar"),
             active = MainConfig.announceActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = MainConfig.announceCooldown.toLong(),
             permission = "totalessentials.commands.announce",
             minimumSize = 1,
@@ -26,16 +26,16 @@ class CommandAnnounce : CommandCreator("announce") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
         // Determine sender name
-        val name = if (s is Player) s.name else "Console"
+        val name = if (sender is Player) sender.name else "Console"
 
         // Combine all arguments into a single message
         val rawMessage = args.joinToString(" ")
 
         // Apply color permissions if sender is a player
-        val p = s as? Player
+        val p = sender as? Player
         val coloredMessage = PermissionUtil.colorPermission(p, rawMessage)
 
         // Format the final message
@@ -48,7 +48,7 @@ class CommandAnnounce : CommandCreator("announce") {
 
         // Remove color codes and send to Discord
         val discordMessage = formattedMessage.replace(Regex("§[0-9a-fk-or]"), "")
-        Discord.sendDiscordMessage(discordMessage, true)
+        DiscordManager.sendDiscordMessage(discordMessage, true)
 
         return false
     }

@@ -1,10 +1,10 @@
 package github.gilbertokpl.total.cache.serializer
 
-import github.gilbertokpl.core.cache.convert.SerializerBase
+import github.gilbertokpl.core.cache.interfaces.ICacheSerializer
 import github.gilbertokpl.total.TotalEssentials
 import org.bukkit.Location
 
-class LocationSerializer : SerializerBase<Location?, String> {
+class LocationSerializer : ICacheSerializer<Location?, String> {
     override fun convertToDatabase(hash: Location?): String {
         return hash?.let {
             "${it.x};${it.y};${it.z};${it.world?.name ?: "world"};${it.pitch};${it.yaw}"

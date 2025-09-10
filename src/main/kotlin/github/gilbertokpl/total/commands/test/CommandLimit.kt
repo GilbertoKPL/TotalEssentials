@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands.test
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.test.LimitData
 import github.gilbertokpl.total.cache.internal.Data.limitPlayerEdit
@@ -12,13 +12,13 @@ import net.milkbowl.vault.permission.Permission
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandLimit : CommandCreator("limit") {
+class CommandLimit : CommandManager("limit") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("limites", "limite"),
             active = MainConfig.limitActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.limit",
             minimumSize = 0,

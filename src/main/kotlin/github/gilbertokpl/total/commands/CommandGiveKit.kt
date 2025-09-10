@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.KitsData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -10,13 +10,13 @@ import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.ItemUtil
 import org.bukkit.command.CommandSender
 
-class CommandGiveKit : CommandCreator("givekit") {
+class CommandGiveKit : CommandManager("givekit") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("darkit"),
             active = MainConfig.kitsActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.givekit",
             minimumSize = 2,
@@ -25,23 +25,23 @@ class CommandGiveKit : CommandCreator("givekit") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
         // Verifica tamanho do nome do jogador
         if (args[0].length > 16) {
-            s.sendMessage(LangConfig.kitsNameLength)
+            sender.sendMessage(LangConfig.kitsNameLength)
             return false
         }
 
         // Verifica se o kit existe
         if (!KitsData.checkIfExist(args[1])) {
-            s.sendMessage(LangConfig.kitsNotExist)
+            sender.sendMessage(LangConfig.kitsNotExist)
             return false
         }
 
         // Pega o jogador online
         val p = TotalEssentials.getInstance().server.getPlayer(args[0]) ?: run {
-            s.sendMessage(LangConfig.generalPlayerNotOnline)
+            sender.sendMessage(LangConfig.generalPlayerNotOnline)
             return false
         }
 
@@ -51,7 +51,7 @@ class CommandGiveKit : CommandCreator("givekit") {
         val fakeName = KitsData.kitFakeName[args[1]]!!
 
         // Mensagens para executor e jogador
-        s.sendMessage(LangConfig.kitsGiveKitMessageOther.replace("%kit%", fakeName).replace("%player%", p.name))
+        sender.sendMessage(LangConfig.kitsGiveKitMessageOther.replace("%kit%", fakeName).replace("%player%", p.name))
         p.sendMessage(LangConfig.kitsGiveKitMessage.replace("%kit%", fakeName))
 
         return false

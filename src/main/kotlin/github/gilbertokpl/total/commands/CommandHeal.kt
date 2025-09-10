@@ -1,21 +1,21 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandHeal : CommandCreator("heal") {
+class CommandHeal : CommandManager("heal") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf("h", "vida"),
+            aliases = listOf("curar"),
             active = MainConfig.healActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.heal",
             minimumSize = 0,
@@ -27,20 +27,20 @@ class CommandHeal : CommandCreator("heal") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        if (args.isEmpty() && s !is Player) return true
+        if (args.isEmpty() && sender !is Player) return true
 
         if (args.size == 1) {
             // Check permission for other player
-            if (s is Player && !s.hasPermission("totalessentials.commands.heal.other")) {
-                s.sendMessage(LangConfig.generalNotPerm)
+            if (sender is Player && !sender.hasPermission("totalessentials.commands.heal.other")) {
+                sender.sendMessage(LangConfig.generalNotPerm)
                 return false
             }
 
             // Get target player
             val p = TotalEssentials.getInstance().server.getPlayer(args[0]) ?: run {
-                s.sendMessage(LangConfig.generalPlayerNotOnline)
+                sender.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
@@ -48,28 +48,28 @@ class CommandHeal : CommandCreator("heal") {
             if (MainConfig.healNeedHealBelow &&
                 TotalEssentials.getCore().getReflection().getHealth(p) >= MAX_PLAYER_HEAL
             ) {
-                s.sendMessage(LangConfig.healOtherFullMessage)
+                sender.sendMessage(LangConfig.healOtherFullMessage)
                 return false
             }
 
             // Heal target
             TotalEssentials.getCore().getReflection().setHealth(p, MAX_PLAYER_HEAL)
             p.sendMessage(LangConfig.healOtherMessage)
-            s.sendMessage(LangConfig.healSuccessOtherMessage.replace("%player%", p.name))
+            sender.sendMessage(LangConfig.healSuccessOtherMessage.replace("%player%", p.name))
             return false
         }
 
         // Check if sender needs healing
         if (MainConfig.healNeedHealBelow &&
-            TotalEssentials.getCore().getReflection().getHealth(s as Player) >= MAX_PLAYER_HEAL
+            TotalEssentials.getCore().getReflection().getHealth(sender as Player) >= MAX_PLAYER_HEAL
         ) {
-            s.sendMessage(LangConfig.healFullMessage)
+            sender.sendMessage(LangConfig.healFullMessage)
             return false
         }
 
         // Heal sender
-        TotalEssentials.getCore().getReflection().setHealth(s as Player, MAX_PLAYER_HEAL)
-        s.sendMessage(LangConfig.healMessage)
+        TotalEssentials.getCore().getReflection().setHealth(sender as Player, MAX_PLAYER_HEAL)
+        sender.sendMessage(LangConfig.healMessage)
         return false
     }
 

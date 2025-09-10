@@ -1,24 +1,24 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.login.CoreLogin
+import github.gilbertokpl.total.login.LoginManager
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandChangePass : CommandCreator("changepass") {
+class CommandChangePass : CommandManager("changepass") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("mudarsenha"),
             active = MainConfig.authActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.changepass",
             minimumSize = 2,
@@ -30,36 +30,36 @@ class CommandChangePass : CommandCreator("changepass") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         val encrypt = TotalEssentials.getCore().getEncrypt()
 
         // --------------------------------------------------------
         // Case 1: Sender is a player and changing own password
         // --------------------------------------------------------
-        if (s is Player && LoginData.doesPlayerExist(s) && LoginData.isPlayerLoggedIn(s)) {
-            val currentPassword = encrypt.decrypt(LoginData.password[s] ?: "")
+        if (sender is Player && LoginData.doesPlayerExist(sender) && LoginData.isPlayerLoggedIn(sender)) {
+            val currentPassword = encrypt.decrypt(LoginData.password[sender] ?: "")
 
             // Correct old password
             if (currentPassword == args[0]) {
-                LoginData.password[s] = encrypt.encrypt(args[1])
-                s.sendMessage(LangConfig.authChangePass)
+                LoginData.password[sender] = encrypt.encrypt(args[1])
+                sender.sendMessage(LangConfig.authChangePass)
                 return false
             }
 
             // Attempt to change another player's password
-            if (s.hasPermission("totalessentials.commands.changepass.other")) {
-                return changeOtherPassword(s, args[0], args[1])
+            if (sender.hasPermission("totalessentials.commands.changepass.other")) {
+                return changeOtherPassword(sender, args[0], args[1])
             }
 
             // Incorrect own password
-            s.sendMessage(LangConfig.authIncorrectPassword)
+            sender.sendMessage(LangConfig.authIncorrectPassword)
             return false
         }
 
         // --------------------------------------------------------
         // Case 2: Changing password of another player as console or admin
         // --------------------------------------------------------
-        return changeOtherPassword(s, args[0], args[1])
+        return changeOtherPassword(sender, args[0], args[1])
     }
 
     // --------------------------------------------------------
@@ -80,7 +80,7 @@ class CommandChangePass : CommandCreator("changepass") {
         LoginData.isLoggedIn[targetName] = false
 
         // Notify player if online
-        Bukkit.getPlayer(targetName)?.let { CoreLogin.loginMessage(it) }
+        Bukkit.getPlayer(targetName)?.let { LoginManager.loginMessage(it) }
 
         // Notify sender
         sender.sendMessage(LangConfig.authOtherChangePass.replace("%player%", targetName))

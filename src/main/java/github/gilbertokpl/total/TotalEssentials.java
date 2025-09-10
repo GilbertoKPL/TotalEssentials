@@ -1,23 +1,22 @@
 package github.gilbertokpl.total;
 
-import github.gilbertokpl.core.CorePlugin;
+import github.gilbertokpl.core.TotalCore;
 import github.gilbertokpl.core.utils.ConsoleColorUtil;
-import github.gilbertokpl.total.cache.data.PlayerData;
 import github.gilbertokpl.total.cache.internal.InternalLoader;
 import github.gilbertokpl.total.cache.loop.ClearEntitiesLoop;
 import github.gilbertokpl.total.cache.loop.PluginLoop;
 import github.gilbertokpl.total.cache.sql.*;
 import github.gilbertokpl.total.config.files.LangConfig;
 import github.gilbertokpl.total.config.files.MainConfig;
-import github.gilbertokpl.total.discord.Discord;
+import github.gilbertokpl.total.discord.DiscordManager;
 import github.gilbertokpl.total.economy.EconomyHolder;
 import github.gilbertokpl.total.filter.Filter;
 import github.gilbertokpl.total.util.EnchantUtil;
+import github.gilbertokpl.total.util.PlayerUtil;
 import github.gilbertokpl.total.util.ServerUtil;
 import github.gilbertokpl.total.util.MaterialUtil;
 import net.dv8tion.jda.internal.utils.JDALogger;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -37,53 +36,29 @@ public class TotalEssentials extends JavaPlugin {
 
     // ====== Static references ======
     private static TotalEssentials instance;
-    private static CorePlugin corePlugin;
+    private static TotalCore totalCore;
     private static Object permission;
 
 
     // ====== State flags ======
-    private static boolean lowVersion = false;
-    private static boolean update = false;
-    private static boolean libModify = false;
-    final boolean publicVer = true;
-
+    public static boolean lowVersion = false;
+    public static boolean update = false;
+    public static boolean libModify = false;
+    public final boolean publicVer = false;
     public static String jarPath = null;
 
     // ====== Getters ======
     public static TotalEssentials getInstance() {
         return instance;
     }
-
-    public static CorePlugin getCore() {
-        return corePlugin;
+    public static TotalCore getCore() {
+        return totalCore;
     }
-
     public static boolean isLowVersion() {
         return lowVersion;
     }
-
     public static Object getPermission() {
         return permission;
-    }
-
-    // =========================================================
-    // Plugin Lifecycle
-    // =========================================================
-
-    public static String JarPath() {
-        if (jarPath != null) {
-            try {
-                return new File(jarPath).getCanonicalPath();
-            } catch (Exception ignored) { }
-        }
-
-        CodeSource codeSource = TotalEssentials.class.getProtectionDomain().getCodeSource();
-        if (codeSource != null) {
-            try {
-                return new File(codeSource.getLocation().getPath()).getCanonicalPath();
-            } catch (Exception ignored) { }
-        }
-        return "";
     }
 
     @Override
@@ -96,11 +71,11 @@ public class TotalEssentials extends JavaPlugin {
         }
 
         instance = this;
-        corePlugin = new CorePlugin(this);
+        totalCore = new TotalCore(this);
 
         MaterialUtil.INSTANCE.startMaterials();
         EnchantUtil.INSTANCE.startEnchantments();
-        corePlugin.startConfig("github.gilbertokpl.total.config.files");
+        totalCore.startConfig("github.gilbertokpl.total.config.files");
 
         if (MainConfig.moneyActivated) {
             Bukkit.getServicesManager().register(
@@ -115,6 +90,9 @@ public class TotalEssentials extends JavaPlugin {
     @Override
     public void onEnable() {
         if (update) return;
+
+        printConsoleBanner();
+
         Runtime runtime = Runtime.getRuntime();
 
         long before = runtime.totalMemory() - runtime.freeMemory();
@@ -133,26 +111,87 @@ public class TotalEssentials extends JavaPlugin {
         getLogger().info("The cache is using approximately: " + ((after - before) / 1024 / 1024) + " MB");
     }
 
-    // =========================================================
-    // Init Methods (modular but inside same class)
-    // =========================================================
-
     @Override
     public void onDisable() {
         if (update) return;
 
-        savePlaytime();
+        PlayerUtil.INSTANCE.savePlaytime();
         ServerUtil.INSTANCE.consoleMessage(ConsoleColorUtil.YELLOW.getColor() + LangConfig.generalSaveDataMessage + ConsoleColorUtil.RESET.getColor());
-        corePlugin.stop();
+        totalCore.stop();
         ServerUtil.INSTANCE.consoleMessage(ConsoleColorUtil.YELLOW.getColor() + LangConfig.generalSaveDataSuccess + ConsoleColorUtil.RESET.getColor());
 
         TotalEssentials.getCore().getTask().disable();
         if (MainConfig.discordbotConnectDiscordChat) {
-            Discord.INSTANCE.sendDiscordMessage(LangConfig.discordchatServerClose, true);
+            DiscordManager.INSTANCE.sendDiscordMessage(LangConfig.discordchatServerClose, true);
+        }
+    }
+    private void startCorePlugin() {
+        totalCore.start(
+                "github.gilbertokpl.total.commands",
+                "github.gilbertokpl.total.listeners",
+                "github.gilbertokpl.total.cache.data",
+                java.util.Arrays.asList(
+                        KitsDataSQL.INSTANCE,
+                        PlayerDataSQL.INSTANCE,
+                        SpawnDataSQL.INSTANCE,
+                        WarpsDataSQL.INSTANCE,
+                        LoginDataSQL.INSTANCE,
+                        VipDataSQL.INSTANCE,
+                        VipKeysSQL.INSTANCE,
+                        ShopDataSQL.INSTANCE
+                )
+        );
+    }
+
+    private void initLoaders() {
+        InternalLoader.INSTANCE.start(
+                MainConfig.announcementsListAnnounce,
+                LangConfig.deathmessagesCauseReplacer,
+                LangConfig.deathmessagesEntityReplacer
+        );
+        ServerUtil.INSTANCE.startInventories();
+    }
+
+    private void initVersionCheck() {
+        if (Bukkit.getBukkitVersion().contains("1.5.2") || Bukkit.getVersion().contains("1.5.2")) {
+            lowVersion = true;
         }
     }
 
-    private void initUpdateAndDependencies() {
+    private void initDiscord() {
+        JDALogger.setFallbackLoggerEnabled(false);
+        DiscordManager.INSTANCE.startBot();
+        if (MainConfig.discordbotConnectDiscordChat) {
+            DiscordManager.INSTANCE.sendDiscordMessage(LangConfig.discordchatServerStart, true);
+        }
+    }
+
+    private void initLoops() {
+        ClearEntitiesLoop.INSTANCE.start();
+        PluginLoop.INSTANCE.start();
+    }
+
+    private void initPermissions() {
+        try {
+            permission = Objects.requireNonNull(
+                    Bukkit.getServer().getServicesManager()
+                            .getRegistration(net.milkbowl.vault.permission.Permission.class)
+            ).getProvider();
+        } catch (NoClassDefFoundError | NullPointerException ignored) {}
+
+        if (permission == null) {
+            try {
+                permission = Objects.requireNonNull(
+                        Bukkit.getServer().getServicesManager()
+                                .getRegistration(net.milkbowl.vault2.permission.Permission.class)
+                ).getProvider();
+            } catch (NoClassDefFoundError | NullPointerException ee) {
+                getLogger().severe("VAULT is missing, the VIP addon will not work properly!");
+            }
+        }
+    }
+
+    public void initUpdateAndDependencies() {
         String version;
 
         boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
@@ -213,76 +252,6 @@ public class TotalEssentials extends JavaPlugin {
         }
     }
 
-    private void startCorePlugin() {
-        corePlugin.start(
-                "github.gilbertokpl.total.commands",
-                "github.gilbertokpl.total.listeners",
-                "github.gilbertokpl.total.cache.data",
-                java.util.Arrays.asList(
-                        KitsDataSQL.INSTANCE,
-                        PlayerDataSQL.INSTANCE,
-                        SpawnDataSQL.INSTANCE,
-                        WarpsDataSQL.INSTANCE,
-                        LoginDataSQL.INSTANCE,
-                        VipDataSQL.INSTANCE,
-                        VipKeysSQL.INSTANCE,
-                        ShopDataSQL.INSTANCE
-                )
-        );
-    }
-
-    private void initLoaders() {
-        InternalLoader.INSTANCE.start(
-                MainConfig.announcementsListAnnounce,
-                LangConfig.deathmessagesCauseReplacer,
-                LangConfig.deathmessagesEntityReplacer
-        );
-        ServerUtil.INSTANCE.startInventories();
-    }
-
-    private void initVersionCheck() {
-        if (Bukkit.getBukkitVersion().contains("1.5.2") || Bukkit.getVersion().contains("1.5.2")) {
-            lowVersion = true;
-        }
-    }
-
-    private void initDiscord() {
-        JDALogger.setFallbackLoggerEnabled(false);
-        Discord.INSTANCE.startBot();
-        if (MainConfig.discordbotConnectDiscordChat) {
-            Discord.INSTANCE.sendDiscordMessage(LangConfig.discordchatServerStart, true);
-        }
-    }
-
-    private void initLoops() {
-        ClearEntitiesLoop.INSTANCE.start();
-        PluginLoop.INSTANCE.start();
-    }
-
-    private void initPermissions() {
-        try {
-            permission = Objects.requireNonNull(
-                    Bukkit.getServer().getServicesManager()
-                            .getRegistration(net.milkbowl.vault.permission.Permission.class)
-            ).getProvider();
-        } catch (NoClassDefFoundError | NullPointerException ignored) {}
-
-        if (permission == null) {
-            try {
-                permission = Objects.requireNonNull(
-                        Bukkit.getServer().getServicesManager()
-                                .getRegistration(net.milkbowl.vault2.permission.Permission.class)
-                ).getProvider();
-            } catch (NoClassDefFoundError | NullPointerException ee) {
-                getLogger().severe("VAULT is missing, the VIP addon will not work properly!");
-            }
-        }
-    }
-
-    // =========================================================
-    // Utils (Jar / Network)
-    // =========================================================
-
     public static boolean downloadArchive(String urlDownload, String path) {
         try {
             URL url = new URL(urlDownload);
@@ -327,6 +296,22 @@ public class TotalEssentials extends JavaPlugin {
         }
     }
 
+    public static String JarPath() {
+        if (jarPath != null) {
+            try {
+                return new File(jarPath).getCanonicalPath();
+            } catch (Exception ignored) { }
+        }
+
+        CodeSource codeSource = TotalEssentials.class.getProtectionDomain().getCodeSource();
+        if (codeSource != null) {
+            try {
+                return new File(codeSource.getLocation().getPath()).getCanonicalPath();
+            } catch (Exception ignored) { }
+        }
+        return "";
+    }
+
     private static void createJarWithNewManifest(String jarFilePath, Manifest newManifest) throws IOException {
         String tempJarFilePath = Files.createTempFile("temp-totalessentials", "").toString();
 
@@ -351,29 +336,6 @@ public class TotalEssentials extends JavaPlugin {
         Files.move(Paths.get(tempJarFilePath), Paths.get(jarFilePath), StandardCopyOption.REPLACE_EXISTING);
     }
 
-    private void savePlaytime() {
-        for (Player p : corePlugin.getReflection().getPlayers()) {
-            if (!MainConfig.playtimeActivated) continue;
-
-            long now = System.currentTimeMillis();
-
-            Long timeCache = PlayerData.INSTANCE.getPlayTimeCache().get(p);
-            long time = (timeCache != null) ? timeCache : 0L;
-
-            Long startCache = PlayerData.INSTANCE.getPlaytimeLocal().get(p);
-            long start = (startCache != null) ? startCache : now;
-
-            long newTime = time + (now - start);
-
-            // Limitar o tempo total sem resetar para valores pequenos
-            long maxTime = 94608000000L; // 3 anos em ms
-            if (newTime > maxTime) newTime = maxTime;
-
-            PlayerData.INSTANCE.getPlayTimeCache().set(p, newTime);
-            PlayerData.INSTANCE.getPlaytimeLocal().set(p, now);
-        }
-    }
-
     public static String getLatestVersion(String owner, String repo) throws IOException {
         String apiUrl = "https://api.github.com/repos/" + owner + "/" + repo + "/releases/latest";
         URL url = new URL(apiUrl);
@@ -392,4 +354,23 @@ public class TotalEssentials extends JavaPlugin {
             return jsonContent.substring(startIndex, endIndex);
         }
     }
+
+    private static final String RESET = "\u001B[0m";
+    private static final String ORANGE = "\u001B[38;5;208m"; // cor laranja vibrante
+    private static final String PURPLE = "\u001B[35m";       // roxo do Kotlin
+    private static final String BLUE = "\u001B[34m";         // azul do Kotlin
+
+    private void printConsoleBanner() {
+        Bukkit.getLogger().info("");
+        Bukkit.getLogger().info(ORANGE + "   █████  █████  █████   ██   █   "+BLUE+"  ████   ███   ███   ████  █   █  █████  █   ██   █     ███" + RESET);
+        Bukkit.getLogger().info(ORANGE + "     █    █   █    █    █  █  █   "+BLUE+"  █     █     █      █     ██  █    █    █  █  █  █    █" + RESET);
+        Bukkit.getLogger().info(ORANGE + "     █    █   █    █    ████  █   "+BLUE+"  ████   ███   ███   ████  █ █ █    █    █  ████  █     ███" + RESET);
+        Bukkit.getLogger().info(ORANGE + "     █    █   █    █    █  █  █   "+BLUE+"  █         █     █  █     █  ██    █    █  █  █  █        █" + RESET);
+        Bukkit.getLogger().info(ORANGE + "     █    █████    █    █  █  ████"+BLUE+"  ████   ███   ███   ████  █   █    █    █  █  █  ████  ███" + RESET);
+        Bukkit.getLogger().info("");
+        Bukkit.getLogger().info(PURPLE +  "  Criador: Gilberto" + RESET);
+        Bukkit.getLogger().info(PURPLE +  "  Github: https://github.com/GilbertoKPL/" + RESET);
+        Bukkit.getLogger().info("");
+    }
+
 }

@@ -1,6 +1,6 @@
 package github.gilbertokpl.core.utils
 
-import github.gilbertokpl.core.serializator.ItemSerializer
+import github.gilbertokpl.core.internal.serializator.ItemSerializer
 import org.bukkit.inventory.ItemStack
 
 class InventoryUtil {

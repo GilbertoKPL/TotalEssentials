@@ -3,12 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "2.2.10"
-    id("com.gradleup.shadow") version "9.0.2"
+    id("com.gradleup.shadow") version "9.1.0"
 }
 
 val base = "github.gilbertokpl.library"
 
-version = "1.2.1"
+version = "1.2.2"
 
 
 repositories {
@@ -45,17 +45,17 @@ dependencies {
     }
 
     //exposed
-    compileOnly("org.jetbrains.exposed:exposed-core:1.0.0-beta-5") {
+    compileOnly("org.jetbrains.exposed:exposed-core:1.0.0-rc-1") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-dao:1.0.0-beta-5") {
+    compileOnly("org.jetbrains.exposed:exposed-dao:1.0.0-rc-1") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-5") {
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:1.0.0-rc-1") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }

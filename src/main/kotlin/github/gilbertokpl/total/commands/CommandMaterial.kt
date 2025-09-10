@@ -1,19 +1,19 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.config.files.LangConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandMaterial : CommandCreator("material") {
+class CommandMaterial : CommandManager("material") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("mat"),
             active = true,
-            target = CommandTarget.PLAYER,
+            target = CommandTargetType.PLAYER,
             countdown = 0,
             permission = "totalessentials.commands.material",
             minimumSize = 0,
@@ -24,10 +24,10 @@ class CommandMaterial : CommandCreator("material") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        s.sendMessage(
-            LangConfig.MaterialName.replace("%material%", (s as Player).inventory.itemInHand.type.name).lowercase()
+        sender.sendMessage(
+            LangConfig.MaterialName.replace("%material%", (sender as Player).inventory.itemInHand.type.name).lowercase()
         )
 
         return false

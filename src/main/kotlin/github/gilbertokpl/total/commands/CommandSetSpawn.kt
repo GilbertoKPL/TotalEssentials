@@ -1,21 +1,21 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.cache.data.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandSetSpawn : CommandCreator("setspawn") {
+class CommandSetSpawn : CommandManager("setspawn") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf(""),
             active = MainConfig.spawnActivated,
-            target = CommandTarget.PLAYER,
+            target = CommandTargetType.PLAYER,
             countdown = 0,
             permission = "totalessentials.commands.setspawn",
             minimumSize = 0,
@@ -24,9 +24,9 @@ class CommandSetSpawn : CommandCreator("setspawn") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        SpawnData.spawnLocation["spawn"] = (s as Player).location
-        s.sendMessage(LangConfig.spawnSetMessage)
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
+        SpawnData.spawnLocation["spawn"] = (sender as Player).location
+        sender.sendMessage(LangConfig.spawnSetMessage)
         return false
     }
 }

@@ -1,11 +1,11 @@
 package github.gilbertokpl.core.utils
 
-import github.gilbertokpl.core.CorePlugin
+import github.gilbertokpl.core.TotalCore
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
-class TimeUtil(core: CorePlugin) {
+class TimeUtil(core: TotalCore) {
     private val MILLIS_TO_SECONDS = 1_000L
     private val SECONDS_TO_MINUTES = 60L
     private val MINUTES_TO_HOURS = 60L
@@ -54,26 +54,26 @@ class TimeUtil(core: CorePlugin) {
         hours %= HOURS_TO_DAYS
 
         if (days > 0) {
-            val unit = if (shortFormat) corePlugin.getConfig().messages().timeDayShort else corePlugin.getConfig()
-                .messages().timeDays
+            val unit = if (shortFormat) corePlugin.getConfig().messages.timeDayShort else corePlugin.getConfig()
+                .messages.timeDays
             units.add("$days $unit")
         }
 
         if (hours > 0) {
-            val unit = if (shortFormat) corePlugin.getConfig().messages().timeHourShort else corePlugin.getConfig()
-                .messages().timeHours
+            val unit = if (shortFormat) corePlugin.getConfig().messages.timeHourShort else corePlugin.getConfig()
+                .messages.timeHours
             units.add("$hours $unit")
         }
 
         if (minutes > 0) {
-            val unit = if (shortFormat) corePlugin.getConfig().messages().timeMinuteShort else corePlugin.getConfig()
-                .messages().timeMinutes
+            val unit = if (shortFormat) corePlugin.getConfig().messages.timeMinuteShort else corePlugin.getConfig()
+                .messages.timeMinutes
             units.add("$minutes $unit")
         }
 
         if (seconds > 0) {
-            val unit = if (shortFormat) corePlugin.getConfig().messages().timeSecondShort else corePlugin.getConfig()
-                .messages().timeSeconds
+            val unit = if (shortFormat) corePlugin.getConfig().messages.timeSecondShort else corePlugin.getConfig()
+                .messages.timeSeconds
             units.add("$seconds $unit")
         }
 

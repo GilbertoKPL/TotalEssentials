@@ -1,6 +1,6 @@
 package github.gilbertokpl.core.utils
 
-import github.gilbertokpl.core.CorePlugin
+import github.gilbertokpl.core.TotalCore
 import oshi.SystemInfo
 import oshi.hardware.CentralProcessor
 import java.io.File
@@ -8,7 +8,7 @@ import java.net.InetAddress
 import java.nio.file.Files
 import java.text.DecimalFormat
 
-class HostUtil(lf: CorePlugin) {
+class HostUtil(lf: TotalCore) {
     private lateinit var si: SystemInfo
 
     private val corePlugin = lf

@@ -2,7 +2,7 @@ package github.gilbertokpl.total.listeners
 
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.stackmobs.CoreStackMobs
+import github.gilbertokpl.total.stackmobs.StackMobsManager
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
@@ -56,7 +56,7 @@ class EntityDeath : Listener {
                 }
 
             if (newEntity != null) {
-                CoreStackMobs.mobCreate(newEntity, stackSize - 1, name)
+                StackMobsManager.mobCreate(newEntity, stackSize - 1, name)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()

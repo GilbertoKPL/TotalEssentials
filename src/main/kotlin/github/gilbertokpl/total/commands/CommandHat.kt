@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil
@@ -10,13 +10,13 @@ import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandHat : CommandCreator("hat") {
+class CommandHat : CommandManager("hat") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf("h", "chapeu"),
+            aliases = listOf("chapeu"),
             active = MainConfig.hatActivated,
-            target = CommandTarget.PLAYER,
+            target = CommandTargetType.PLAYER,
             countdown = 0,
             permission = "totalessentials.commands.hat",
             minimumSize = 0,
@@ -25,8 +25,8 @@ class CommandHat : CommandCreator("hat") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val p = s as Player
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
+        val p = sender as Player
 
         // Get item in main hand
         val itemHand = try {

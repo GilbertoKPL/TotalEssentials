@@ -7,12 +7,12 @@ import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.cache.data.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.discord.Discord
-import github.gilbertokpl.total.login.CoreLogin
+import github.gilbertokpl.total.discord.DiscordManager
+import github.gilbertokpl.total.login.LoginManager
 import github.gilbertokpl.total.util.ServerUtil
 import github.gilbertokpl.total.util.PermissionUtil
 import github.gilbertokpl.total.util.PlayerUtil
-import github.gilbertokpl.total.vip.CoreVip
+import github.gilbertokpl.total.vip.VipManager
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -36,7 +36,7 @@ class PlayerJoin : Listener {
             handlePlaytime(player)
             initializePlayerData(player)
             sendMessages(player)
-            CoreVip.checkVip(player.name.lowercase())
+            VipManager.checkVip(player.name.lowercase())
             handleAntiVpn(player, address)
 
             task.sync {
@@ -58,7 +58,7 @@ class PlayerJoin : Listener {
             player.sendMessage(LangConfig.authAutoLogin)
             LoginData.isLoggedIn[player] = true
         } else {
-            CoreLogin.loginMessage(player)
+            LoginManager.loginMessage(player)
         }
     }
 
@@ -90,7 +90,7 @@ class PlayerJoin : Listener {
             )
         }
         if (MainConfig.discordbotSendLoginMessage) {
-            Discord.sendDiscordMessage(
+            DiscordManager.sendDiscordMessage(
                 LangConfig.discordchatDiscordSendLoginMessage.replace("%player%", player.name),
                 true
             )

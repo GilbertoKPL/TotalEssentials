@@ -37,9 +37,7 @@ internal data class DataTeleport(
             val dataTeleport = DataTeleport(pSender, pReceived, true)
             tpaData[pSender] = dataTeleport
 
-            task.async {
-                task.waitSeconds(time.toLong())
-
+            task.supplyLater(time.toLong()) {
                 val senderData = tpaData[pSender]
                 if (senderData?.wait == true) {
                     tpaData.remove(pSender)

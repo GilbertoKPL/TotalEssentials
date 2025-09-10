@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.cache.data.ShopData
 import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.cache.inventory.Shop
@@ -14,13 +14,13 @@ import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandShop : CommandCreator("shop") {
+class CommandShop : CommandManager("shop") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("loja", "lojas"),
             active = MainConfig.shopActivated,
-            target = CommandTarget.PLAYER,
+            target = CommandTargetType.PLAYER,
             countdown = 0,
             permission = "totalessentials.commands.shop",
             minimumSize = 0,
@@ -33,13 +33,13 @@ class CommandShop : CommandCreator("shop") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val p = s as Player
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
+        val p = sender as Player
 
         // open own shop GUI
         if (args.isEmpty()) {
             val inventory = Data.shopInventoryCache[1] ?: run {
-                s.sendMessage(LangConfig.shopNotExistShop)
+                sender.sendMessage(LangConfig.shopNotExistShop)
                 return false
             }
 
@@ -58,7 +58,7 @@ class CommandShop : CommandCreator("shop") {
         // toggle own shop open/close
         if (args[0].equals("trocar", true) && p.hasPermission("totalessentials.commands.shop.set")) {
             if (!ShopData.checkIfShopExists(p.name.lowercase())) {
-                s.sendMessage(LangConfig.shopNotCreated)
+                sender.sendMessage(LangConfig.shopNotCreated)
                 return false
             }
 
@@ -74,7 +74,7 @@ class CommandShop : CommandCreator("shop") {
 
         // set or update own shop
         if (args[0].equals("setar", true) && p.hasPermission("totalessentials.commands.shop.set")) {
-            s.sendMessage(LangConfig.shopCreateShopSuccess)
+            sender.sendMessage(LangConfig.shopCreateShopSuccess)
 
             if (ShopData.checkIfShopExists(p.name.lowercase())) {
                 ShopData.shopLocation[p] = p.location
@@ -88,13 +88,13 @@ class CommandShop : CommandCreator("shop") {
 
         // check if target shop exists
         if (!ShopData.checkIfShopExists(args[0])) {
-            s.sendMessage(LangConfig.shopNotExist)
+            sender.sendMessage(LangConfig.shopNotExist)
             return false
         }
 
         // check if target shop is open
         if (ShopData.shopOpen[args[0].lowercase()] == false) {
-            s.sendMessage(LangConfig.shopClosedMessage)
+            sender.sendMessage(LangConfig.shopClosedMessage)
             return false
         }
 

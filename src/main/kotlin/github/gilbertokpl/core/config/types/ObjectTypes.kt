@@ -1,13 +1,13 @@
 package github.gilbertokpl.core.config.types
 
-import github.gilbertokpl.core.CorePlugin
+import github.gilbertokpl.core.TotalCore
 import org.simpleyaml.configuration.file.YamlFile
 
 enum class ObjectTypes {
     STRING {
-        override fun getValueConfig(yml: YamlFile, value: String, basePlugin: CorePlugin): String? {
+        override fun getValueConfig(yml: YamlFile, value: String, totalCore: TotalCore): String? {
             if (yml.get(value) == null) return null
-            return basePlugin.getValue().getString(yml, value)
+            return totalCore.getValue().getString(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {
@@ -16,9 +16,9 @@ enum class ObjectTypes {
         }
     },
     STRING_LIST {
-        override fun getValueConfig(yml: YamlFile, value: String, basePlugin: CorePlugin): List<String>? {
+        override fun getValueConfig(yml: YamlFile, value: String, totalCore: TotalCore): List<String>? {
             if (yml.get(value) == null) return null
-            return basePlugin.getValue().getStringList(yml, value)
+            return totalCore.getValue().getStringList(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {
@@ -27,9 +27,9 @@ enum class ObjectTypes {
         }
     },
     BOOLEAN {
-        override fun getValueConfig(yml: YamlFile, value: String, basePlugin: CorePlugin): Boolean? {
+        override fun getValueConfig(yml: YamlFile, value: String, totalCore: TotalCore): Boolean? {
             if (yml.get(value) == null) return null
-            return basePlugin.getValue().getBoolean(yml, value)
+            return totalCore.getValue().getBoolean(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {
@@ -38,9 +38,9 @@ enum class ObjectTypes {
         }
     },
     INTEGER {
-        override fun getValueConfig(yml: YamlFile, value: String, basePlugin: CorePlugin): Int? {
+        override fun getValueConfig(yml: YamlFile, value: String, totalCore: TotalCore): Int? {
             if (yml.get(value) == null) return null
-            return basePlugin.getValue().getInt(yml, value)
+            return totalCore.getValue().getInt(yml, value)
         }
 
         override fun setValueConfig(yml: YamlFile, value: String): YamlFile? {
@@ -49,6 +49,6 @@ enum class ObjectTypes {
         }
     };
 
-    abstract fun getValueConfig(yml: YamlFile, value: String, basePlugin: CorePlugin): Any?
+    abstract fun getValueConfig(yml: YamlFile, value: String, totalCore: TotalCore): Any?
     abstract fun setValueConfig(yml: YamlFile, value: String): YamlFile?
 }

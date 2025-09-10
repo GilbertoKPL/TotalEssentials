@@ -3,7 +3,7 @@ package github.gilbertokpl.total.cache.loop
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.discord.Discord
+import github.gilbertokpl.total.discord.DiscordManager
 import github.gilbertokpl.total.util.PlayerUtil
 
 import java.util.concurrent.TimeUnit
@@ -25,7 +25,7 @@ object DiscordLoop {
             val onlineTime = TotalEssentials.getCore().getTime().getOnlineTime()
             val currentTime = TotalEssentials.getCore().getTime().getCurrentDate()
 
-            Discord.jda?.getTextChannelById(MainConfig.discordbotIdDiscordChat)?.manager?.setTopic(
+            DiscordManager.jda?.getTextChannelById(MainConfig.discordbotIdDiscordChat)?.manager?.setTopic(
                 LangConfig.discordchatDiscordTopic
                     .replace("%online%", online.toString())
                     .replace(

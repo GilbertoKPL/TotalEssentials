@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -12,13 +12,13 @@ import org.bukkit.GameMode
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandGamemode : CommandCreator("gamemode") {
+class CommandGamemode : CommandManager("gamemode") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("gm"),
             active = MainConfig.gamemodeActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.gamemode",
             minimumSize = 1,
@@ -30,8 +30,8 @@ class CommandGamemode : CommandCreator("gamemode") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val senderPlayer = s as? Player
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
+        val senderPlayer = sender as? Player
         val targetGameMode = PlayerUtil.getGameModeNumber(args[0])
 
         // --------------------------------------------------------
@@ -60,12 +60,12 @@ class CommandGamemode : CommandCreator("gamemode") {
             }
 
             val target = TotalEssentials.getInstance().server.getPlayer(args[1]) ?: run {
-                s.sendMessage(LangConfig.generalPlayerNotOnline)
+                sender.sendMessage(LangConfig.generalPlayerNotOnline)
                 return false
             }
 
             if (target.gameMode == targetGameMode) {
-                s.sendMessage(LangConfig.gamemodeSameOtherGamemode)
+                sender.sendMessage(LangConfig.gamemodeSameOtherGamemode)
                 return false
             }
 
@@ -75,7 +75,7 @@ class CommandGamemode : CommandCreator("gamemode") {
                 LangConfig.gamemodeUseOtherSuccess.replace("%gamemode%", targetGameMode.name.lowercase())
             )
 
-            s.sendMessage(
+            sender.sendMessage(
                 LangConfig.gamemodeSuccessOtherMessage
                     .replace("%player%", target.name)
                     .replace("%gamemode%", targetGameMode.name.lowercase())

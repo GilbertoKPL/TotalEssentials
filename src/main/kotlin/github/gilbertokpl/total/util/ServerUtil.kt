@@ -8,7 +8,7 @@ import github.gilbertokpl.total.cache.inventory.Playtime
 import github.gilbertokpl.total.cache.inventory.Shop
 import github.gilbertokpl.total.cache.loop.AntiAfkLoop
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.economy.CoreMoney
+import github.gilbertokpl.total.economy.MoneyManager
 import java.util.*
 
 
@@ -45,7 +45,7 @@ internal object ServerUtil {
             Playtime.setup()
         }
         if (MainConfig.moneyActivated) {
-            CoreMoney.refreshTycoon()
+            MoneyManager.refreshTycoon()
         }
     }
 

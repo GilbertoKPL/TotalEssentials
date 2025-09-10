@@ -1,9 +1,9 @@
 package github.gilbertokpl.total.cache.serializer
 
-import github.gilbertokpl.core.cache.convert.SerializerBase
+import github.gilbertokpl.core.cache.interfaces.ICacheSerializer
 import org.bukkit.Location
 
-internal class HomeSerializer : SerializerBase<HashMap<String, Location>, String> {
+internal class HomeSerializer : ICacheSerializer<HashMap<String, Location>, String> {
 
     private val locationSerializer = LocationSerializer()
 

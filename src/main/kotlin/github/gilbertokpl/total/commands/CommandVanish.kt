@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -12,13 +12,13 @@ import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-class CommandVanish : CommandCreator("vanish") {
+class CommandVanish : CommandManager("vanish") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("v"),
             active = MainConfig.vanishActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.vanish",
             minimumSize = 0,

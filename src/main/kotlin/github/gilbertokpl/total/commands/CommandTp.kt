@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.PlayerUtil.teleportSafe
@@ -11,13 +11,13 @@ import org.bukkit.Location
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandTp : CommandCreator("tp") {
+class CommandTp : CommandManager("tp") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("teleport"),
             active = MainConfig.tpActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.tp",
             minimumSize = 1,
@@ -36,11 +36,11 @@ class CommandTp : CommandCreator("tp") {
     override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) return true
 
-        return when {
-            args.size == 1 && sender is Player -> teleportToPlayer(sender, args[0])
-            args.size == 2 -> teleportPlayerToPlayer(sender, args[0], args[1])
-            args.size in 3..4 && sender is Player -> teleportByCoordinates(sender, args)
-            args.size in 4..5 -> teleportPlayerByCoordinates(sender, args)
+        return when (args.size) {
+            1 if sender is Player -> teleportToPlayer(sender, args[0])
+            2 -> teleportPlayerToPlayer(sender, args[0], args[1])
+            in 3..4 if sender is Player -> teleportByCoordinates(sender, args)
+            in 4..5 -> teleportPlayerByCoordinates(sender, args)
             else -> true
         }
     }

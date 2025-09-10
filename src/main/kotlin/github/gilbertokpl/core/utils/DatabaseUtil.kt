@@ -2,7 +2,7 @@ package github.gilbertokpl.core.utils
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import github.gilbertokpl.core.CorePlugin
+import github.gilbertokpl.core.TotalCore
 import org.bukkit.Bukkit
 import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -10,14 +10,14 @@ import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.sql.SQLTransientConnectionException
 
-class DatabaseUtil(lf: CorePlugin) {
+class DatabaseUtil(lf: TotalCore) {
 
     private val corePlugin = lf
 
     fun start(databaseTablePackage: List<Table>) {
         try {
 
-            val database = when (corePlugin.getConfig().configs().databaseType.lowercase()) {
+            val database = when (corePlugin.getConfig().configs.databaseType.lowercase()) {
                 "h2" -> {
                     val databasePath = "./${corePlugin.mainPath}/sql/H2database".replace(".paper-remapped/", "")
                     Database.connect("jdbc:h2:$databasePath", "org.h2.Driver")
@@ -25,11 +25,11 @@ class DatabaseUtil(lf: CorePlugin) {
 
                 "mysql" -> {
                     val config = HikariConfig().apply {
-                        val databaseSqlIp = corePlugin.getConfig().configs().databaseSqlIp
-                        val databaseSqlPort = corePlugin.getConfig().configs().databaseSqlPort
-                        val databaseSqlDatabase = corePlugin.getConfig().configs().databaseSqlDatabase
-                        val databaseSqlUsername = corePlugin.getConfig().configs().databaseSqlUsername
-                        val databaseSqlPassword = corePlugin.getConfig().configs().databaseSqlPassword
+                        val databaseSqlIp = corePlugin.getConfig().configs.databaseSqlIp
+                        val databaseSqlPort = corePlugin.getConfig().configs.databaseSqlPort
+                        val databaseSqlDatabase = corePlugin.getConfig().configs.databaseSqlDatabase
+                        val databaseSqlUsername = corePlugin.getConfig().configs.databaseSqlUsername
+                        val databaseSqlPassword = corePlugin.getConfig().configs.databaseSqlPassword
 
                         jdbcUrl = "jdbc:mariadb://$databaseSqlIp:$databaseSqlPort/$databaseSqlDatabase"
                         driverClassName = "org.mariadb.jdbc.Driver"

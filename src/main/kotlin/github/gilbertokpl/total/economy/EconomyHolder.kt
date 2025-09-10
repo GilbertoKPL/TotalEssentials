@@ -24,7 +24,7 @@ class EconomyHolder : Economy {
     }
 
     override fun format(amount: Double): String {
-        return CoreMoney.coinReplacer(amount)
+        return MoneyManager.coinReplacer(amount)
     }
 
     override fun currencyNamePlural(): String {
@@ -92,16 +92,16 @@ class EconomyHolder : Economy {
     }
 
     override fun withdrawPlayer(playerName: String, amount: Double): EconomyResponse {
-        return CoreMoney.withdrawPlayer(playerName, amount)
+        return MoneyManager.withdrawPlayer(playerName, amount)
     }
 
     override fun withdrawPlayer(player: OfflinePlayer, amount: Double): EconomyResponse {
-        return CoreMoney.withdrawPlayer(player.name ?: "", amount)
+        return MoneyManager.withdrawPlayer(player.name ?: "", amount)
     }
 
     override fun depositPlayer(playerName: String?, worldName: String?, amount: Double): EconomyResponse {
         return if (playerName != null) {
-            return CoreMoney.depositPlayer(playerName, amount)
+            return MoneyManager.depositPlayer(playerName, amount)
         } else {
             EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
@@ -110,18 +110,18 @@ class EconomyHolder : Economy {
     override fun depositPlayer(player: OfflinePlayer?, worldName: String?, amount: Double): EconomyResponse {
         val playerName = player?.name
         return if (playerName != null) {
-            return CoreMoney.depositPlayer(playerName, amount)
+            return MoneyManager.depositPlayer(playerName, amount)
         } else {
             EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
     }
 
     override fun depositPlayer(playerName: String, amount: Double): EconomyResponse {
-        return CoreMoney.depositPlayer(playerName, amount)
+        return MoneyManager.depositPlayer(playerName, amount)
     }
 
     override fun depositPlayer(player: OfflinePlayer, amount: Double): EconomyResponse {
-        return CoreMoney.depositPlayer(player.name ?: "", amount)
+        return MoneyManager.depositPlayer(player.name ?: "", amount)
     }
 
     override fun createBank(name: String?, player: String?): EconomyResponse {

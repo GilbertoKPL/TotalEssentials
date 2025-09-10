@@ -1,20 +1,20 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.cache.data.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 
-class CommandDelWarp : CommandCreator("delwarp") {
+class CommandDelWarp : CommandManager("delwarp") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("deletarwarp"),
             active = MainConfig.warpsActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.delwarp",
             minimumSize = 1,
@@ -23,14 +23,14 @@ class CommandDelWarp : CommandCreator("delwarp") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         val warpName = args[0].lowercase()
 
         // --------------------------------------------------------
         // Check length of warp name
         // --------------------------------------------------------
         if (warpName.length > 16) {
-            s.sendMessage(LangConfig.warpsNameLength)
+            sender.sendMessage(LangConfig.warpsNameLength)
             return false
         }
 
@@ -38,7 +38,7 @@ class CommandDelWarp : CommandCreator("delwarp") {
         // Check if warp exists
         // --------------------------------------------------------
         if (!WarpData.checkIfWarpExist(warpName)) {
-            s.sendMessage(LangConfig.warpsNameDontExist)
+            sender.sendMessage(LangConfig.warpsNameDontExist)
             return false
         }
 
@@ -50,7 +50,7 @@ class CommandDelWarp : CommandCreator("delwarp") {
         // --------------------------------------------------------
         // Notify player
         // --------------------------------------------------------
-        s.sendMessage(LangConfig.warpsRemoved.replace("%warp%", warpName))
+        sender.sendMessage(LangConfig.warpsRemoved.replace("%warp%", warpName))
 
         return false
     }

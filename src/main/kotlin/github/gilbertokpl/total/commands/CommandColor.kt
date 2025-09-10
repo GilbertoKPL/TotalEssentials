@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -10,13 +10,13 @@ import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandColor : CommandCreator("color") {
+class CommandColor : CommandManager("color") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("cor"),
             active = MainConfig.colorActivated,
-            target = CommandTarget.PLAYER,
+            target = CommandTargetType.PLAYER,
             countdown = 0,
             permission = "totalessentials.commands.color",
             minimumSize = 1,
@@ -29,9 +29,9 @@ class CommandColor : CommandCreator("color") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        val player = s as? Player ?: return false
+        val player = sender as? Player ?: return false
 
         when (args[0].lowercase()) {
 

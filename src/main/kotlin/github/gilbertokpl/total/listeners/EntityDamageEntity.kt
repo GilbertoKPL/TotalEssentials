@@ -1,7 +1,7 @@
 package github.gilbertokpl.total.listeners
 
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.stackmobs.CoreStackMobs.mobCreate
+import github.gilbertokpl.total.stackmobs.StackMobsManager.mobCreate
 import org.bukkit.entity.Damageable
 import org.bukkit.entity.Item
 import org.bukkit.entity.LivingEntity

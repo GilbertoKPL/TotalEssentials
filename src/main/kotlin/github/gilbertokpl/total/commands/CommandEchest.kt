@@ -1,21 +1,21 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandEchest : CommandCreator("echest") {
+class CommandEchest : CommandManager("echest") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("ec"),
             active = MainConfig.echestActivated,
-            target = CommandTarget.PLAYER,
+            target = CommandTargetType.PLAYER,
             countdown = 0,
             permission = "totalessentials.commands.ec",
             minimumSize = 0,
@@ -27,8 +27,8 @@ class CommandEchest : CommandCreator("echest") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
-        val player = s as Player
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
+        val player = sender as Player
 
         // --------------------------------------------------------
         // Open own Ender Chest

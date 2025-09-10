@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.cache.data.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -12,13 +12,13 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandWarp : CommandCreator("warp") {
+class CommandWarp : CommandManager("warp") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("warps"),
             active = MainConfig.warpsActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.warp",
             minimumSize = 0,
@@ -30,16 +30,16 @@ class CommandWarp : CommandCreator("warp") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        val p = if (s is Player) {
-            s
+        val p = if (sender is Player) {
+            sender
         } else {
             null
         }
 
         if (args.isEmpty()) {
-            s.sendMessage(
+            sender.sendMessage(
                 LangConfig.warpsList.replace(
                     "%list%",
                     WarpData.getWarpList(p).toString()
@@ -55,7 +55,7 @@ class CommandWarp : CommandCreator("warp") {
 
             //check if not exist
             if (!WarpData.checkIfWarpExist(warpName)) {
-                s.sendMessage(
+                sender.sendMessage(
                     LangConfig.warpsList.replace(
                         "%list%",
                         WarpData.getWarpList(null).toString()
@@ -72,7 +72,7 @@ class CommandWarp : CommandCreator("warp") {
                     warpName
                 )
             )
-            s.sendMessage(
+            sender.sendMessage(
                 LangConfig.warpsTeleportedOtherSuccess
                     .replace("%warp%", warpName)
                     .replace("%player%", newPlayer.name.lowercase())
@@ -83,7 +83,7 @@ class CommandWarp : CommandCreator("warp") {
 
         //check length of warp name
         if (args[0].length > 16) {
-            s.sendMessage(LangConfig.warpsNameLength)
+            sender.sendMessage(LangConfig.warpsNameLength)
             return false
         }
 

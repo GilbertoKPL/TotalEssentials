@@ -42,12 +42,10 @@ class ColorUtil() {
         colorPermissions.forEach { permission ->
             if (hasPlayer) {
                 val permissionNode = "totalessentials.color.$permission"
-                if (player != null) {
-                    if (player.hasPermission(permissionNode)) {
-                        modifiedString = modifiedString.replace(permission, permission.replace("&", "§"))
-                    } else {
-                        modifiedString = modifiedString.replace(permission, "")
-                    }
+                modifiedString = if (player.hasPermission(permissionNode)) {
+                    modifiedString.replace(permission, permission.replace("&", "§"))
+                } else {
+                    modifiedString.replace(permission, "")
                 }
             } else {
                 modifiedString = modifiedString.replace(permission, permission.replace("&", "§"))

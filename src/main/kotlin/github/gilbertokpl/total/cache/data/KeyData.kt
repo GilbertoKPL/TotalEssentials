@@ -1,13 +1,13 @@
 package github.gilbertokpl.total.cache.data
 
-import github.gilbertokpl.core.cache.interfaces.CacheBase
+import github.gilbertokpl.core.cache.interfaces.ICache
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.sql.VipKeysSQL
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.Table
 import java.util.*
 
-object KeyData : CacheBase {
+object KeyData : ICache {
     override var table: Table = VipKeysSQL
     override var primaryColumn: Column<String> = VipKeysSQL.vipKey
 

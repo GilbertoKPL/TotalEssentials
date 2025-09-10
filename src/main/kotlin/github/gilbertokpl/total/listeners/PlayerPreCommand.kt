@@ -5,7 +5,7 @@ import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.LoginData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
-import github.gilbertokpl.total.discord.Discord
+import github.gilbertokpl.total.discord.DiscordManager
 import net.milkbowl.vault.chat.Chat
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
@@ -102,7 +102,7 @@ class PlayerPreCommand : Listener {
                     .replace("%message%", msg)
                     .replace("%player%", e.player.name).replace("&[0-9,a-z]".toRegex(), "")
 
-            Discord.sendDiscordMessage(patternMessage, false)
+            DiscordManager.sendDiscordMessage(patternMessage, false)
         }
     }
 }

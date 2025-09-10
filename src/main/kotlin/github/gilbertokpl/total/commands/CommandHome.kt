@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
@@ -11,13 +11,13 @@ import github.gilbertokpl.total.util.PlayerUtil.teleportSafe
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandHome : CommandCreator("home") {
+class CommandHome : CommandManager("home") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("h", "homes"),
             active = MainConfig.homesActivated,
-            target = CommandTarget.PLAYER,
+            target = CommandTargetType.PLAYER,
             countdown = 0,
             permission = "totalessentials.commands.home",
             minimumSize = 0,
@@ -31,9 +31,9 @@ class CommandHome : CommandCreator("home") {
     }
 
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
-        val p = s as Player
+        val p = sender as Player
 
         if (!PlayerData.checkIfPlayerExists(p)) return false
 
@@ -92,7 +92,7 @@ class CommandHome : CommandCreator("home") {
 
         val nameHome = args[0].lowercase()
 
-        val homes = PlayerData.homeCache[s]!!
+        val homes = PlayerData.homeCache[sender]!!
 
         //check if home don't exist
         val loc = homes[nameHome] ?: run {

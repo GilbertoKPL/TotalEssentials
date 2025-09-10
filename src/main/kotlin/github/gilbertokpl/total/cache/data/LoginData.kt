@@ -1,13 +1,13 @@
 package github.gilbertokpl.total.cache.data
 
-import github.gilbertokpl.core.cache.interfaces.CacheBase
+import github.gilbertokpl.core.cache.interfaces.ICache
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.sql.LoginDataSQL
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.Table
 
-object LoginData : CacheBase {
+object LoginData : ICache {
     override var table: Table = LoginDataSQL
     override var primaryColumn: Column<String> = LoginDataSQL.player
 

@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.cache.data.KitsData
 import github.gilbertokpl.total.cache.inventory.EditKit.editKitGui
 import github.gilbertokpl.total.config.files.LangConfig
@@ -10,13 +10,13 @@ import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandEditKit : CommandCreator("editkit") {
+class CommandEditKit : CommandManager("editkit") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("editarkit"),
             active = MainConfig.kitsActivated,
-            target = CommandTarget.PLAYER,
+            target = CommandTargetType.PLAYER,
             countdown = 0,
             permission = "totalessentials.commands.editkit",
             minimumSize = 1,
@@ -25,9 +25,9 @@ class CommandEditKit : CommandCreator("editkit") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         val kitName = args[0].lowercase()
-        val player = s as Player
+        val player = sender as Player
 
         // --------------------------------------------------------
         // Check length of kit name

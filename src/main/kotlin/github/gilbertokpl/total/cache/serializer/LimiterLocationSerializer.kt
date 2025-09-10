@@ -1,11 +1,11 @@
 package github.gilbertokpl.total.cache.serializer
 
-import github.gilbertokpl.core.cache.convert.SerializerBase
+import github.gilbertokpl.core.cache.interfaces.ICacheSerializer
 import github.gilbertokpl.core.utils.InventoryUtil
 import org.bukkit.Location
 import org.bukkit.inventory.ItemStack
 
-class LimiterLocationSerializer : SerializerBase<HashMap<ItemStack, ArrayList<Location>>, String> {
+class LimiterLocationSerializer : ICacheSerializer<HashMap<ItemStack, ArrayList<Location>>, String> {
 
     private val locationSerializer = LocationSerializer()
     private val itemSerializer = InventoryUtil()

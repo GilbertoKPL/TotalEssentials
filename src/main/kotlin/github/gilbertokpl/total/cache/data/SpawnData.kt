@@ -1,6 +1,6 @@
 package github.gilbertokpl.total.cache.data
 
-import github.gilbertokpl.core.cache.interfaces.CacheBase
+import github.gilbertokpl.core.cache.interfaces.ICache
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.serializer.LocationSerializer
 import github.gilbertokpl.total.cache.sql.SpawnDataSQL
@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.Table
 
-object SpawnData : CacheBase {
+object SpawnData : ICache {
     override var table: Table = SpawnDataSQL
     override var primaryColumn: Column<String> = SpawnDataSQL.spawnNameTable
 

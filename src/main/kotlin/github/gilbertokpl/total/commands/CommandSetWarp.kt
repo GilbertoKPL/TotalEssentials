@@ -1,8 +1,8 @@
 package github.gilbertokpl.total.commands
 
-import github.gilbertokpl.core.command.annotations.CommandPattern
-import github.gilbertokpl.core.command.external.CommandCreator
-import github.gilbertokpl.core.command.interfaces.CommandTarget
+import github.gilbertokpl.core.command.pattern.CommandPattern
+import github.gilbertokpl.core.command.CommandManager
+import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
@@ -12,13 +12,13 @@ import org.bukkit.Location
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandSetWarp : CommandCreator("setwarp") {
+class CommandSetWarp : CommandManager("setwarp") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf(""),
             active = MainConfig.warpsActivated,
-            target = CommandTarget.ALL,
+            target = CommandTargetType.ALL,
             countdown = 0,
             permission = "totalessentials.commands.setwarp",
             minimumSize = 1,
@@ -30,23 +30,23 @@ class CommandSetWarp : CommandCreator("setwarp") {
         )
     }
 
-    override fun funCommand(s: CommandSender, label: String, args: Array<out String>): Boolean {
+    override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
 
         // check warp name length
         if (args[0].length > 16) {
-            s.sendMessage(LangConfig.warpsNameLength)
+            sender.sendMessage(LangConfig.warpsNameLength)
             return false
         }
 
         // check for special characters
         if (ServerUtil.checkSpecialCharacters(args[0])) {
-            s.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
+            sender.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
 
         // check if warp already exists
         if (WarpData.checkIfWarpExist(args[0])) {
-            s.sendMessage(LangConfig.warpsNameAlreadyExist)
+            sender.sendMessage(LangConfig.warpsNameAlreadyExist)
             return false
         }
 
@@ -59,19 +59,19 @@ class CommandSetWarp : CommandCreator("setwarp") {
                     args[3].toDouble(),
                     args[4].toDouble()
                 )
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
                 return true
             }
 
             WarpData.warpLocation[args[0]] = loc
-            s.sendMessage(LangConfig.warpsCreated.replace("%warp%", args[0].lowercase()))
+            sender.sendMessage(LangConfig.warpsCreated.replace("%warp%", args[0].lowercase()))
             return false
         }
 
         // create warp at player location
-        if (args.size == 1 && s is Player) {
-            WarpData.warpLocation[args[0]] = s.location
-            s.sendMessage(LangConfig.warpsCreated.replace("%warp%", args[0].lowercase()))
+        if (args.size == 1 && sender is Player) {
+            WarpData.warpLocation[args[0]] = sender.location
+            sender.sendMessage(LangConfig.warpsCreated.replace("%warp%", args[0].lowercase()))
             return false
         }
 
