@@ -16,8 +16,8 @@ object VipData : ICache {
     private val cache = TotalEssentials.getCore().getCache()
 
     val vipItems = cache.list(this, VipDataSQL.vipItems, ItemSerializer())
-    val vipPrice = cache.integer(this, VipDataSQL.vipPrice)
-    val vipQuantity = cache.integer(this, VipDataSQL.vipQuantity)
+    val vipPrice = cache.int(this, VipDataSQL.vipPrice)
+    val vipQuantity = cache.int(this, VipDataSQL.vipQuantity)
     val vipGroup = cache.string(this, VipDataSQL.vipGroup)
     val vipDiscord = cache.long(this, VipDataSQL.vipDiscord)
     val vipCommands = cache.list(this, VipDataSQL.vipCommands, CommandsSerializer())

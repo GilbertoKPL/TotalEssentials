@@ -21,12 +21,12 @@ object DiscordLoop {
         start = true
 
         TotalEssentials.getCore().getTask().getInternalExecutor().scheduleWithFixedDelay({
-            val online = PlayerUtil.getIntOnlinePlayers(false)
+            val online = PlayerUtil.getOnlinePlayersCount(false)
             val onlineTime = TotalEssentials.getCore().getTime().getOnlineTime()
             val currentTime = TotalEssentials.getCore().getTime().getCurrentDate()
 
             DiscordManager.jda?.getTextChannelById(MainConfig.discordbotIdDiscordChat)?.manager?.setTopic(
-                LangConfig.discordchatDiscordTopic
+                LangConfig.discordchatTopic
                     .replace("%online%", online.toString())
                     .replace(
                         "%online_time%",
@@ -34,6 +34,6 @@ object DiscordLoop {
                     )
                     .replace("%time%", currentTime)
             )?.queue()
-        }, 15, 15, TimeUnit.MINUTES)
+        }, 1, 5, TimeUnit.MINUTES)
     }
 }

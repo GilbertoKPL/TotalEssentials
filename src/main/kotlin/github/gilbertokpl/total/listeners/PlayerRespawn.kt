@@ -10,24 +10,23 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerRespawnEvent
 
 class PlayerRespawn : Listener {
-    @EventHandler
-    fun event(e: PlayerRespawnEvent) {
-        try {
-            playerData(e)
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        }
+
+    companion object {
+        private const val RESPAWN_DELAY_MS = 20L
     }
 
-    private fun playerData(e: PlayerRespawnEvent) {
+    @EventHandler
+    fun onPlayerRespawn(event: PlayerRespawnEvent) {
         val task = TotalEssentials.getCore().getTask()
+
         task.async {
-            delay(20)
+            delay(RESPAWN_DELAY_MS)
+
             task.sync {
-                PlayerData.applyPlayerSettings(e.player)
+                PlayerData.applyPlayerSettings(event.player)
 
                 if (MainConfig.spawnSendToSpawnOnDeath) {
-                    SpawnData.teleportToSpawn(e.player)
+                    SpawnData.teleportToSpawn(event.player)
                 }
             }
         }

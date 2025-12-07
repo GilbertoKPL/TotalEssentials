@@ -8,23 +8,16 @@ import org.bukkit.event.Listener
 import org.bukkit.event.vehicle.VehicleEnterEvent
 
 class EntityVehicleEnter : Listener {
-    @EventHandler
-    fun event(e: VehicleEnterEvent) {
-        if (MainConfig.antibugsBlockClimbingOnVehicles) {
-            try {
-                blockEnterInVehicles(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
-    }
 
-    private fun blockEnterInVehicles(e: VehicleEnterEvent) {
-        if (e.entered is Player &&
-            !(e.entered as Player).hasPermission("totalessentials.bypass.vehicles")
-        ) {
-            (e.entered as Player).sendMessage(LangConfig.generalNotPermAction)
-            e.isCancelled = true
-        }
+    @EventHandler
+    fun onVehicleEnter(event: VehicleEnterEvent) {
+        if (!MainConfig.antibugsBlockClimbingOnVehicles) return
+
+        val player = event.entered as? Player ?: return
+
+        if (player.hasPermission("totalessentials.bypass.vehicles")) return
+
+        player.sendMessage(LangConfig.generalNotPermAction)
+        event.isCancelled = true
     }
 }

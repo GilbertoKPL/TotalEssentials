@@ -7,154 +7,217 @@ import org.bukkit.command.*
 import org.bukkit.event.Event
 import org.bukkit.plugin.*
 import java.io.File
-import java.io.IOException
 import java.lang.reflect.Field
 import java.net.URLClassLoader
 import java.util.*
 
-internal object PluginUtil {
+object PluginUtil {
 
+    private const val PLUGINS_FOLDER = "plugins"
+    private const val JAR_EXTENSION = ".jar"
+
+    /**
+     * Busca um plugin pelo nome (case-insensitive)
+     */
     fun getPluginByName(name: String): Plugin? {
-        for (plugin in Bukkit.getPluginManager().plugins) {
-            if (name.equals(plugin.name, ignoreCase = true)) return plugin
+        return Bukkit.getPluginManager().plugins.firstOrNull { plugin ->
+            plugin.name.equals(name, ignoreCase = true)
         }
-        return null
     }
 
+    /**
+     * Habilita um plugin se ele estiver desabilitado
+     */
     fun enable(plugin: Plugin?) {
-        if (plugin != null && !plugin.isEnabled) Bukkit.getPluginManager().enablePlugin(plugin)
+        if (plugin != null && !plugin.isEnabled) {
+            Bukkit.getPluginManager().enablePlugin(plugin)
+        }
     }
 
+    /**
+     * Desabilita um plugin se ele estiver habilitado
+     */
     fun disable(plugin: Plugin?) {
-        if (plugin != null && plugin.isEnabled) Bukkit.getPluginManager().disablePlugin(plugin)
+        if (plugin != null && plugin.isEnabled) {
+            Bukkit.getPluginManager().disablePlugin(plugin)
+        }
     }
 
-    private fun load(plugin: Plugin): String {
-        return load(plugin.name)
-    }
+    /**
+     * Carrega um plugin a partir do seu arquivo JAR
+     */
+    fun load(pluginName: String): String {
+        val pluginsDirectory = File(PLUGINS_FOLDER)
 
-    fun load(name: String): String {
-        val target: Plugin?
-        val pluginDir = File("plugins")
-        if (!pluginDir.isDirectory) {
+        if (!pluginsDirectory.isDirectory) {
             return LangConfig.generalPluginNotFound
         }
-        var pluginFile = File(pluginDir, "$name.jar")
-        if (!pluginFile.isFile) {
-            for (f in pluginDir.listFiles()!!) {
-                if (f.name.endsWith(".jar")) try {
-                    val desc: PluginDescriptionFile =
-                        TotalEssentials.getInstance().pluginLoader.getPluginDescription(f)
-                    if (desc.name.equals(name, ignoreCase = true)) {
-                        pluginFile = f
-                        break
-                    }
-                } catch (e: InvalidDescriptionException) {
-                    return LangConfig.generalPluginLoadProblems
-                }
+
+        val pluginFile = findPluginFile(pluginsDirectory, pluginName)
+            ?: return LangConfig.generalPluginNotFound
+
+        return loadPluginFromFile(pluginFile)
+    }
+
+    /**
+     * Recarrega um plugin (descarrega e carrega novamente)
+     */
+    fun reload(plugin: Plugin?, sender: CommandSender) {
+        if (plugin == null) return
+
+        sender.sendMessage(unload(plugin))
+        sender.sendMessage(load(plugin.name))
+    }
+
+    /**
+     * Descarrega completamente um plugin da memória
+     */
+    fun unload(plugin: Plugin): String {
+        val pluginManager = Bukkit.getPluginManager()
+
+        pluginManager.disablePlugin(plugin)
+
+        val reflectionResult = PluginReflectionHelper.unregisterPlugin(plugin, pluginManager)
+        if (!reflectionResult) {
+            return LangConfig.generalPluginUnloadProblems
+        }
+
+        cleanupClassLoader(plugin)
+        System.gc()
+
+        return LangConfig.generalPluginUnload
+    }
+
+    private fun findPluginFile(pluginsDirectory: File, pluginName: String): File? {
+        // Tenta encontrar diretamente por nome
+        val directFile = File(pluginsDirectory, "$pluginName$JAR_EXTENSION")
+        if (directFile.isFile) return directFile
+
+        // Procura em todos os JARs do diretório
+        return pluginsDirectory.listFiles()?.firstOrNull { file ->
+            if (!file.name.endsWith(JAR_EXTENSION)) return@firstOrNull false
+
+            try {
+                val description = TotalEssentials.getInstance().pluginLoader.getPluginDescription(file)
+                description.name.equals(pluginName, ignoreCase = true)
+            } catch (e: InvalidDescriptionException) {
+                false
             }
         }
-        target = try {
+    }
+
+    private fun loadPluginFromFile(pluginFile: File): String {
+        val plugin = try {
             Bukkit.getPluginManager().loadPlugin(pluginFile)
-        } catch (e: InvalidDescriptionException) {
+        } catch (e: Exception) {
             return LangConfig.generalPluginLoadProblems
-        } catch (e: InvalidPluginException) {
-            return LangConfig.generalPluginLoadProblems
-        }
-        target!!.onLoad()
-        Bukkit.getPluginManager().enablePlugin(target)
+        } ?: return LangConfig.generalPluginLoadProblems
+
+        plugin.onLoad()
+        Bukkit.getPluginManager().enablePlugin(plugin)
+
         return LangConfig.generalPluginLoad
     }
 
-    fun reload(plugin: Plugin?, s: CommandSender) {
-        if (plugin != null) {
-            s.sendMessage(unload(plugin))
-            s.sendMessage(load(plugin))
+    private fun cleanupClassLoader(plugin: Plugin) {
+        val classLoader = plugin.javaClass.classLoader as? URLClassLoader ?: return
+
+        try {
+            // Limpa referências internas do ClassLoader
+            setFieldValue(classLoader, "plugin", null)
+            setFieldValue(classLoader, "pluginInit", null)
+
+            // Fecha o ClassLoader
+            classLoader.close()
+        } catch (e: Exception) {
+            // Ignorar erros de cleanup - não crítico
         }
     }
 
-    fun unload(plugin: Plugin): String {
-        val name = plugin.name
-        val pluginManager = Bukkit.getPluginManager()
-        var commandMap: SimpleCommandMap? = null
-        var plugins: MutableList<Plugin?>? = null
-        var names: MutableMap<String?, Plugin?>? = null
-        var commands: MutableMap<String?, Command>? = null
-        var listeners: Map<Event?, SortedSet<RegisteredListener>>? = null
-        var reloadlisteners = true
-        if (pluginManager != null) {
-            pluginManager.disablePlugin(plugin)
-            try {
-                val pluginsField: Field = Bukkit.getPluginManager().javaClass.getDeclaredField("plugins")
-                pluginsField.isAccessible = true
-                (pluginsField.get(pluginManager) as MutableList<Plugin?>).also { plugins = it }
-                val lookupNamesField: Field = Bukkit.getPluginManager().javaClass.getDeclaredField("lookupNames")
-                lookupNamesField.isAccessible = true
-                names = lookupNamesField.get(pluginManager) as MutableMap<String?, Plugin?>
-                try {
-                    val listenersField: Field = Bukkit.getPluginManager().javaClass.getDeclaredField("listeners")
-                    listenersField.isAccessible = true
-                    listeners = listenersField.get(pluginManager) as Map<Event?, SortedSet<RegisteredListener>>
-                } catch (e: Throwable) {
-                    reloadlisteners = false
+    private fun setFieldValue(target: Any, fieldName: String, value: Any?) {
+        try {
+            val field = target.javaClass.getDeclaredField(fieldName)
+            field.isAccessible = true
+            field.set(target, value)
+        } catch (e: Exception) {
+            // Field não existe nesta versão/implementação
+        }
+    }
+
+    /**
+     * Helper class para manipular internals do PluginManager via reflection
+     */
+    private object PluginReflectionHelper {
+
+        private val pluginsField by lazy { getField(PluginManager::class.java, "plugins") }
+        private val lookupNamesField by lazy { getField(PluginManager::class.java, "lookupNames") }
+        private val listenersField by lazy { getField(PluginManager::class.java, "listeners") }
+        private val commandMapField by lazy { getField(PluginManager::class.java, "commandMap") }
+        private val knownCommandsField by lazy { getField(SimpleCommandMap::class.java, "knownCommands") }
+
+        fun unregisterPlugin(plugin: Plugin, pluginManager: PluginManager): Boolean {
+            return try {
+                removeFromPluginsList(plugin, pluginManager)
+                removeFromLookupNames(plugin, pluginManager)
+                removeFromListeners(plugin, pluginManager)
+                removeFromCommandMap(plugin, pluginManager)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+
+        private fun removeFromPluginsList(plugin: Plugin, pluginManager: PluginManager) {
+            val pluginsList = getFieldValue<MutableList<Plugin>>(pluginManager, pluginsField) ?: return
+            pluginsList.remove(plugin)
+        }
+
+        private fun removeFromLookupNames(plugin: Plugin, pluginManager: PluginManager) {
+            val lookupNames = getFieldValue<MutableMap<String, Plugin>>(pluginManager, lookupNamesField) ?: return
+            lookupNames.remove(plugin.name)
+        }
+
+        private fun removeFromListeners(plugin: Plugin, pluginManager: PluginManager) {
+            val listeners = getFieldValue<Map<Event, SortedSet<RegisteredListener>>>(
+                pluginManager,
+                listenersField
+            ) ?: return
+
+            listeners.values.forEach { listenerSet ->
+                listenerSet.removeIf { it.plugin === plugin }
+            }
+        }
+
+        private fun removeFromCommandMap(plugin: Plugin, pluginManager: PluginManager) {
+            val commandMap = getFieldValue<SimpleCommandMap>(pluginManager, commandMapField) ?: return
+            val knownCommands = getFieldValue<MutableMap<String, Command>>(commandMap, knownCommandsField) ?: return
+
+            knownCommands.entries.removeIf { (_, command) ->
+                if (command is PluginCommand && command.plugin === plugin) {
+                    command.unregister(commandMap)
+                    true
+                } else {
+                    false
                 }
-                val commandMapField: Field = Bukkit.getPluginManager().javaClass.getDeclaredField("commandMap")
-                commandMapField.isAccessible = true
-                commandMap = commandMapField.get(pluginManager) as SimpleCommandMap
-                val knownCommandsField: Field = SimpleCommandMap::class.java.getDeclaredField("knownCommands")
-                knownCommandsField.isAccessible = true
-                commands = knownCommandsField.get(commandMap) as MutableMap<String?, Command>
+            }
+        }
+
+        private fun getField(clazz: Class<*>, fieldName: String): Field? {
+            return try {
+                clazz.getDeclaredField(fieldName).apply { isAccessible = true }
             } catch (e: NoSuchFieldException) {
-                return LangConfig.generalPluginUnloadProblems
-            } catch (e: IllegalAccessException) {
-                return LangConfig.generalPluginUnloadProblems
+                null
             }
         }
-        pluginManager.disablePlugin(plugin)
-        if (plugins != null && plugins.contains(plugin)) plugins.remove(plugin)
-        if (names != null && names.containsKey(name)) names.remove(name)
-        if (listeners != null) {
-            for (set in listeners.values) {
-                val it = set.iterator()
-                while (it.hasNext()) {
-                    val value = it.next()
-                    if (value.plugin === plugin) it.remove()
-                }
+
+        @Suppress("UNCHECKED_CAST")
+        private fun <T> getFieldValue(target: Any, field: Field?): T? {
+            if (field == null) return null
+            return try {
+                field.get(target) as? T
+            } catch (e: Exception) {
+                null
             }
         }
-        if (commandMap != null) {
-            val it: MutableIterator<Map.Entry<String?, Command>> = commands!!.entries.iterator()
-            while (it.hasNext()) {
-                val (_, value) = it.next()
-                if (value is PluginCommand) {
-                    if (value.plugin === plugin) {
-                        value.unregister(commandMap as CommandMap)
-                        it.remove()
-                    }
-                }
-            }
-        }
-        val cl = plugin.javaClass.classLoader
-        if (cl is URLClassLoader) {
-            try {
-                val pluginField: Field = cl.javaClass.getDeclaredField("plugin")
-                pluginField.isAccessible = true
-                pluginField.set(cl, null as Any?)
-                val pluginInitField: Field = cl.javaClass.getDeclaredField("pluginInit")
-                pluginInitField.isAccessible = true
-                pluginInitField.set(cl, null as Any?)
-            } catch (ignored: NoSuchFieldException) {
-            } catch (ignored: SecurityException) {
-            } catch (ignored: IllegalArgumentException) {
-            } catch (ignored: IllegalAccessException) {
-            }
-            try {
-                cl.close()
-            } catch (ex: IOException) {
-                //error
-            }
-        }
-        System.gc()
-        return LangConfig.generalPluginUnload
     }
 }

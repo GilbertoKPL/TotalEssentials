@@ -1,268 +1,404 @@
 package github.gilbertokpl.total.util
 
+import gilbertokpl.mcpctotal.addons.ActionBarAdaptor
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.PlayerData
-import github.gilbertokpl.total.cache.data.PlayerData.playTimeCache
-import github.gilbertokpl.total.cache.data.PlayerData.playtimeLocal
 import github.gilbertokpl.total.cache.data.ShopData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.GameMode
 import org.bukkit.Location
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.reflect.Field
-import java.lang.reflect.Method
 import java.net.URL
 import java.nio.charset.StandardCharsets
+import java.util.Locale
+import java.util.Locale.getDefault
 
+object PlayerUtil {
 
-internal object PlayerUtil {
+    private const val MAX_PLAYTIME_MS = 94608000000L // 3 anos em milissegundos
+    private const val LOCALHOST_IP = "127.0.0.1"
 
-    private var teleportAsyncMethod: Method? = null
-    private var hasCheckedTeleport = false
+    var title: Boolean = true
 
+    private val reflectionCache = ReflectionCache()
+
+    /**
+     * Teleporta um jogador de forma segura, usando teleportAsync se disponível
+     */
     fun Player.teleportSafe(location: Location) {
-        if (!hasCheckedTeleport) {
-            teleportAsyncMethod = try {
-                this.javaClass.getMethod("teleportAsync", Location::class.java)
-            } catch (_: Exception) {
-                null
-            }
-            hasCheckedTeleport = true
+        reflectionCache.teleportPlayer(this, location)
+    }
+
+    /**
+     * Mandar TITLE todas versões
+     */
+    fun Player.title(t: String, subtitle: String) {
+        if (!title) return
+        try {
+            this.sendTitle(t, subtitle)
+        } catch (e: Exception) {
+            title = false
         }
 
-        teleportAsyncMethod?.invoke(this, location) ?: run {
-            this.teleport(location)
+    }
+
+    /**
+     * Mandar SOUND todas versões
+     */
+    fun Player.sound(sound: String) {
+        try {
+            this.playSound(this.location, sound, 1f, 1f)
+        } catch (e: Exception) {
+            try {
+                this.playSound(this.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1f)
+            }
+            catch (e: Exception) {}
         }
     }
 
+    /**
+     * Envia mensagem para todos os jogadores online
+     */
+    fun sendAllSound(sound: String) {
+        TotalEssentials.getCore().getReflection().getPlayers().forEach { player ->
+            player.sound(sound)
+        }
+    }
+
+    /**
+     * Envia mensagem para todos os jogadores online
+     */
     fun sendAllMessage(message: String) {
-        for (p in TotalEssentials.getCore().getReflection().getPlayers()) {
-            p.sendMessage(message)
+        TotalEssentials.getCore().getReflection().getPlayers().forEach { player ->
+            player.sendMessage(message)
         }
     }
 
-    fun sendMessage(player: String, message: String) {
-        val p = TotalEssentials.getInstance().server.getPlayerExact(player.lowercase()) ?: return
-        p.sendMessage(message)
-    }
-
-    fun getIntOnlinePlayers(vanish: Boolean): Int {
-        var amount = TotalEssentials.getCore().getReflection().getPlayers()
-        if (!vanish) {
-            amount = amount.filter {
-                PlayerData.vanishCache[it] != null && !PlayerData.vanishCache[it]!!
-            }
-        }
-        return amount.size
-    }
-
-    fun getNumberGameMode(gameMode: GameMode): Int {
-        return try {
-            when (gameMode) {
-                GameMode.SURVIVAL -> 0
-                GameMode.CREATIVE -> 1
-                GameMode.ADVENTURE -> 2
-                GameMode.SPECTATOR -> 3
-            }
-        } catch (e: Throwable) {
-            when (gameMode) {
-                GameMode.SURVIVAL -> 0
-                GameMode.CREATIVE -> 1
-                else -> {
-                    0
-                }
+    /**
+     * Envia mensagem para todos os jogadores online
+     */
+    fun sendAllAction(message: String) {
+        TotalEssentials.getCore().getReflection().getPlayers().forEach { player ->
+            try {
+                player.spigot().sendMessage(
+                    net.md_5.bungee.api.ChatMessageType.ACTION_BAR, net.md_5.bungee.api.chat.TextComponent(message)
+                )
+            } catch (e: NoClassDefFoundError) {
+                try {
+                    ActionBarAdaptor.smallTitle(player, message, 20, 100, 20)
+                }catch (e: NoClassDefFoundError) {}
             }
         }
     }
 
+    /**
+     * Envia mensagem para um jogador específico pelo nome
+     */
+    fun sendMessage(playerName: String, message: String) {
+        val player = TotalEssentials.getInstance().server.getPlayerExact(playerName.lowercase())
+        player?.sendMessage(message)
+    }
+
+    /**
+     * Retorna a quantidade de jogadores online
+     * @param includeVanished se deve incluir jogadores em vanish na contagem
+     */
+    fun getOnlinePlayersCount(includeVanished: Boolean = true): Int {
+        val players = TotalEssentials.getCore().getReflection().getPlayers()
+
+        if (includeVanished) {
+            return players.size
+        }
+
+        return players.count { player ->
+            PlayerData.vanishCache[player] != true
+        }
+    }
+
+    /**
+     * Salva o playtime de todos os jogadores online
+     */
     fun savePlaytime() {
-        for (p in TotalEssentials.getCore().getReflection().getPlayers()) {
-            if (!MainConfig.playtimeActivated) continue
+        if (!MainConfig.playtimeActivated) return
 
-            val now = System.currentTimeMillis()
+        val currentTime = System.currentTimeMillis()
 
-            val timeCache = playTimeCache.get(p)
-            val time = if (timeCache != null) timeCache else 0L
-
-            val startCache = playtimeLocal.get(p)
-            val start = if (startCache != null) startCache else now
-
-            var newTime = time + (now - start)
-
-            // Limitar o tempo total sem resetar para valores pequenos
-            val maxTime = 94608000000L // 3 anos em ms
-            if (newTime > maxTime) newTime = maxTime
-
-            playTimeCache.set(p, newTime)
-            playtimeLocal.set(p, now)
+        TotalEssentials.getCore().getReflection().getPlayers().forEach { player ->
+            updatePlayerPlaytime(player, currentTime)
         }
     }
 
-    fun getGameModeNumber(number: String): GameMode {
-        return when (number.lowercase()) {
-            "0" -> GameMode.SURVIVAL
-            "1" -> GameMode.CREATIVE
-            "survival" -> GameMode.SURVIVAL
-            "creative" -> GameMode.CREATIVE
-            "adventure" -> try {
-                GameMode.ADVENTURE
-            } catch (e: NoSuchMethodError) {
-                GameMode.SURVIVAL
-            }
+    private fun updatePlayerPlaytime(player: Player, currentTime: Long) {
+        val previousPlaytime = PlayerData.playTimeCache[player] ?: 0L
+        val sessionStart = PlayerData.playtimeLocal[player] ?: currentTime
 
-            "spectactor" -> try {
-                GameMode.SPECTATOR
-            } catch (e: NoSuchMethodError) {
-                GameMode.SURVIVAL
-            }
+        val sessionDuration = currentTime - sessionStart
+        var totalPlaytime = previousPlaytime + sessionDuration
 
-            "2" -> try {
-                GameMode.ADVENTURE
-            } catch (e: NoSuchMethodError) {
-                GameMode.SURVIVAL
-            }
+        // Limita o playtime máximo
+        if (totalPlaytime > MAX_PLAYTIME_MS) {
+            totalPlaytime = MAX_PLAYTIME_MS
+        }
 
-            "3" -> try {
-                GameMode.SPECTATOR
-            } catch (e: NoSuchMethodError) {
-                GameMode.SURVIVAL
-            }
+        PlayerData.playTimeCache[player] = totalPlaytime
+        PlayerData.playtimeLocal[player] = currentTime
+    }
 
+    /**
+     * Converte GameMode para número (compatibilidade com versões antigas)
+     */
+    fun getGameModeAsNumber(gameMode: GameMode): Int {
+        return when (gameMode) {
+            GameMode.SURVIVAL -> 0
+            GameMode.CREATIVE -> 1
+            GameMode.ADVENTURE -> 2
+            GameMode.SPECTATOR -> 3
+            else -> 0 // Fallback para versões antigas
+        }
+    }
+
+    /**
+     * Converte número/string para GameMode
+     */
+    fun getGameModeFromString(input: String): GameMode {
+        return when (input.lowercase()) {
+            "0", "survival" -> GameMode.SURVIVAL
+            "1", "creative" -> GameMode.CREATIVE
+            "2", "adventure" -> safeGameMode(GameMode.ADVENTURE)
+            "3", "spectator", "spectactor" -> safeGameMode(GameMode.SPECTATOR)
             else -> GameMode.SURVIVAL
         }
     }
 
-    fun checkPlayer(address: String): List<String> {
-        try {
-            if (address.contains("127.0.0.1")) {
-                return listOf(
-                    "País: Local",
-                    "Estado: Local",
-                    "Cidade: Local",
-                    "false"
-                )
-            }
-
-            val apiUrl = URL("http://ip-api.com/json$address?fields=status,country,regionName,city,hosting")
-            apiUrl.openStream().use { inputStream ->
-                BufferedReader(InputStreamReader(inputStream, StandardCharsets.UTF_8)).use { reader ->
-                    val jsonContent = StringBuilder()
-
-                    var line: String?
-                    while (reader.readLine().also { line = it } != null) {
-                        jsonContent.append(line)
-                    }
-
-                    // Analisar o JSON manualmente
-                    val jsonString = jsonContent.toString()
-                    if (!jsonString.contains("\"status\":\"fail\"")) {
-                        val countryIndex = jsonString.indexOf("\"country\":\"") + 11
-                        val regionIndex = jsonString.indexOf("\"regionName\":\"") + 13
-                        val cityIndex = jsonString.indexOf("\"city\":\"") + 8
-                        val hostingIndex = jsonString.indexOf("\"hosting\":\"") + 10
-
-                        val country = jsonString.substring(countryIndex, jsonString.indexOf("\"", countryIndex))
-                        val region = jsonString.substring(regionIndex, jsonString.indexOf("\"", regionIndex))
-                        val city = jsonString.substring(cityIndex, jsonString.indexOf("\"", cityIndex))
-                        val hosting = jsonString.substring(hostingIndex, jsonString.indexOf("\"", hostingIndex))
-
-                        return listOf(
-                            "País: $country",
-                            "Estado: $region",
-                            "Cidade: $city",
-                            hosting
-                        )
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun safeGameMode(gameMode: GameMode): GameMode {
+        return try {
+            gameMode
+        } catch (e: NoSuchFieldError) {
+            GameMode.SURVIVAL
         }
-
-        return listOf("Erro API")
     }
 
+    /**
+     * Verifica informações de IP usando ip-api.com
+     * @return Lista com [País, Estado, Cidade, isVPN]
+     */
+    fun checkPlayerIP(ipAddress: String): List<String> {
+        if (ipAddress.contains(LOCALHOST_IP)) {
+            return listOf("País: Local", "Estado: Local", "Cidade: Local", "false")
+        }
 
+        return try {
+            fetchIPInfo(ipAddress)
+        } catch (e: Exception) {
+            listOf("Erro API")
+        }
+    }
 
-    fun shopTeleport(p: Player, shop: String) {
-        val loc = ShopData.shopLocation[shop] ?: return
-        teleportWithTime(
-            p,
-            loc,
-            MainConfig.homesTimeToTeleport,
-            LangConfig.shopTeleport.replace("%player%", shop),
-            "shop"
+    private fun fetchIPInfo(ipAddress: String): List<String> {
+        val apiUrl = URL("http://ip-api.com/json/$ipAddress?fields=status,country,regionName,city,hosting")
+
+        apiUrl.openStream().use { inputStream ->
+            val jsonContent = BufferedReader(
+                InputStreamReader(inputStream, StandardCharsets.UTF_8)
+            ).use { it.readText() }
+
+            return parseIPApiResponse(jsonContent)
+        }
+    }
+
+    private fun parseIPApiResponse(json: String): List<String> {
+        if (json.contains("\"status\":\"fail\"")) {
+            return listOf("Erro API")
+        }
+
+        val country = extractJsonValue(json, "country")
+        val region = extractJsonValue(json, "regionName")
+        val city = extractJsonValue(json, "city")
+        val hosting = extractJsonValue(json, "hosting")
+
+        return listOf(
+            "País: $country",
+            "Estado: $region",
+            "Cidade: $city",
+            hosting
         )
     }
 
-    fun teleportWithTime(p: Player, location: Location, time: Int, message: String?, locationName: String) {
-        if (p.hasPermission("totalessentials.bypass.teleport") || time == 0) {
-            p.teleportSafe(location)
-            if (message != null) {
-                p.sendMessage(message)
-            }
-            return
-        }
-        val inTeleport = PlayerData.inTeleport[p]
+    private fun extractJsonValue(json: String, key: String): String {
+        val startMarker = "\"$key\":\""
+        val startIndex = json.indexOf(startMarker) + startMarker.length
+        val endIndex = json.indexOf("\"", startIndex)
 
-        if (inTeleport != null && inTeleport) {
-            p.sendMessage(LangConfig.generalInTeleport)
+        return if (startIndex > startMarker.length && endIndex > startIndex) {
+            json.substring(startIndex, endIndex)
+        } else {
+            "Unknown"
+        }
+    }
+
+    /**
+     * Teleporta jogador para uma loja
+     */
+    fun shopTeleport(player: Player, shopOwner: String) {
+        val location = ShopData.shopLocation[shopOwner] ?: return
+
+        teleportWithDelay(
+            player = player,
+            location = location,
+            delaySeconds = MainConfig.homesTimeToTeleport,
+            message = LangConfig.shopTeleport.replace("%player%", shopOwner),
+            locationName = "shop"
+        )
+    }
+
+    /**
+     * Retorna URL do avatar do jogador
+     */
+    fun getMojangSkinURL(player: Player): String {
+        return "https://minotar.net/avatar/${player.name.lowercase()}"
+    }
+
+    /**
+     * Teleporta jogador com delay configurável
+     */
+    fun teleportWithDelay(
+        player: Player,
+        location: Location,
+        delaySeconds: Int,
+        message: String? = null,
+        locationName: String
+    ) {
+        // Bypass para jogadores com permissão ou delay 0
+        if (player.hasPermission("totalessentials.bypass.teleport") || delaySeconds == 0) {
+            player.teleportSafe(location)
+            message?.let { player.sendMessage(it) }
             return
         }
+
+        // Verifica se já está em teleporte
+        if (PlayerData.inTeleport[player] == true) {
+            player.sendMessage(LangConfig.generalInTeleport)
+            return
+        }
+
+        scheduleDelayedTeleport(player, location, delaySeconds, message, locationName)
+    }
+
+    private fun scheduleDelayedTeleport(
+        player: Player,
+        location: Location,
+        delaySeconds: Int,
+        message: String?,
+        locationName: String
+    ) {
+        PlayerData.inTeleport[player] = true
 
         val task = TotalEssentials.getCore().getTask()
 
-        task.supplyLater(time.toLong()) {
-            try {
-                PlayerData.inTeleport[p] = false
-                task.sync {
-                    p.teleportSafe(location)
-                    if (message != null) {
-                        p.sendMessage(message)
-                    }
-                }
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
+        task.supplyLater(delaySeconds.toLong()) {
+            PlayerData.inTeleport[player] = false
+
+            task.sync {
+                player.teleportSafe(location)
+                message?.let { player.sendMessage(it) }
             }
         }
 
-        p.sendMessage(
-            LangConfig.generalTimeToTeleport.replace("%local%", locationName).replace("%time%", time.toString())
+        player.sendMessage(
+            LangConfig.generalTimeToTeleport
+                .replace("%local%", locationName)
+                .replace("%time%", delaySeconds.toString())
         )
-
     }
 
-    var usage = false
-    fun setDisplayName(p: Player, nick: String?) {
-        if (!usage) {
-            try {
-                p.setDisplayName(nick)
-                return
-            } catch (e: NoSuchMethodError) {
-                usage = true
+    /**
+     * Define o display name de um jogador (compatível com versões antigas)
+     */
+    fun setDisplayName(player: Player, displayName: String?) {
+        reflectionCache.setPlayerDisplayName(player, displayName)
+    }
+
+    /**
+     * Define o item na mão principal (compatível com versões antigas)
+     */
+    fun setItemInMainHand(player: Player, item: ItemStack?) {
+        reflectionCache.setPlayerItemInHand(player, item)
+    }
+
+    /**
+     * Cache de métodos de reflection para melhor performance
+     */
+    private class ReflectionCache {
+        private val teleportAsyncMethod by lazy { findTeleportAsyncMethod() }
+        private var useLegacyDisplayName = false
+        private var useLegacyItemInHand = false
+
+        private val displayNameField by lazy {
+            findField(Player::class.java, "displayName")
+        }
+
+        private val itemInHandField by lazy {
+            findField(Player::class.java, "itemInHand")
+        }
+
+        fun teleportPlayer(player: Player, location: Location) {
+            teleportAsyncMethod?.let { method ->
+                try {
+                    method.invoke(player, location)
+                    return
+                } catch (e: Exception) {
+                    // Fallback para teleport normal
+                }
+            }
+
+            player.teleport(location)
+        }
+
+        fun setPlayerDisplayName(player: Player, displayName: String?) {
+            if (!useLegacyDisplayName) {
+                try {
+                    player.setDisplayName(displayName)
+                    return
+                } catch (e: NoSuchMethodError) {
+                    useLegacyDisplayName = true
+                }
+            }
+
+            displayNameField?.set(player, displayName)
+        }
+
+        fun setPlayerItemInHand(player: Player, item: ItemStack?) {
+            if (!useLegacyItemInHand) {
+                try {
+                    @Suppress("DEPRECATION")
+                    player.setItemInHand(item)
+                    return
+                } catch (e: NoSuchMethodError) {
+                    useLegacyItemInHand = true
+                }
+            }
+
+            itemInHandField?.set(player, item)
+        }
+
+        private fun findTeleportAsyncMethod() = try {
+            Player::class.java.getMethod("teleportAsync", Location::class.java)
+        } catch (e: NoSuchMethodException) {
+            null
+        }
+
+        private fun findField(clazz: Class<*>, fieldName: String): Field? {
+            return try {
+                clazz.getDeclaredField(fieldName).apply { isAccessible = true }
+            } catch (e: NoSuchFieldException) {
+                null
             }
         }
-        val field: Field = Player::class.java.getDeclaredField("displayName")
-        field.isAccessible = true
-        field.set(p, nick)
     }
-    private var usage1 = false
-    fun setItemInMainHand(p: Player, item : ItemStack?) {
-        if (!usage1) {
-            try {
-                p.setItemInHand(item)
-                return
-            } catch (e: NoSuchMethodError) {
-                usage1 = true
-            }
-        }
-        val field: Field = Player::class.java.getDeclaredField("itemInHand")
-        field.isAccessible = true
-        field.set(p, item)
-    }
-
 }

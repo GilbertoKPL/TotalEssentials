@@ -8,25 +8,18 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
 
 class EntityDamage : Listener {
-    @EventHandler
-    fun event(e: EntityDamageEvent) {
-        if (MainConfig.addonsBlockPlayerGoToVoid) {
-            try {
-                blockPlayerFallInVoid(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
-    }
 
-    private fun blockPlayerFallInVoid(e: EntityDamageEvent) {
-        if (e.entity is Player && e.cause == EntityDamageEvent.DamageCause.VOID) {
-            val p = e.entity as Player
-            if (p.location.blockY < 0) {
-                e.isCancelled = true
-                p.fallDistance = 1.0f
-                SpawnData.teleportToSpawn(p)
-            }
+    @EventHandler
+    fun onEntityDamage(event: EntityDamageEvent) {
+        if (!MainConfig.addonsBlockPlayerGoToVoid) return
+        if (event.cause != EntityDamageEvent.DamageCause.VOID) return
+
+        val player = event.entity as? Player ?: return
+
+        if (player.location.blockY < 0) {
+            event.isCancelled = true
+            player.fallDistance = 1.0f
+            SpawnData.teleportToSpawn(player)
         }
     }
 }

@@ -6,11 +6,12 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerKickEvent
 
+class PlayerKick : Listener {
 
-class PlayerKickEvent : Listener {
     @EventHandler(priority = EventPriority.HIGH)
-    fun kick(e: PlayerKickEvent) {
+    fun onPlayerKick(event: PlayerKickEvent) {
         if (TotalEssentials.isLowVersion()) {
+            event.leaveMessage = ""
         }
     }
 }

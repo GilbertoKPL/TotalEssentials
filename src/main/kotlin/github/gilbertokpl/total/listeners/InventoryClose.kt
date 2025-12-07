@@ -8,126 +8,122 @@ import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.cache.inventory.Kit
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.listeners.InventoryClick.Titles
 import github.gilbertokpl.total.util.PlayerUtil
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.ItemStack
 
 class InventoryClose : Listener {
+
     @EventHandler
-    fun event(e: InventoryCloseEvent) {
+    fun onInventoryClose(event: InventoryCloseEvent) {
+        val player = event.player as? Player ?: return
+
         if (MainConfig.kitsActivated) {
-            try {
-                if (editKitInventoryCloseEvent(e)) return
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            if (handleKitEdit(event, player)) return
         }
-        if (MainConfig.invseeActivated) {
-            try {
-                invseeInventoryCloseEvent(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
+
         if (MainConfig.vipActivated) {
-            try {
-                vipInventoryCloseEvent(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            handleVip(event, player)
+            if (handleVipEdit(event, player)) return
         }
 
         if (MainConfig.limitActivated) {
-            try {
-                limitInventoryCloseEvent(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            if (handleLimitEdit(event, player)) return
+        }
+
+        if (MainConfig.invseeActivated) {
+            handleInvseeClose(event, player)
         }
     }
 
-    //limit
+    private fun handleKitEdit(event: InventoryCloseEvent, player: Player): Boolean {
+        val kitName = Data.playerEditKit[player] ?: return false
 
-    private fun limitInventoryCloseEvent(e: InventoryCloseEvent): Boolean {
-        val p = e.player as Player
-        Data.playerVipEdit[p].also {
-            if (it == null) return false
+        Data.playerEditKit.remove(player)
 
-            val array = ArrayList<ItemStack>()
+        val items = extractItems(event)
+        KitsData.kitItems[kitName, items] = true
 
-            for (i in e.inventory.contents.filterNotNull()) {
-                array.add(i)
-            }
+        val displayName = KitsData.kitFakeName[kitName]?.takeIf { it.isNotEmpty() } ?: kitName
 
-            LimitData.limitItems[it, array] = true
-
-        }
-        return true
-    }
-    //vips
-    private fun vipInventoryCloseEvent(e: InventoryCloseEvent): Boolean {
-        val p = e.player as Player
-        Data.playerVipEdit[p].also {
-
-            if (it == null) return false
-
-            val array = ArrayList<ItemStack>()
-
-            for (i in e.inventory.contents.filterNotNull()) {
-                array.add(i)
-            }
-
-            VipData.vipItems[it, array] = true
-
-            Data.playerVipEdit.remove(p)
-
-            PlayerUtil.sendMessage(e.player.name, LangConfig.VipsUpdateItems.replace("%vip%", it))
-
-        }
-
-        return true
-    }
-
-    //editkit
-    private fun editKitInventoryCloseEvent(e: InventoryCloseEvent): Boolean {
-        val p = e.player as Player
-        Data.playerEditKit[p].also {
-            if (it == null) return false
-            Data.playerEditKit.remove(p)
-
-            val array = ArrayList<ItemStack>()
-
-            for (i in e.inventory.contents.filterNotNull()) {
-                array.add(i)
-            }
-
-            KitsData.kitItems[it, array] = true
-
-            val name = KitsData.kitFakeName[it]
-
-            PlayerUtil.sendMessage(
-                e.player.name,
-                LangConfig.kitsEditKitSuccess.replace(
-                    "%kit%",
-                    if (name == null || name == "") it else name
-                )
-            )
-        }
+        PlayerUtil.sendMessage(
+            player.name,
+            LangConfig.kitsEditKitSuccess.replace("%kit%", displayName)
+        )
 
         Kit.setup()
+        return true
+    }
+
+    private fun handleVip(event: InventoryCloseEvent, player: Player) {
+        val player = event.player as? Player ?: return
+
+        val titleParts = getInventoryTitle(event) ?: return
+        if (titleParts[0] != Titles.VIP) return
+
+        // Itens que sobraram dentro do inventário
+        val leftover = event.inventory.contents
+            .filterNotNull()
+            .toMutableList()
+
+        // Itens que estavam no cache
+        val cache = PlayerData.vipItems[player.name] ?: arrayListOf()
+
+        // Junta tudo novamente no cache (inventário ∪ cache)
+        cache.addAll(leftover)
+
+        // Atualiza o cache real
+        PlayerData.vipItems[player.name] = cache
+    }
+
+    private fun handleVipEdit(event: InventoryCloseEvent, player: Player): Boolean {
+        val vipName = Data.playerVipEdit[player] ?: return false
+
+        Data.playerVipEdit.remove(player)
+
+        val items = extractItems(event)
+        VipData.vipItems[vipName, items] = true
+
+        PlayerUtil.sendMessage(
+            player.name,
+            LangConfig.VipsUpdateItems.replace("%vip%", vipName)
+        )
 
         return true
     }
 
-    private fun invseeInventoryCloseEvent(e: InventoryCloseEvent) {
-        val p = e.player as Player
+    private fun handleLimitEdit(event: InventoryCloseEvent, player: Player): Boolean {
+        val limitName = Data.playerVipEdit[player] ?: return false
 
-        if (PlayerData.inInvSee[p] != null && e.inventory.type == InventoryType.PLAYER) {
-            PlayerData.inInvSee[p] = null
+        val items = extractItems(event)
+        LimitData.limitItems[limitName, items] = true
+
+        return true
+    }
+
+    private fun handleInvseeClose(event: InventoryCloseEvent, player: Player) {
+        if (event.inventory.type == InventoryType.PLAYER && PlayerData.inInvSee[player] != null) {
+            PlayerData.inInvSee[player] = null
+        }
+    }
+
+    private fun extractItems(event: InventoryCloseEvent): ArrayList<ItemStack> {
+        return event.inventory.contents
+            .filterNotNull()
+            .toCollection(ArrayList())
+    }
+
+    private fun getInventoryTitle(event: InventoryCloseEvent): List<String>? {
+        return try {
+            event.view.title.split(" ")
+        } catch (_: Exception) {
+            null
         }
     }
 }

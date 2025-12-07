@@ -101,6 +101,37 @@ public class MainConfig implements DefaultConfig {
     public static String databaseSqlDatabase = "!s0_TotalEssentials";
     public static String databaseSqlPassword = "!TotalEssentials123";
 
+    //title
+    @RootComments(
+            {
+                    @RootComment(primaryAnnotations = "Configurações do titles", lang = LangTypes.PT_BR),
+                    @RootComment(primaryAnnotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    @MultiComment(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), Os titles será ativado.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean titleActivated = true;
+
+    //sound
+    @RootComments(
+            {
+                    @RootComment(primaryAnnotations = "Configurações do sound", lang = LangTypes.PT_BR),
+                    @RootComment(primaryAnnotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    @MultiComment(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), Os sound será ativado.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean soundActivated = true;
+
+
 
     //stackMobs
 
@@ -840,7 +871,7 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "BotToken", lang = LangTypes.EN_US)
             }
     )
-    public static String discordbotToken = "123456";
+    public static String discordbotToken = "";
     @MultiComment(
             {
                     @Comment(annotations = "Se estiver ativado (true), O discord conectará com o chat do discord.", lang = LangTypes.PT_BR),
@@ -855,6 +886,13 @@ public class MainConfig implements DefaultConfig {
             }
     )
     public static String discordbotIdDiscordChat = "123456";
+    @MultiComment(
+            {
+                    @Comment(annotations = "Caso o connect esteja ativado terá que colocar o webhook do chat conectado aqui.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "If connect is activated, you will have to put the webhook of the connected chat here.", lang = LangTypes.EN_US)
+            }
+    )
+    public static String discordbotIdWebhookChat = "123456";
 
     @MultiComment(
             {

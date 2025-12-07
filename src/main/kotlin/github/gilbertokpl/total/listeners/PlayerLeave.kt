@@ -6,6 +6,7 @@ import github.gilbertokpl.total.cache.data.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.DiscordManager
+import github.gilbertokpl.total.util.PlayerUtil.getMojangSkinURL
 import github.gilbertokpl.total.util.ServerUtil
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -14,70 +15,79 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 class PlayerLeave : Listener {
 
+    companion object {
+        private const val MAX_PLAYTIME_MS = 94608000000L // ~3 anos em milissegundos
+    }
+
     @EventHandler(priority = EventPriority.HIGH)
-    fun event(e: PlayerQuitEvent) {
-        e.quitMessage = null
+    fun onPlayerQuit(event: PlayerQuitEvent) {
+        event.quitMessage = null
 
-        LoginData.isLoggedIn[e.player] = false
+        val player = event.player
+        LoginData.isLoggedIn[player] = false
 
-        // Handle back location
         if (MainConfig.backActivated) {
-            try {
-                setBackLocation(e)
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
+            updateBackLocation(event)
         }
 
-        // Handle leave messages
-        try {
-            val isVanished = PlayerData.vanishCache[e.player] ?: false
-            if (!isVanished && !e.player.hasPermission("*")) {
-                if (MainConfig.messagesLeaveMessage) {
-                    ServerUtil.serverMessage(
-                        LangConfig.messagesLeaveMessage.replace("%player%", e.player.name)
-                    )
-                }
-                if (MainConfig.discordbotSendLeaveMessage) sendLeaveEmbed(e)
-            }
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-        }
+        handleLeaveMessages(event)
 
-        // Handle playtime
-        try {
-            if (MainConfig.playtimeActivated) {
-                val lastLoginTime = PlayerData.playtimeLocal[e.player] ?: System.currentTimeMillis()
-                val previousTime = PlayerData.playTimeCache[e.player] ?: 0L
-
-                var totalTime = previousTime + (System.currentTimeMillis() - lastLoginTime)
-
-                // Optional safety cap, avoid arbitrary resets
-                if (totalTime > 94608000000) totalTime = 94608000000
-
-                PlayerData.playTimeCache[e.player] = totalTime
-                PlayerData.playtimeLocal[e.player] = System.currentTimeMillis() // Reset to now
-            }
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
+        if (MainConfig.playtimeActivated) {
+            updatePlaytime(event)
         }
     }
 
-    private fun setBackLocation(e: PlayerQuitEvent) {
-        if (!e.player.hasPermission("totalessentials.commands.back") || MainConfig.backDisabledWorlds.contains(
-                e.player.world.name.lowercase()
+    private fun updateBackLocation(event: PlayerQuitEvent) {
+        val player = event.player
+
+        if (!player.hasPermission("totalessentials.commands.back")) return
+        if (MainConfig.backDisabledWorlds.contains(player.world.name.lowercase())) return
+        if (player.location == SpawnData.spawnLocation["spawn"]) return
+
+        PlayerData.backLocation[player] = player.location
+    }
+
+    private fun handleLeaveMessages(event: PlayerQuitEvent) {
+        val player = event.player
+        val isVanished = PlayerData.vanishCache[player] ?: false
+
+        // Não envia mensagem se estiver vanish ou for admin (permissão *)
+        if (isVanished || player.hasPermission("*")) return
+
+        if (MainConfig.messagesLeaveMessage) {
+            ServerUtil.broadcastMessage(
+                LangConfig.messagesLeaveMessage.replace("%player%", player.name)
             )
-        ) return
-        if (e.player.location == SpawnData.spawnLocation["spawn"]) return
-        PlayerData.backLocation[e.player] = e.player.location
-    }
+        }
 
-    private fun sendLeaveEmbed(e: PlayerQuitEvent) {
         if (MainConfig.discordbotSendLeaveMessage) {
-            DiscordManager.sendDiscordMessage(
-                LangConfig.discordchatDiscordSendLeaveMessage.replace("%player%", e.player.name),
-                true
-            )
+            sendLeaveEmbed(event)
         }
+    }
+
+    private fun updatePlaytime(event: PlayerQuitEvent) {
+        val player = event.player
+
+        val loginTime = PlayerData.playtimeLocal[player] ?: System.currentTimeMillis()
+        val previousPlaytime = PlayerData.playTimeCache[player] ?: 0L
+
+        val sessionDuration = System.currentTimeMillis() - loginTime
+        var totalPlaytime = previousPlaytime + sessionDuration
+
+        // Limita o playtime máximo para evitar overflow
+        if (totalPlaytime > MAX_PLAYTIME_MS) {
+            totalPlaytime = MAX_PLAYTIME_MS
+        }
+
+        PlayerData.playTimeCache[player] = totalPlaytime
+    }
+
+    private fun sendLeaveEmbed(event: PlayerQuitEvent) {
+        DiscordManager.sendDiscordMessage(
+            message = LangConfig.discordchatDiscordSendLeaveMessage.replace("%player%", event.player.name),
+            embed = true,
+            tittle = true,
+            avatarUrl = getMojangSkinURL(event.player)
+        )
     }
 }

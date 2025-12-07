@@ -100,7 +100,7 @@ class CommandHome : CommandManager("home") {
             return false
         }
 
-        PlayerUtil.teleportWithTime(
+        PlayerUtil.teleportWithDelay(
             p,
             loc,
             MainConfig.homesTimeToTeleport,

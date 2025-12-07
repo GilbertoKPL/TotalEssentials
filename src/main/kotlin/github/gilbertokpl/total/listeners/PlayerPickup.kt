@@ -7,11 +7,12 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerPickupItemEvent
 
 class PlayerPickup : Listener {
+
+    @Suppress("DEPRECATION")
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    fun event(e: PlayerPickupItemEvent) {
-        if (!LoginData.isPlayerLoggedIn(e.player)) {
-            e.isCancelled = true
-            return
+    fun onPlayerPickupItem(event: PlayerPickupItemEvent) {
+        if (!LoginData.isPlayerLoggedIn(event.player)) {
+            event.isCancelled = true
         }
     }
 }

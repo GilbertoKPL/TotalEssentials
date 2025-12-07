@@ -14,7 +14,7 @@ class CommandTpa : CommandManager("tpa") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf("back"),
+            aliases = listOf(),
             active = MainConfig.tpaActivated,
             target = CommandTargetType.PLAYER,
             countdown = 0,
@@ -64,6 +64,8 @@ class CommandTpa : CommandManager("tpa") {
                 .replace("%player%", sender.name)
                 .replace("%time%", timeToAccept.toString())
         )
+
+
 
         return false
     }

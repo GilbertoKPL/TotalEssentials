@@ -105,7 +105,7 @@ class CommandWarp : CommandManager("warp") {
             return false
         }
 
-        PlayerUtil.teleportWithTime(
+        PlayerUtil.teleportWithDelay(
             p,
             WarpData.warpLocation[warpName]!!,
             MainConfig.warpsTimeToTeleport,

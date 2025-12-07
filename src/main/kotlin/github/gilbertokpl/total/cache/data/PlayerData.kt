@@ -24,12 +24,12 @@ object PlayerData : ICache {
     val vipCache = ins.hashMap(this, PlayerDataSQL.vipTable, VipSerializer())
     val vipItems = ins.list(this, PlayerDataSQL.vipItems, ItemSerializer())
     val nickCache = ins.string(this, PlayerDataSQL.nickTable)
-    val gameModeCache = ins.integer(this, PlayerDataSQL.gameModeTable)
+    val gameModeCache = ins.int(this, PlayerDataSQL.gameModeTable)
     val vanishCache = ins.boolean(this, PlayerDataSQL.vanishTable)
     val lightCache = ins.boolean(this, PlayerDataSQL.lightTable)
     val flyCache = ins.boolean(this, PlayerDataSQL.flyTable)
     val backLocation = ins.location(this, PlayerDataSQL.backTable, LocationSerializer())
-    val speedCache = ins.integer(this, PlayerDataSQL.speedTable)
+    val speedCache = ins.int(this, PlayerDataSQL.speedTable)
     val moneyCache = ins.double(this, PlayerDataSQL.moneyTable)
     val discordCache = ins.long(this, PlayerDataSQL.DiscordTable)
     val playTimeCache = ins.long(this, PlayerDataSQL.PlaytimeTable)
@@ -38,9 +38,9 @@ object PlayerData : ICache {
     val limiterItemCache = ins.hashMap(this, PlayerDataSQL.LimiterItemTable, LimiterItemSerializer())
     val limiterLocationCache = ins.hashMap(this, PlayerDataSQL.LimiterLocationTable, LimiterLocationSerializer())
     val inInvSee = ins.simplePlayer()
-    val homeLimitCache = ins.simpleInteger()
+    val homeLimitCache = ins.simpleInt()
     val inTeleport = ins.simpleBoolean()
-    val afk = ins.simpleInteger()
+    val afk = ins.simpleInt()
     val playtimeLocal = ins.simpleLong()
     val playerInfo = ins.simpleList<String>()
 
@@ -89,7 +89,7 @@ object PlayerData : ICache {
         }
 
         gameModeCache[p]?.let { gameModeNumber ->
-            val gameModeName = PlayerUtil.getGameModeNumber(gameModeNumber.toString())
+            val gameModeName = PlayerUtil.getGameModeFromString(gameModeNumber.toString())
             if (p.gameMode != gameModeName && (gameModeName == GameMode.SURVIVAL || p.hasPermission("totalessentials.commands.gamemode"))) {
                 p.gameMode = gameModeName
             }

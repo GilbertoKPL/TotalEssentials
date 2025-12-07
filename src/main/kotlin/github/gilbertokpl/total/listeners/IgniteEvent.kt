@@ -6,20 +6,20 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockIgniteEvent
 
 class IgniteEvent : Listener {
-    @EventHandler
-    fun event(e: BlockIgniteEvent) {
-        if (MainConfig.addonsBlockPropagationFire) {
-            try {
-                blockPropagationFire(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
+
+    companion object {
+        private val BLOCKED_CAUSES = setOf(
+            BlockIgniteEvent.IgniteCause.LAVA,
+            BlockIgniteEvent.IgniteCause.SPREAD
+        )
     }
 
-    private fun blockPropagationFire(e: BlockIgniteEvent) {
-        if (e.cause == BlockIgniteEvent.IgniteCause.LAVA || e.cause == BlockIgniteEvent.IgniteCause.SPREAD) {
-            e.isCancelled = true
+    @EventHandler
+    fun onBlockIgnite(event: BlockIgniteEvent) {
+        if (!MainConfig.addonsBlockPropagationFire) return
+
+        if (event.cause in BLOCKED_CAUSES) {
+            event.isCancelled = true
         }
     }
 }

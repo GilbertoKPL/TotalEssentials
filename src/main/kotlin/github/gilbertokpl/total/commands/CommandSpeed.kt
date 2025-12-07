@@ -14,7 +14,7 @@ class CommandSpeed : CommandManager("speed") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf(""),
+            aliases = listOf(),
             active = MainConfig.speedActivated,
             target = CommandTargetType.ALL,
             countdown = 0,

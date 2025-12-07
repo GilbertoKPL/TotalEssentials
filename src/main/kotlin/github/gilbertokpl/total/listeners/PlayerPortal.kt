@@ -7,21 +7,13 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerPortalEvent
 
 class PlayerPortal : Listener {
-    @EventHandler
-    fun event(e: PlayerPortalEvent) {
-        if (MainConfig.antibugsBlockPlayerTeleportPortal) {
-            try {
-                blockPlayerTeleport(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
-    }
 
-    private fun blockPlayerTeleport(e: PlayerPortalEvent) {
-        if (!e.player.hasPermission("totalessentials.bypass.teleportportal")) {
-            e.player.sendMessage(LangConfig.generalNotPermAction)
-            e.isCancelled = true
-        }
+    @EventHandler
+    fun onPlayerPortal(event: PlayerPortalEvent) {
+        if (!MainConfig.antibugsBlockPlayerTeleportPortal) return
+        if (event.player.hasPermission("totalessentials.bypass.teleportportal")) return
+
+        event.player.sendMessage(LangConfig.generalNotPermAction)
+        event.isCancelled = true
     }
 }

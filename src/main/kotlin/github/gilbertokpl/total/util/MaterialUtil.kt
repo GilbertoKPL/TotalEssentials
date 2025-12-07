@@ -11,7 +11,7 @@ internal object MaterialUtil {
 
     fun startMaterials() {
         material["glass"] =
-            materialHelper(listOf("STAINED_GLASS_PANE", "THIN_GLASS", "YELLOW_STAINED_GLASS_PANE"))
+            materialHelper(listOf("IRON_FENCE", "THIN_GLASS", "YELLOW_STAINED_GLASS_PANE"))
         material["clock"] = materialHelper(listOf("CLOCK", "WATCH"))
         material["feather"] = materialHelper(listOf("FEATHER"))
         material["soil"] =

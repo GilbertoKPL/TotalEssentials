@@ -139,7 +139,7 @@ object VipManager {
             }
         }
 
-        VipData.vipQuantity[vipKey] = (VipData.vipQuantity[vipKey] ?: 0) + 1
+        VipData.vipQuantity[vipKey] = ((VipData.vipQuantity[vipKey] ?: 0) + 1)
 
         val token = PlayerData.discordCache[entity]
         val roleID = VipData.vipDiscord[vipKey]

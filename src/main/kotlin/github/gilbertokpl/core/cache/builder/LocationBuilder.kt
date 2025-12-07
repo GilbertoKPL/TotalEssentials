@@ -1,150 +1,175 @@
 package github.gilbertokpl.core.cache.builder
 
+import github.gilbertokpl.core.cache.interfaces.ICacheLogger
 import github.gilbertokpl.core.cache.interfaces.ICacheSerializer
-import github.gilbertokpl.core.cache.interfaces.ICacheBuilder
-import github.gilbertokpl.total.TotalEssentials
-import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.Location
-import org.bukkit.entity.Player
-import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.inList
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.update
-import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.write
+import kotlin.concurrent.read
 
+/**
+ * Builder para cache de Locations do Bukkit.
+ * Suporta filtragem de mundos desabilitados no load.
+ */
 internal class LocationBuilder(
-    private val table: Table,
-    private val primaryColumn: Column<String>,
-    private val column: Column<String>,
-    private val classConvert: ICacheSerializer<Location?, String>
-) : ICacheBuilder<Location?> {
+    table: Table,
+    primaryColumn: Column<String>,
+    column: Column<String>,
+    private val serializer: ICacheSerializer<Location?, String>,
+    logger: ICacheLogger,
+    private val disabledWorldsProvider: () -> List<String> = { emptyList() },
+    private val columnName: String = column.name
+) : AbstractCacheBuilder<Location?, String>(table, primaryColumn, column, logger) {
 
-    private val hashMap = HashMap<String, Location?>()
-    private val toUpdate = mutableSetOf<String>()
-    private val lock = ReentrantLock()
+    override fun toDatabase(value: Location?): String =
+        if (value == null) "" else serializer.convertToDatabase(value) ?: ""
 
-    override fun getMap(): Map<String, Location?> {
-        lock.lock()
-        return try {
-            hashMap.toMap()
-        } finally {
-            lock.unlock()
-        }
-    }
+    override fun fromDatabase(value: String): Location? =
+        serializer.convertToCache(value)
 
-    override operator fun get(entity: String): Location? {
-        lock.lock()
-        return try {
-            hashMap[entity.lowercase()]
-        } finally {
-            lock.unlock()
-        }
-    }
+    override fun shouldDelete(value: Location?): Boolean = value == null
 
-    override operator fun get(entity: Player): Location? {
-        return get(entity.name)
-    }
-
-    override operator fun set(entity: Player, value: Location?) {
-        set(entity.name, value)
-    }
-
-    override fun set(entity: String, value: Location?, override: Boolean) {
-        set(entity, value)
-    }
+    // =========================================================
+    // Operações de set - CORRIGIDO para lidar com null
+    // =========================================================
 
     override operator fun set(entity: String, value: Location?) {
-        lock.lock()
-        try {
-            hashMap[entity.lowercase()] = value
-            toUpdate.add(entity.lowercase())
-        } finally {
-            lock.unlock()
+        set(entity, value, override = true)
+    }
+
+    override operator fun set(entity: String, value: Location?, override: Boolean) {
+        val key = normalizeKey(entity)
+        rwLock.write {
+            if (value == null) {
+                // Marca para deleção
+                cache[key] = null
+                markedForDeletion.add(key)
+            } else {
+                // Valor válido
+                cache[key] = value
+                markedForDeletion.remove(key)
+            }
+            markForUpdate(key)
         }
     }
 
-    override fun remove(entity: Player) {
-        remove(entity.name)
-    }
-
-    override fun remove(entity: String) {
-        lock.lock()
-        try {
-            hashMap[entity.lowercase()] = null
-            toUpdate.add(entity.lowercase())
-        } finally {
-            lock.unlock()
-        }
-    }
+    // =========================================================
+    // Persistência
+    // =========================================================
 
     override fun update() {
-        save(toUpdate.toList())
-    }
+        if (pendingUpdates.isEmpty()) return
 
-    private fun save(list: List<String>) {
-        lock.lock()
-        try {
-            if (toUpdate.isEmpty()) return
+        rwLock.write {
+            val keysToProcess = pendingUpdates.toList()
+            if (keysToProcess.isEmpty()) return
 
             val existingRows = table.selectAll()
-                .where { primaryColumn inList toUpdate }
-                .toList()
-                .associateBy { it[primaryColumn] }
+                .where { primaryColumn inList keysToProcess }
+                .associate { it[primaryColumn].lowercase() to it[primaryColumn] }
 
-            val existingKeys = existingRows.keys.toMutableSet()
+            for (key in keysToProcess) {
+                val value = cache[key]
+                val originalKey = existingRows[key]
+                val shouldRemove = isMarkedForDeletion(key) || value == null
 
-            for (i in list) {
-                if (i in toUpdate) {
-                    toUpdate.remove(i)
-                    val value = hashMap[i] ?: continue
-                    if (i !in existingKeys) {
-                        val newValue = classConvert.convertToDatabase(value)
-                        TotalEssentials.getCore().logger.log("Setando valor da entidade: $i, coluna: $column, valor: $newValue")
-                        table.insert {
-                            it[primaryColumn] = i
-                            it[column] = newValue
+                try {
+                    when {
+                        // Deletar se null e existe no banco
+                        shouldRemove && originalKey != null -> {
+                            logger.log("Removendo location: $key, coluna: ${column.name}")
+                            table.deleteWhere { primaryColumn eq originalKey }
+                            clearDeletionMark(key)
                         }
-                        existingKeys.add(i)
-                    } else {
-                        val newValue = classConvert.convertToDatabase(value)
-                        TotalEssentials.getCore().logger.log("Setando valor da entidade: $i, coluna: $column, valor: $newValue")
-                        table.update({ primaryColumn eq i }) {
-                            it[column] = newValue
+                        // Inserir se não existe
+                        value != null && originalKey == null -> {
+                            val dbValue = toDatabase(value)
+                            logger.log("Inserindo location: $key, coluna: ${column.name}")
+                            table.insert {
+                                it[primaryColumn] = key
+                                it[column] = dbValue
+                            }
                         }
-
+                        // Atualizar se existe
+                        value != null && originalKey != null -> {
+                            val dbValue = toDatabase(value)
+                            logger.log("Atualizando location: $key, coluna: ${column.name}")
+                            table.update({ primaryColumn eq originalKey }) {
+                                it[column] = dbValue
+                            }
+                        }
                     }
+                    pendingUpdates.remove(key)
+                } catch (e: Exception) {
+                    logger.error("Erro ao persistir location: $key, coluna: ${column.name}", e)
                 }
             }
-        } finally {
-            lock.unlock()
         }
     }
 
     override fun load() {
-        lock.lock()
-        try {
+        val disabledWorlds = disabledWorldsProvider()
+
+        rwLock.write {
             table.selectAll().forEach { row ->
-                val location = classConvert.convertToCache(row[column]) ?: return@forEach
+                val key = normalizeKey(row[primaryColumn])
+                val location = fromDatabase(row[column])
 
-                val primaryKey = row[primaryColumn]
+                if (location == null) {
+                    return@forEach
+                }
 
-                if (column.name == "Back" &&
-                    MainConfig.backDisabledWorlds.any { disabledWorld ->
-                        location.world?.name.equals(disabledWorld, ignoreCase = true)
-                    }
-                ) {
-                    hashMap[primaryKey] = null
-                    toUpdate.add(primaryKey)
+                // Verifica se o mundo está desabilitado (para coluna "Back")
+                val worldName = location.world?.name
+                val isDisabledWorld = columnName == "Back" && disabledWorlds.any { disabled ->
+                    worldName.equals(disabled, ignoreCase = true)
+                }
+
+                if (isDisabledWorld) {
+                    cache[key] = null
+                    markedForDeletion.add(key)
+                    markForUpdate(key)
+                    logger.log("Location ignorada (mundo desabilitado): $key, mundo: $worldName")
                 } else {
-                    hashMap[primaryKey] = location
+                    cache[key] = location
                 }
             }
-        } finally {
-            lock.unlock()
+        }
+        logger.log("Carregado ${cache.count { it.value != null }} locations para coluna: ${column.name}")
+    }
+
+    // =========================================================
+    // Métodos utilitários
+    // =========================================================
+
+    /**
+     * Retorna todas as locations em um mundo específico.
+     */
+    fun getByWorld(worldName: String): Map<String, Location> {
+        rwLock.read {
+            return cache.filterValues { it?.world?.name.equals(worldName, ignoreCase = true) }
+                .mapValues { it.value!! }
         }
     }
 
-    override fun unload() {
-        update()
+    /**
+     * Retorna locations dentro de um raio de uma location base.
+     */
+    fun getNearby(center: Location, radius: Double): Map<String, Location> {
+        val radiusSquared = radius * radius
+        rwLock.read {
+            return cache.filterValues { loc ->
+                loc != null &&
+                loc.world?.name == center.world?.name &&
+                loc.distanceSquared(center) <= radiusSquared
+            }.mapValues { it.value!! }
+        }
     }
 }

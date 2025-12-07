@@ -15,7 +15,7 @@ class CommandTp : CommandManager("tp") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf("teleport"),
+            aliases = listOf(),
             active = MainConfig.tpActivated,
             target = CommandTargetType.ALL,
             countdown = 0,

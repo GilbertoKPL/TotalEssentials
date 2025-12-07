@@ -39,7 +39,7 @@ class CommandCreateKit : CommandManager("createkit") {
         // --------------------------------------------------------
         // Validate special characters
         // --------------------------------------------------------
-        if (ServerUtil.checkSpecialCharacters(kitName)) {
+        if (ServerUtil.hasSpecialCharacters(kitName)) {
             sender.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }

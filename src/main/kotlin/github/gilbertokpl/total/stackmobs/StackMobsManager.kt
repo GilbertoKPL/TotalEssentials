@@ -7,79 +7,131 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.metadata.FixedMetadataValue
 
 object StackMobsManager {
-    fun handleSpawnWithinRange(ent: LivingEntity) {
 
-        for (worlds in MainConfig.stackmobsBlockedWorlds) {
-            if (ent.world.name.equals(worlds, ignoreCase = true)) {
-                return
+    private const val STACK_METADATA_KEY = "stack"
+    private const val DEATH_QUANTITY_KEY = "DeathQuantity"
+    private const val DEFAULT_DEATH_QUANTITY = 1
+
+    fun handleSpawnWithinRange(entity: LivingEntity) {
+        if (isWorldBlocked(entity.world.name)) return
+
+        val nearbyStackedMob = findNearbyStackedMob(entity)
+
+        if (nearbyStackedMob != null) {
+            stackMobsWithinRange(nearbyStackedMob, entity)
+        } else if (!entity.hasMetadata(STACK_METADATA_KEY)) {
+            initializeNewStack(entity)
+        }
+    }
+
+    private fun isWorldBlocked(worldName: String): Boolean {
+        return MainConfig.stackmobsBlockedWorlds.any {
+            it.equals(worldName, ignoreCase = true)
+        }
+    }
+
+    private fun findNearbyStackedMob(entity: LivingEntity): LivingEntity? {
+        val radius = MainConfig.stackmobsRadius.toDouble()
+        val nearbyEntities = entity.getNearbyEntities(radius, radius, radius)
+
+        return nearbyEntities
+            .filterIsInstance<LivingEntity>()
+            .firstOrNull { nearby ->
+                nearby.type == entity.type &&
+                        !nearby.isDead &&
+                        nearby.hasMetadata(STACK_METADATA_KEY)
             }
-        }
-
-        val nearbyEntities = ent.getNearbyEntities(
-            MainConfig.stackmobsRadius.toDouble(),
-            MainConfig.stackmobsRadius.toDouble(),
-            MainConfig.stackmobsRadius.toDouble()
-        )
-
-        for (entity in nearbyEntities) {
-            if (entity is LivingEntity && entity.type == ent.type && !entity.isDead && entity.hasMetadata("stack")) {
-                stackMobsWithinRange(entity, ent)
-                return
-            }
-        }
-
-        if (!ent.hasMetadata("stack")) {
-            handleNonStackedSpawn(ent)
-        }
-
     }
 
     private fun stackMobsWithinRange(target: LivingEntity, source: LivingEntity) {
-        val stackSize = target.getMetadata("stack")[0].asInt() + 1
+        val currentStack = target.getMetadata(STACK_METADATA_KEY).firstOrNull()?.asInt() ?: 1
+        val newStackSize = currentStack + 1
 
-        if (stackSize > MainConfig.stackmobsMax) return
+        if (newStackSize > MainConfig.stackmobsMax) return
 
-        val nome = MainConfig.stackmobsNameTag.replace("%name%", getEntityName(target))
-            .replace("%quantity%", stackSize.toString())
-        target.setMetadata("stack", FixedMetadataValue(TotalEssentials.getInstance(), stackSize))
-        target.customName = nome
-        target.isCustomNameVisible = true
+        updateStackMetadata(target, newStackSize)
+        updateCustomName(target, newStackSize)
 
         source.remove()
     }
 
-    private fun handleNonStackedSpawn(ent: LivingEntity) {
-        mobCreate(ent, 1, getEntityName(ent))
+    private fun initializeNewStack(entity: LivingEntity) {
+        val entityName = getEntityName(entity)
+        mobCreate(entity, 1, entityName)
     }
 
-    fun mobCreate(entity: Entity, quantity: Int, name: String) {
+    /**
+     * Cria/inicializa um mob stackado com nome customizado
+     */
+    fun mobCreate(entity: Entity, quantity: Int, displayName: String) {
         if (entity !is LivingEntity) return
 
-        entity.setMetadata("stack", FixedMetadataValue(TotalEssentials.getInstance(), quantity))
-        entity.setMetadata("DeathQuantity", FixedMetadataValue(TotalEssentials.getInstance(), 1))
-
-        val customName = MainConfig.stackmobsNameTag.replace("%name%", name).replace("%quantity%", quantity.toString())
-
-        entity.customName = customName
-        entity.isCustomNameVisible = true
+        updateStackMetadata(entity, quantity, DEFAULT_DEATH_QUANTITY)
+        updateCustomName(entity, quantity, displayName)
     }
 
-    fun mobCreate(entity: Entity, quantity: Int, deathQuantity: Int) {
-        if (entity !is LivingEntity) return
+    /**
+     * Reduz o stack de um mob existente (quando leva dano letal)
+     * Incrementa o contador de mortes para multiplicar drops no final
+     */
+    fun reduceStack(entity: LivingEntity, newStackSize: Int) {
+        // Pega o deathQuantity atual e incrementa
+        val currentDeathQuantity = entity.getMetadata(DEATH_QUANTITY_KEY)
+            .firstOrNull()?.asInt() ?: 0
+        val newDeathQuantity = currentDeathQuantity + 1
 
-        val customName = MainConfig.stackmobsNameTag.replace("%name%", getEntityName(entity))
+        updateStackMetadata(entity, newStackSize, newDeathQuantity)
+        updateCustomName(entity, newStackSize)
+    }
+
+    /**
+     * Cria um novo mob stackado a partir de um que morreu (fallback do EntityDeath)
+     * Preserva o contador de mortes do mob original
+     */
+    fun respawnStack(entity: LivingEntity, newStackSize: Int, originalDeathQuantity: Int) {
+        val displayName = getEntityName(entity)
+        updateStackMetadata(entity, newStackSize, originalDeathQuantity + 1)
+        updateCustomName(entity, newStackSize, displayName)
+    }
+
+    private fun updateStackMetadata(
+        entity: LivingEntity,
+        stackSize: Int,
+        deathQuantity: Int = DEFAULT_DEATH_QUANTITY
+    ) {
+        entity.setMetadata(
+            STACK_METADATA_KEY,
+            FixedMetadataValue(TotalEssentials.getInstance(), stackSize)
+        )
+        entity.setMetadata(
+            DEATH_QUANTITY_KEY,
+            FixedMetadataValue(TotalEssentials.getInstance(), deathQuantity)
+        )
+    }
+
+    private fun updateCustomName(
+        entity: LivingEntity,
+        quantity: Int,
+        displayName: String = getEntityName(entity)
+    ) {
+        val customName = MainConfig.stackmobsNameTag
+            .replace("%name%", displayName)
             .replace("%quantity%", quantity.toString())
 
-        entity.setMetadata("stack", FixedMetadataValue(TotalEssentials.getInstance(), quantity))
-        entity.setMetadata("DeathQuantity", FixedMetadataValue(TotalEssentials.getInstance(), deathQuantity))
-
         entity.customName = customName
         entity.isCustomNameVisible = true
     }
 
-    private fun getEntityName(entity: LivingEntity): String {
-        return MainConfig.stackmobsNameReplacer.firstOrNull { it.startsWith("${entity.type.typeId.toInt()}:") }
-            ?.split(":")?.get(1)?.replace("&", "§")
-            ?: entity.toString().replace("Craft", "")
+    @Suppress("DEPRECATION")
+    fun getEntityName(entity: LivingEntity): String {
+        val entityTypeId = entity.type.typeId.toInt()
+
+        val customName = MainConfig.stackmobsNameReplacer
+            .firstOrNull { it.startsWith("$entityTypeId:") }
+            ?.split(":")
+            ?.getOrNull(1)
+            ?.replace("&", "§")
+
+        return customName ?: entity.toString().replace("Craft", "")
     }
 }

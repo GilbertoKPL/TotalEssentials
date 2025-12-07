@@ -15,7 +15,7 @@ class CommandTpaccept : CommandManager("tpaccept") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf("back"),
+            aliases = listOf(),
             active = MainConfig.tpaActivated,
             target = CommandTargetType.PLAYER,
             countdown = 0,

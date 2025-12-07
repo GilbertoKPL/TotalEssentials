@@ -46,7 +46,7 @@ class CommandGiveKit : CommandManager("givekit") {
         }
 
         // Dá o kit ao jogador
-        ItemUtil.giveKit(p, KitsData.kitItems[args[1]]!!, true, drop = true)
+        ItemUtil.giveKit(p, KitsData.kitItems[args[1]]!!, autoEquipArmor = true, dropIfFull = true)
 
         val fakeName = KitsData.kitFakeName[args[1]]!!
 

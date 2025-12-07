@@ -13,8 +13,8 @@ object LoginData : ICache {
 
     private val cache = TotalEssentials.getCore().getCache()
 
-    val loginAttempts = cache.simpleInteger()
-    val values = cache.simpleInteger()
+    val loginAttempts = cache.simpleInt()
+    val values = cache.simpleInt()
     val isLoggedIn = cache.simpleBoolean()
     val password = cache.string(this, LoginDataSQL.password)
     val ipAddress = cache.string(this, LoginDataSQL.ip)

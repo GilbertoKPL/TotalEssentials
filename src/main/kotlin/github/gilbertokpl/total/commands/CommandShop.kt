@@ -44,11 +44,11 @@ class CommandShop : CommandManager("shop") {
             }
 
             if (p.hasPermission("totalessentials.commands.shop.set")) {
-                inventory.setItem(30, ItemUtil.item(Material.CHEST, LangConfig.shopLoreSet, false))
-                inventory.setItem(32, ItemUtil.item(Material.CHEST, LangConfig.shopLoreSwitch, false))
+                inventory.setItem(30, ItemUtil.createItem(Material.CHEST, LangConfig.shopLoreSet, glowEffect = false))
+                inventory.setItem(32, ItemUtil.createItem(Material.CHEST, LangConfig.shopLoreSwitch, glowEffect = false))
             } else {
-                inventory.setItem(30, Shop.GLASS_MATERIAL)
-                inventory.setItem(32, Shop.GLASS_MATERIAL)
+                inventory.setItem(30, Shop.glassItem)
+                inventory.setItem(32, Shop.glassItem)
             }
 
             p.openInventory(inventory)

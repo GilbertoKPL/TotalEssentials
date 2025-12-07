@@ -32,7 +32,7 @@ class CommandGamemode : CommandManager("gamemode") {
 
     override fun funCommand(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         val senderPlayer = sender as? Player
-        val targetGameMode = PlayerUtil.getGameModeNumber(args[0])
+        val targetGameMode = PlayerUtil.getGameModeFromString(args[0])
 
         // --------------------------------------------------------
         // Set gamemode self
@@ -88,7 +88,7 @@ class CommandGamemode : CommandManager("gamemode") {
     }
 
     private fun applyGamemode(player: Player, gm: GameMode) {
-        val gmNumber = PlayerUtil.getNumberGameMode(gm)
+        val gmNumber = PlayerUtil.getGameModeAsNumber(gm)
         PlayerData.gameModeCache[player] = gmNumber
 
         player.gameMode = gm

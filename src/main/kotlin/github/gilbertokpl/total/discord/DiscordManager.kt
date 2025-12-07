@@ -1,5 +1,9 @@
 package github.gilbertokpl.total.discord
 
+import club.minnced.discord.webhook.WebhookClient
+import club.minnced.discord.webhook.send.WebhookEmbed
+import club.minnced.discord.webhook.send.WebhookEmbedBuilder
+import club.minnced.discord.webhook.send.WebhookMessageBuilder
 import github.gilbertokpl.core.utils.ConsoleColorUtil
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.config.files.LangConfig
@@ -16,6 +20,7 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import java.awt.Color
 import javax.security.auth.login.LoginException
 
@@ -37,8 +42,14 @@ internal object DiscordManager {
      * @throws BotIsNotInitialized if bot is true but token is incorrect.
      * @throws ChatDoesNotExist if chat does not exist.
      */
-    fun sendDiscordMessage(message: String, embed: Boolean) {
-        sendDiscordMessage(message, MainConfig.discordbotIdDiscordChat, embed)
+    fun sendDiscordMessage(message: String, embed: Boolean = false, tittle: Boolean = false, avatarUrl: String? = null) {
+        if (!embed) {
+            sendDiscordMessage(message, MainConfig.discordbotIdDiscordChat, false)
+        }
+        if (tittle) {
+            sendDiscordMessage(message, MainConfig.discordbotIdDiscordChat, LangConfig.discordchatFooter.replace("%time%", ServerUtil.getCurrentTime()), avatarUrl)
+            return
+        }
     }
 
     /**
@@ -102,6 +113,55 @@ internal object DiscordManager {
         }
 
         return true
+    }
+
+    fun sendPlayerWebhook(playerName: String, avatarUrl: String?, message: String) {
+        val client = WebhookClient.withUrl(MainConfig.discordbotIdWebhookChat)
+
+        val msg = WebhookMessageBuilder()
+            .setUsername(playerName)
+            .setAvatarUrl(avatarUrl)
+            .setContent(message)         // Mensagem sem embed
+            .build()
+
+        client.send(msg)
+        client.close()
+    }
+
+    private fun sendDiscordMessage(message: String, chatID: String, footer: String, avatarUrl: String? = null) {
+        if (!MainConfig.discordbotConnectDiscordChat) return
+
+        val channel = hashTextChannel[chatID]
+
+        TotalEssentials.getCore().getTask().async {
+            val sendEmbed = { ch: TextChannel ->
+                val embed = EmbedBuilder()
+                    .setFooter(footer)
+                    .setColor(randomColor())
+                    .apply {
+                        if (avatarUrl != null)
+                            setAuthor(message, null, avatarUrl)
+                        else {
+                            setDescription("**$message**")
+                        }
+                    }
+                    .build()
+
+                ch.sendMessageEmbeds(embed).queue()
+            }
+            if (channel == null) {
+                val newChat = setupDiscordChat(chatID) ?: throw ChatDoesNotExist()
+                hashTextChannel[chatID] = newChat
+                sendEmbed(newChat)
+                return@async
+            }
+
+            try {
+                sendEmbed(channel)
+            } catch (e: Throwable) {
+                hashTextChannel.remove(chatID)
+            }
+        }
     }
 
     fun checkIfRoleIdExist(roleId: Long): Boolean {
@@ -225,9 +285,12 @@ internal object DiscordManager {
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(ChatDiscordEvent())
                 .build()
+                .awaitReady()
         } catch (e: LoginException) {
+            println(e)
             null
         } catch (e: Throwable) {
+            println(e)
             null
         }
     }
@@ -235,6 +298,7 @@ internal object DiscordManager {
     private fun setupDiscordChat(chatID: String): TextChannel? {
 
         val jda = getJdaCheck()
+
         val newChat =
             jda.getTextChannelById(chatID) ?: run {
                 ServerUtil.consoleMessage(

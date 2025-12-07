@@ -10,84 +10,151 @@ import org.bukkit.Material
 import org.bukkit.SkullType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import java.util.*
 
 object Shop {
-    val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§eSHOP", true)
-    private const val ITEMS_PER_PAGE = 27
+
+    // ────────────────────────────────────────────────────────────────
+    //  CONSTANTES
+    // ────────────────────────────────────────────────────────────────
+
+    private object Slots {
+        const val ITEMS_PER_PAGE = 27
+        const val INVENTORY_SIZE = 36
+
+        // Navegação
+        const val BACK_BUTTON = 27
+        val GLASS_SLOTS = 28..34
+        const val NEXT_BUTTON = 35
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  CACHE DE ITENS
+    // ────────────────────────────────────────────────────────────────
+
+    val glassItem: ItemStack by lazy {
+        ItemUtil.createItem(MaterialUtil["glass"]!!, "§eSHOP", glowEffect = true)
+    }
+
+    private val backButtonItem: ItemStack by lazy {
+        ItemUtil.createItem(Material.HOPPER, LangConfig.shopInventoryIconBackName, glowEffect = true)
+    }
+
+    private val nextButtonItem: ItemStack by lazy {
+        ItemUtil.createItem(Material.ARROW, LangConfig.shopInventoryIconNextName, glowEffect = true)
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  SETUP
+    // ────────────────────────────────────────────────────────────────
 
     fun setup() {
+        val sortedShops = getSortedShops()
+        if (sortedShops.isEmpty()) {
+            Data.shopInventoryCache = emptyMap()
+            Data.shopItemCache = emptyMap()
+            return
+        }
+
         val inventoryCache = linkedMapOf<Int, Inventory>()
         val itemCache = linkedMapOf<Int, String>()
+
         var currentPage = 1
         var currentSlot = 0
         var inventory = createShopInventory(currentPage)
 
-        val sortedShops = ShopData.shopVisits.getMap().asSequence()
-            .sortedByDescending { (_, value) -> value }
-
         sortedShops.forEach { (shopKey, visits) ->
-            val item = createShopItem(shopKey, visits ?: 0)
-            val cacheValue = (currentSlot + 1) + ((currentPage - 1) * ITEMS_PER_PAGE)
-            itemCache[cacheValue] = shopKey
+            val cacheIndex = calculateCacheIndex(currentSlot, currentPage)
+            itemCache[cacheIndex] = shopKey
 
-            inventory.setItem(currentSlot, item)
+            inventory.setItem(currentSlot, createShopItem(shopKey, visits ?: 0))
             currentSlot++
 
-            if (currentSlot == ITEMS_PER_PAGE) {
-                finalizePage(inventory, currentPage)
+            if (currentSlot == Slots.ITEMS_PER_PAGE) {
+                applyNavigationBar(inventory, currentPage, hasNextPage = true)
                 inventoryCache[currentPage] = inventory
+
                 currentPage++
                 currentSlot = 0
                 inventory = createShopInventory(currentPage)
             }
         }
 
+        // Última página (pode não estar cheia)
         if (currentSlot > 0) {
-            finalizePage(inventory, currentPage, isLastPage = true)
+            applyNavigationBar(inventory, currentPage, hasNextPage = false)
             inventoryCache[currentPage] = inventory
         }
 
-        Data.shopInventoryCache = Collections.unmodifiableMap(inventoryCache)
-        Data.shopItemCache = Collections.unmodifiableMap(itemCache)
+        Data.shopInventoryCache = inventoryCache.toMap()
+        Data.shopItemCache = itemCache.toMap()
     }
 
-    private fun createShopItem(shopKey: String, visits: Int): ItemStack {
-        val name = LangConfig.shopInventoryItemsName.replace("%player%", shopKey)
-        val item = ItemStack(MaterialUtil["head"]!!, 1, SkullType.PLAYER.ordinal.toShort())
-        val meta = item.itemMeta
-
-        ItemUtil.setDisplayName(meta, name)
-
-        val isOpen = ShopData.shopOpen[shopKey] ?: false
-        meta?.lore = LangConfig.shopInventoryItemsLore.map {
-            it.replace("%visits%", visits.toString())
-                .replace("%open%", if (isOpen) LangConfig.shopOpen else LangConfig.shopClosed)
-        }
-        item.itemMeta = meta
-
-        return item
+    private fun getSortedShops(): List<Pair<String, Int?>> {
+        return ShopData.shopVisits.getMap()
+            .toList()
+            .sortedByDescending { it.second }
     }
 
-    private fun finalizePage(inventory: Inventory, currentPage: Int, isLastPage: Boolean = false) {
-        inventory.setItem(27, if (currentPage > 1) {
-            ItemUtil.item(Material.HOPPER, LangConfig.shopInventoryIconBackName, true)
-        } else {
-            GLASS_MATERIAL
-        })
-
-        for (i in 28..34) {
-            inventory.setItem(i, GLASS_MATERIAL)
-        }
-
-        inventory.setItem(35, if (isLastPage) {
-            GLASS_MATERIAL
-        } else {
-            ItemUtil.item(Material.ARROW, LangConfig.shopInventoryIconNextName, true)
-        })
+    private fun calculateCacheIndex(slot: Int, page: Int): Int {
+        return slot + 1 + ((page - 1) * Slots.ITEMS_PER_PAGE)
     }
+
+    // ────────────────────────────────────────────────────────────────
+    //  CRIAÇÃO DE INVENTÁRIOS
+    // ────────────────────────────────────────────────────────────────
 
     private fun createShopInventory(page: Int): Inventory {
-        return Bukkit.createInventory(null, 36, "§eSHOP $page")
+        return Bukkit.createInventory(null, Slots.INVENTORY_SIZE, "§eSHOP $page")
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  NAVEGAÇÃO
+    // ────────────────────────────────────────────────────────────────
+
+    private fun applyNavigationBar(inventory: Inventory, currentPage: Int, hasNextPage: Boolean) {
+        // Botão voltar
+        inventory.setItem(
+            Slots.BACK_BUTTON,
+            if (currentPage > 1) backButtonItem else glassItem
+        )
+
+        // Vidros decorativos
+        Slots.GLASS_SLOTS.forEach { inventory.setItem(it, glassItem) }
+
+        // Botão próximo
+        inventory.setItem(
+            Slots.NEXT_BUTTON,
+            if (hasNextPage) nextButtonItem else glassItem
+        )
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  CRIAÇÃO DE ITENS
+    // ────────────────────────────────────────────────────────────────
+
+    private fun createShopItem(shopKey: String, visits: Int): ItemStack {
+        @Suppress("DEPRECATION")
+        val item = ItemStack(MaterialUtil["head"]!!, 1, SkullType.PLAYER.ordinal.toShort())
+
+        return item.apply {
+            itemMeta = itemMeta?.apply {
+                ItemUtil.setDisplayName(this, formatShopName(shopKey))
+                lore = createShopLore(shopKey, visits)
+            }
+        }
+    }
+
+    private fun formatShopName(shopKey: String): String {
+        return LangConfig.shopInventoryItemsName.replace("%player%", shopKey)
+    }
+
+    private fun createShopLore(shopKey: String, visits: Int): List<String> {
+        val isOpen = ShopData.shopOpen[shopKey] ?: false
+        val statusText = if (isOpen) LangConfig.shopOpen else LangConfig.shopClosed
+
+        return LangConfig.shopInventoryItemsLore.map {
+            it.replace("%visits%", visits.toString())
+                .replace("%open%", statusText)
+        }
     }
 }

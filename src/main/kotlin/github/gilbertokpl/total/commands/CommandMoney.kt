@@ -15,7 +15,7 @@ class CommandMoney : CommandManager("money") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf("dinheiro"),
+            aliases = listOf("dinheiro", "coin"),
             active = MainConfig.moneyActivated,
             target = CommandTargetType.ALL,
             countdown = 0,
@@ -39,7 +39,7 @@ class CommandMoney : CommandManager("money") {
         // show player own money
         if (args.isEmpty() && sender is Player) {
             val money = PlayerData.moneyCache[sender] ?: 0.0
-            sender.sendMessage(MoneyManager.coinReplacer(LangConfig.moneyMessage, money))
+            sender.sendMessage(MoneyManager.replaceMoney(LangConfig.moneyMessage, money))
             return false
         }
 
@@ -51,7 +51,7 @@ class CommandMoney : CommandManager("money") {
             var position = 1
             for (i in MoneyManager.tycoonPlayer) {
                 sender.sendMessage(
-                    MoneyManager.coinReplacer(LangConfig.moneyTop, i.value)
+                    MoneyManager.replaceMoney(LangConfig.moneyTop, i.value)
                         .replace("%player%", i.key)
                         .replace("%position%", position.toString())
                 )
@@ -68,7 +68,7 @@ class CommandMoney : CommandManager("money") {
             }
             val otherMoney = PlayerData.moneyCache[args[0]] ?: 0.0
             sender.sendMessage(
-                MoneyManager.coinReplacer(LangConfig.moneyMessageOther, otherMoney)
+                MoneyManager.replaceMoney(LangConfig.moneyMessageOther, otherMoney)
                     .replace("%player%", args[0].lowercase())
             )
             return false
@@ -91,7 +91,7 @@ class CommandMoney : CommandManager("money") {
 
             val money = PlayerData.moneyCache[sender] ?: 0.0
             if (money < value) {
-                sender.sendMessage(MoneyManager.coinReplacer(LangConfig.moneyMissing, value - money))
+                sender.sendMessage(MoneyManager.replaceMoney(LangConfig.moneyMissing, value - money))
                 return false
             }
 
@@ -100,13 +100,13 @@ class CommandMoney : CommandManager("money") {
             MoneyManager.depositPlayer(args[1], value)
 
             sender.sendMessage(
-                MoneyManager.coinReplacer(LangConfig.moneyPay, value)
+                MoneyManager.replaceMoney(LangConfig.moneyPay, value)
                     .replace("%player%", args[1].lowercase())
             )
 
             PlayerUtil.sendMessage(
                 args[1].lowercase(),
-                MoneyManager.coinReplacer(LangConfig.moneyPayOther, value)
+                MoneyManager.replaceMoney(LangConfig.moneyPayOther, value)
                     .replace("%player%", sender.name)
             )
 
@@ -127,32 +127,32 @@ class CommandMoney : CommandManager("money") {
                 "set" -> {
                     PlayerData.moneyCache[args[1]] = value
                     sender.sendMessage(
-                        MoneyManager.coinReplacer(LangConfig.moneySet, value)
+                        MoneyManager.replaceMoney(LangConfig.moneySet, value)
                         .replace("%player%", args[1].lowercase()))
-                    PlayerUtil.sendMessage(args[1].lowercase(), MoneyManager.coinReplacer(LangConfig.moneySetOther, value))
+                    PlayerUtil.sendMessage(args[1].lowercase(), MoneyManager.replaceMoney(LangConfig.moneySetOther, value))
                 }
                 "take" -> {
                     val otherMoney = PlayerData.moneyCache[args[1]] ?: return true
                     if (otherMoney < value) {
-                        sender.sendMessage(MoneyManager.coinReplacer(LangConfig.moneyMissing, value - otherMoney))
+                        sender.sendMessage(MoneyManager.replaceMoney(LangConfig.moneyMissing, value - otherMoney))
                         return false
                     }
                     PlayerData.moneyCache[args[1]] = otherMoney - value
                     sender.sendMessage(
-                        MoneyManager.coinReplacer(LangConfig.moneyTake, value)
+                        MoneyManager.replaceMoney(LangConfig.moneyTake, value)
                         .replace("%player%", args[1].lowercase()))
                     PlayerUtil.sendMessage(
                         args[1].lowercase(),
-                        MoneyManager.coinReplacer(LangConfig.moneyTakeOther, value)
+                        MoneyManager.replaceMoney(LangConfig.moneyTakeOther, value)
                     )
                 }
                 "give" -> {
                     val otherMoney = PlayerData.moneyCache[args[1]] ?: 0.0
                     PlayerData.moneyCache[args[1]] = otherMoney + value
                     sender.sendMessage(
-                        MoneyManager.coinReplacer(LangConfig.moneyAdd, value)
+                        MoneyManager.replaceMoney(LangConfig.moneyAdd, value)
                         .replace("%player%", args[1].lowercase()))
-                    PlayerUtil.sendMessage(args[1].lowercase(), MoneyManager.coinReplacer(LangConfig.moneyAddOther, value))
+                    PlayerUtil.sendMessage(args[1].lowercase(), MoneyManager.replaceMoney(LangConfig.moneyAddOther, value))
                 }
             }
             return false

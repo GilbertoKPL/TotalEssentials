@@ -2,13 +2,13 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "2.2.10"
-    id("com.gradleup.shadow") version "9.1.0"
+    kotlin("jvm") version "2.3.0-RC"
+    id("com.gradleup.shadow") version "9.2.2"
 }
 
 val base = "github.gilbertokpl.library"
 
-version = "1.2.2"
+version = "1.2.3"
 
 
 repositories {
@@ -45,17 +45,17 @@ dependencies {
     }
 
     //exposed
-    compileOnly("org.jetbrains.exposed:exposed-core:1.0.0-rc-1") {
+    compileOnly("org.jetbrains.exposed:exposed-core:1.0.0-rc-4") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-dao:1.0.0-rc-1") {
+    compileOnly("org.jetbrains.exposed:exposed-dao:1.0.0-rc-4") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:1.0.0-rc-1") {
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:1.0.0-rc-4") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -68,7 +68,7 @@ dependencies {
     }
 
     //Mysql with MariaDB driver database
-    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.5") {
+    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.6") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -88,12 +88,12 @@ dependencies {
     }
 
     //host info
-    compileOnly("com.github.oshi:oshi-core:6.8.3") {
+    compileOnly("com.github.oshi:oshi-core:6.9.1") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.10") {
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0-RC") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -108,6 +108,8 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
+
+    compileOnly("club.minnced:discord-webhooks:0.8.4")
 
 }
 
@@ -137,6 +139,7 @@ tasks.shadowJar {
     relocate("com.google.gson", "$base.gson")
     relocate("org.simpleyaml", "$base.yaml")
     relocate("com.zaxxer.hikari", "$base.hikari")
+    relocate("com.squareup.okhttp3", "$base.okhttp3")
 }
 
 tasks {

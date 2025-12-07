@@ -28,7 +28,7 @@ class CommandOnline : CommandManager("online") {
         sender.sendMessage(
             LangConfig.onlineMessage.replace(
                 "%amount%",
-                PlayerUtil.getIntOnlinePlayers(MainConfig.onlineCountRemoveVanish)
+                PlayerUtil.getOnlinePlayersCount(MainConfig.onlineCountRemoveVanish)
                     .toString()
             )
         )

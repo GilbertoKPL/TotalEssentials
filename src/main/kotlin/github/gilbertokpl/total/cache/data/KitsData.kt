@@ -16,7 +16,7 @@ object KitsData : ICache {
     val kitFakeName = ins.string(this, KitsDataSQL.kitFakeNameTable)
     val kitTime = ins.long(this, KitsDataSQL.kitTimeTable)
     val kitItems = ins.list(this, KitsDataSQL.kitItemsTable, ItemSerializer())
-    val kitWeight = ins.integer(this, KitsDataSQL.kitWeightTable)
+    val kitWeight = ins.int(this, KitsDataSQL.kitWeightTable)
 
     fun checkIfExist(entity: String): Boolean {
         return kitTime[entity.lowercase()] != null

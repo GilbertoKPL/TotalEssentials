@@ -16,6 +16,7 @@ import github.gilbertokpl.total.vip.VipManager
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 class CommandVip : CommandManager("vip") {
@@ -133,9 +134,11 @@ class CommandVip : CommandManager("vip") {
 
             VipData.vipQuantity[vipName] = (VipData.vipQuantity[vipName] ?: 0) - 1
 
-            PlayerData.discordCache[playerName]?.let { discordId ->
-                VipData.vipDiscord[vipName]?.let { roleId ->
-                    DiscordManager.removeUserRole(discordId, roleId)
+            TotalEssentials.getCore().getTask().async {
+                PlayerData.discordCache[playerName]?.let { discordId ->
+                    VipData.vipDiscord[vipName]?.let { roleId ->
+                        DiscordManager.removeUserRole(discordId, roleId)
+                    }
                 }
             }
 
@@ -171,19 +174,13 @@ class CommandVip : CommandManager("vip") {
                 PlayerData.createNewPlayerData(playerName.lowercase())
             }
 
-            val existingItems = PlayerData.vipItems[playerName]?.size ?: 0
-            val vipItemSize = VipData.vipItems[vipName]?.size ?: 0
-            if ((90 - existingItems) <= vipItemSize) {
-                sender.sendMessage(LangConfig.VipsClearItemsInventory)
-                return false
-            }
-
             val currentVipTime = PlayerData.vipCache[playerName]?.get(vipName) ?: 0L
             val millisVipTime = if (currentVipTime == 0L) System.currentTimeMillis() + days * 86_400_000 else currentVipTime + days * 86_400_000
 
-            PlayerData.vipCache[playerName] = hashMapOf(vipName to millisVipTime)
 
-            if (giveItems) PlayerData.vipItems[playerName] = VipData.vipItems[vipName]!!
+            PlayerData.vipCache[playerName, hashMapOf(vipName to millisVipTime)] = false
+
+            PlayerData.vipItems[playerName, VipData.vipItems[vipName]!!] = false
 
             sender.sendMessage(LangConfig.VipsActivate.replace("%vip%", vipName).replace("%days%", days.toString()))
 
@@ -200,14 +197,15 @@ class CommandVip : CommandManager("vip") {
             VipManager.updateCargo(playerName, vipName, giveItems)
 
             DiscordManager.sendDiscordMessage(
-                LangConfig.VipsDiscordActivateMessage
+                message =  LangConfig.VipsDiscordActivateMessage
                     .replace("%player%", playerName)
                     .replace(
                         "%time%",
                         TotalEssentials.getCore().getTime().convertMillisToString(days * 86_400_000, false)
                     )
                     .replace("%vip%", vipName),
-                true
+                embed = true,
+                tittle = true
             )
 
             return false
@@ -269,29 +267,61 @@ class CommandVip : CommandManager("vip") {
          */
 
         // VIEW or EDIT VIP ITEMS
+        // VIEW or EDIT VIP ITEMS
         if (sender is Player && (subCommand == "itens" || subCommand == "items")) {
             val vipName = args.getOrNull(1)
 
-            val inventory = if (vipName != null && sender.hasPermission("totalessentials.commands.vip.admin")) {
+            // ==========================
+            // ADMIN EDIT MODE
+            // ==========================
+            if (vipName != null && sender.hasPermission("totalessentials.commands.vip.admin")) {
+
                 if (!VipData.vipExists(vipName)) {
                     sender.sendMessage(LangConfig.VipsNotExist)
                     return false
                 }
+
                 val inv = TotalEssentials.getInstance().server.createInventory(null, 54, "§eVipEditItens $vipName")
-                VipData.vipItems[vipName]?.forEach { inv.addItem(it) }
+
+                val items = VipData.vipItems[vipName] ?: emptyList()
+
+                // usa setItem no slot certinho para evitar juntar stacks
+                items.forEachIndexed { index, item ->
+                    if (index < 54)
+                        inv.setItem(index, item.clone())
+                }
+
                 Data.playerVipEdit[sender] = vipName
-                inv
-            } else {
-                val playerItems = PlayerData.vipItems[sender] ?: emptyList()
-                val size = if (playerItems.size > 54) 90 else 54
-                val inv = TotalEssentials.getInstance().server.createInventory(null, size, "§eVipItens")
-                playerItems.forEach { inv.addItem(it) }
-                inv
+                sender.openInventory(inv)
+                return false
             }
 
-            sender.openInventory(inventory)
+            // ==========================
+            // PLAYER VIEW MODE
+            // ==========================
+            val allItems = PlayerData.vipItems[sender] ?: arrayListOf()
+
+            // Primeiros 54 itens exibidos
+            val firstPage = allItems.take(54)
+
+            // O resto continua no cache (fila)
+            val remaining = allItems.drop(54)
+
+            // Atualiza cache
+            PlayerData.vipItems[sender] = ArrayList(remaining)
+
+            val inv = TotalEssentials.getInstance().server.createInventory(null, 54, "§eVipItens")
+
+            // Coloca os itens sem juntar / merge
+            firstPage.forEachIndexed { index, item ->
+                if (index < 54)
+                    inv.setItem(index, item.clone())
+            }
+
+            sender.openInventory(inv)
             return false
         }
+
 
         // VIEW VIP TIME
         if (subCommand == "tempo") {
@@ -338,8 +368,12 @@ class CommandVip : CommandManager("vip") {
 
         // SWITCH VIP
         if (subCommand == "mudar" && sender is Player && args.size == 1) {
-            val vipName = VipManager.updateCargo(sender.name.lowercase()) ?: return false
-            sender.sendMessage(LangConfig.VipsSwitch.replace("%vipName%", vipName))
+            TotalEssentials.getCore().getTask().async {
+                val vipName = VipManager.updateCargo(sender.name.lowercase()) ?: return@async
+                TotalEssentials.getCore().getTask().sync {
+                    sender.sendMessage(LangConfig.VipsSwitch.replace("%vipName%", vipName))
+                }
+            }
             return false
         }
 
@@ -365,21 +399,23 @@ class CommandVip : CommandManager("vip") {
                     }
                     sender.sendMessage(LangConfig.VipsDiscordTokenActivate)
 
-                    // Remove previous roles
-                    PlayerData.discordCache[sender]?.let { oldId ->
-                        VipData.vipDiscord.getMap().forEach { (_, role) ->
-                            DiscordManager.removeUserRole(oldId, role ?: return@forEach)
+                    TotalEssentials.getCore().getTask().async {
+                        // Remove previous roles
+                        PlayerData.discordCache[sender]?.let { oldId ->
+                            VipData.vipDiscord.getMap().forEach { (_, role) ->
+                                DiscordManager.removeUserRole(oldId, role ?: return@forEach)
+                            }
                         }
-                    }
 
-                    PlayerData.discordCache[sender] = discordId
+                        PlayerData.discordCache[sender] = discordId
 
-                    // Remove all VIP roles and add new ones
-                    VipData.vipDiscord.getMap().forEach { (_, role) ->
-                        DiscordManager.removeUserRole(discordId, role ?: return@forEach)
-                    }
-                    PlayerData.vipCache[sender]?.forEach { (vip, _) ->
-                        DiscordManager.addUserRole(discordId, VipData.vipDiscord[vip] ?: return@forEach)
+                        // Remove all VIP roles and add new ones
+                        VipData.vipDiscord.getMap().forEach { (_, role) ->
+                            DiscordManager.removeUserRole(discordId, role ?: return@forEach)
+                        }
+                        PlayerData.vipCache[sender]?.forEach { (vip, _) ->
+                            DiscordManager.addUserRole(discordId, VipData.vipDiscord[vip] ?: return@forEach)
+                        }
                     }
 
                     Data.tokenVip.remove(token)
@@ -400,7 +436,7 @@ class CommandVip : CommandManager("vip") {
             TotalEssentials.getCore().getTask().async {
                 try {
                     transaction(totalCore?.sql) {
-                        for (i in totalCore?.getCache()?.toByteUpdate!!) {
+                        for (i in totalCore?.getCache()?.getBuilders()!!) {
                             try { i.update() } catch (_: Exception) {}
                         }
                     }

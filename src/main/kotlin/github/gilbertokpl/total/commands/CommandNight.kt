@@ -20,10 +20,7 @@ class CommandNight : CommandManager("night") {
             permission = "totalessentials.commands.night",
             minimumSize = 0,
             maximumSize = 0,
-            usage = listOf(
-                "/night",
-                "/noite"
-            )
+            usage = listOf("/night")
         )
     }
 

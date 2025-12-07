@@ -9,14 +9,14 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 
 class ChatEventLegend : Listener {
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    fun event(e: ChatMessageEvent) {
-        if (MainConfig.addonsColorInChat) {
-            try {
-                e.message = PlayerData.colorCache[e.sender] + PermissionUtil.colorPermission(e.sender, e.message)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
+    fun onChatMessage(event: ChatMessageEvent) {
+        if (!MainConfig.addonsColorInChat) return
+
+        val playerColor = PlayerData.colorCache[event.sender] ?: ""
+        val coloredMessage = PermissionUtil.colorPermission(event.sender, event.message)
+
+        event.message = playerColor + coloredMessage
     }
 }

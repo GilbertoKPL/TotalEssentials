@@ -39,7 +39,7 @@ class CommandSetWarp : CommandManager("setwarp") {
         }
 
         // check for special characters
-        if (ServerUtil.checkSpecialCharacters(args[0])) {
+        if (ServerUtil.hasSpecialCharacters(args[0])) {
             sender.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }

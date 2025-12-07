@@ -24,7 +24,7 @@ class EconomyHolder : Economy {
     }
 
     override fun format(amount: Double): String {
-        return MoneyManager.coinReplacer(amount)
+        return MoneyManager.formatMoney(amount)
     }
 
     override fun currencyNamePlural(): String {

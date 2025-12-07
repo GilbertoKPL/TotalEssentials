@@ -7,21 +7,13 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerBedEnterEvent
 
 class PlayerBedEnter : Listener {
-    @EventHandler
-    fun event(e: PlayerBedEnterEvent) {
-        if (MainConfig.antibugsBlockBed) {
-            try {
-                blockEnterInBed(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
-    }
 
-    private fun blockEnterInBed(e: PlayerBedEnterEvent) {
-        if (!e.player.hasPermission("totalessentials.bypass.bed")) {
-            e.player.sendMessage(LangConfig.generalNotPermAction)
-            e.isCancelled = true
-        }
+    @EventHandler
+    fun onPlayerBedEnter(event: PlayerBedEnterEvent) {
+        if (!MainConfig.antibugsBlockBed) return
+        if (event.player.hasPermission("totalessentials.bypass.bed")) return
+
+        event.player.sendMessage(LangConfig.generalNotPermAction)
+        event.isCancelled = true
     }
 }

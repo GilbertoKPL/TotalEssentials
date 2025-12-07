@@ -10,30 +10,24 @@ import org.bukkit.event.Listener
 import org.bukkit.event.server.ServerListPingEvent
 
 class ServerListPing : Listener {
+
     @EventHandler
-    fun event(e: ServerListPingEvent) {
-        if (MainConfig.motdEnabled) {
-            try {
-                motd(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+    fun onServerListPing(event: ServerListPingEvent) {
+        if (!MainConfig.motdEnabled) return
+
+        val motdList = if (TotalEssentials.getInstance().server.hasWhitelist()) {
+            MainConfig.motdListMotdWhitelist
+        } else {
+            MainConfig.motdListMotd
         }
+
+        event.motd = ServerUtil.getRandom(motdList).formatMotd()
     }
 
-    private fun motd(e: ServerListPingEvent) {
-        val motd = if (TotalEssentials.getInstance().server.hasWhitelist()) {
-            ServerUtil.getRandom(MainConfig.motdListMotdWhitelist).replace(
-                "%players_online%",
-                PlayerUtil.getIntOnlinePlayers(false).toString()
-            ).replace("\\n", "\n")
-        } else {
-            ServerUtil.getRandom(MainConfig.motdListMotd).replace(
-                "%players_online%",
-                PlayerUtil.getIntOnlinePlayers(false).toString()
-            ).replace("\\n", "\n")
-        }.replace("&", "§")
-
-        e.motd = motd
+    private fun String.formatMotd(): String {
+        return this
+            .replace("%players_online%", PlayerUtil.getOnlinePlayersCount(false).toString())
+            .replace("\\n", "\n")
+            .replace("&", "§")
     }
 }

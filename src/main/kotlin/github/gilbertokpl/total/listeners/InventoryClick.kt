@@ -24,375 +24,432 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.ItemStack
 
 class InventoryClick : Listener {
+
+    // ────────────────────────────────────────────────────────────────
+    //  CONSTANTES
+    // ────────────────────────────────────────────────────────────────
+
+    private object Slots {
+        const val ITEMS_PER_PAGE = 27
+
+        // Kit view
+        const val KIT_BACK = 36
+        const val KIT_EDIT = 40
+        const val KIT_GET = 44
+
+        // Navegação geral
+        const val NAV_BACK = 27
+        const val NAV_NEXT = 35
+
+        // Shop
+        const val SHOP_CREATE = 30
+        const val SHOP_TOGGLE = 32
+
+        // EditKit
+        const val EDIT_ITEMS = 10
+        const val EDIT_TIME = 12
+        const val EDIT_NAME = 14
+        const val EDIT_WEIGHT = 16
+    }
+
+    object Titles {
+        const val KIT_SINGLE = "§eKit"
+        const val KIT_LIST = "§eKits"
+        const val EDIT_KIT = "§eEditKit"
+        const val SHOP = "§eSHOP"
+        const val PLAYTIME = "§ePLAYTIME"
+        const val VIP = "§eVipItens"
+    }
+
+    private object Permissions {
+        const val EDIT_KIT = "totalessentials.commands.editkit"
+        const val SHOP_SET = "totalessentials.commands.shop.set"
+        const val BYPASS_SHIFT = "totalessentials.bypass.shiftcontainer"
+        const val INVSEE = "totalessentials.commands.invsee"
+        const val INVSEE_ADMIN = "totalessentials.commands.invsee.admin"
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  HANDLER PRINCIPAL
+    // ────────────────────────────────────────────────────────────────
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    fun event(e: InventoryClickEvent) {
+    fun onInventoryClick(event: InventoryClickEvent) {
+        val player = event.whoClicked as? Player ?: return
 
-        if (e.whoClicked is Player && !LoginData.isPlayerLoggedIn(e.whoClicked as Player)) {
-            e.isCancelled = true
+        if (!LoginData.isPlayerLoggedIn(player)) {
+            event.isCancelled = true
             return
         }
 
-        if (e.slot == 45) {
-            return
-        }
+        // Slot especial que sempre permite interação
+        if (event.slot == 45) return
+
+        // Processa GUIs específicas
         if (MainConfig.kitsActivated) {
-            try {
-                if (editKitInventoryClickEvent(e)) return
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-            try {
-                if (kitGuiEvent(e)) return
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            if (handleEditKitGui(event, player)) return
+            if (handleKitGui(event, player)) return
         }
-        if (MainConfig.containersBlockShiftEnable) {
-            try {
-                blockShiftInInventory(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
-        if (MainConfig.addonsColorInAnvil) {
-            try {
-                anvilColor(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
-        if (MainConfig.invseeActivated) {
-            try {
-                invSeeEvent(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
+
         if (MainConfig.shopActivated) {
-            try {
-                shopGuiEvent(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            if (handleShopGui(event, player)) return
         }
+
         if (MainConfig.playtimeActivated) {
-            try {
-                playtimeGuiEvent(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            if (handlePlaytimeGui(event, player)) return
         }
+
         if (MainConfig.vipActivated) {
-            try {
-                vipGuiEvent(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            if (handleVipGui(event, player)) return
+        }
+
+        // Funcionalidades gerais
+        if (MainConfig.containersBlockShiftEnable) {
+            blockShiftClick(event, player)
+        }
+
+        if (MainConfig.addonsColorInAnvil) {
+            handleAnvilColor(event, player)
+        }
+
+        if (MainConfig.invseeActivated) {
+            handleInvsee(event, player)
         }
     }
 
-    //vips event
-    private fun vipGuiEvent(e: InventoryClickEvent): Boolean {
-        e.currentItem ?: return false
-        val inventoryName = try {
-            e.view.title.split(" ")
-        } catch (e: NullPointerException) {
-            return false
+    // ────────────────────────────────────────────────────────────────
+    //  VIP GUI
+    // ────────────────────────────────────────────────────────────────
+
+    private fun handleVipGui(event: InventoryClickEvent, player: Player): Boolean {
+        val titleParts = getInventoryTitle(event) ?: return false
+        if (titleParts[0] != Titles.VIP) return false
+
+        event.isCancelled = true
+
+        val clickedItem = event.currentItem ?: return true
+        if (clickedItem.type == Material.AIR) return true
+        if (!event.click.isLeftClick) return true
+        if (event.rawSlot != event.slot) return true
+
+        val freeSlots = (0..35).count { player.inventory.getItem(it) == null }
+        if (freeSlots == 0) return true
+
+        // pega item
+        player.inventory.addItem(clickedItem)
+        event.currentItem = ItemStack(Material.AIR)
+
+        // pega cache FIFO do player
+        val cache = PlayerData.vipItems[player] ?: arrayListOf()
+
+        // se tiver mais itens na fila → recarrega o slot
+        if (cache.isNotEmpty()) {
+            val nextItem = cache.removeAt(0)
+            event.inventory.setItem(event.slot, nextItem)
         }
-        if (inventoryName[0] == "§eVipItens") {
-            e.isCancelled = true
-            val p = e.whoClicked as Player
-            if (e.rawSlot != e.slot) {
-                return false
-            }
-            if (e.click.isLeftClick) {
 
-                var inventorySpace = 0
+        // salva novo cache
+        PlayerData.vipItems[player] = cache
 
-                for (i in 0..35) {
-                    if (p.inventory.getItem(i) == null) {
-                        inventorySpace += 1
-                    }
-                }
-
-                if (inventorySpace == 0) {
-                    return false
-                }
-
-                p.inventory.addItem(e.currentItem ?: return false)
-
-                e.currentItem = ItemStack(Material.AIR)
-
-                val list = ArrayList<ItemStack>()
-
-                for (i in e.inventory.contents) {
-                    if (i == null || i == ItemStack(Material.AIR)) continue
-                    list.add(i)
-                }
-
-                PlayerData.vipItems[p.name, list] = true
-
-            }
-            return true
-        }
-        return false
+        return true
     }
 
-    //playtime event
-    private fun playtimeGuiEvent(e: InventoryClickEvent): Boolean {
-        e.currentItem ?: return false
-        val inventoryName = try {
-            e.view.title.split(" ")
-        } catch (e: NullPointerException) {
-            return false
+    // ────────────────────────────────────────────────────────────────
+    //  PLAYTIME GUI
+    // ────────────────────────────────────────────────────────────────
+
+    private fun handlePlaytimeGui(event: InventoryClickEvent, player: Player): Boolean {
+        val titleParts = getInventoryTitle(event) ?: return false
+        if (titleParts[0] != Titles.PLAYTIME) return false
+
+        event.isCancelled = true
+
+        val currentPage = titleParts.getOrNull(1)?.toIntOrNull() ?: return true
+
+        when (event.slot) {
+            Slots.NAV_BACK -> navigateToPage(player, Data.playTimeInventoryCache, currentPage - 1)
+            Slots.NAV_NEXT -> navigateToPage(player, Data.playTimeInventoryCache, currentPage + 1)
         }
-        if (inventoryName[0] == "§ePLAYTIME") {
-            e.isCancelled = true
-            val p = e.whoClicked as Player
-            val number = e.slot
-            if (number == 27 && inventoryName[1].toInt() > 1) {
-                p.openInventory(Data.playTimeInventoryCache[inventoryName[1].toInt() - 1]!!)
-            }
-            if (number == 35) {
-                val check = Data.playTimeInventoryCache[inventoryName[1].toInt() + 1]
-                if (check != null) {
-                    p.openInventory(check)
-                }
-            }
-            return true
-        }
-        return false
+
+        return true
     }
 
-    //shop event
-    private fun shopGuiEvent(e: InventoryClickEvent): Boolean {
-        e.currentItem ?: return false
-        val inventoryName = try {
-            e.view.title.split(" ")
-        } catch (e: NullPointerException) {
-            return false
-        }
-        if (inventoryName[0] == "§eSHOP") {
-            e.isCancelled = true
-            val p = e.whoClicked as Player
-            val number = e.slot
-            if (number < 27) {
-                val loc = Data.shopItemCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
-                if (loc != null) {
-                    if (!ShopData.shopOpen[loc]!!) {
-                        p.sendMessage(LangConfig.shopClosedMessage)
-                        return false
-                    }
-                    PlayerUtil.shopTeleport(p, loc)
-                    if (loc.lowercase() != p.name.lowercase()) {
-                        ShopData.shopVisits[loc] = ShopData.shopVisits[loc]!!.plus(1)
-                    }
-                }
-                return true
-            }
-            if (number == 27 && inventoryName[1].toInt() > 1) {
-                p.openInventory(Data.shopInventoryCache[inventoryName[1].toInt() - 1]!!)
-            }
-            if (number == 30 && p.hasPermission("totalessentials.commands.shop.set")) {
-                ShopData.createNewShop(p.location, p)
-                p.sendMessage(LangConfig.shopCreateShopSuccess)
-                Shop.setup()
-                p.closeInventory()
-            }
-            if (number == 32 && p.hasPermission("totalessentials.commands.shop.set")) {
+    // ────────────────────────────────────────────────────────────────
+    //  SHOP GUI
+    // ────────────────────────────────────────────────────────────────
 
-                if (!ShopData.checkIfShopExists(p.name.lowercase())) {
-                    return true
-                }
+    private fun handleShopGui(event: InventoryClickEvent, player: Player): Boolean {
+        val titleParts = getInventoryTitle(event) ?: return false
+        if (titleParts[0] != Titles.SHOP) return false
 
-                val new = ShopData.shopOpen[p]?.not() ?: false
-                ShopData.shopOpen[p] = new
-                if (new) {
-                    p.sendMessage(LangConfig.shopSwitchMessage.replace("%open%", LangConfig.shopOpen))
-                } else {
-                    p.sendMessage(LangConfig.shopSwitchMessage.replace("%open%", LangConfig.shopClosed))
-                }
-                Shop.setup()
-                p.closeInventory()
+        event.isCancelled = true
+
+        val currentPage = titleParts.getOrNull(1)?.toIntOrNull() ?: return true
+        val slot = event.slot
+
+        when {
+            slot < Slots.ITEMS_PER_PAGE -> handleShopSelection(slot, currentPage, player)
+            slot == Slots.NAV_BACK && currentPage > 1 -> {
+                navigateToPage(player, Data.shopInventoryCache, currentPage - 1)
             }
-            if (number == 35) {
-                val check = Data.shopInventoryCache[inventoryName[1].toInt() + 1]
-                if (check != null) {
-                    p.openInventory(check)
-                }
+            slot == Slots.SHOP_CREATE && player.hasPermission(Permissions.SHOP_SET) -> {
+                createShop(player)
             }
-            return true
+            slot == Slots.SHOP_TOGGLE && player.hasPermission(Permissions.SHOP_SET) -> {
+                toggleShop(player)
+            }
+            slot == Slots.NAV_NEXT -> {
+                navigateToPage(player, Data.shopInventoryCache, currentPage + 1)
+            }
         }
-        return false
+
+        return true
     }
 
-    //kit event
-    private fun kitGuiEvent(e: InventoryClickEvent): Boolean {
-        e.currentItem ?: return false
-        val inventoryName = try {
-            e.view.title.split(" ")
-        } catch (e: NullPointerException) {
-            return false
-        }
-        if (inventoryName[0] == "§eKit") {
-            e.isCancelled = true
-            val meta = e.currentItem!!.itemMeta ?: return false
-            val p = e.whoClicked as Player
+    private fun handleShopSelection(slot: Int, page: Int, player: Player) {
+        val shopIndex = calculateCacheIndex(slot, page)
+        val shopLocation = Data.shopItemCache[shopIndex] ?: return
 
-            val number = e.slot
-            if (number == 36) {
-                p.openInventory(Data.kitInventoryCache[inventoryName[2].toInt()]!!)
-            }
-            if (number == 40 && meta.displayName == LangConfig.kitsInventoryIconEditKitName && p.hasPermission(
-                    "totalessentials.commands.editkit"
-                )
-            ) {
-                editKitGui(p, inventoryName[1])
-            }
-            if (number == 44) {
-                if (meta.displayName == LangConfig.kitsGetIcon) {
-                    ItemUtil.pickupKit(p, inventoryName[1].lowercase())
-                    p.closeInventory()
-                    return true
-                }
-                if (meta.displayName == LangConfig.kitsGetIconNotCatch) {
-                    openKitInventory(inventoryName[1], inventoryName[2], p)
-                }
-            }
-            return true
-        }
-        if (inventoryName[0] == "§eKits") {
-            e.isCancelled = true
-            val p = e.whoClicked as Player
-            val number = e.slot
-            if (number < 27) {
-                val kit =
-                    Data.kitItemCache[(number + 1) + ((inventoryName[1].toInt() - 1) * 27)]
-                if (kit != null) {
-                    openKitInventory(kit, inventoryName[1], p)
-                }
-                return true
-            }
-            if (number == 27 && inventoryName[1].toInt() > 1) {
-                p.openInventory(Data.kitInventoryCache[inventoryName[1].toInt() - 1]!!)
-            }
-            if (number == 35) {
-                val check = Data.kitInventoryCache[inventoryName[1].toInt() + 1]
-                if (check != null) {
-                    p.openInventory(check)
-                }
-            }
-            return true
-        }
-        return false
-    }
-
-    //editkit event
-    private fun editKitInventoryClickEvent(e: InventoryClickEvent): Boolean {
-        e.currentItem ?: return false
-        val inventoryName = try {
-            e.view.title.split(" ")
-        } catch (e: NullPointerException) {
-            return false
-        }
-        if (inventoryName[0].equals("§eEditKit", true)) {
-            e.isCancelled = true
-            val number = e.slot
-            val p = e.whoClicked as Player
-
-            //items
-            if (number == 10) {
-                p.closeInventory()
-                editKitGuiItems(p, inventoryName[1], KitsData.kitItems[inventoryName[1]]!!)
-                Data.playerEditKit[p] = inventoryName[1]
-            }
-
-            //time
-            if (number == 12) {
-                p.closeInventory()
-                p.sendMessage(LangConfig.kitsEditKitInventoryTimeMessage)
-                Data.playerEditKitChat[p] = "time-${inventoryName[1]}"
-            }
-
-            //name
-            if (number == 14) {
-                p.closeInventory()
-                p.sendMessage(LangConfig.kitsEditKitInventoryNameMessage)
-                Data.playerEditKitChat[p] = "name-${inventoryName[1]}"
-            }
-
-            //weight
-            if (number == 16) {
-                p.closeInventory()
-                p.sendMessage(LangConfig.kitsEditKitInventoryWeightMessage)
-                Data.playerEditKitChat[p] = "weight-${inventoryName[1]}"
-            }
-
-            return true
-        }
-
-        return false
-    }
-
-    //block shift
-    private fun blockShiftInInventory(e: InventoryClickEvent) {
-        if ((e.currentItem ?: return).type == Material.AIR) return
-        if (e.click.isShiftClick &&
-            MainConfig.containersBlockShift.contains(e.inventory.type.name.lowercase()) &&
-            !e.whoClicked.hasPermission("totalessentials.bypass.shiftcontainer")
-        ) {
-            e.whoClicked.sendMessage(LangConfig.generalNotPermAction)
-            e.isCancelled = true
+        if (ShopData.shopOpen[shopLocation] != true) {
+            player.sendMessage(LangConfig.shopClosedMessage)
             return
         }
+
+        PlayerUtil.shopTeleport(player, shopLocation)
+
+        if (!shopLocation.equals(player.name, ignoreCase = true)) {
+            ShopData.shopVisits[shopLocation] = (ShopData.shopVisits[shopLocation] ?: 0) + 1
+        }
     }
 
-    //anvil color
+    private fun createShop(player: Player) {
+        ShopData.createNewShop(player.location, player)
+        player.sendMessage(LangConfig.shopCreateShopSuccess)
+        Shop.setup()
+        player.closeInventory()
+    }
 
-    private fun anvilColor(e: InventoryClickEvent) {
-        if (e.inventory.type == InventoryType.ANVIL && e.slotType == InventoryType.SlotType.RESULT) {
-            val item = e.currentItem ?: return
-            if (item.type == Material.AIR || !item.itemMeta!!.hasDisplayName()) {
+    private fun toggleShop(player: Player) {
+        if (!ShopData.checkIfShopExists(player.name.lowercase())) return
+
+        val newState = !(ShopData.shopOpen[player] ?: false)
+        ShopData.shopOpen[player] = newState
+
+        val statusMessage = if (newState) LangConfig.shopOpen else LangConfig.shopClosed
+        player.sendMessage(LangConfig.shopSwitchMessage.replace("%open%", statusMessage))
+
+        Shop.setup()
+        player.closeInventory()
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  KIT GUI
+    // ────────────────────────────────────────────────────────────────
+
+    private fun handleKitGui(event: InventoryClickEvent, player: Player): Boolean {
+        val titleParts = getInventoryTitle(event) ?: return false
+
+        return when (titleParts[0]) {
+            Titles.KIT_SINGLE -> {
+                event.isCancelled = true  // CANCELA PRIMEIRO!
+                handleSingleKitGui(event, titleParts, player)
+                true
+            }
+            Titles.KIT_LIST -> {
+                event.isCancelled = true  // CANCELA PRIMEIRO!
+                handleKitListGui(event, titleParts, player)
+                true
+            }
+            else -> false
+        }
+    }
+
+    private fun handleSingleKitGui(
+        event: InventoryClickEvent,
+        titleParts: List<String>,
+        player: Player
+    ) {
+        val clickedItem = event.currentItem ?: return
+        if (clickedItem.type == Material.AIR) return
+
+        val meta = clickedItem.itemMeta ?: return
+        val kitName = titleParts.getOrNull(1) ?: return
+        val page = titleParts.getOrNull(2) ?: return
+
+        when (event.slot) {
+            Slots.KIT_BACK -> {
+                page.toIntOrNull()?.let { navigateToPage(player, Data.kitInventoryCache, it) }
+            }
+            Slots.KIT_EDIT -> {
+                if (meta.displayName == LangConfig.kitsInventoryIconEditKitName &&
+                    player.hasPermission(Permissions.EDIT_KIT)) {
+                    editKitGui(player, kitName)
+                }
+            }
+            Slots.KIT_GET -> {
+                when (meta.displayName) {
+                    LangConfig.kitsGetIcon -> {
+                        ItemUtil.pickupKit(player, kitName.lowercase())
+                        player.closeInventory()
+                    }
+                    LangConfig.kitsGetIconNotCatch -> {
+                        openKitInventory(kitName, page, player)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun handleKitListGui(
+        event: InventoryClickEvent,
+        titleParts: List<String>,
+        player: Player
+    ) {
+        val currentPage = titleParts.getOrNull(1)?.toIntOrNull() ?: return
+        val slot = event.slot
+
+        when {
+            slot < Slots.ITEMS_PER_PAGE -> {
+                val kitIndex = calculateCacheIndex(slot, currentPage)
+                Data.kitItemCache[kitIndex]?.let { kit ->
+                    openKitInventory(kit, currentPage.toString(), player)
+                }
+            }
+            slot == Slots.NAV_BACK && currentPage > 1 -> {
+                navigateToPage(player, Data.kitInventoryCache, currentPage - 1)
+            }
+            slot == Slots.NAV_NEXT -> {
+                navigateToPage(player, Data.kitInventoryCache, currentPage + 1)
+            }
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  EDIT KIT GUI
+    // ────────────────────────────────────────────────────────────────
+
+    private fun handleEditKitGui(event: InventoryClickEvent, player: Player): Boolean {
+        val titleParts = getInventoryTitle(event) ?: return false
+        if (!titleParts[0].equals(Titles.EDIT_KIT, ignoreCase = true)) return false
+
+        event.isCancelled = true
+
+        val kitName = titleParts.getOrNull(1) ?: return true
+
+        when (event.slot) {
+            Slots.EDIT_ITEMS -> {
+                player.closeInventory()
+                KitsData.kitItems[kitName]?.let { items ->
+                    editKitGuiItems(player, kitName, items)
+                    Data.playerEditKit[player] = kitName
+                }
+            }
+            Slots.EDIT_TIME -> {
+                player.closeInventory()
+                player.sendMessage(LangConfig.kitsEditKitInventoryTimeMessage)
+                Data.playerEditKitChat[player] = "time-$kitName"
+            }
+            Slots.EDIT_NAME -> {
+                player.closeInventory()
+                player.sendMessage(LangConfig.kitsEditKitInventoryNameMessage)
+                Data.playerEditKitChat[player] = "name-$kitName"
+            }
+            Slots.EDIT_WEIGHT -> {
+                player.closeInventory()
+                player.sendMessage(LangConfig.kitsEditKitInventoryWeightMessage)
+                Data.playerEditKitChat[player] = "weight-$kitName"
+            }
+        }
+
+        return true
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  FUNCIONALIDADES GERAIS
+    // ────────────────────────────────────────────────────────────────
+
+    private fun blockShiftClick(event: InventoryClickEvent, player: Player) {
+        val clickedItem = event.currentItem ?: return
+        if (clickedItem.type == Material.AIR) return
+        if (!event.click.isShiftClick) return
+        if (player.hasPermission(Permissions.BYPASS_SHIFT)) return
+
+        val inventoryType = event.inventory.type.name.lowercase()
+        if (MainConfig.containersBlockShift.contains(inventoryType)) {
+            player.sendMessage(LangConfig.generalNotPermAction)
+            event.isCancelled = true
+        }
+    }
+
+    private fun handleAnvilColor(event: InventoryClickEvent, player: Player) {
+        if (event.inventory.type != InventoryType.ANVIL) return
+        if (event.slotType != InventoryType.SlotType.RESULT) return
+
+        val resultItem = event.currentItem ?: return
+        if (resultItem.type == Material.AIR) return
+
+        val meta = resultItem.itemMeta ?: return
+        if (!meta.hasDisplayName()) return
+
+        val currentName = meta.displayName
+        val originalItem = event.inventory.getItem(0) ?: return
+        val originalMeta = originalItem.itemMeta ?: return
+
+        // Preserva cores originais se o nome não foi alterado
+        if (originalMeta.hasDisplayName()) {
+            val originalNameWithoutColors = originalMeta.displayName.replace("§", "")
+            if (currentName == originalNameWithoutColors) {
+                try {
+                    ItemUtil.setDisplayName(meta, originalMeta.displayName)
+                } catch (_: NoSuchMethodError) {
+                    meta.setDisplayName(originalMeta.displayName)
+                }
+                resultItem.itemMeta = meta
+                event.currentItem = resultItem
                 return
             }
-            val meta = item.itemMeta ?: return
-            val name = meta.displayName
-            val oldItem = e.inventory.getItem(0) ?: return
-            val oldMeta = oldItem.itemMeta ?: return
-            if (oldMeta.hasDisplayName()) {
-                val oldName = oldMeta.displayName.replace("§", "")
-                if (name == oldName) {
-                    try {
-                        ItemUtil.setDisplayName(meta, oldMeta.displayName)
-                    } catch (e: NoSuchMethodError) {
-                        meta.setDisplayName(oldMeta.displayName)
-                    }
-                    item.itemMeta = meta
-                    e.currentItem = item
-                    return
-                }
-            }
-            ItemUtil.setDisplayName(meta, PermissionUtil.colorPermission(e.whoClicked as Player, name))
-            item.itemMeta = meta
-            e.currentItem = item
+        }
+
+        ItemUtil.setDisplayName(meta, PermissionUtil.colorPermission(player, currentName))
+        resultItem.itemMeta = meta
+        event.currentItem = resultItem
+    }
+
+    private fun handleInvsee(event: InventoryClickEvent, player: Player) {
+        if (event.inventory.type != InventoryType.PLAYER) return
+
+        val targetPlayer = PlayerData.inInvSee[player] ?: return
+
+        if (!targetPlayer.isOnline) {
+            player.closeInventory()
+            player.sendMessage(LangConfig.invseePlayerLeave)
+            return
+        }
+
+        if (player.hasPermission(Permissions.INVSEE) &&
+            !player.hasPermission(Permissions.INVSEE_ADMIN)) {
+            event.isCancelled = true
         }
     }
 
-    private fun invSeeEvent(e: InventoryClickEvent) {
-        val p = e.whoClicked as Player
-        val otherPlayer = PlayerData.inInvSee[p]
-        if (e.inventory.type == InventoryType.PLAYER && otherPlayer != null) {
+    // ────────────────────────────────────────────────────────────────
+    //  HELPERS
+    // ────────────────────────────────────────────────────────────────
 
-            if (!otherPlayer.isOnline) {
-                p.closeInventory()
-                p.sendMessage(LangConfig.invseePlayerLeave)
-            }
-
-            if (p.hasPermission("totalessentials.commands.invsee")
-                && !p.hasPermission("totalessentials.commands.invsee.admin")
-            ) {
-                e.isCancelled = true
-            }
+    private fun getInventoryTitle(event: InventoryClickEvent): List<String>? {
+        return try {
+            event.view.title.split(" ")
+        } catch (_: Exception) {
+            null
         }
+    }
+
+    private fun calculateCacheIndex(slot: Int, page: Int): Int {
+        return (slot + 1) + ((page - 1) * Slots.ITEMS_PER_PAGE)
+    }
+
+    private fun <T> navigateToPage(player: Player, cache: Map<Int, T>, page: Int) {
+        if (page < 1) return
+        (cache[page] as? org.bukkit.inventory.Inventory)?.let { player.openInventory(it) }
     }
 }

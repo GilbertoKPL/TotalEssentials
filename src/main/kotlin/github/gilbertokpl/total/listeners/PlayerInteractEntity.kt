@@ -8,24 +8,18 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
 
 class PlayerInteractEntity : Listener {
-    @EventHandler
-    fun event(e: PlayerInteractEntityEvent) {
-        if (MainConfig.antibugsBlockNametag) {
-            try {
-                blockNameTag(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
-    }
 
-    private fun blockNameTag(e: PlayerInteractEntityEvent) {
+    @EventHandler
+    fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
+        if (!MainConfig.antibugsBlockNametag) return
+        if (event.player.hasPermission("totalessentials.bypass.nametag")) return
+
         @Suppress("DEPRECATION")
-        if (e.player.itemInHand.type == Material.NAME_TAG &&
-            !e.player.hasPermission("totalessentials.bypass.nametag")
-        ) {
-            e.player.sendMessage(LangConfig.generalNotPermAction)
-            e.isCancelled = true
+        val itemInHand = event.player.itemInHand
+
+        if (itemInHand.type == Material.NAME_TAG) {
+            event.player.sendMessage(LangConfig.generalNotPermAction)
+            event.isCancelled = true
         }
     }
 }

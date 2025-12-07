@@ -13,94 +13,103 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 
 class PlayerDeath : Listener {
+
     @EventHandler
-    fun event(e: PlayerDeathEvent) {
+    fun onPlayerDeath(event: PlayerDeathEvent) {
         if (MainConfig.backActivated) {
-            try {
-                setBackLocation(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            updateBackLocation(event)
         }
+
         if (MainConfig.messagesDeathmessagesMessage) {
-            try {
-                deathMessage(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            handleDeathMessage(event)
         }
+
         if (MainConfig.addonsPlayerPreventLoseXp) {
-            try {
-                loseXP(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
+            preventXpLoss(event)
+        }
+    }
+
+    private fun preventXpLoss(event: PlayerDeathEvent) {
+        event.keepLevel = true
+        event.droppedExp = 0
+    }
+
+    private fun updateBackLocation(event: PlayerDeathEvent) {
+        val player = event.entity
+
+        if (!player.hasPermission("totalessentials.commands.back")) return
+
+        val isWorldBlocked = MainConfig.backDisabledWorlds.contains(player.world.name.lowercase())
+        val canBypassBlockedWorlds = player.hasPermission("totalessentials.bypass.backblockedworlds")
+
+        if (isWorldBlocked && !canBypassBlockedWorlds) return
+
+        PlayerData.backLocation[player] = player.location
+    }
+
+    private fun handleDeathMessage(event: PlayerDeathEvent) {
+        event.deathMessage = null
+
+        val player = event.entity
+        val playerName = player.name
+        val damageCause = player.lastDamageCause
+
+        if (damageCause == null) {
+            sendGenericDeathMessage(playerName)
+            return
+        }
+
+        when (damageCause.cause) {
+            EntityDamageEvent.DamageCause.ENTITY_ATTACK -> {
+                handleEntityAttackDeath(damageCause, playerName)
+            }
+            else -> {
+                handleEnvironmentalDeath(damageCause, playerName)
             }
         }
     }
 
-    private fun loseXP(e: PlayerDeathEvent) {
-        e.keepLevel = true
-        e.droppedExp = 0
-    }
+    private fun handleEntityAttackDeath(damageCause: EntityDamageEvent, playerName: String) {
+        val damageEvent = damageCause as? EntityDamageByEntityEvent ?: return
+        val damager = damageEvent.damager
 
-    private fun setBackLocation(e: PlayerDeathEvent) {
-        if (!e.entity.hasPermission("totalessentials.commands.back") || MainConfig.backDisabledWorlds.contains(
-                e.entity.world.name.lowercase()
-            ) && !e.entity.hasPermission("totalessentials.bypass.backblockedworlds")
-        ) return
-        PlayerData.backLocation[e.entity] = e.entity.location
-    }
-
-    private fun deathMessage(e: PlayerDeathEvent) {
-        e.deathMessage = null
-
-        val pName = e.entity.player!!.name
-
-        val damageCause = e.entity.player!!.lastDamageCause ?: run {
-            ServerUtil.serverMessage(
-                LangConfig.deathmessagesNothingKillPlayer
-                    .replace("%player%", pName)
+        if (damager is Player) {
+            ServerUtil.broadcastMessage(
+                LangConfig.deathmessagesPlayerKillPlayer
+                    .replace("%player%", playerName)
+                    .replace("%killer%", damager.name)
             )
             return
         }
 
-        if (damageCause.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
-            val ent = damageCause as EntityDamageByEntityEvent
-            val dmg = ent.damager
-            if (dmg is Player) {
-                ServerUtil.serverMessage(
-                    LangConfig.deathmessagesPlayerKillPlayer
-                        .replace("%player%", pName)
-                        .replace("%killer%", dmg.name)
-                )
-                return
-            }
-            val causeMessage =
-                InternalLoader.deathMessageListReplacer[ent.damager.toString().lowercase()] ?: run {
-                    ent.damager.toString().lowercase()
-                }
-            ServerUtil.serverMessage(
-                LangConfig.deathmessagesEntityKillPlayer
-                    .replace("%player%", pName)
-                    .replace("%entity%", causeMessage)
+        val entityName = InternalLoader.deathMessageListReplacer[damager.type.name.lowercase()]
+            ?: damager.type.name.lowercase()
+
+        ServerUtil.broadcastMessage(
+            LangConfig.deathmessagesEntityKillPlayer
+                .replace("%player%", playerName)
+                .replace("%entity%", entityName)
+        )
+    }
+
+    private fun handleEnvironmentalDeath(damageCause: EntityDamageEvent, playerName: String) {
+        val causeName = damageCause.cause.name.lowercase()
+        val causeMessage = InternalLoader.deathMessageListReplacer[causeName]
+
+        if (causeMessage == null) {
+            ServerUtil.consoleMessage(
+                LangConfig.deathmessagesCauseNotExist.replace("%cause%", causeName)
             )
+            sendGenericDeathMessage(playerName)
             return
         }
 
-        val causeMessage =
-            InternalLoader.deathMessageListReplacer[damageCause.cause.name.lowercase()] ?: run {
-                ServerUtil.consoleMessage(
-                    LangConfig.deathmessagesCauseNotExist
-                        .replace("%cause%", damageCause.cause.name.lowercase())
-                )
-                ServerUtil.serverMessage(
-                    LangConfig.deathmessagesNothingKillPlayer
-                        .replace("%player%", pName)
-                )
-                return
-            }
-        ServerUtil.serverMessage(
-            causeMessage.replace("%player%", pName)
+        ServerUtil.broadcastMessage(causeMessage.replace("%player%", playerName))
+    }
+
+    private fun sendGenericDeathMessage(playerName: String) {
+        ServerUtil.broadcastMessage(
+            LangConfig.deathmessagesNothingKillPlayer.replace("%player%", playerName)
         )
     }
 }

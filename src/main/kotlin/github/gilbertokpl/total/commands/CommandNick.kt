@@ -38,7 +38,7 @@ class CommandNick : CommandManager("nick") {
         // single argument (self nick)
         if (args.size == 1 && sender is Player) {
 
-            if (ServerUtil.checkSpecialCharacters(args[0])) {
+            if (ServerUtil.hasSpecialCharacters(args[0])) {
                 sender.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
                 return false
             }
@@ -78,7 +78,7 @@ class CommandNick : CommandManager("nick") {
         // two arguments (other player)
         if (args.size != 2) return true
 
-        if (ServerUtil.checkSpecialCharacters(args[1])) {
+        if (ServerUtil.hasSpecialCharacters(args[1])) {
             sender.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }

@@ -225,6 +225,42 @@ public class LangConfig implements DefaultLang {
     )
     public static String generalResetDiscordMessage;
 
+    //title
+
+    @MultiValue(
+            {
+                    @Value(value = "BEM VINDO!", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String titleJoinTitle;
+
+    @MultiValue(
+            {
+                    @Value(value = "Ao Servidor TotalCraft", lang = LangTypes.PT_BR),
+                    @Value(value = "", lang = LangTypes.EN_US)
+            }
+    )
+    public static String titleJoinSubtitle;
+
+    //sound
+    @MultiValue(
+            {
+                    @Value(value = "note.pling", lang = LangTypes.PT_BR),
+                    @Value(value = "note.pling", lang = LangTypes.EN_US)
+            }
+    )
+    public static String soundJoin;
+
+    @MultiValue(
+            {
+                    @Value(value = "note.pling", lang = LangTypes.PT_BR),
+                    @Value(value = "note.pling", lang = LangTypes.EN_US)
+            }
+    )
+    public static String soundClearentities;
+
+
     //time
     @MultiValue(
             {
@@ -2231,11 +2267,18 @@ public class LangConfig implements DefaultLang {
     public static String discordchatNoChatId;
     @MultiValue(
             {
-                    @Value(value = "**`%group% %player%`**: %message%", lang = LangTypes.PT_BR),
-                    @Value(value = "**`%group% %player%`**: %message%", lang = LangTypes.EN_US)
+                    @Value(value = "%message%", lang = LangTypes.PT_BR),
+                    @Value(value = "%message%", lang = LangTypes.EN_US)
             }
     )
-    public static String discordchatMessageToDiscordPattern;
+    public static String discordchatMessageToDiscordNewPattern;
+    @MultiValue(
+            {
+                    @Value(value = "%group% • %player%", lang = LangTypes.PT_BR),
+                    @Value(value = "%group% • %player%", lang = LangTypes.EN_US)
+            }
+    )
+    public static String discordchatMessageToDiscordNamePattern;
     @MultiValue(
             {
                     @Value(value = "&e[Disc] %player%: %message%", lang = LangTypes.PT_BR),
@@ -2252,36 +2295,43 @@ public class LangConfig implements DefaultLang {
     public static String discordchatMessageNotSendToServer;
     @MultiValue(
             {
-                    @Value(value = "%player% Entrou no servidor.", lang = LangTypes.PT_BR),
-                    @Value(value = "%player% Joined the server.", lang = LangTypes.EN_US)
+                    @Value(value = "✅ %player% Entrou no servidor.", lang = LangTypes.PT_BR),
+                    @Value(value = "✅ %player% Joined the server.", lang = LangTypes.EN_US)
             }
     )
     public static String discordchatDiscordSendLoginMessage;
     @MultiValue(
             {
-                    @Value(value = "%player% Saiu do servidor.", lang = LangTypes.PT_BR),
-                    @Value(value = "%player% Left the server.", lang = LangTypes.EN_US)
+                    @Value(value = "⛔ %player% Saiu do servidor.", lang = LangTypes.PT_BR),
+                    @Value(value = "⛔ %player% Left the server.", lang = LangTypes.EN_US)
             }
     )
     public static String discordchatDiscordSendLeaveMessage;
     @MultiValue(
             {
-                    @Value(value = "Online: %online% players, Tempo Online: %online_time%, Atualizado: %time%", lang = LangTypes.PT_BR),
-                    @Value(value = "Online: %online% players, Online time: %online_time%, Updated: %time%", lang = LangTypes.EN_US)
+                    @Value(value = "Network • server • %time%.", lang = LangTypes.PT_BR),
+                    @Value(value = "Network • server • %time%.", lang = LangTypes.EN_US)
             }
     )
-    public static String discordchatDiscordTopic;
+    public static String discordchatFooter;
     @MultiValue(
             {
-                    @Value(value = "Servidor Iniciado", lang = LangTypes.PT_BR),
-                    @Value(value = "Server started", lang = LangTypes.EN_US)
+                    @Value(value = "👥 Online: %online% • ⏱️ Tempo total: %online_time% • 🕒 Atualizado: %time%", lang = LangTypes.PT_BR),
+                    @Value(value = "👥 Online: %online% • ⏱️ Online time: %online_time% • 🕒 Updated: %time%", lang = LangTypes.EN_US)
+            }
+    )
+    public static String discordchatTopic;
+    @MultiValue(
+            {
+                    @Value(value = "✅ Servidor Iniciado", lang = LangTypes.PT_BR),
+                    @Value(value = "✅ Server started", lang = LangTypes.EN_US)
             }
     )
     public static String discordchatServerStart;
     @MultiValue(
             {
-                    @Value(value = "Servidor fechado", lang = LangTypes.PT_BR),
-                    @Value(value = "Server closed", lang = LangTypes.EN_US)
+                    @Value(value = "⛔ Servidor fechado", lang = LangTypes.PT_BR),
+                    @Value(value = "⛔ Server closed", lang = LangTypes.EN_US)
             }
     )
     public static String discordchatServerClose;

@@ -15,7 +15,7 @@ object ShopData : ICache {
 
     private val cache = TotalEssentials.getCore().getCache()
 
-    val shopVisits = cache.integer(this, ShopDataSQL.visits)
+    val shopVisits = cache.int(this, ShopDataSQL.visits)
     val shopLocation = cache.location(this, ShopDataSQL.location, LocationSerializer())
     val shopOpen = cache.boolean(this, ShopDataSQL.open)
 

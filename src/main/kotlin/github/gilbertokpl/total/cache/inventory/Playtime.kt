@@ -10,85 +10,164 @@ import org.bukkit.Material
 import org.bukkit.SkullType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import java.util.*
 
 object Playtime {
-    private val GLASS_MATERIAL = ItemUtil.item(MaterialUtil["glass"]!!, "§ePLAYTIME", true)
-    private const val ITEMS_PER_PAGE = 27
-    private const val MAX_ITEMS = 135
+
+    // ────────────────────────────────────────────────────────────────
+    //  CONSTANTES
+    // ────────────────────────────────────────────────────────────────
+
+    private object Slots {
+        const val ITEMS_PER_PAGE = 27
+        const val INVENTORY_SIZE = 36
+
+        // Navegação
+        const val BACK_BUTTON = 27
+        val GLASS_SLOTS = 28..34
+        const val NEXT_BUTTON = 35
+    }
+
+    private object Limits {
+        const val MAX_PLAYERS = 135
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  CACHE DE ITENS
+    // ────────────────────────────────────────────────────────────────
+
+    private val glassItem: ItemStack by lazy {
+        ItemUtil.createItem(MaterialUtil["glass"]!!, "§ePLAYTIME", glowEffect = true)
+    }
+
+    private val backButtonItem: ItemStack by lazy {
+        ItemUtil.createItem(Material.HOPPER, LangConfig.playtimeInventoryIconBackName, glowEffect = true)
+    }
+
+    private val nextButtonItem: ItemStack by lazy {
+        ItemUtil.createItem(Material.ARROW, LangConfig.playtimeInventoryIconNextName, glowEffect = true)
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  SETUP
+    // ────────────────────────────────────────────────────────────────
 
     fun setup() {
+        val sortedPlayers = getSortedPlayers()
+        if (sortedPlayers.isEmpty()) {
+            Data.playTimeInventoryCache = emptyMap()
+            return
+        }
+
         val inventoryCache = linkedMapOf<Int, Inventory>()
         var currentPage = 1
         var currentSlot = 0
         var inventory = createPlaytimeInventory(currentPage)
 
-        val sortedPlaytime = PlayerData.playTimeCache.getMap()
-            .toList()
-            .sortedByDescending { (_, value) -> value }
-
-        sortedPlaytime.take(MAX_ITEMS).forEach { (player, time) ->
-            val item = createHeadItem(player, time ?: 0L)
-            inventory.setItem(currentSlot, item)
+        sortedPlayers.forEach { (playerName, time) ->
+            inventory.setItem(currentSlot, createHeadItem(playerName, time ?: 0L))
             currentSlot++
 
-            if (currentSlot == ITEMS_PER_PAGE) {
-                finalizePage(inventory, currentPage)
+            if (currentSlot == Slots.ITEMS_PER_PAGE) {
+                applyNavigationBar(inventory, currentPage, hasNextPage = true)
                 inventoryCache[currentPage] = inventory
+
                 currentPage++
                 currentSlot = 0
                 inventory = createPlaytimeInventory(currentPage)
             }
         }
 
+        // Última página (pode não estar cheia)
         if (currentSlot > 0) {
-            finalizePage(inventory, currentPage, isLastPage = true)
+            applyNavigationBar(inventory, currentPage, hasNextPage = false)
             inventoryCache[currentPage] = inventory
         }
 
-        Data.playTimeInventoryCache = Collections.unmodifiableMap(inventoryCache)
+        Data.playTimeInventoryCache = inventoryCache.toMap()
     }
 
-    fun createHeadItem(name: String, time: Long): ItemStack {
-        val playerName = LangConfig.playtimeInventoryItemsName.replace("%player%", name)
-        val item = ItemStack(MaterialUtil["head"]!!, 1, SkullType.PLAYER.ordinal.toShort())
-        val meta = item.itemMeta
-
-        ItemUtil.setDisplayName(meta, playerName)
-        meta?.lore = createLore(name, time)
-        item.itemMeta = meta
-
-        return item
+    private fun getSortedPlayers(): List<Pair<String, Long?>> {
+        return PlayerData.playTimeCache.getMap()
+            .toList()
+            .sortedByDescending { it.second }
+            .take(Limits.MAX_PLAYERS)
     }
 
-    private fun createLore(name: String, time: Long): List<String> {
-        val t1 = PlayerData.playtimeLocal[name] ?: 0L
-        val totalTime = time + if (t1 != 0L) System.currentTimeMillis() - t1 else 0L
-
-        return LangConfig.playtimeInventoryItemsLore.map {
-            it.replace("%time%", TotalEssentials.getCore().getTime().convertMillisToString(totalTime, true))
-        }
-    }
-
-    private fun finalizePage(inventory: Inventory, currentPage: Int, isLastPage: Boolean = false) {
-        inventory.setItem(27, if (currentPage > 1) {
-            ItemUtil.item(Material.HOPPER, LangConfig.playtimeInventoryIconBackName, true)
-        } else {
-            GLASS_MATERIAL
-        })
-
-        for (i in 28..34) {
-            inventory.setItem(i, GLASS_MATERIAL)
-        }
-
-        inventory.setItem(35, if (isLastPage) {
-            GLASS_MATERIAL
-        } else {
-            ItemUtil.item(Material.ARROW, LangConfig.playtimeInventoryIconNextName, true)
-        })
-    }
+    // ────────────────────────────────────────────────────────────────
+    //  CRIAÇÃO DE INVENTÁRIOS
+    // ────────────────────────────────────────────────────────────────
 
     private fun createPlaytimeInventory(page: Int): Inventory {
-        return TotalEssentials.getInstance().server.createInventory(null, 36, "§ePLAYTIME $page")
+        return TotalEssentials.getInstance().server.createInventory(
+            null,
+            Slots.INVENTORY_SIZE,
+            "§ePLAYTIME $page"
+        )
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  NAVEGAÇÃO
+    // ────────────────────────────────────────────────────────────────
+
+    private fun applyNavigationBar(inventory: Inventory, currentPage: Int, hasNextPage: Boolean) {
+        // Botão voltar
+        inventory.setItem(
+            Slots.BACK_BUTTON,
+            if (currentPage > 1) backButtonItem else glassItem
+        )
+
+        // Vidros decorativos
+        Slots.GLASS_SLOTS.forEach { inventory.setItem(it, glassItem) }
+
+        // Botão próximo
+        inventory.setItem(
+            Slots.NEXT_BUTTON,
+            if (hasNextPage) nextButtonItem else glassItem
+        )
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  CRIAÇÃO DE ITENS
+    // ────────────────────────────────────────────────────────────────
+
+    fun createHeadItem(playerName: String, time: Long): ItemStack {
+        @Suppress("DEPRECATION")
+        val item = ItemStack(MaterialUtil["head"]!!, 1, SkullType.PLAYER.ordinal.toShort())
+
+        return item.apply {
+            itemMeta = itemMeta?.apply {
+                ItemUtil.setDisplayName(this, formatPlayerName(playerName))
+                lore = createTimeLore(playerName, time)
+            }
+        }
+    }
+
+    private fun formatPlayerName(playerName: String): String {
+        return LangConfig.playtimeInventoryItemsName.replace("%player%", playerName)
+    }
+
+    private fun createTimeLore(playerName: String, savedTime: Long): List<String> {
+        val totalTime = calculateTotalTime(playerName, savedTime)
+        val formattedTime = formatTime(totalTime)
+
+        return LangConfig.playtimeInventoryItemsLore.map {
+            it.replace("%time%", formattedTime)
+        }
+    }
+
+    private fun calculateTotalTime(playerName: String, savedTime: Long): Long {
+        val sessionStart = PlayerData.playtimeLocal[playerName] ?: 0L
+        val currentSessionTime = if (sessionStart != 0L) {
+            System.currentTimeMillis() - sessionStart
+        } else {
+            0L
+        }
+        return savedTime + currentSessionTime
+    }
+
+    private fun formatTime(millis: Long): String {
+        return TotalEssentials.getCore()
+            .getTime()
+            .convertMillisToString(millis, true)
     }
 }

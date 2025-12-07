@@ -1,25 +1,33 @@
 package github.gilbertokpl.total.listeners
 
-
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.LoginData
 import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.cache.data.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
+import github.gilbertokpl.total.config.files.LangConfig.titleJoinSubtitle
+import github.gilbertokpl.total.config.files.LangConfig.titleJoinTitle
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.DiscordManager
 import github.gilbertokpl.total.login.LoginManager
 import github.gilbertokpl.total.util.ServerUtil
 import github.gilbertokpl.total.util.PermissionUtil
 import github.gilbertokpl.total.util.PlayerUtil
+import github.gilbertokpl.total.util.PlayerUtil.getMojangSkinURL
+import github.gilbertokpl.total.util.PlayerUtil.sound
+import github.gilbertokpl.total.util.PlayerUtil.title
 import github.gilbertokpl.total.vip.VipManager
+import net.md_5.bungee.api.ChatMessageType
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import java.awt.TextComponent
 
 class PlayerJoin : Listener {
+
     @EventHandler(priority = EventPriority.HIGH)
     fun onPlayerJoin(event: PlayerJoinEvent) {
         event.joinMessage = null
@@ -31,13 +39,28 @@ class PlayerJoin : Listener {
         SpawnData.teleportToSpawn(player)
 
         val task = TotalEssentials.getCore().getTask()
+        initializePlayerData(player)
+
+        //title
+
+        if (MainConfig.titleActivated) {
+            player.title(titleJoinTitle, titleJoinSubtitle)
+        }
+
+        //sound
+
+        if (MainConfig.soundActivated) {
+            player.sound(LangConfig.soundJoin)
+        }
 
         task.async {
             handlePlaytime(player)
-            initializePlayerData(player)
-            sendMessages(player)
+            sendJoinMessages(player)
             VipManager.checkVip(player.name.lowercase())
-            handleAntiVpn(player, address)
+
+            if (MainConfig.generalAntiVpn) {
+                PlayerData.playerInfo[player] = PlayerUtil.checkPlayerIP(address)
+            }
 
             task.sync {
                 PlayerData.applyPlayerSettings(player)
@@ -63,9 +86,9 @@ class PlayerJoin : Listener {
     }
 
     private fun handlePlaytime(player: Player) {
-        if (MainConfig.playtimeActivated) {
-            PlayerData.playtimeLocal[player] = System.currentTimeMillis()
-        }
+        if (!MainConfig.playtimeActivated) return
+
+        PlayerData.playtimeLocal[player] = System.currentTimeMillis()
     }
 
     private fun initializePlayerData(player: Player) {
@@ -81,25 +104,26 @@ class PlayerJoin : Listener {
         PlayerData.homeLimitCache[player] = homeLimit
     }
 
-    private fun sendMessages(player: Player) {
+    private fun sendJoinMessages(player: Player) {
+        // Não envia mensagem para admins (permissão *)
         if (player.hasPermission("*")) return
 
+        val isVanished = PlayerData.vanishCache[player] ?: false
+        if (isVanished) return
+
         if (MainConfig.messagesLoginMessage) {
-            ServerUtil.serverMessage(
+            ServerUtil.broadcastMessage(
                 LangConfig.messagesEnterMessage.replace("%player%", player.name)
             )
         }
+
         if (MainConfig.discordbotSendLoginMessage) {
             DiscordManager.sendDiscordMessage(
-                LangConfig.discordchatDiscordSendLoginMessage.replace("%player%", player.name),
-                true
+                message = LangConfig.discordchatDiscordSendLoginMessage.replace("%player%", player.name),
+                embed = true,
+                tittle = true,
+                avatarUrl = getMojangSkinURL(player)
             )
-        }
-    }
-
-    private fun handleAntiVpn(player: Player, address: String) {
-        if (MainConfig.generalAntiVpn) {
-            PlayerData.playerInfo[player] = PlayerUtil.checkPlayer(address)
         }
     }
 }

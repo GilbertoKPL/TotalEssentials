@@ -14,6 +14,6 @@ object LimitData : ICache {
     private val cache = TotalEssentials.getCore().getCache()
 
     val limitItems = cache.list(this, LimiterSQL.itemsTable, ItemSerializer())
-    val limitPrice = cache.integer(this, LimiterSQL.priceTable)
+    val limitPrice = cache.int(this, LimiterSQL.priceTable)
 
 }

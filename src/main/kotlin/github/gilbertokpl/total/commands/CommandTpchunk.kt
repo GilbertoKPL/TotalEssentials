@@ -13,7 +13,7 @@ class CommandTpchunk : CommandManager("tpchunk") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf("tpchunk"),
+            aliases = listOf(),
             active = MainConfig.tpActivated,
             target = CommandTargetType.PLAYER,
             countdown = 0,

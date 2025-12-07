@@ -138,7 +138,7 @@ class CommandTotal : CommandManager("total") {
         TotalEssentials.getCore().getTask().async {
             try {
                 transaction(TotalEssentials.getCore().sql) {
-                    TotalEssentials.getCore().getCache().toByteUpdate.forEach {
+                    TotalEssentials.getCore().getCache().getBuilders().forEach {
                         try { it.update() } catch (e: Exception) { println(e) }
                     }
                 }

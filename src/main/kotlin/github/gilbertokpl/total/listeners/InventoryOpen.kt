@@ -7,24 +7,21 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryOpenEvent
 
 class InventoryOpen : Listener {
-    @EventHandler
-    fun event(e: InventoryOpenEvent) {
-        if (MainConfig.containersBlockOpenEnable) {
-            try {
-                blockOpenInventory(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
+
+    private val blockedInventories by lazy {
+        MainConfig.containersBlockOpen.map { it.lowercase() }.toSet()
     }
 
-    //block open
-    private fun blockOpenInventory(e: InventoryOpenEvent) {
-        if (!e.player.hasPermission("totalessentials.bypass.opencontainer") &&
-            MainConfig.containersBlockOpen.contains(e.inventory.type.name.lowercase())
-        ) {
-            e.isCancelled = true
-            e.player.sendMessage(LangConfig.generalNotPermAction)
+    @EventHandler
+    fun onInventoryOpen(event: InventoryOpenEvent) {
+        if (!MainConfig.containersBlockOpenEnable) return
+        if (event.player.hasPermission("totalessentials.bypass.opencontainer")) return
+
+        val inventoryType = event.inventory.type.name.lowercase()
+
+        if (blockedInventories.contains(inventoryType)) {
+            event.isCancelled = true
+            event.player.sendMessage(LangConfig.generalNotPermAction)
         }
     }
 }

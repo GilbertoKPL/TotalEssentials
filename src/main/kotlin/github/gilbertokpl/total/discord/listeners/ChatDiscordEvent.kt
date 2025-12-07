@@ -26,7 +26,7 @@ class ChatDiscordEvent : ListenerAdapter() {
                     }
                     return
                 }
-                ServerUtil.serverMessage(
+                ServerUtil.broadcastMessage(
                     LangConfig.discordchatDiscordToServerPattern
                         .replace("%player%", e.author.name)
                         .replace("%message%", msg)

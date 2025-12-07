@@ -6,14 +6,11 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBurnEvent
 
 class BurnEvent : Listener {
-    @EventHandler
-    fun event(e: BlockBurnEvent) {
-        if (MainConfig.addonsBlockPropagationFire) {
-            blockPropagationFire(e)
-        }
-    }
 
-    private fun blockPropagationFire(e: BlockBurnEvent) {
-        e.isCancelled = true
+    @EventHandler
+    fun onBlockBurn(event: BlockBurnEvent) {
+        if (MainConfig.addonsBlockPropagationFire) {
+            event.isCancelled = true
+        }
     }
 }

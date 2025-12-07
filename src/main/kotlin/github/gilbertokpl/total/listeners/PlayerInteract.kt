@@ -10,27 +10,26 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 
 class PlayerInteract : Listener {
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    fun event(e: PlayerInteractEvent) {
 
-        if (!LoginData.isPlayerLoggedIn(e.player)) {
-            e.isCancelled = true
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    fun onPlayerInteract(event: PlayerInteractEvent) {
+        if (!LoginData.isPlayerLoggedIn(event.player)) {
+            event.isCancelled = true
             return
         }
 
         if (MainConfig.addonsInfinityAnvil) {
-            try {
-                infinityAnvil(e)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            repairAnvil(event)
         }
     }
 
-    private fun infinityAnvil(e: PlayerInteractEvent) {
-        e.clickedBlock ?: return
-        if (e.action == Action.RIGHT_CLICK_BLOCK && e.clickedBlock!!.type == Material.ANVIL) {
-            e.clickedBlock!!.type = Material.ANVIL
+    private fun repairAnvil(event: PlayerInteractEvent) {
+        if (event.action != Action.RIGHT_CLICK_BLOCK) return
+
+        val clickedBlock = event.clickedBlock ?: return
+
+        if (clickedBlock.type == Material.ANVIL) {
+            clickedBlock.type = Material.ANVIL
         }
     }
 }

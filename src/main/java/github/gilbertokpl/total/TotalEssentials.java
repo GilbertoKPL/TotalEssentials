@@ -74,7 +74,6 @@ public class TotalEssentials extends JavaPlugin {
         totalCore = new TotalCore(this);
 
         MaterialUtil.INSTANCE.startMaterials();
-        EnchantUtil.INSTANCE.startEnchantments();
         totalCore.startConfig("github.gilbertokpl.total.config.files");
 
         if (MainConfig.moneyActivated) {
@@ -94,6 +93,8 @@ public class TotalEssentials extends JavaPlugin {
         printConsoleBanner();
 
         Runtime runtime = Runtime.getRuntime();
+
+        EnchantUtil.INSTANCE.startEnchantments();
 
         long before = runtime.totalMemory() - runtime.freeMemory();
 
@@ -122,7 +123,12 @@ public class TotalEssentials extends JavaPlugin {
 
         TotalEssentials.getCore().getTask().disable();
         if (MainConfig.discordbotConnectDiscordChat) {
-            DiscordManager.INSTANCE.sendDiscordMessage(LangConfig.discordchatServerClose, true);
+            DiscordManager.INSTANCE.sendDiscordMessage(
+                    LangConfig.discordchatServerClose,
+                    true,
+                    true,
+                    null
+            );
         }
     }
     private void startCorePlugin() {
@@ -149,7 +155,7 @@ public class TotalEssentials extends JavaPlugin {
                 LangConfig.deathmessagesCauseReplacer,
                 LangConfig.deathmessagesEntityReplacer
         );
-        ServerUtil.INSTANCE.startInventories();
+        ServerUtil.INSTANCE.initializeFeatures();
     }
 
     private void initVersionCheck() {
@@ -159,10 +165,16 @@ public class TotalEssentials extends JavaPlugin {
     }
 
     private void initDiscord() {
+        if (MainConfig.discordbotToken.isEmpty()) return;
         JDALogger.setFallbackLoggerEnabled(false);
         DiscordManager.INSTANCE.startBot();
         if (MainConfig.discordbotConnectDiscordChat) {
-            DiscordManager.INSTANCE.sendDiscordMessage(LangConfig.discordchatServerStart, true);
+            DiscordManager.INSTANCE.sendDiscordMessage(
+                    LangConfig.discordchatServerStart,
+                    true,
+                    true,
+                    null
+            );
         }
     }
 

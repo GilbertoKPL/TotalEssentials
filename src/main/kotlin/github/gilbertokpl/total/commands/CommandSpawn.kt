@@ -16,7 +16,7 @@ class CommandSpawn : CommandManager("spawn") {
 
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
-            aliases = listOf(""),
+            aliases = listOf(),
             active = MainConfig.spawnActivated,
             target = CommandTargetType.ALL,
             countdown = 0,
@@ -64,7 +64,7 @@ class CommandSpawn : CommandManager("spawn") {
 
         // Teleport self
         if (sender is Player) {
-            PlayerUtil.teleportWithTime(sender, spawnLocation, MainConfig.spawnTimeToTeleport, LangConfig.spawnMessage, "spawn")
+            PlayerUtil.teleportWithDelay(sender, spawnLocation, MainConfig.spawnTimeToTeleport, LangConfig.spawnMessage, "spawn")
         }
 
         return false

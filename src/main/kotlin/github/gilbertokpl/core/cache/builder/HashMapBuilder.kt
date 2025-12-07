@@ -1,177 +1,250 @@
 package github.gilbertokpl.core.cache.builder
 
-import github.gilbertokpl.core.cache.interfaces.ICacheSerializer
 import github.gilbertokpl.core.cache.interfaces.ICacheBuilderExtended
-import github.gilbertokpl.total.TotalEssentials
-import github.gilbertokpl.total.cache.data.PlayerData
+import github.gilbertokpl.core.cache.interfaces.ICacheLogger
+import github.gilbertokpl.core.cache.interfaces.ICacheSerializer
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.update
-import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.write
+import kotlin.concurrent.read
 
-internal class HashMapBuilder<T, V, K>(
-    private val table: Table,
-    private val primaryColumn: Column<String>,
-    private val column: Column<T>,
-    private val classConvert: ICacheSerializer<HashMap<V, K>, T>
-) : ICacheBuilderExtended<HashMap<V, K>, V> {
+/**
+ * Builder para cache de HashMaps com persistência.
+ * Suporta operações de adição/remoção de chaves individuais.
+ *
+ * @param K Tipo das chaves do HashMap
+ * @param V Tipo dos valores do HashMap
+ * @param D Tipo no banco de dados (geralmente String ou Int)
+ */
+class HashMapBuilder<K, V, D>(
+    table: Table,
+    primaryColumn: Column<String>,
+    column: Column<D>,
+    private val serializer: ICacheSerializer<HashMap<K, V>, D>,
+    logger: ICacheLogger
+) : AbstractCacheBuilder<HashMap<K, V>, D>(table, primaryColumn, column, logger),
+    ICacheBuilderExtended<HashMap<K, V>, K> {
 
-    private val hashMap = HashMap<String, HashMap<V, K>?>()
-    private val toUpdate = mutableSetOf<String>()
-    private val lock = ReentrantLock()
+    override fun toDatabase(value: HashMap<K, V>): D = serializer.convertToDatabase(value)
 
-    override fun getMap(): Map<String, HashMap<V, K>?> {
-        lock.lock()
-        return try {
-            hashMap.toMap()
-        } finally {
-            lock.unlock()
-        }
-    }
+    override fun fromDatabase(value: D): HashMap<K, V>? = serializer.convertToCache(value)
 
-    override operator fun get(entity: String): HashMap<V, K>? {
-        return hashMap[entity.lowercase()]
-    }
+    override fun defaultValue(): HashMap<K, V> = HashMap()
 
-    override operator fun get(entity: Player): HashMap<V, K>? {
-        return get(entity.name.lowercase())
-    }
+    override fun shouldDelete(value: HashMap<K, V>?): Boolean = value == null
 
-    override operator fun set(entity: Player, value: HashMap<V, K>) {
-        set(entity.name.lowercase(), value)
-    }
+    // =========================================================
+    // Operações de set
+    // =========================================================
 
-    override fun set(entity: String, value: HashMap<V, K>, override: Boolean) {
-        lock.lock()
-        try {
-            val lowerKey = entity.lowercase()
+    override operator fun set(entity: String, value: HashMap<K, V>, override: Boolean) {
+        val key = normalizeKey(entity)
+        rwLock.write {
             if (override) {
-                hashMap[lowerKey] = value
+                cache[key] = value
             } else {
-                val existing = hashMap[lowerKey] ?: HashMap()
+                val existing = cache[key] ?: HashMap()
                 existing.putAll(value)
-                hashMap[lowerKey] = existing
+                cache[key] = existing
             }
-            toUpdate.add(lowerKey)
-        } finally {
-            lock.unlock()
+            markedForDeletion.remove(key)
+            markForUpdate(key)
         }
     }
 
-    override operator fun set(entity: String, value: HashMap<V, K>) {
-        set(entity, value, override = false)
+    // =========================================================
+    // Operações estendidas (ICacheBuilderExtended)
+    // =========================================================
+
+    override fun add(entity: String, value: K) {
+        throw UnsupportedOperationException(
+            "Use put(entity, key, value) para adicionar entradas ao HashMap"
+        )
     }
 
-    override fun remove(entity: Player, value: V) {
-        remove(entity.name.lowercase(), value)
-    }
+    override fun add(entity: Player, value: K) = add(entity.name, value)
 
-    override fun remove(entity: String, value: V) {
-        lock.lock()
-        try {
-            val lowerKey = entity.lowercase()
-            val existing = hashMap[lowerKey] ?: return
-            existing.remove(value)
-            hashMap[lowerKey] = existing
-            toUpdate.add(lowerKey)
-        } finally {
-            lock.unlock()
+    /**
+     * Adiciona ou atualiza uma entrada no HashMap de uma entidade.
+     */
+    fun put(entity: String, mapKey: K, mapValue: V) {
+        val key = normalizeKey(entity)
+        rwLock.write {
+            val map = cache[key] ?: HashMap()
+            map[mapKey] = mapValue
+            cache[key] = map
+            markedForDeletion.remove(key)
+            markForUpdate(key)
         }
     }
 
-    override fun remove(entity: Player) {
-        remove(entity.name.lowercase())
-    }
+    /**
+     * Adiciona ou atualiza uma entrada no HashMap de um Player.
+     */
+    fun put(entity: Player, mapKey: K, mapValue: V) = put(entity.name, mapKey, mapValue)
 
-    override fun remove(entity: String) {
-        lock.lock()
-        try {
-        hashMap[entity.lowercase()] = null
-        toUpdate.add(entity.lowercase())
-        } finally {
-            lock.unlock()
+    /**
+     * Obtém um valor específico do HashMap de uma entidade.
+     */
+    fun getValue(entity: String, mapKey: K): V? {
+        rwLock.read {
+            return cache[normalizeKey(entity)]?.get(mapKey)
         }
     }
 
-    private fun save(list: List<String>) {
-        if (toUpdate.isEmpty()) return
+    /**
+     * Obtém um valor específico do HashMap de um Player.
+     */
+    fun getValue(entity: Player, mapKey: K): V? = getValue(entity.name, mapKey)
 
-        lock.lock()
-        try {
-            if (toUpdate.isEmpty()) return
+    override fun remove(entity: String, value: K) {
+        val key = normalizeKey(entity)
+        rwLock.write {
+            val map = cache[key] ?: return
+            map.remove(value)
+            cache[key] = map
+            markForUpdate(key)
+        }
+    }
+
+    override fun remove(entity: Player, value: K) = remove(entity.name, value)
+
+    override fun contains(entity: String, value: K): Boolean {
+        rwLock.read {
+            return cache[normalizeKey(entity)]?.containsKey(value) ?: false
+        }
+    }
+
+    override fun contains(entity: Player, value: K): Boolean = contains(entity.name, value)
+
+    /**
+     * Verifica se o HashMap de uma entidade contém um valor.
+     */
+    fun containsValue(entity: String, value: V): Boolean {
+        rwLock.read {
+            return cache[normalizeKey(entity)]?.containsValue(value) ?: false
+        }
+    }
+
+    // =========================================================
+    // Persistência
+    // =========================================================
+
+    override fun update() {
+        if (pendingUpdates.isEmpty()) return
+
+        rwLock.write {
+            val keysToProcess = pendingUpdates.toList()
+            if (keysToProcess.isEmpty()) return
 
             val existingRows = table.selectAll()
-                .where { primaryColumn inList toUpdate }
-                .toList()
-                .associateBy { it[primaryColumn] }
+                .where { primaryColumn inList keysToProcess }
+                .associate { it[primaryColumn].lowercase() to it[primaryColumn] }
 
-            val existingKeys = existingRows.keys.toMutableSet()
+            for (key in keysToProcess) {
+                val value = cache[key]
+                val originalKey = existingRows[key]
+                val shouldRemove = isMarkedForDeletion(key) || value == null
 
-            for (i in list) {
-                if (i in toUpdate) {
-                    toUpdate.remove(i)
-                    val value = hashMap[i]
-
-                    if (value == null) {
-                        existingRows[i]?.let { row ->
-                            TotalEssentials.getCore().logger.log("Removendo Entidade chamada: $i, coluna: $column")
-                            table.deleteWhere { primaryColumn eq row[primaryColumn] }
+                try {
+                    when {
+                        // Deletar se null e existe no banco
+                        shouldRemove && originalKey != null -> {
+                            logger.log("Removendo entidade: $key, coluna: ${column.name}")
+                            table.deleteWhere { primaryColumn eq originalKey }
+                            clearDeletionMark(key)
                         }
-                    } else {
-                        if (i !in existingKeys) {
+                        // Inserir se não existe
+                        value != null && originalKey == null -> {
+                            val dbValue = toDatabase(value)
+                            logger.log("Inserindo entidade: $key, coluna: ${column.name}")
                             table.insert {
-                                val newValue = classConvert.convertToDatabase(value)
-                                TotalEssentials.getCore().logger.log("Setando valor da entidade: $i, coluna: $column, valor: $newValue")
-                                it[primaryColumn] = i
-                                it[column] = newValue
+                                it[primaryColumn] = key
+                                it[column] = dbValue
                             }
-                            existingKeys.add(i)
-                        } else {
-                            val newValue = classConvert.convertToDatabase(value)
-                            TotalEssentials.getCore().logger.log("Atualizando valor da entidade: $i, coluna: $column, valor: $newValue")
-                            table.update({ primaryColumn eq i }) {
-                                it[column] = newValue
+                        }
+                        // Atualizar se existe
+                        value != null && originalKey != null -> {
+                            val dbValue = toDatabase(value)
+                            logger.log("Atualizando entidade: $key, coluna: ${column.name}")
+                            table.update({ primaryColumn eq originalKey }) {
+                                it[column] = dbValue
                             }
                         }
                     }
+                    pendingUpdates.remove(key)
+                } catch (e: Exception) {
+                    logger.error("Erro ao persistir hashmap: $key, coluna: ${column.name}", e)
                 }
             }
-        } finally {
-            lock.unlock()
         }
-    }
-
-    override fun update() {
-        save(toUpdate.toList())
     }
 
     override fun load() {
-        lock.lock()
-        try {
-            for (i in table.selectAll()) {
-                hashMap[i[primaryColumn].lowercase()] = classConvert.convertToCache(i[column]) ?: HashMap()
+        rwLock.write {
+            table.selectAll().forEach { row ->
+                val key = normalizeKey(row[primaryColumn])
+                cache[key] = fromDatabase(row[column]) ?: HashMap()
             }
-        } finally {
-            lock.unlock()
         }
-
+        logger.log("Carregado ${cache.size} hashmaps para coluna: ${column.name}")
     }
 
-    override fun unload() {
-        update()
-        //Verificação PlayerData
-        if (primaryColumn != PlayerData.primaryColumn) return
-        for (i in table.selectAll()) {
-            val value = hashMap[i[primaryColumn].lowercase()] ?: continue
-            if (classConvert.convertToCache(i[column]) != value) {
-                val name = i[primaryColumn]
-                TotalEssentials.getCore().logger.log("Novo Erro encontrado da entidade: $name, coluna: $column, setando novo valor: $value")
-                set(name, value)
-            }
+    // =========================================================
+    // Métodos utilitários
+    // =========================================================
+
+    /**
+     * Retorna o tamanho do HashMap de uma entidade.
+     */
+    fun sizeOf(entity: String): Int {
+        rwLock.read {
+            return cache[normalizeKey(entity)]?.size ?: 0
         }
-        update()
+    }
+
+    /**
+     * Verifica se o HashMap de uma entidade está vazio.
+     */
+    fun isEmpty(entity: String): Boolean {
+        rwLock.read {
+            return cache[normalizeKey(entity)]?.isEmpty() ?: true
+        }
+    }
+
+    /**
+     * Retorna as chaves do HashMap de uma entidade.
+     */
+    fun keysOf(entity: String): Set<K> {
+        rwLock.read {
+            return cache[normalizeKey(entity)]?.keys?.toSet() ?: emptySet()
+        }
+    }
+
+    /**
+     * Retorna os valores do HashMap de uma entidade.
+     */
+    fun valuesOf(entity: String): Collection<V> {
+        rwLock.read {
+            return cache[normalizeKey(entity)]?.values?.toList() ?: emptyList()
+        }
+    }
+
+    /**
+     * Limpa o HashMap de uma entidade (sem deletar do banco).
+     */
+    fun clear(entity: String) {
+        val key = normalizeKey(entity)
+        rwLock.write {
+            cache[key]?.clear()
+            markForUpdate(key)
+        }
     }
 }

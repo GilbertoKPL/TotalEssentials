@@ -9,7 +9,7 @@ internal object EnchantUtil {
     operator fun get(mat: String) = enchants[mat.lowercase()]
 
     fun startEnchantments() {
-        enchants["luck"] = enchantmentHelper(listOf("LUCK", "LURE")) ?: return
+        enchants["luck"] = enchantmentHelper(listOf("LUCK", "LURE", "LOOT_BONUS_MOBS")) ?: return
     }
 
     private fun enchantmentHelper(name: List<String>): Enchantment? {

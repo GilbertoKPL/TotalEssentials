@@ -70,7 +70,7 @@ class CommandSetHome : CommandManager("sethome") {
         sender as Player
 
         // check invalid characters
-        if (ServerUtil.checkSpecialCharacters(nameHome)) {
+        if (ServerUtil.hasSpecialCharacters(nameHome)) {
             sender.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
@@ -112,7 +112,8 @@ class CommandSetHome : CommandManager("sethome") {
         }
 
         // set home
-        PlayerData.homeCache[sender] = hashMapOf(nameHome to sender.location)
+        PlayerData.homeCache[sender.name, hashMapOf(nameHome to sender.location)] = false
+
         sender.sendMessage(LangConfig.homesCreated.replace("%home%", nameHome))
 
         return false

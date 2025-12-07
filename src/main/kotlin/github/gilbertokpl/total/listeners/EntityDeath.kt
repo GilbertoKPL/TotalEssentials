@@ -6,65 +6,73 @@ import github.gilbertokpl.total.stackmobs.StackMobsManager
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.metadata.FixedMetadataValue
 
 class EntityDeath : Listener {
-    @EventHandler
-    fun event(e: EntityDeathEvent) {
-        try {
-            if (MainConfig.stackmobsActivated) {
-                stackMobsEvent(e)
-            }
-        } catch (ex: Exception) {
-            // Log the exception or handle it appropriately
-            ex.printStackTrace()
+
+    companion object {
+        private const val STACK_METADATA_KEY = "stack"
+        private const val DEATH_QUANTITY_KEY = "DeathQuantity"
+        private const val STACK_PROCESSED_KEY = "StackProcessed"
+        private const val MOB_ID_KEY = "mob_id"
+    }
+
+    private val plugin = TotalEssentials.getInstance()
+
+    @EventHandler(priority = EventPriority.HIGH)
+    fun onEntityDeath(event: EntityDeathEvent) {
+        if (!MainConfig.stackmobsActivated) return
+
+        val entity = event.entity
+        if (!entity.hasMetadata(STACK_METADATA_KEY)) return
+
+        val stackSize = entity.getMetadata(STACK_METADATA_KEY).firstOrNull()?.asInt() ?: 1
+
+        // Stack > 1: fallback se damage handler não processou
+        if (stackSize > 1 && !entity.hasMetadata(STACK_PROCESSED_KEY)) {
+            respawnStackedMob(entity, stackSize - 1)
         }
     }
 
-    private fun stackMobsEvent(e: EntityDeathEvent) {
-        val livingEntity = e.entity as? LivingEntity ?: return
+    private fun respawnStackedMob(entity: LivingEntity, remainingStack: Int) {
+        if (remainingStack < 1) return
 
-        if (livingEntity.hasMetadata("stack")) {
-            val deathQuantity = livingEntity.getMetadata("DeathQuantity")[0].asInt()
-            val stackSize = livingEntity.getMetadata("stack")[0].asInt()
+        @Suppress("DEPRECATION")
+        val entityTypeId = entity.type.typeId.toInt()
 
-            if (deathQuantity <= 1) {
-                handleStackMobsDeath(livingEntity, stackSize)
-            } else {
-                adjustDropsForStackedMobs(e, deathQuantity)
-            }
-        }
+        val location = entity.location.clone()
+
+        // Pega o deathQuantity atual para preservar
+        val currentDeathQuantity = entity.getMetadata(DEATH_QUANTITY_KEY)
+            .firstOrNull()?.asInt() ?: 0
+
+        val newEntity = EntityType.fromId(entityTypeId)
+            ?.let { entity.world.spawnEntity(location, it) as? LivingEntity }
+            ?: return
+
+        newEntity.setMetadata(MOB_ID_KEY, FixedMetadataValue(plugin, entityTypeId))
+        newEntity.setMetadata("respawnYaw", FixedMetadataValue(plugin, location.yaw))
+        newEntity.setMetadata("respawnPitch", FixedMetadataValue(plugin, location.pitch))
+
+        // Usa o novo método que preserva/incrementa deathQuantity
+        StackMobsManager.respawnStack(newEntity, remainingStack, currentDeathQuantity)
+
+        val finalLocation = newEntity.location.clone()
+        finalLocation.yaw = location.yaw
+        finalLocation.pitch = location.pitch
+        newEntity.teleport(finalLocation)
     }
 
-    private fun handleStackMobsDeath(livingEntity: LivingEntity, stackSize: Int) {
-        if (stackSize - 1 < 1) return
+    private fun getCustomMobName(entityTypeId: Int, entity: LivingEntity): String {
+        val customName = MainConfig.stackmobsNameReplacer
+            .firstOrNull { it.startsWith("$entityTypeId:") }
+            ?.split(":")
+            ?.getOrNull(1)
 
-        try {
-            val entityId = livingEntity.type.typeId.toInt()
-
-            val newEntity = EntityType.fromId(entityId)
-                ?.let { livingEntity.world.spawnEntity(livingEntity.location, it) }
-
-            newEntity?.setMetadata("mob_id", FixedMetadataValue(TotalEssentials.getInstance(), entityId))
-
-            var name = livingEntity.toString().replace("Craft", "")
-            MainConfig.stackmobsNameReplacer
-                .firstOrNull { it.startsWith("${livingEntity.type.typeId.toInt()}:") }?.split(":")?.get(1)?.let {
-                    name = it
-                }
-
-            if (newEntity != null) {
-                StackMobsManager.mobCreate(newEntity, stackSize - 1, name)
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
+        return customName ?: entity.toString().replace("Craft", "")
     }
 
-    private fun adjustDropsForStackedMobs(e: EntityDeathEvent, deathQuantity: Int) {
-        e.drops.removeIf { it.type.maxDurability.toInt() == 0 }
-        e.drops.forEach { it.amount *= deathQuantity }
-    }
 }

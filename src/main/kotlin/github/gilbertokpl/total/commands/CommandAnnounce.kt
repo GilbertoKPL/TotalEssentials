@@ -8,6 +8,7 @@ import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.DiscordManager
 import github.gilbertokpl.total.util.ServerUtil
 import github.gilbertokpl.total.util.PermissionUtil
+import github.gilbertokpl.total.util.PlayerUtil.getMojangSkinURL
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -22,7 +23,7 @@ class CommandAnnounce : CommandManager("announce") {
             permission = "totalessentials.commands.announce",
             minimumSize = 1,
             maximumSize = null,
-            usage = listOf("/announce <msg>", "/anunciar <msg>")
+            usage = listOf("/announce <msg>")
         )
     }
 
@@ -44,11 +45,17 @@ class CommandAnnounce : CommandManager("announce") {
             .replace("%message%", coloredMessage)
 
         // Send message to server
-        ServerUtil.serverMessage(formattedMessage)
+        ServerUtil.broadcastMessage(formattedMessage)
 
         // Remove color codes and send to Discord
         val discordMessage = formattedMessage.replace(Regex("§[0-9a-fk-or]"), "")
-        DiscordManager.sendDiscordMessage(discordMessage, true)
+
+        DiscordManager.sendDiscordMessage(
+            message = discordMessage,
+            embed = true,
+            tittle = true,
+            avatarUrl = if (sender is Player) getMojangSkinURL(sender) else null
+        )
 
         return false
     }

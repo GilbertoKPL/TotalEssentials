@@ -64,7 +64,7 @@ class ConfigManager(private val totalCore: TotalCore) {
                 is DefaultLang -> {
                     messages = instance
                     // Generate configs for all available languages
-                    for (i in LangTypes.values()) {
+                    for (i in LangTypes.entries) {
                         startClass(
                             NewConfig(cl, instance, i.getFile(totalCore), i),
                             false
