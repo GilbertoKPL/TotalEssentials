@@ -18,9 +18,15 @@ import java.nio.file.Paths
 
 class ReflectionUtil(core: TotalCore) {
     private var getPlayersList: Boolean? = null
+    private var getOnlinePlayersMethod: java.lang.reflect.Method? = null
     private var getHealthMethod: ((Player) -> Double)? = null
     private var setHealthMethod: ((Player, Int) -> Unit)? = null
     private val corePlugin = core
+
+    companion object {
+        // Cache do regex para evitar recompilação
+        private val CAMEL_CASE_REGEX = "(?=\\p{Upper})".toRegex()
+    }
 
     fun getClasses(packageName: String): List<Class<*>> {
         val classes = mutableListOf<Class<*>>()
@@ -101,7 +107,7 @@ class ReflectionUtil(core: TotalCore) {
 
 
     fun nameFieldHelper(field: Field): String {
-        val nameField = field.name.split("(?=\\p{Upper})".toRegex())
+        val nameField = field.name.split(CAMEL_CASE_REGEX)
         val nameFieldComplete = StringBuilder()
         var quanta = 0
         for (value in nameField) {
@@ -173,21 +179,21 @@ class ReflectionUtil(core: TotalCore) {
 
     fun getPlayers(): List<Player> {
         if (getPlayersList == null) {
-            val onlinePlayersMethod = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers")
+            getOnlinePlayersMethod = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers")
             return try {
                 @Suppress("UNCHECKED_CAST")
-                val players = onlinePlayersMethod.invoke(Bukkit.getServer()) as Array<Player>
+                val players = getOnlinePlayersMethod!!.invoke(Bukkit.getServer()) as Array<Player>
                 getPlayersList = true
                 players.toList()
             } catch (e: ClassCastException) {
                 getPlayersList = false
+                getOnlinePlayersMethod = null
                 Bukkit.getOnlinePlayers().toList()
             }
         }
-        return if (getPlayersList == true) {
-            val list = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers")
+        return if (getPlayersList == true && getOnlinePlayersMethod != null) {
             @Suppress("UNCHECKED_CAST")
-            (list.invoke(Bukkit.getServer()) as Array<Player>).toList()
+            (getOnlinePlayersMethod!!.invoke(Bukkit.getServer()) as Array<Player>).toList()
         } else {
             Bukkit.getOnlinePlayers().toList()
         }

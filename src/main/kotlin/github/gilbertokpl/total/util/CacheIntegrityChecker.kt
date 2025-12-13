@@ -52,40 +52,47 @@ object CacheIntegrityChecker {
                 val limiterItemSerializer = LimiterItemSerializer()
                 val limiterLocationSerializer = LimiterLocationSerializer()
 
-                // Busca TODOS os dados do banco
-                val dbRecords = PlayerDataSQL.selectAll().associate { row ->
-                    row[PlayerDataSQL.playerTable].lowercase() to DbRecord(
-                        originalKey = row[PlayerDataSQL.playerTable],
-                        money = row[PlayerDataSQL.moneyTable],
-                        nick = row[PlayerDataSQL.nickTable],
-                        gamemode = row[PlayerDataSQL.gameModeTable],
-                        vanish = row[PlayerDataSQL.vanishTable],
-                        light = row[PlayerDataSQL.lightTable],
-                        fly = row[PlayerDataSQL.flyTable],
-                        speed = row[PlayerDataSQL.speedTable],
-                        playtime = row[PlayerDataSQL.PlaytimeTable],
-                        discord = row[PlayerDataSQL.DiscordTable],
-                        color = row[PlayerDataSQL.colorTable],
-                        command = row[PlayerDataSQL.CommandTable],
-                        kits = row[PlayerDataSQL.kitsTable],
-                        homes = row[PlayerDataSQL.homeTable],
-                        vip = row[PlayerDataSQL.vipTable],
-                        vipItems = row[PlayerDataSQL.vipItems],
-                        back = row[PlayerDataSQL.backTable],
-                        limiterItem = row[PlayerDataSQL.LimiterItemTable],
-                        limiterLocation = row[PlayerDataSQL.LimiterLocationTable]
-                    )
-                }
+                // Pega todas as chaves do cache (otimizado - evita lista intermediária)
+                val cacheKeys = PlayerData.moneyCache.getMap().keys.mapTo(HashSet()) { it.lowercase() }
 
-                // Pega todas as chaves do cache
-                val cacheKeys = PlayerData.moneyCache.getMap().keys.map { it.lowercase() }.toSet()
+                // Processa em batches de 1000 para evitar carregar tudo na memória
+                val batchSize = 1000
+                val keyBatches = cacheKeys.chunked(batchSize)
 
-                for (playerKey in cacheKeys) {
-                    try {
-                        val dbRecord = dbRecords[playerKey]
+                for (batch in keyBatches) {
+                    // Busca apenas os registros deste batch do banco
+                    val dbRecords = PlayerDataSQL.selectAll()
+                        .where { LowerCase(PlayerDataSQL.playerTable) inList batch }
+                        .associate { row ->
+                            row[PlayerDataSQL.playerTable].lowercase() to DbRecord(
+                                originalKey = row[PlayerDataSQL.playerTable],
+                                money = row[PlayerDataSQL.moneyTable],
+                                nick = row[PlayerDataSQL.nickTable],
+                                gamemode = row[PlayerDataSQL.gameModeTable],
+                                vanish = row[PlayerDataSQL.vanishTable],
+                                light = row[PlayerDataSQL.lightTable],
+                                fly = row[PlayerDataSQL.flyTable],
+                                speed = row[PlayerDataSQL.speedTable],
+                                playtime = row[PlayerDataSQL.PlaytimeTable],
+                                discord = row[PlayerDataSQL.DiscordTable],
+                                color = row[PlayerDataSQL.colorTable],
+                                command = row[PlayerDataSQL.CommandTable],
+                                kits = row[PlayerDataSQL.kitsTable],
+                                homes = row[PlayerDataSQL.homeTable],
+                                vip = row[PlayerDataSQL.vipTable],
+                                vipItems = row[PlayerDataSQL.vipItems],
+                                back = row[PlayerDataSQL.backTable],
+                                limiterItem = row[PlayerDataSQL.LimiterItemTable],
+                                limiterLocation = row[PlayerDataSQL.LimiterLocationTable]
+                            )
+                        }
 
-                        // Pega valores do cache
-                        val money = PlayerData.moneyCache[playerKey] ?: continue
+                    for (playerKey in batch) {
+                        try {
+                            val dbRecord = dbRecords[playerKey]
+
+                            // Pega valores do cache
+                            val money = PlayerData.moneyCache[playerKey] ?: continue
                         val nick = PlayerData.nickCache[playerKey] ?: ""
                         val gamemode = PlayerData.gameModeCache[playerKey] ?: 0
                         val vanish = PlayerData.vanishCache[playerKey] ?: false
