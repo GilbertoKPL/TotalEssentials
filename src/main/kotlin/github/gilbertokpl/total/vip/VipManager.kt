@@ -141,6 +141,7 @@ object VipManager {
 
         VipData.vipQuantity[vipKey] = ((VipData.vipQuantity[vipKey] ?: 0) + 1)
 
+
         val token = PlayerData.discordCache[entity]
         val roleID = VipData.vipDiscord[vipKey]
         if (token != null && roleID != null && token != 0L) DiscordManager.addUserRole(token, roleID)

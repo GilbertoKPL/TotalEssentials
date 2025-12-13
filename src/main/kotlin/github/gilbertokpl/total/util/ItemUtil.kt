@@ -152,7 +152,7 @@ object ItemUtil {
     }
 
     private fun updateKitClaim(player: Player, kitName: String) {
-        PlayerData.kitsCache[player] = hashMapOf(kitName to System.currentTimeMillis())
+        PlayerData.kitsCache[player.name,hashMapOf(kitName to System.currentTimeMillis())] = false
     }
 
     private fun sendSuccessMessage(player: Player, kitName: String) {

@@ -11,10 +11,7 @@ import github.gilbertokpl.total.config.files.MainConfig;
 import github.gilbertokpl.total.discord.DiscordManager;
 import github.gilbertokpl.total.economy.EconomyHolder;
 import github.gilbertokpl.total.filter.Filter;
-import github.gilbertokpl.total.util.EnchantUtil;
-import github.gilbertokpl.total.util.PlayerUtil;
-import github.gilbertokpl.total.util.ServerUtil;
-import github.gilbertokpl.total.util.MaterialUtil;
+import github.gilbertokpl.total.util.*;
 import net.dv8tion.jda.internal.utils.JDALogger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
@@ -115,6 +112,8 @@ public class TotalEssentials extends JavaPlugin {
     @Override
     public void onDisable() {
         if (update) return;
+
+        CacheIntegrityChecker.INSTANCE.syncCacheToDatabase();
 
         PlayerUtil.INSTANCE.savePlaytime();
         ServerUtil.INSTANCE.consoleMessage(ConsoleColorUtil.YELLOW.getColor() + LangConfig.generalSaveDataMessage + ConsoleColorUtil.RESET.getColor());

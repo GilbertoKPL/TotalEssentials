@@ -17,14 +17,11 @@ import github.gilbertokpl.total.util.PlayerUtil.getMojangSkinURL
 import github.gilbertokpl.total.util.PlayerUtil.sound
 import github.gilbertokpl.total.util.PlayerUtil.title
 import github.gilbertokpl.total.vip.VipManager
-import net.md_5.bungee.api.ChatMessageType
-import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import java.awt.TextComponent
 
 class PlayerJoin : Listener {
 
@@ -39,7 +36,6 @@ class PlayerJoin : Listener {
         SpawnData.teleportToSpawn(player)
 
         val task = TotalEssentials.getCore().getTask()
-        initializePlayerData(player)
 
         //title
 
@@ -54,12 +50,13 @@ class PlayerJoin : Listener {
         }
 
         task.async {
+            initializePlayerData(player)
             handlePlaytime(player)
             sendJoinMessages(player)
             VipManager.checkVip(player.name.lowercase())
 
             if (MainConfig.generalAntiVpn) {
-                PlayerData.playerInfo[player] = PlayerUtil.checkPlayerIP(address)
+                PlayerData.playerInfo[player.name, PlayerUtil.checkPlayerIP(address)] = true
             }
 
             task.sync {
@@ -88,7 +85,7 @@ class PlayerJoin : Listener {
     private fun handlePlaytime(player: Player) {
         if (!MainConfig.playtimeActivated) return
 
-        PlayerData.playtimeLocal[player] = System.currentTimeMillis()
+        PlayerData.playtimeLocal[player.name, System.currentTimeMillis()] = true
     }
 
     private fun initializePlayerData(player: Player) {
@@ -101,7 +98,7 @@ class PlayerJoin : Listener {
             "totalessentials.commands.sethome.",
             MainConfig.homesDefaultLimitHomes
         )
-        PlayerData.homeLimitCache[player] = homeLimit
+        PlayerData.homeLimitCache[player.name, homeLimit] = true
     }
 
     private fun sendJoinMessages(player: Player) {

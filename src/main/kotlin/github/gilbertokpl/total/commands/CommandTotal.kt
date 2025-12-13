@@ -11,9 +11,11 @@ import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.DiscordManager
+import github.gilbertokpl.total.util.CacheIntegrityChecker.syncCacheToDatabase
 import github.gilbertokpl.total.util.PluginUtil
 import github.gilbertokpl.total.vip.VipManager.checkVip
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -35,6 +37,8 @@ class CommandTotal : CommandManager("total") {
                 "/total plugin <load/unload/reload> <pluginName>",
                 "C_/total reset",
                 "P_/total id",
+                "P_/total mobid",
+                "/forcesave",
                 "/total save"
             )
         )
@@ -85,9 +89,42 @@ class CommandTotal : CommandManager("total") {
                 return false
             }
 
+            "forcesave" -> {
+                TotalEssentials.getCore().getTask().async {
+                    syncCacheToDatabase()
+                    sender.sendMessage("§aPronto.")
+                }
+                return false
+            }
+
+            "mobid" -> {
+                if (sender !is Player) {
+                    sender.sendMessage("§cApenas jogadores podem usar este comando.")
+                    return true
+                }
+
+                val player = sender
+                val range = 10.0 // ← defina o range desejado
+
+                val nearest = player.location.world?.getNearbyEntities(player.location, range, range, range)
+                    ?.filterIsInstance<LivingEntity>()
+                    ?.filter { it != player }
+                    ?.minByOrNull { it.location.distance(player.location) }
+
+                if (nearest == null) {
+                    player.sendMessage("§cNenhum mob encontrado no raio de $range blocos.")
+                    return true
+                }
+
+                player.sendMessage("§aMob mais próximo: §f${nearest.type.name.lowercase()}")
+                return false
+            }
+
             "save" -> {
-                TotalEssentials.getCore().getCache().save()
-                sender.sendMessage("Salvo!")
+                TotalEssentials.getCore().getTask().async {
+                    TotalEssentials.getCore().getCache().save()
+                    sender.sendMessage("Salvo!")
+                }
                 return false
             }
         }

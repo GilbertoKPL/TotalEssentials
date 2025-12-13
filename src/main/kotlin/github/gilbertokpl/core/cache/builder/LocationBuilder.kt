@@ -4,11 +4,10 @@ import github.gilbertokpl.core.cache.interfaces.ICacheLogger
 import github.gilbertokpl.core.cache.interfaces.ICacheSerializer
 import org.bukkit.Location
 import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.LowerCase
 import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
-import org.jetbrains.exposed.v1.jdbc.deleteWhere
-import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.update
 import kotlin.concurrent.write
@@ -17,6 +16,11 @@ import kotlin.concurrent.read
 /**
  * Builder para cache de Locations do Bukkit.
  * Suporta filtragem de mundos desabilitados no load.
+ *
+ * IMPORTANTE: 
+ * - NUNCA faz DELETE da linha (isso apagaria todas as colunas do jogador)
+ * - Remove/null apenas limpa o valor para string vazia
+ * - INSERT é feito apenas pelo PlayerData.createNewPlayerData()
  */
 internal class LocationBuilder(
     table: Table,
@@ -32,12 +36,12 @@ internal class LocationBuilder(
         if (value == null) "" else serializer.convertToDatabase(value) ?: ""
 
     override fun fromDatabase(value: String): Location? =
-        serializer.convertToCache(value)
+        if (value.isEmpty()) null else serializer.convertToCache(value)
 
     override fun shouldDelete(value: Location?): Boolean = value == null
 
     // =========================================================
-    // Operações de set - CORRIGIDO para lidar com null
+    // Operações de set
     // =========================================================
 
     override operator fun set(entity: String, value: Location?) {
@@ -47,21 +51,15 @@ internal class LocationBuilder(
     override operator fun set(entity: String, value: Location?, override: Boolean) {
         val key = normalizeKey(entity)
         rwLock.write {
-            if (value == null) {
-                // Marca para deleção
-                cache[key] = null
-                markedForDeletion.add(key)
-            } else {
-                // Valor válido
-                cache[key] = value
-                markedForDeletion.remove(key)
-            }
+            cache[key] = value
+            // NÃO marca para deleção - apenas atualiza para string vazia
+            markedForDeletion.remove(key)
             markForUpdate(key)
         }
     }
 
     // =========================================================
-    // Persistência
+    // Persistência - NUNCA DELETA A LINHA!
     // =========================================================
 
     override fun update() {
@@ -71,39 +69,33 @@ internal class LocationBuilder(
             val keysToProcess = pendingUpdates.toList()
             if (keysToProcess.isEmpty()) return
 
+            // Busca quais registros existem no banco (com chave original)
             val existingRows = table.selectAll()
-                .where { primaryColumn inList keysToProcess }
+                .where { LowerCase(primaryColumn) inList keysToProcess }
                 .associate { it[primaryColumn].lowercase() to it[primaryColumn] }
 
             for (key in keysToProcess) {
                 val value = cache[key]
                 val originalKey = existingRows[key]
-                val shouldRemove = isMarkedForDeletion(key) || value == null
+                val dbValue = toDatabase(value) // Converte null para ""
 
                 try {
                     when {
-                        // Deletar se null e existe no banco
-                        shouldRemove && originalKey != null -> {
-                            logger.log("Removendo location: $key, coluna: ${column.name}")
-                            table.deleteWhere { primaryColumn eq originalKey }
-                            clearDeletionMark(key)
-                        }
-                        // Inserir se não existe
-                        value != null && originalKey == null -> {
-                            val dbValue = toDatabase(value)
-                            logger.log("Inserindo location: $key, coluna: ${column.name}")
-                            table.insert {
-                                it[primaryColumn] = key
-                                it[column] = dbValue
+                        // Existe no banco - faz UPDATE (mesmo se null, apenas limpa para "")
+                        originalKey != null -> {
+                            if (value != null) {
+                                logger.log("Atualizando location: $key, coluna: ${column.name}")
+                            } else {
+                                logger.log("Limpando location: $key, coluna: ${column.name}")
                             }
-                        }
-                        // Atualizar se existe
-                        value != null && originalKey != null -> {
-                            val dbValue = toDatabase(value)
-                            logger.log("Atualizando location: $key, coluna: ${column.name}")
                             table.update({ primaryColumn eq originalKey }) {
                                 it[column] = dbValue
                             }
+                        }
+                        
+                        // Não existe no banco - ignora (INSERT é responsabilidade do PlayerData)
+                        else -> {
+                            logger.warn("SKIP: Entidade não existe no banco: $key, coluna: ${column.name}")
                         }
                     }
                     pendingUpdates.remove(key)
@@ -120,9 +112,11 @@ internal class LocationBuilder(
         rwLock.write {
             table.selectAll().forEach { row ->
                 val key = normalizeKey(row[primaryColumn])
-                val location = fromDatabase(row[column])
+                val rawValue = row[column]
+                val location = fromDatabase(rawValue)
 
                 if (location == null) {
+                    cache[key] = null
                     return@forEach
                 }
 
@@ -134,8 +128,7 @@ internal class LocationBuilder(
 
                 if (isDisabledWorld) {
                     cache[key] = null
-                    markedForDeletion.add(key)
-                    markForUpdate(key)
+                    markForUpdate(key) // Vai limpar no banco
                     logger.log("Location ignorada (mundo desabilitado): $key, mundo: $worldName")
                 } else {
                     cache[key] = location

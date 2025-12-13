@@ -42,7 +42,7 @@ class PlayerTeleport : Listener {
         if (!hasPermission || (isWorldBlocked && !canBypassBlockedWorlds)) return
         if (player.location == SpawnData.spawnLocation["spawn"]) return
 
-        PlayerData.backLocation[player] = player.location
+        PlayerData.backLocation[player.name, player.location] = true
     }
 
     private fun blockPassEdgeEnderPearl(event: PlayerTeleportEvent) {

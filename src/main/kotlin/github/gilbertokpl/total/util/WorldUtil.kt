@@ -79,7 +79,7 @@ object WorldUtil {
     }
 
     private fun clearEntitiesInWorld(world: World) {
-        val entities = world.entities.toList()
+        val entities = world.entities
 
         for (entity in entities) {
             if (regionSchedulerSupport.isAvailable) {

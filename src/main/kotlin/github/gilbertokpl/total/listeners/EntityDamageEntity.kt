@@ -5,9 +5,11 @@ import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.stackmobs.StackMobsManager
 import github.gilbertokpl.total.stackmobs.StackMobsManager.mobCreate
 import org.bukkit.entity.Damageable
+import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
+import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -65,23 +67,46 @@ class EntityDamageEntity : Listener {
         if (!MainConfig.stackmobsActivated) return
 
         val damaged = event.entity
-        val damager = event.damager as? LivingEntity ?: return
+        val damager = realDamager(event) ?: return
+
+        // Jogador atacando → não mexe
         if (damager is Player) return
 
-        // Mob stackado atacando player → multiplica dano
+        // Mob stackado atacando jogador → MULTIPLICAR
         if (damaged is Player) {
             val stack = damager.getStackSize() ?: return
-            val dmg = compat.getDamage(event)
-            compat.setDamage(event, dmg * stack)
+            val base = compat.getDamage(event)
+            compat.setDamage(event, base * stack)
             return
         }
 
         // Mob stackado levando dano
         if (damaged is LivingEntity && damaged !is Player) {
             val stack = damaged.getStackSize() ?: return
-            val dmg = compat.getDamage(event)
-            handleStackDamage(damaged, dmg, stack, event)
+            val base = compat.getDamage(event)
+            handleStackDamage(damaged, base, stack, event)
         }
+    }
+
+    /** Pega o atacante real (LivingEntity), mesmo se for flecha/fireball/etc */
+    private fun realDamager(event: EntityDamageByEntityEvent): Entity? {
+        val damager = event.damager
+
+        // Se for projétil, tentar pegar shooter via reflection (compatível com 1.5.2)
+        if (damager is Projectile) {
+            try {
+                val method = damager.javaClass.getMethod("getShooter")
+                val shooter = method.invoke(damager)
+
+                if (shooter is LivingEntity) {
+                    return shooter
+                }
+            } catch (_: Exception) {
+                // método não existe
+            }
+        }
+
+        return damager
     }
 
     // ────────────────────────────────────────────────────────────────
@@ -158,7 +183,7 @@ class EntityDamageEntity : Listener {
     // ────────────────────────────────────────────────────────────────
     //  EXTENSION FUNCTION
     // ────────────────────────────────────────────────────────────────
-    private fun LivingEntity.getStackSize(): Int? {
+    private fun Entity.getStackSize(): Int? {
         if (!hasMetadata(STACK_METADATA_KEY)) return null
         return getMetadata(STACK_METADATA_KEY).firstOrNull()?.asInt()
     }

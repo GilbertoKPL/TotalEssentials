@@ -2,11 +2,10 @@ package github.gilbertokpl.core.cache.builder
 
 import github.gilbertokpl.core.cache.interfaces.ICacheLogger
 import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.LowerCase
 import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
-import org.jetbrains.exposed.v1.jdbc.deleteWhere
-import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.update
 import kotlin.concurrent.write
@@ -14,6 +13,11 @@ import kotlin.concurrent.write
 /**
  * Builder para tipos primitivos e simples (String, Boolean, Int, Double, Long).
  * Persiste valores diretamente na coluna sem conversão.
+ * 
+ * IMPORTANTE: 
+ * - NUNCA faz DELETE da linha (isso apagaria todas as colunas do jogador)
+ * - Remove apenas limpa o valor para o default
+ * - INSERT é feito apenas pelo PlayerData.createNewPlayerData()
  */
 internal class ByteBuilder<T>(
     table: Table,
@@ -42,43 +46,37 @@ internal class ByteBuilder<T>(
             val keysToProcess = pendingUpdates.toList()
             if (keysToProcess.isEmpty()) return
 
+            // Busca quais registros existem no banco (com chave original)
             val existingRows = table.selectAll()
-                .where { primaryColumn inList keysToProcess }
+                .where { LowerCase(primaryColumn) inList keysToProcess }
                 .associate { it[primaryColumn].lowercase() to it[primaryColumn] }
 
             for (key in keysToProcess) {
                 val value = cache[key]
                 val originalKey = existingRows[key]
-                val shouldRemove = isMarkedForDeletion(key) || value == null
 
                 try {
                     when {
-                        // Deletar se valor é null e existe no banco
-                        shouldRemove && originalKey != null -> {
-                            logger.log("Removendo entidade: $key, coluna: ${column.name}")
-                            table.deleteWhere { primaryColumn eq originalKey }
-                            clearDeletionMark(key)
-                        }
-                        // Inserir se não existe no banco
-                        value != null && originalKey == null -> {
-                            logger.log("Inserindo entidade: $key, coluna: ${column.name}, valor: $value")
-                            table.insert {
-                                it[primaryColumn] = key
-                                it[column] = value
+                        // Existe no banco - faz UPDATE (mesmo se value for null, apenas limpa)
+                        originalKey != null -> {
+                            if (value != null) {
+                                logger.log("Atualizando entidade: $key, coluna: ${column.name}, valor: $value")
+                                table.update({ primaryColumn eq originalKey }) {
+                                    it[column] = value
+                                }
                             }
+                            // Se value for null, não faz nada - não podemos "limpar" um tipo primitivo
+                            // O valor permanece o que está no banco
                         }
-                        // Atualizar se existe no banco
-                        value != null && originalKey != null -> {
-                            logger.log("Atualizando entidade: $key, coluna: ${column.name}, valor: $value")
-                            table.update({ primaryColumn eq originalKey }) {
-                                it[column] = value
-                            }
+                        
+                        // Não existe no banco - ignora (INSERT é responsabilidade do PlayerData)
+                        value != null -> {
+                            logger.warn("SKIP: Entidade não existe no banco: $key, coluna: ${column.name}")
                         }
                     }
                     pendingUpdates.remove(key)
                 } catch (e: Exception) {
                     logger.error("Erro ao persistir entidade: $key, coluna: ${column.name}", e)
-                    // Mantém na lista de pendentes para retry
                 }
             }
         }

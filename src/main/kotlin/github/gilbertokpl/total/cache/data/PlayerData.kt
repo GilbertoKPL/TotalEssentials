@@ -1,5 +1,6 @@
 package github.gilbertokpl.total.cache.data
 
+import github.gilbertokpl.core.cache.builder.EntityExistenceCache
 import github.gilbertokpl.core.cache.interfaces.ICache
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.serializer.*
@@ -10,8 +11,12 @@ import github.gilbertokpl.total.vip.VipManager
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 object PlayerData : ICache {
     override var table: Table = PlayerDataSQL
@@ -44,39 +49,119 @@ object PlayerData : ICache {
     val playtimeLocal = ins.simpleLong()
     val playerInfo = ins.simpleList<String>()
 
+    /**
+     * Verifica se o jogador existe no banco de dados.
+     * Usa o moneyCache como referência pois sempre tem valor.
+     */
     fun checkIfPlayerExists(entity: String): Boolean {
-        return nickCache[entity.lowercase()] != null
+        val key = entity.lowercase()
+        // Primeiro verifica no cache de existência centralizado
+        if (EntityExistenceCache.exists(table, key)) {
+            return true
+        }
+        // Fallback para o cache local
+        return moneyCache[key] != null
     }
 
     fun checkIfPlayerExists(entity: Player): Boolean {
-        return nickCache[entity] != null
+        return checkIfPlayerExists(entity.name)
     }
 
+    /**
+     * Cria dados de economia para um jogador (apenas money).
+     * Usado quando o jogador já existe mas não tem money.
+     */
     fun createNewPlayerEco(entity: String) {
         moneyCache[entity] = MainConfig.moneyDefault?.toDouble() ?: 0.0
     }
 
+    /**
+     * Cria um novo registro COMPLETO no banco de dados para um jogador novo.
+     *
+     * IMPORTANTE: Este método faz INSERT direto no banco com TODAS as colunas,
+     * evitando o problema de INSERT parcial que zera outras colunas.
+     *
+     * Os builders só fazem UPDATE, nunca INSERT.
+     */
     fun createNewPlayerData(entity: String) {
+        val key = entity.lowercase()
+
+        // Verifica se já existe para evitar duplicação
+        if (checkIfPlayerExists(key)) {
+            TotalEssentials.getCore().logger.log("[WARN] Tentativa de criar jogador que já existe: $key")
+            return
+        }
+
         val defaultLocation = SpawnData.spawnLocation["spawn"]
             ?: Location(TotalEssentials.getInstance()?.server?.getWorld("world"), 1.0, 1.0, 1.0)
 
-        kitsCache[entity] = hashMapOf()
-        homeCache[entity] = hashMapOf()
-        vipCache[entity] = hashMapOf()
-        vipItems[entity] = arrayListOf()
-        nickCache[entity] = ""
-        gameModeCache[entity] = 0
-        vanishCache[entity] = false
-        lightCache[entity] = false
-        flyCache[entity] = false
-        backLocation[entity] = defaultLocation
-        speedCache[entity] = 1
-        moneyCache[entity] = MainConfig.moneyDefault?.toDouble() ?: 0.0
-        afk[entity] = 1
-        playTimeCache[entity] = 0
-        discordCache[entity] = 0
-        colorCache[entity] = ""
-        commandCache[entity] = ""
+        val defaultMoney = MainConfig.moneyDefault?.toDouble() ?: 0.0
+
+        // Serializers para converter os valores
+        val kitSerializer = KitSerializer()
+        val homeSerializer = HomeSerializer()
+        val vipSerializer = VipSerializer()
+        val itemSerializer = ItemSerializer()
+        val locationSerializer = LocationSerializer()
+        val limiterItemSerializer = LimiterItemSerializer()
+        val limiterLocationSerializer = LimiterLocationSerializer()
+
+        try {
+            transaction(TotalEssentials.getCore().sql) {
+                // INSERT completo com TODAS as colunas
+                PlayerDataSQL.insert {
+                    it[playerTable] = key
+                    it[kitsTable] = kitSerializer.convertToDatabase(hashMapOf())
+                    it[homeTable] = homeSerializer.convertToDatabase(hashMapOf())
+                    it[vipTable] = vipSerializer.convertToDatabase(hashMapOf())
+                    it[vipItems] = itemSerializer.convertToDatabase(arrayListOf())
+                    it[nickTable] = ""
+                    it[gameModeTable] = 0
+                    it[vanishTable] = false
+                    it[lightTable] = false
+                    it[flyTable] = false
+                    it[backTable] = locationSerializer.convertToDatabase(defaultLocation) ?: ""
+                    it[speedTable] = 1
+                    it[moneyTable] = defaultMoney
+                    it[DiscordTable] = 0L
+                    it[PlaytimeTable] = 0L
+                    it[colorTable] = ""
+                    it[CommandTable] = ""
+                    it[LimiterItemTable] = limiterItemSerializer.convertToDatabase(hashMapOf())
+                    it[LimiterLocationTable] = limiterLocationSerializer.convertToDatabase(hashMapOf())
+                }
+
+                // Marca como existente no cache centralizado
+                EntityExistenceCache.markAsExisting(table, key)
+
+                // Atualiza os caches em memória
+                kitsCache[key] = hashMapOf()
+                homeCache[key] = hashMapOf()
+                vipCache[key] = hashMapOf()
+                vipItems[key] = arrayListOf()
+                nickCache[key] = ""
+                gameModeCache[key] = 0
+                vanishCache[key] = false
+                lightCache[key] = false
+                flyCache[key] = false
+                backLocation[key] = defaultLocation
+                speedCache[key] = 1
+                moneyCache[key] = defaultMoney
+                afk[key] = 1
+                playTimeCache[key] = 0
+                discordCache[key] = 0
+                colorCache[key] = ""
+                commandCache[key] = ""
+                limiterItemCache[key] = hashMapOf()
+                limiterLocationCache[key] = hashMapOf()
+            }
+
+            TotalEssentials.getCore().logger.log("[INFO] Novo jogador criado: $key")
+
+        } catch (e: Exception) {
+            TotalEssentials.getCore().logger.log("[ERROR] Erro ao criar jogador $key: ${e.message}")
+            e.printStackTrace()
+        }
     }
 
     fun applyPlayerSettings(p: Player) {
@@ -95,20 +180,8 @@ object PlayerData : ICache {
             }
         }
 
-        vanishCache[p]?.takeIf { it }?.let {
-            //p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
-            TotalEssentials.getCore().getReflection().getPlayers().forEach { otherPlayer ->
-                otherPlayer.player?.takeIf {
-                    !it.hasPermission("totalessentials.commands.vanish") && !it.hasPermission(
-                        "totalessentials.bypass.vanish"
-                    )
-                }
-                    ?.hidePlayer(p)
-            }
-        }
-
         lightCache[p]?.takeIf { it }?.let {
-            //p.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 1))
+            p.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 1))
         }
 
         flyCache[p]?.takeIf { it }?.let {
@@ -139,9 +212,26 @@ object PlayerData : ICache {
             VipManager.updateCargo(p.name.lowercase())
         }
 
+        var players = emptyList<Player>()
+
+        vanishCache[p]?.takeIf { it }?.let {
+
+            players = TotalEssentials.getCore().getReflection().getPlayers()
+
+            p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
+            players.forEach { otherPlayer ->
+                otherPlayer.player?.takeIf {
+                    !it.hasPermission("totalessentials.commands.vanish") && !it.hasPermission(
+                        "totalessentials.bypass.vanish"
+                    )
+                }
+                    ?.hidePlayer(p)
+            }
+        }
+
         if (MainConfig.vanishActivated) {
             if (!p.hasPermission("totalessentials.commands.vanish") && !p.hasPermission("totalessentials.bypass.vanish")) {
-                TotalEssentials.getCore().getReflection().getPlayers().forEach { otherPlayer ->
+                players.forEach { otherPlayer ->
                     vanishCache[otherPlayer]?.takeIf { it }?.let {
                         p.hidePlayer(otherPlayer)
                     }

@@ -45,9 +45,6 @@ class EntityDeath : Listener {
 
         val location = entity.location.clone()
 
-        // Pega o deathQuantity atual para preservar
-        val currentDeathQuantity = entity.getMetadata(DEATH_QUANTITY_KEY)
-            .firstOrNull()?.asInt() ?: 0
 
         val newEntity = EntityType.fromId(entityTypeId)
             ?.let { entity.world.spawnEntity(location, it) as? LivingEntity }
@@ -57,8 +54,7 @@ class EntityDeath : Listener {
         newEntity.setMetadata("respawnYaw", FixedMetadataValue(plugin, location.yaw))
         newEntity.setMetadata("respawnPitch", FixedMetadataValue(plugin, location.pitch))
 
-        // Usa o novo método que preserva/incrementa deathQuantity
-        StackMobsManager.respawnStack(newEntity, remainingStack, currentDeathQuantity)
+        StackMobsManager.respawnStack(newEntity, remainingStack)
 
         val finalLocation = newEntity.location.clone()
         finalLocation.yaw = location.yaw

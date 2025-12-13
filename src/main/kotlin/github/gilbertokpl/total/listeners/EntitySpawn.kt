@@ -10,22 +10,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent
 
 class EntitySpawn : Listener {
 
-    companion object {
-        private val IGNORED_SPAWN_REASONS: Set<CreatureSpawnEvent.SpawnReason> by lazy {
-            buildSet {
-                add(CreatureSpawnEvent.SpawnReason.EGG)
-                tryAddReason("SPAWNER_EGG")
-            }
-        }
-
-        private fun MutableSet<CreatureSpawnEvent.SpawnReason>.tryAddReason(name: String) {
-            try {
-                add(CreatureSpawnEvent.SpawnReason.valueOf(name))
-            } catch (_: IllegalArgumentException) {}
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGH)
     fun onCreatureSpawn(event: CreatureSpawnEvent) {
 
         if (!MainConfig.antibugsBlockMobCatch) {
@@ -35,22 +20,24 @@ class EntitySpawn : Listener {
         if (!MainConfig.stackmobsActivated) return
 
         val entity = event.entity
-        val spawnReason = event.spawnReason
-
-        // Ignora spawn customizado que não tem metadata de stack
-        if (spawnReason == CreatureSpawnEvent.SpawnReason.CUSTOM &&
-            !entity.hasMetadata("stack")) {
-            return
-        }
 
         // Aplica rotação se for mob respawnado
         applyRespawnRotation(entity)
 
         // Verifica se o tipo de mob está na lista de stack
         val entityTypeId = getEntityTypeId(entity)
-        if (entityTypeId == null || !MainConfig.stackmobsStackList.contains(entityTypeId)) return
+        if (entityTypeId == null || !(MainConfig.stackmobsStackList)?.contains(entityTypeId.toString())!!) return
+
+        makeFireProof(entity)
 
         handleSpawnWithinRange(entity)
+    }
+
+    fun makeFireProof(entity: LivingEntity) {
+        try {
+            val method = entity.javaClass.methods.firstOrNull { it.name.equals("setFireTicks", true) }
+            method?.invoke(entity, 0)
+        } catch (_: Exception) {}
     }
 
     /**

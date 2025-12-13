@@ -5,6 +5,7 @@ import github.gilbertokpl.core.config.defaults.DefaultConfig;
 import github.gilbertokpl.core.config.types.LangTypes;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -154,7 +155,7 @@ public class MainConfig implements DefaultConfig {
                     @Comment(annotations = "", lang = LangTypes.EN_US)
             }
     )
-    public static List<Integer> stackmobsStackList = Collections.singletonList(54);
+    public static List<String> stackmobsStackList = Collections.singletonList("54");
     @MultiComment(
             {
                     @Comment(annotations = "dar replace no nome do mob.", lang = LangTypes.PT_BR),

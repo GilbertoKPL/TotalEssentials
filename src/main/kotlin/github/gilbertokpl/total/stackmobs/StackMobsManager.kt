@@ -9,8 +9,6 @@ import org.bukkit.metadata.FixedMetadataValue
 object StackMobsManager {
 
     private const val STACK_METADATA_KEY = "stack"
-    private const val DEATH_QUANTITY_KEY = "DeathQuantity"
-    private const val DEFAULT_DEATH_QUANTITY = 1
 
     fun handleSpawnWithinRange(entity: LivingEntity) {
         if (isWorldBlocked(entity.world.name)) return
@@ -66,7 +64,7 @@ object StackMobsManager {
     fun mobCreate(entity: Entity, quantity: Int, displayName: String) {
         if (entity !is LivingEntity) return
 
-        updateStackMetadata(entity, quantity, DEFAULT_DEATH_QUANTITY)
+        updateStackMetadata(entity, quantity)
         updateCustomName(entity, quantity, displayName)
     }
 
@@ -75,12 +73,7 @@ object StackMobsManager {
      * Incrementa o contador de mortes para multiplicar drops no final
      */
     fun reduceStack(entity: LivingEntity, newStackSize: Int) {
-        // Pega o deathQuantity atual e incrementa
-        val currentDeathQuantity = entity.getMetadata(DEATH_QUANTITY_KEY)
-            .firstOrNull()?.asInt() ?: 0
-        val newDeathQuantity = currentDeathQuantity + 1
-
-        updateStackMetadata(entity, newStackSize, newDeathQuantity)
+        updateStackMetadata(entity, newStackSize)
         updateCustomName(entity, newStackSize)
     }
 
@@ -88,24 +81,18 @@ object StackMobsManager {
      * Cria um novo mob stackado a partir de um que morreu (fallback do EntityDeath)
      * Preserva o contador de mortes do mob original
      */
-    fun respawnStack(entity: LivingEntity, newStackSize: Int, originalDeathQuantity: Int) {
+    fun respawnStack(entity: LivingEntity, newStackSize: Int) {
         val displayName = getEntityName(entity)
-        updateStackMetadata(entity, newStackSize, originalDeathQuantity + 1)
+        updateStackMetadata(entity, newStackSize)
         updateCustomName(entity, newStackSize, displayName)
     }
 
     private fun updateStackMetadata(
         entity: LivingEntity,
-        stackSize: Int,
-        deathQuantity: Int = DEFAULT_DEATH_QUANTITY
-    ) {
+        stackSize: Int) {
         entity.setMetadata(
             STACK_METADATA_KEY,
             FixedMetadataValue(TotalEssentials.getInstance(), stackSize)
-        )
-        entity.setMetadata(
-            DEATH_QUANTITY_KEY,
-            FixedMetadataValue(TotalEssentials.getInstance(), deathQuantity)
         )
     }
 

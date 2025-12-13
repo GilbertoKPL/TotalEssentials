@@ -180,7 +180,9 @@ class CommandVip : CommandManager("vip") {
 
             PlayerData.vipCache[playerName, hashMapOf(vipName to millisVipTime)] = false
 
-            PlayerData.vipItems[playerName, VipData.vipItems[vipName]!!] = false
+            if (giveItems) {
+                PlayerData.vipItems[playerName, VipData.vipItems[vipName]!!] = false
+            }
 
             sender.sendMessage(LangConfig.VipsActivate.replace("%vip%", vipName).replace("%days%", days.toString()))
 
@@ -429,7 +431,7 @@ class CommandVip : CommandManager("vip") {
             val addTime = args[1].toLongOrNull()?.times(86_400_000) ?: return true
             PlayerData.vipCache.getMap().forEach { (playerName, vipMap) ->
                 vipMap?.forEach { (vipName, time) ->
-                    PlayerData.vipCache[playerName]?.set(vipName, time + addTime)
+                    PlayerData.vipCache[playerName,hashMapOf(vipName to (time + addTime))] = false
                 }
             }
 
