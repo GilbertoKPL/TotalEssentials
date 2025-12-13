@@ -212,26 +212,30 @@ object PlayerData : ICache {
             VipManager.updateCargo(p.name.lowercase())
         }
 
-        var players = emptyList<Player>()
+        // Otimização: combina as duas iterações em uma só
+        val isPlayerVanished = vanishCache[p] ?: false
+        val shouldCheckOthersVanish = MainConfig.vanishActivated &&
+            !p.hasPermission("totalessentials.commands.vanish") &&
+            !p.hasPermission("totalessentials.bypass.vanish")
 
-        vanishCache[p]?.takeIf { it }?.let {
+        if (isPlayerVanished || shouldCheckOthersVanish) {
+            val players = TotalEssentials.getCore().getReflection().getPlayers()
 
-            players = TotalEssentials.getCore().getReflection().getPlayers()
-
-            p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
-            players.forEach { otherPlayer ->
-                otherPlayer.player?.takeIf {
-                    !it.hasPermission("totalessentials.commands.vanish") && !it.hasPermission(
-                        "totalessentials.bypass.vanish"
-                    )
-                }
-                    ?.hidePlayer(p)
+            if (isPlayerVanished) {
+                p.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1))
             }
-        }
 
-        if (MainConfig.vanishActivated) {
-            if (!p.hasPermission("totalessentials.commands.vanish") && !p.hasPermission("totalessentials.bypass.vanish")) {
-                players.forEach { otherPlayer ->
+            players.forEach { otherPlayer ->
+                // Se o player está vanished, esconde dele os outros sem permissão
+                if (isPlayerVanished) {
+                    otherPlayer.player?.takeIf {
+                        !it.hasPermission("totalessentials.commands.vanish") &&
+                        !it.hasPermission("totalessentials.bypass.vanish")
+                    }?.hidePlayer(p)
+                }
+
+                // Se o outro player está vanished, esconde dele
+                if (shouldCheckOthersVanish) {
                     vanishCache[otherPlayer]?.takeIf { it }?.let {
                         p.hidePlayer(otherPlayer)
                     }
