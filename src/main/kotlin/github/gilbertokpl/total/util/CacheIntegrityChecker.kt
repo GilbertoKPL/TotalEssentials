@@ -22,6 +22,28 @@ object CacheIntegrityChecker {
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
+    private data class DbRecord(
+        val originalKey: String,
+        val money: Double,
+        val nick: String,
+        val gamemode: Int,
+        val vanish: Boolean,
+        val light: Boolean,
+        val fly: Boolean,
+        val speed: Int,
+        val playtime: Long,
+        val discord: Long,
+        val color: String,
+        val command: String,
+        val kits: String,
+        val homes: String,
+        val vip: String,
+        val vipItems: String,
+        val back: String,
+        val limiterItem: String,
+        val limiterLocation: String
+    )
+
     /**
      * Verifica diferenças e SINCRONIZA o banco com o cache.
      * Qualquer valor diferente no cache será gravado no banco.
@@ -264,26 +286,4 @@ object CacheIntegrityChecker {
             TotalEssentials.getCore().logger.log("Erro ao salvar log: ${e.message}")
         }
     }
-
-    private data class DbRecord(
-        val originalKey: String,
-        val money: Double,
-        val nick: String,
-        val gamemode: Int,
-        val vanish: Boolean,
-        val light: Boolean,
-        val fly: Boolean,
-        val speed: Int,
-        val playtime: Long,
-        val discord: Long,
-        val color: String,
-        val command: String,
-        val kits: String,
-        val homes: String,
-        val vip: String,
-        val vipItems: String,
-        val back: String,
-        val limiterItem: String,
-        val limiterLocation: String
-    )
 }
