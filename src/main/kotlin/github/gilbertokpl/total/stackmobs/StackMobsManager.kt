@@ -30,15 +30,25 @@ object StackMobsManager {
 
     private fun findNearbyStackedMob(entity: LivingEntity): LivingEntity? {
         val radius = MainConfig.stackmobsRadius.toDouble()
-        val nearbyEntities = entity.getNearbyEntities(radius, radius, radius)
+        val radiusSquared = radius * radius
+        val entityLocation = entity.location
 
-        return nearbyEntities
+        // Use world.entities instead of getNearbyEntities to avoid MCPCTotal entity tracking issues
+        return entity.world.entities
             .filterIsInstance<LivingEntity>()
-            .firstOrNull { nearby ->
-                nearby.type == entity.type &&
-                        !nearby.isDead &&
-                        nearby.hasMetadata(STACK_METADATA_KEY)
+            .filter { nearby ->
+                if (nearby == entity || nearby.isDead) return@filter false
+                if (nearby.type != entity.type) return@filter false
+                if (!nearby.hasMetadata(STACK_METADATA_KEY)) return@filter false
+
+                // Manual distance check
+                val nearbyLocation = nearby.location
+                if (nearbyLocation.world != entityLocation.world) return@filter false
+
+                val distanceSquared = entityLocation.distanceSquared(nearbyLocation)
+                distanceSquared <= radiusSquared
             }
+            .firstOrNull()
     }
 
     private fun stackMobsWithinRange(target: LivingEntity, source: LivingEntity) {
