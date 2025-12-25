@@ -93,17 +93,26 @@ class PlayerJoin : Listener {
             PlayerData.createNewPlayerData(player.name)
         }
 
-        val homeLimit = PermissionUtil.getNumberPermission(
-            player,
-            "totalessentials.commands.sethome.",
-            MainConfig.homesDefaultLimitHomes
-        )
-        PlayerData.homeLimitCache[player.name, homeLimit] = true
+        try {
+            val homeLimit = PermissionUtil.getNumberPermission(
+                player,
+                "totalessentials.commands.sethome.",
+                MainConfig.homesDefaultLimitHomes
+            )
+            PlayerData.homeLimitCache[player.name, homeLimit] = true
+        } catch (ex: Exception) {
+            // Fallback to default if permission check fails
+            PlayerData.homeLimitCache[player.name, MainConfig.homesDefaultLimitHomes] = true
+        }
     }
 
     private fun sendJoinMessages(player: Player) {
         // Não envia mensagem para admins (permissão *)
-        if (player.hasPermission("*")) return
+        try {
+            if (player.hasPermission("*")) return
+        } catch (ex: Exception) {
+            // Se falhar ao verificar permissão, continua normalmente
+        }
 
         val isVanished = PlayerData.vanishCache[player] ?: false
         if (isVanished) return

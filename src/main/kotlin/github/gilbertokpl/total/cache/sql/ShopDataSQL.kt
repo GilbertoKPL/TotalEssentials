@@ -8,5 +8,5 @@ object ShopDataSQL : Table("ShopData" + MainConfig.databaseManager) {
     val visits = integer("visits").default(0)
     val location = text("location").default("")
     val open = bool("open").default(true)
-    override val primaryKey = PrimaryKey(PlayerDataSQL.playerTable)
+    override val primaryKey = PrimaryKey(playerTable)
 }
