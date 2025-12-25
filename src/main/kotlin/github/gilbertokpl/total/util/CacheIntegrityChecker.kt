@@ -170,7 +170,7 @@ object CacheIntegrityChecker {
                                 it[kitsTable] = kitsStr
                                 it[homeTable] = homesStr
                                 it[vipTable] = vipStr
-                                it[this.vipItems] = vipItemsStr
+                                it[vipItems] = vipItemsStr
                                 it[backTable] = backStr
                                 it[LimiterItemTable] = limiterItemStr
                                 it[LimiterLocationTable] = limiterLocationStr
@@ -238,7 +238,7 @@ object CacheIntegrityChecker {
                                     it[kitsTable] = kitsStr
                                     it[homeTable] = homesStr
                                     it[vipTable] = vipStr
-                                    it[this.vipItems] = vipItemsStr
+                                    it[vipItems] = vipItemsStr
                                     it[backTable] = backStr
                                     it[LimiterItemTable] = limiterItemStr
                                     it[LimiterLocationTable] = limiterLocationStr
@@ -316,9 +316,9 @@ object CacheIntegrityChecker {
                             logs.add("➕ INSERT SHOP: $playerKey")
                             ShopDataSQL.insert {
                                 it[playerTable] = playerKey
-                                it[this.visits] = visits
-                                it[this.location] = locationStr
-                                it[this.open] = open
+                                it[visits] = visits
+                                it[location] = locationStr
+                                it[open] = open
                             }
                             inserted++
                         } else {
@@ -331,9 +331,9 @@ object CacheIntegrityChecker {
                                 logs.add("🔄 UPDATE SHOP: $playerKey")
                                 logs.addAll(diffs)
                                 ShopDataSQL.update({ LowerCase(ShopDataSQL.playerTable) eq playerKey }) {
-                                    it[this.visits] = visits
+                                    it[visits] = visits
                                     it[location] = locationStr
-                                    it[this.open] = open
+                                    it[open] = open
                                 }
                                 updated++
                             } else {
@@ -395,8 +395,8 @@ object CacheIntegrityChecker {
                             logs.add("➕ INSERT KEY: $key")
                             VipKeysSQL.insert {
                                 it[vipKey] = key
-                                it[this.vipName] = vipName
-                                it[this.vipTime] = vipTime
+                                it[vipName] = vipName
+                                it[vipTime] = vipTime
                             }
                             inserted++
                         } else {
@@ -409,7 +409,7 @@ object CacheIntegrityChecker {
                                 logs.addAll(diffs)
                                 VipKeysSQL.update({ VipKeysSQL.vipKey eq key }) {
                                     it[vipName] = vipName
-                                    it[this.vipTime] = vipTime
+                                    it[vipTime] = vipTime
                                 }
                                 updated++
                             } else {
@@ -560,8 +560,8 @@ object CacheIntegrityChecker {
                             logs.add("➕ INSERT LOGIN: $playerName")
                             LoginDataSQL.insert {
                                 it[player] = playerName
-                                it[this.password] = password
-                                it[this.ip] = ip
+                                it[password] = password
+                                it[ip] = ip
                             }
                             inserted++
                         } else {
@@ -574,7 +574,7 @@ object CacheIntegrityChecker {
                                 logs.addAll(diffs)
                                 LoginDataSQL.update({ LowerCase(LoginDataSQL.player) eq playerName }) {
                                     it[password] = password
-                                    it[this.ip] = ip
+                                    it[ip] = ip
                                 }
                                 updated++
                             } else {
@@ -717,10 +717,10 @@ object CacheIntegrityChecker {
                         if (dbRecord == null) {
                             logs.add("➕ INSERT VIP: $vipName")
                             VipDataSQL.insert {
-                                it[this.vipName] = vipName
+                                it[vipName] = vipName
                                 it[vipDiscord] = discord
                                 it[vipGroup] = group
-                                it[this.vipItems] = itemsStr
+                                it[vipItems] = itemsStr
                                 it[vipCommands] = commandsStr
                                 it[vipPrice] = price
                                 it[vipQuantity] = quantity
