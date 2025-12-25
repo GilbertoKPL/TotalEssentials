@@ -11,7 +11,7 @@ import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.DiscordManager
-import github.gilbertokpl.total.util.CacheIntegrityChecker.syncCacheToDatabase
+import github.gilbertokpl.total.util.CacheIntegrityChecker.syncAllCaches
 import github.gilbertokpl.total.util.PluginUtil
 import github.gilbertokpl.total.vip.VipManager.checkVip
 import org.bukkit.command.CommandSender
@@ -91,8 +91,8 @@ class CommandTotal : CommandManager("total") {
 
             "forcesave" -> {
                 TotalEssentials.getCore().getTask().async {
-                    syncCacheToDatabase()
-                    sender.sendMessage("§aPronto.")
+                    syncAllCaches()
+                    sender.sendMessage("§aSincronização de todos os caches concluída!")
                 }
                 return false
             }

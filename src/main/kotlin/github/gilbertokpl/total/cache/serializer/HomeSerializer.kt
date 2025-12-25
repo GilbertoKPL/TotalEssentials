@@ -8,15 +8,11 @@ internal class HomeSerializer : ICacheSerializer<HashMap<String, Location>, Stri
     private val locationSerializer = LocationSerializer()
 
     override fun convertToDatabase(hash: HashMap<String, Location>): String {
-        val stringBuilder = StringBuilder()
-        for ((key, value) in hash) {
-            val toString = "$key,${locationSerializer.convertToDatabase(value)}"
-            if (stringBuilder.isNotEmpty()) {
-                stringBuilder.append("|")
+        return hash.entries
+            .sortedBy { it.key }
+            .joinToString("|") { (key, value) ->
+                "$key,${locationSerializer.convertToDatabase(value)}"
             }
-            stringBuilder.append(toString)
-        }
-        return stringBuilder.toString()
     }
 
     override fun convertToCache(value: String): HashMap<String, Location> {

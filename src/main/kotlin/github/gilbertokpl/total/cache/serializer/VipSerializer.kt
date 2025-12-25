@@ -4,16 +4,11 @@ import github.gilbertokpl.core.cache.interfaces.ICacheSerializer
 
 class VipSerializer : ICacheSerializer<HashMap<String, Long>, String> {
     override fun convertToDatabase(hash: HashMap<String, Long>): String {
-        var string = ""
-        for (i in hash) {
-            val toString = "${i.key},${i.value}"
-            string += if (string == "") {
-                toString
-            } else {
-                "|$toString"
+        return hash.entries
+            .sortedBy { it.key }
+            .joinToString("|") { (key, value) ->
+                "$key,$value"
             }
-        }
-        return string
     }
 
     override fun convertToCache(value: String): HashMap<String, Long> {

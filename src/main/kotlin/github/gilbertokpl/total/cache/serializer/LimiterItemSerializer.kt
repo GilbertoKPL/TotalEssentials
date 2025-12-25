@@ -4,9 +4,11 @@ import github.gilbertokpl.core.cache.interfaces.ICacheSerializer
 
 class LimiterItemSerializer : ICacheSerializer<HashMap<Int, Int>, String> {
     override fun convertToDatabase(hash: HashMap<Int, Int>): String {
-        return hash.entries.joinToString("|") { (key, value) ->
-            "$key,$value"
-        }
+        return hash.entries
+            .sortedBy { it.key }
+            .joinToString("|") { (key, value) ->
+                "$key,$value"
+            }
     }
 
     override fun convertToCache(value: String): HashMap<Int, Int> {

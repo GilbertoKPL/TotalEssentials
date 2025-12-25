@@ -11,13 +11,14 @@ class LimiterLocationSerializer : ICacheSerializer<HashMap<ItemStack, ArrayList<
     private val itemSerializer = InventoryUtil()
 
     override fun convertToDatabase(hash: HashMap<ItemStack, ArrayList<Location>>): String {
-        val serializedLocations = hash.entries.joinToString("|") { entry ->
-            val locationList = entry.value.joinToString("-") { location ->
-                locationSerializer.convertToDatabase(location)
+        return hash.entries
+            .sortedBy { itemSerializer.serialize(it.key) }
+            .joinToString("|") { entry ->
+                val locationList = entry.value.joinToString("-") { location ->
+                    locationSerializer.convertToDatabase(location)
+                }
+                "${itemSerializer.serialize(entry.key)},$locationList"
             }
-            "${itemSerializer.serialize(entry.key)},$locationList"
-        }
-        return serializedLocations
     }
 
     override fun convertToCache(value: String): HashMap<ItemStack, ArrayList<Location>> {
