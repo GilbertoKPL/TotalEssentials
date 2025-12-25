@@ -113,7 +113,7 @@ public class TotalEssentials extends JavaPlugin {
     public void onDisable() {
         if (update) return;
 
-        CacheIntegrityChecker.INSTANCE.syncCacheToDatabase();
+        CacheIntegrityChecker.INSTANCE.syncAllCaches();
 
         PlayerUtil.INSTANCE.savePlaytime();
         ServerUtil.INSTANCE.consoleMessage(ConsoleColorUtil.YELLOW.getColor() + LangConfig.generalSaveDataMessage + ConsoleColorUtil.RESET.getColor());
