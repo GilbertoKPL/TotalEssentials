@@ -23,16 +23,18 @@ object KitsData : ICache {
     }
 
     fun createNewKitData(entity: String) {
-        kitFakeName[entity] = ""
-        kitTime[entity] = 0L
-        kitItems[entity] = arrayListOf()
-        kitWeight[entity] = 0
+        val key = entity.lowercase()
+        kitFakeName[key] = ""
+        kitTime[key] = 0L
+        kitItems[key] = arrayListOf()
+        kitWeight[key] = 0
     }
 
     fun delete(entity: String) {
-        kitFakeName.remove(entity)
-        kitTime.remove(entity)
-        kitItems.remove(entity)
-        kitWeight.remove(entity)
+        val key = entity.lowercase()
+        kitFakeName.remove(key)
+        kitTime.remove(key)
+        kitItems.remove(key)
+        kitWeight.remove(key)
     }
 }

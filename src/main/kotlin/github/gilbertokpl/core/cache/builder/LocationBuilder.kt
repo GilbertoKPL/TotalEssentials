@@ -84,9 +84,9 @@ internal class LocationBuilder(
                         // Existe no banco - faz UPDATE (mesmo se null, apenas limpa para "")
                         originalKey != null -> {
                             if (value != null) {
-                                logger.log("Atualizando location: $key, coluna: ${column.name}")
+                                logger.log("Atualizando location: $key, coluna: ${column.name}", 2)
                             } else {
-                                logger.log("Limpando location: $key, coluna: ${column.name}")
+                                logger.log("Limpando location: $key, coluna: ${column.name}", 2)
                             }
                             table.update({ primaryColumn eq originalKey }) {
                                 it[column] = dbValue
@@ -129,7 +129,7 @@ internal class LocationBuilder(
                 if (isDisabledWorld) {
                     cache[key] = null
                     markForUpdate(key) // Vai limpar no banco
-                    logger.log("Location ignorada (mundo desabilitado): $key, mundo: $worldName")
+                    logger.log("Location ignorada (mundo desabilitado): $key, mundo: $worldName", 2)
                 } else {
                     cache[key] = location
                 }

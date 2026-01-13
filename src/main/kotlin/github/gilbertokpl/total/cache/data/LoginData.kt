@@ -36,8 +36,9 @@ object LoginData : ICache {
     }
 
     fun createNewLoginData(playerName: String, password: String, ipAddress: String) {
-        isLoggedIn[playerName] = true
-        this.password[playerName] = password
-        this.ipAddress[playerName] = ipAddress
+        val key = playerName.lowercase()
+        isLoggedIn[key] = true
+        this.password[key] = password
+        this.ipAddress[key] = ipAddress
     }
 }

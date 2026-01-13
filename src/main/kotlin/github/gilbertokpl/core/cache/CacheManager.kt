@@ -85,6 +85,10 @@ class CacheManager private constructor(
             totalCore.logger.log(message)
         }
 
+        override fun log(message: String, level: Int) {
+            totalCore.logger.log(message, level)
+        }
+
         override fun warn(message: String) {
             totalCore.logger.log("[WARN] $message")
         }

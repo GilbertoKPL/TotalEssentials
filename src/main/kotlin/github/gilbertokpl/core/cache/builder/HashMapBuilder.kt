@@ -162,7 +162,7 @@ class HashMapBuilder<K, V, D>(
                     when {
                         // Existe no banco - faz UPDATE
                         originalKey != null -> {
-                            logger.log("Atualizando entidade: $key, coluna: ${column.name}")
+                            logger.log("Atualizando entidade: $key, coluna: ${column.name}", 2)
                             table.update({ primaryColumn eq originalKey }) {
                                 it[column] = dbValue
                             }

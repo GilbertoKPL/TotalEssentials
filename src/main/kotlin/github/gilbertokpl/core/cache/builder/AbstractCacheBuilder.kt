@@ -5,23 +5,21 @@ import github.gilbertokpl.core.cache.interfaces.ICacheLogger
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.Table
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 /**
- * Classe base abstrata para todos os builders de cache persistentes.
- * Fornece implementação comum de thread-safety e operações básicas.
+ * Classe base abstrata para builders de cache com persistência.
  *
- * IMPORTANTE - REGRAS DE PERSISTÊNCIA:
- * 1. NUNCA faz DELETE da linha (isso apagaria todas as colunas do jogador)
- * 2. Remove apenas limpa o valor para default (null, "", HashMap vazio, etc)
- * 3. INSERT é feito APENAS pelo PlayerData.createNewPlayerData()
- * 4. Builders só fazem UPDATE de registros existentes
+ * Fornece:
+ * - Normalização de chaves (lowercase)
+ * - Thread-safety via ReadWriteLock
+ * - Gerenciamento de pendências de update
+ * - Estrutura comum para persistência
  *
- * @param T Tipo do valor armazenado
- * @param D Tipo no banco de dados
+ * @param T Tipo do valor no cache
+ * @param D Tipo do valor no banco de dados
  */
 abstract class AbstractCacheBuilder<T, D>(
     protected val table: Table,
@@ -30,145 +28,165 @@ abstract class AbstractCacheBuilder<T, D>(
     protected val logger: ICacheLogger
 ) : ICacheBuilder<T> {
 
-    // HashMap normal protegido por lock (ConcurrentHashMap não aceita null)
+    // Cache em memória
     protected val cache = HashMap<String, T?>()
 
-    // Set de chaves pendentes para atualização
-    protected val pendingUpdates = ConcurrentHashMap.newKeySet<String>()
-
-    // REMOVIDO: markedForDeletion - não usamos mais DELETE
-    // Mantido apenas para compatibilidade, mas não é usado
-    protected val markedForDeletion = ConcurrentHashMap.newKeySet<String>()
-
-    // ReadWriteLock para operações no cache
+    // Lock para thread-safety
     protected val rwLock = ReentrantReadWriteLock()
 
-    // =========================================================
-    // Métodos utilitários
-    // =========================================================
+    // Chaves com alterações pendentes para persistir
+    protected val pendingUpdates = mutableSetOf<String>()
 
-    /**
-     * Normaliza a chave para lowercase.
-     */
-    protected fun normalizeKey(key: String): String = key.lowercase()
-
-    /**
-     * Marca uma chave para atualização.
-     */
-    protected fun markForUpdate(key: String) {
-        pendingUpdates.add(normalizeKey(key))
-    }
+    // Chaves marcadas para deleção (limpar valor, não deletar linha)
+    protected val markedForDeletion = mutableSetOf<String>()
 
     // =========================================================
-    // Implementações de ICacheBuilder
-    // =========================================================
-
-    override fun getMap(): Map<String, T?> {
-        rwLock.read {
-            return cache.mapValues { (_, value) ->
-                when (value) {
-                    is HashMap<*, *> -> HashMap(value) as T   // cópia profunda
-                    else -> value
-                }
-            }
-        }
-    }
-
-    override operator fun get(entity: String): T? {
-        val key = normalizeKey(entity)
-        rwLock.read {
-            val value = cache[key] ?: return null
-
-            return when (value) {
-                is HashMap<*, *> -> HashMap(value) as T       // nunca retornar o original
-                else -> value
-            }
-        }
-    }
-
-    override operator fun get(entity: Player): T? = get(entity.name.lowercase())
-
-    override operator fun set(entity: Player, value: T) = set(entity.name.lowercase(), value)
-
-    override operator fun set(entity: String, value: T) = set(entity.lowercase(), value, override = true)
-
-    override fun remove(entity: Player) = remove(entity.name.lowercase())
-
-    override fun contains(entity: String): Boolean {
-        val key = normalizeKey(entity.lowercase())
-        rwLock.read {
-            return cache.containsKey(key) && cache[key] != null
-        }
-    }
-
-    override fun contains(entity: Player): Boolean = contains(entity.name.lowercase())
-
-    override fun size(): Int {
-        rwLock.read {
-            return cache.count { it.value != null }
-        }
-    }
-
-    override fun hasPendingUpdates(): Boolean = pendingUpdates.isNotEmpty()
-
-    /**
-     * Remove apenas limpa o valor no cache.
-     * NÃO marca para deleção no banco - apenas atualiza para valor default.
-     */
-    override fun remove(entity: String) {
-        val key = normalizeKey(entity.lowercase())
-        rwLock.write {
-            cache[key] = null
-            // NÃO adiciona em markedForDeletion
-            // Apenas marca para update (vai salvar como valor vazio/default)
-            markForUpdate(key)
-        }
-    }
-
-    override fun unload() {
-        update()
-    }
-
-    // =========================================================
-    // Métodos auxiliares (mantidos para compatibilidade)
+    // Métodos abstratos para conversão
     // =========================================================
 
     /**
-     * @deprecated Não usamos mais deleção de linhas
-     */
-    protected fun isMarkedForDeletion(key: String): Boolean {
-        return false // Sempre retorna false - não deletamos mais
-    }
-
-    /**
-     * @deprecated Não usamos mais deleção de linhas
-     */
-    protected fun clearDeletionMark(key: String) {
-        markedForDeletion.remove(key)
-    }
-
-    // =========================================================
-    // Métodos abstratos para implementação específica
-    // =========================================================
-
-    /**
-     * Converte o valor para o tipo do banco de dados.
+     * Converte valor do cache para formato do banco.
      */
     protected abstract fun toDatabase(value: T): D
 
     /**
-     * Converte o valor do banco de dados para o tipo em memória.
+     * Converte valor do banco para formato do cache.
      */
     protected abstract fun fromDatabase(value: D): T?
 
+    // =========================================================
+    // Métodos opcionais para override
+    // =========================================================
+
     /**
-     * Retorna o valor padrão para novas entradas (se aplicável).
+     * Valor default para novas entradas.
+     * Override para tipos com valor default específico.
      */
     protected open fun defaultValue(): T? = null
 
     /**
-     * Verifica se o valor deve ser tratado como "vazio".
-     * NÃO é mais usado para deleção.
+     * Determina se um valor deve ser tratado como "deletado".
+     * Override para lógica customizada.
      */
     protected open fun shouldDelete(value: T?): Boolean = value == null
+
+    // =========================================================
+    // Normalização de chaves
+    // =========================================================
+
+    /**
+     * Normaliza a chave para lowercase.
+     * Garante consistência entre cache e banco.
+     */
+    protected fun normalizeKey(key: String): String = key.lowercase()
+
+    /**
+     * Marca uma chave para ser persistida no próximo update.
+     */
+    protected fun markForUpdate(key: String) {
+        pendingUpdates.add(key)
+    }
+
+    // =========================================================
+    // Implementação de ICacheBuilder - Leitura
+    // =========================================================
+
+    override fun getMap(): Map<String, T?> {
+        rwLock.read {
+            return cache.toMap()
+        }
+    }
+
+    override operator fun get(entity: String): T? {
+        rwLock.read {
+            return cache[normalizeKey(entity)]
+        }
+    }
+
+    override operator fun get(entity: Player): T? = get(entity.name)
+
+    override fun contains(entity: String): Boolean {
+        rwLock.read {
+            return cache.containsKey(normalizeKey(entity))
+        }
+    }
+
+    override fun contains(entity: Player): Boolean = contains(entity.name)
+
+    override fun size(): Int {
+        rwLock.read {
+            return cache.size
+        }
+    }
+
+    override fun hasPendingUpdates(): Boolean {
+        rwLock.read {
+            return pendingUpdates.isNotEmpty()
+        }
+    }
+
+    // =========================================================
+    // Implementação de ICacheBuilder - Escrita
+    // =========================================================
+
+    override operator fun set(entity: String, value: T) {
+        set(entity, value, override = true)
+    }
+
+    override operator fun set(entity: Player, value: T) {
+        set(entity.name, value)
+    }
+
+    /**
+     * Implementação padrão de set com override.
+     * Subclasses podem sobrescrever para comportamento específico.
+     */
+    override operator fun set(entity: String, value: T, override: Boolean) {
+        val key = normalizeKey(entity)
+        rwLock.write {
+            cache[key] = value
+            markedForDeletion.remove(key)
+            markForUpdate(key)
+        }
+    }
+
+    override fun remove(entity: String) {
+        val key = normalizeKey(entity)
+        rwLock.write {
+            cache.remove(key)
+            markedForDeletion.add(key)
+            markForUpdate(key)
+        }
+    }
+
+    override fun remove(entity: Player) = remove(entity.name)
+
+    // =========================================================
+    // Ciclo de vida - devem ser implementados pelas subclasses
+    // =========================================================
+
+    /**
+     * Persiste alterações pendentes no banco.
+     * Subclasses devem implementar a lógica de UPDATE.
+     */
+    abstract override fun update()
+
+    /**
+     * Carrega dados do banco para o cache.
+     * Subclasses devem implementar a lógica de SELECT.
+     */
+    abstract override fun load()
+
+    /**
+     * Salva e limpa recursos.
+     * Implementação padrão: update + clear.
+     */
+    override fun unload() {
+        update()
+        rwLock.write {
+            cache.clear()
+            pendingUpdates.clear()
+            markedForDeletion.clear()
+        }
+    }
 }

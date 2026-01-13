@@ -60,7 +60,7 @@ internal class ByteBuilder<T>(
                         // Existe no banco - faz UPDATE (mesmo se value for null, apenas limpa)
                         originalKey != null -> {
                             if (value != null) {
-                                logger.log("Atualizando entidade: $key, coluna: ${column.name}, valor: $value")
+                                logger.log("Atualizando entidade: $key, coluna: ${column.name}, valor: $value", 2)
                                 table.update({ primaryColumn eq originalKey }) {
                                     it[column] = value
                                 }
