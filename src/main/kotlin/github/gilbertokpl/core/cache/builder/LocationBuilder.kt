@@ -45,11 +45,11 @@ internal class LocationBuilder(
     // =========================================================
 
     override operator fun set(entity: String, value: Location?) {
-        set(entity, value, override = true)
+        set(entity.lowercase(), value, override = true)
     }
 
     override operator fun set(entity: String, value: Location?, override: Boolean) {
-        val key = normalizeKey(entity)
+        val key = normalizeKey(entity.lowercase())
         rwLock.write {
             cache[key] = value
             // NÃO marca para deleção - apenas atualiza para string vazia

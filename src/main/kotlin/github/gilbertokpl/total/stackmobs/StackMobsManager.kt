@@ -8,7 +8,7 @@ import org.bukkit.metadata.FixedMetadataValue
 
 object StackMobsManager {
 
-    private const val STACK_METADATA_KEY = "stack"
+    private const val STACK_METADATA_KEY = "stmob"
 
     fun handleSpawnWithinRange(entity: LivingEntity) {
         if (isWorldBlocked(entity.world.name)) return
