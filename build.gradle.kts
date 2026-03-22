@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "2.3.0-RC"
-    id("com.gradleup.shadow") version "9.2.2"
+    kotlin("jvm") version "2.3.20"
+    id("com.gradleup.shadow") version "9.4.0"
 }
 
 val base = "github.gilbertokpl.library"
@@ -45,17 +45,17 @@ dependencies {
     }
 
     //exposed
-    compileOnly("org.jetbrains.exposed:exposed-core:1.0.0-rc-4") {
+    compileOnly("org.jetbrains.exposed:exposed-core:1.1.1") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-dao:1.0.0-rc-4") {
+    compileOnly("org.jetbrains.exposed:exposed-dao:1.1.1") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:1.0.0-rc-4") {
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:1.1.1") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -68,7 +68,7 @@ dependencies {
     }
 
     //Mysql with MariaDB driver database
-    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.6") {
+    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.7") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
@@ -88,17 +88,17 @@ dependencies {
     }
 
     //host info
-    compileOnly("com.github.oshi:oshi-core:6.9.1") {
+    compileOnly("com.github.oshi:oshi-core:6.9.3") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0-RC") {
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.20") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    compileOnly("net.dv8tion:JDA:5.6.1") {
+    compileOnly("net.dv8tion:JDA:6.3.2") {
         exclude("club.minnced","opus-java")
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
