@@ -38,9 +38,9 @@ class CommandRegister : CommandManager("register") {
         // self register
         if (sender is Player && !LoginData.doesPlayerExist(sender)) {
 
-            val vpn = PlayerData.playerInfo[sender]?.get(3) ?: false
+            val vpn = PlayerData.playerInfo[sender]?.getOrNull(3) ?: "false"
 
-            if (vpn == true) {
+            if (vpn == "true") {
                 sender.sendMessage(LangConfig.authVpn)
                 return false
             }
@@ -83,9 +83,9 @@ class CommandRegister : CommandManager("register") {
             val message = LangConfig.discordchatSendPlayerLocale
                 .replace("%player%", sender.name)
                 .replace("%ip%", playerAddress)
-                .replace("%country%", info?.get(0) ?: "none")
-                .replace("%state%", info?.get(1) ?: "none")
-                .replace("%city%", info?.get(2) ?: "none")
+                .replace("%country%", info?.getOrNull(0) ?: "none")
+                .replace("%state%", info?.getOrNull(1) ?: "none")
+                .replace("%city%", info?.getOrNull(2) ?: "none")
 
             if (MainConfig.discordbotConnectRegisterChat) {
                 DiscordManager.sendDiscordMessage(message, MainConfig.discordbotIdRegisterChat, false)
