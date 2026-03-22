@@ -196,7 +196,7 @@ object PlayerUtil {
         return try {
             fetchIPInfo(ipAddress)
         } catch (e: Exception) {
-            listOf("Erro API")
+            listOf("Erro API", "Erro API", "Erro API", "false")
         }
     }
 
@@ -214,13 +214,13 @@ object PlayerUtil {
 
     private fun parseIPApiResponse(json: String): List<String> {
         if (json.contains("\"status\":\"fail\"")) {
-            return listOf("Erro API")
+            return listOf("Erro API", "Erro API", "Erro API", "false")
         }
 
         val country = extractJsonValue(json, "country")
         val region = extractJsonValue(json, "regionName")
         val city = extractJsonValue(json, "city")
-        val hosting = extractJsonValue(json, "hosting")
+        val hosting = extractJsonBooleanValue(json, "hosting")
 
         return listOf(
             "País: $country",
@@ -228,6 +228,15 @@ object PlayerUtil {
             "Cidade: $city",
             hosting
         )
+    }
+
+    private fun extractJsonBooleanValue(json: String, key: String): String {
+        val pattern = "\"$key\":"
+        val startIndex = json.indexOf(pattern)
+        if (startIndex == -1) return "false"
+        val valueStart = startIndex + pattern.length
+        val remaining = json.substring(valueStart).trim()
+        return if (remaining.startsWith("true")) "true" else "false"
     }
 
     private fun extractJsonValue(json: String, key: String): String {

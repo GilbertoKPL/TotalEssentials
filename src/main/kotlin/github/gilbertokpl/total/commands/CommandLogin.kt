@@ -54,9 +54,9 @@ class CommandLogin : CommandManager("login") {
                     val message = LangConfig.discordchatSendPlayerLocalAtt
                         .replace("%player%", sender.name)
                         .replace("%ip%", address)
-                        .replace("%country%", info?.get(0) ?: "none")
-                        .replace("%state%", info?.get(1) ?: "none")
-                        .replace("%city%", info?.get(2) ?: "none")
+                        .replace("%country%", info?.getOrNull(0) ?: "none")
+                        .replace("%state%", info?.getOrNull(1) ?: "none")
+                        .replace("%city%", info?.getOrNull(2) ?: "none")
 
 
                     if (MainConfig.discordbotConnectRegisterChat) {

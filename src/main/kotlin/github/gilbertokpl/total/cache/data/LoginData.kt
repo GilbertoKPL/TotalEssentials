@@ -6,6 +6,8 @@ import github.gilbertokpl.total.cache.sql.LoginDataSQL
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 object LoginData : ICache {
     override var table: Table = LoginDataSQL
@@ -37,6 +39,20 @@ object LoginData : ICache {
 
     fun createNewLoginData(playerName: String, password: String, ipAddress: String) {
         val key = playerName.lowercase()
+
+        try {
+            transaction(TotalEssentials.getCore().sql) {
+                LoginDataSQL.insert {
+                    it[player] = key
+                    it[ip] = ipAddress
+                    it[LoginDataSQL.password] = password
+                }
+            }
+        } catch (e: Exception) {
+            TotalEssentials.getCore().logger.log("[ERROR] Erro ao criar login para $key: ${e.message}")
+            e.printStackTrace()
+        }
+
         isLoggedIn[key] = true
         this.password[key] = password
         this.ipAddress[key] = ipAddress
