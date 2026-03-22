@@ -6,8 +6,6 @@ plugins {
     id("com.gradleup.shadow") version "9.4.0"
 }
 
-val base = "github.gilbertokpl.library"
-
 version = "1.2.3"
 
 
@@ -122,24 +120,9 @@ tasks.shadowJar {
             "Plugin-Version" to project.version.toString(),
             "Plugin-Creator" to "Gilberto",
             "Plugin-Name" to "TotalEssentials",
-            "Plugin-Github" to "https://github.com/GilbertoKPL/TotalEssentials",
-            "Class-Path" to "TotalEssentials/lib/TotalEssentials-lib-$version.jar ../TotalEssentials/lib/TotalEssentials-lib-$version.jar"
+            "Plugin-Github" to "https://github.com/GilbertoKPL/TotalEssentials"
         )
     }
-
-
-    //relocate all libs
-    relocate("org.apache.commons.lang3", "$base.lang3")
-    relocate("oshi", "$base.oshi")
-    relocate("gnu.trove", "$base.trove")
-    relocate("net.dv8tion", "$base.dv8tion")
-    relocate("com.neovisionaries", "$base.neovisionaries")
-    relocate("org.apache.commons.io", "$base.io")
-    relocate("org.yaml", "$base.yaml")
-    relocate("com.google.gson", "$base.gson")
-    relocate("org.simpleyaml", "$base.yaml")
-    relocate("com.zaxxer.hikari", "$base.hikari")
-    relocate("com.squareup.okhttp3", "$base.okhttp3")
 }
 
 tasks {
