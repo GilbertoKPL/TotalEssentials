@@ -21,13 +21,8 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.security.CodeSource;
-import java.util.Enumeration;
 import java.util.Objects;
-import java.util.jar.*;
 
 public class TotalEssentials extends JavaPlugin {
 
@@ -40,7 +35,6 @@ public class TotalEssentials extends JavaPlugin {
     // ====== State flags ======
     public static boolean lowVersion = false;
     public static boolean update = false;
-    public static boolean libModify = false;
     public final boolean publicVer = false;
     public static String jarPath = null;
 
@@ -60,8 +54,19 @@ public class TotalEssentials extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        initUpdateAndDependencies();
-        if (update || libModify) {
+        // Load libraries from Maven repos and inject into classloader
+        LibraryLoader loader = new LibraryLoader(
+                getLogger(),
+                Paths.get(getDataFolder().getPath().replace(".paper-remapped" + File.separator, "")),
+                getClass().getClassLoader()
+        );
+        loader.cleanOldLibs();
+        if (!loader.loadAll()) {
+            getLogger().severe("Falha ao carregar dependencias! O plugin pode nao funcionar corretamente.");
+        }
+
+        initUpdateCheck();
+        if (update) {
             getLogger().severe("Restarting to apply changes...");
             Bukkit.shutdown();
             return;
@@ -202,14 +207,12 @@ public class TotalEssentials extends JavaPlugin {
         }
     }
 
-    public void initUpdateAndDependencies() {
-        String version;
-
+    public void initUpdateCheck() {
         boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
 
         try {
             if (publicVer && !isWindows) {
-                version = getLatestVersion("GilbertoKPL", "TotalEssentials");
+                String version = getLatestVersion("GilbertoKPL", "TotalEssentials");
                 if (!Objects.equals(version, this.getDescription().getVersion())) {
                     getLogger().severe("§eNew version available = " + version + ", downloading...");
                     jarPath = "plugins" + File.separator + "TotalEssentials-" + version + ".jar";
@@ -226,40 +229,8 @@ public class TotalEssentials extends JavaPlugin {
                         update = true;
                     }
                 }
-            } else {
-                version = this.getDescription().getVersion();
             }
         } catch (IOException ignored) {
-            version = this.getDescription().getVersion();
-        }
-
-        String depend = "https://github.com/GilbertoKPL/TotalEssentials/releases/download/"
-                + version + "/TotalEssentials-lib-" + version + ".jar";
-        String[] split = depend.split("/");
-        String name = split[split.length - 1];
-
-        String pathLib = this.getDataFolder().getPath()
-                .replace(".paper-remapped" + File.separator, "")
-                + File.separator + "lib" + File.separator;
-
-        String newPath = pathLib + name;
-
-        File file = new File(newPath);
-        String classPath = "TotalEssentials/lib/" + name + " ../TotalEssentials/lib/" + name;
-
-        if (!file.exists()) {
-            Bukkit.getConsoleSender().sendMessage("§eBaixando dependência = " + name);
-            downloadArchive(depend, newPath);
-            libModify = true;
-        }
-
-        try {
-            if ((update && !isWindows) || !Objects.equals(getManifest(), classPath)) {
-                modifyManifest(classPath);
-                update = true;
-            }
-        } catch (IOException e) {
-            getLogger().severe("§cYou are using Windows. Some features may not work properly!");
         }
     }
 
@@ -284,67 +255,6 @@ public class TotalEssentials extends JavaPlugin {
         } catch (IOException e) {
             return false;
         }
-    }
-
-    public static String getManifest() throws IOException {
-        try (JarFile jar = new JarFile(JarPath())) {
-            Manifest manifest = jar.getManifest();
-            return manifest.getMainAttributes().getValue("Class-Path");
-        }
-    }
-
-    public static void modifyManifest(String classPath) throws IOException {
-        String jarFilePath = JarPath();
-        try (JarFile jarFile = new JarFile(jarFilePath)) {
-            Manifest manifest = jarFile.getManifest();
-            Attributes mainAttributes = manifest.getMainAttributes();
-            mainAttributes.putValue("Class-Path", classPath);
-
-            Manifest newManifest = new Manifest();
-            newManifest.getMainAttributes().putAll(mainAttributes);
-
-            createJarWithNewManifest(jarFilePath, newManifest);
-        }
-    }
-
-    public static String JarPath() {
-        if (jarPath != null) {
-            try {
-                return new File(jarPath).getCanonicalPath();
-            } catch (Exception ignored) { }
-        }
-
-        CodeSource codeSource = TotalEssentials.class.getProtectionDomain().getCodeSource();
-        if (codeSource != null) {
-            try {
-                return new File(codeSource.getLocation().getPath()).getCanonicalPath();
-            } catch (Exception ignored) { }
-        }
-        return "";
-    }
-
-    private static void createJarWithNewManifest(String jarFilePath, Manifest newManifest) throws IOException {
-        String tempJarFilePath = Files.createTempFile("temp-totalessentials", "").toString();
-
-        try (JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(tempJarFilePath), newManifest);
-             JarFile jarFile = new JarFile(jarFilePath)) {
-
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                if (!entry.getName().equals(JarFile.MANIFEST_NAME)) {
-                    try (InputStream entryStream = jarFile.getInputStream(entry)) {
-                        jarOutputStream.putNextEntry(new JarEntry(entry.getName()));
-                        byte[] buffer = new byte[4096];
-                        int bytesRead;
-                        while ((bytesRead = entryStream.read(buffer)) != -1) {
-                            jarOutputStream.write(buffer, 0, bytesRead);
-                        }
-                    }
-                }
-            }
-        }
-        Files.move(Paths.get(tempJarFilePath), Paths.get(jarFilePath), StandardCopyOption.REPLACE_EXISTING);
     }
 
     public static String getLatestVersion(String owner, String repo) throws IOException {
