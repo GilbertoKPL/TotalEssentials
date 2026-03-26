@@ -21,7 +21,6 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.Objects;
 
 public class TotalEssentials extends JavaPlugin {
@@ -54,17 +53,6 @@ public class TotalEssentials extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        // Load libraries from Maven repos and inject into classloader
-        LibraryLoader loader = new LibraryLoader(
-                getLogger(),
-                Paths.get(getDataFolder().getPath().replace(".paper-remapped" + File.separator, "")),
-                getClass().getClassLoader()
-        );
-        loader.cleanOldLibs();
-        if (!loader.loadAll()) {
-            getLogger().severe("Falha ao carregar dependencias! O plugin pode nao funcionar corretamente.");
-        }
-
         initUpdateCheck();
         if (update) {
             getLogger().severe("Restarting to apply changes...");
