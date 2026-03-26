@@ -42,86 +42,78 @@ dependencies {
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    //exposed - bundled in JAR (no runtime download needed)
-    implementation("org.jetbrains.exposed:exposed-core:1.1.1") {
+    //exposed
+    compileOnly("org.jetbrains.exposed:exposed-core:1.1.1") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    implementation("org.jetbrains.exposed:exposed-dao:1.1.1") {
+    compileOnly("org.jetbrains.exposed:exposed-dao:1.1.1") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    implementation("org.jetbrains.exposed:exposed-jdbc:1.1.1") {
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:1.1.1") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
 
     //H2 database
-    implementation("com.h2database:h2:2.2.224") {
+    compileOnly("com.h2database:h2:2.2.224") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
     //Mysql with MariaDB driver database
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.7") {
+    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.7") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
-    //HikariCP
-    implementation("com.zaxxer:HikariCP:4.0.3") {
-        exclude("org.slf4j", "slf4j-api")
+    //implementation to mysql - MariaDB
+    compileOnly("com.zaxxer:HikariCP:4.0.3") {
+            exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
     //remove all connections of slf4
-    implementation("org.slf4j:slf4j-nop:2.0.17")
+    compileOnly("org.slf4j:slf4j-nop:2.0.17")
 
     //simple yaml to help in yaml
-    implementation("me.carleslc.Simple-YAML:Simple-Yaml:1.7.3") {
+    compileOnly("me.carleslc.Simple-YAML:Simple-Yaml:1.7.3") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
-        exclude("org.yaml", "snakeyaml")
     }
 
     //host info
-    implementation("com.github.oshi:oshi-core:6.9.3") {
+    compileOnly("com.github.oshi:oshi-core:6.9.3") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.20") {
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.20") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    implementation("net.dv8tion:JDA:6.3.2") {
+    compileOnly("net.dv8tion:JDA:6.3.2") {
         exclude("club.minnced","opus-java")
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    implementation("org.json:json:20250517") {
+    compileOnly("org.json:json:20250517") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.slf4j", "jcl-over-slf4j")
     }
 
-    implementation("club.minnced:discord-webhooks:0.8.4")
+    compileOnly("club.minnced:discord-webhooks:0.8.4")
 
 }
 
 tasks.shadowJar {
     archiveFileName.set(rootProject.name + "-" + project.version.toString() + ".jar")
     destinationDirectory.set(File("$projectDir/jar/plugins"))
-
-    // Exclude JAR signature files to prevent SecurityException when bundling signed JARs
-    exclude("META-INF/*.SF")
-    exclude("META-INF/*.DSA")
-    exclude("META-INF/*.RSA")
-    exclude("META-INF/*.EC")
-    exclude("module-info.class")
 
     manifest {
         attributes(
