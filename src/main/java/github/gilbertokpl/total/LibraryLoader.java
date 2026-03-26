@@ -3,7 +3,9 @@ package github.gilbertokpl.total;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.AccessibleObject;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -26,6 +28,8 @@ public class LibraryLoader {
     private final Path libFolder;
     private final ClassLoader classLoader;
     private Method addURLMethod;
+    private MethodHandle addURLHandle;
+    private boolean useMethodHandle = false;
 
     public LibraryLoader(Logger logger, Path dataFolder, ClassLoader classLoader) {
         this.logger = logger;
@@ -140,19 +144,28 @@ public class LibraryLoader {
             } catch (Exception ignored) {
             }
 
-            // Java 16+: Use Unsafe to bypass module restrictions
+            // Java 16+: Use Unsafe to get a trusted MethodHandles.Lookup (IMPL_LOOKUP)
+            // which bypasses all module access checks
             try {
                 Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
                 Field theUnsafe = unsafeClass.getDeclaredField("theUnsafe");
                 theUnsafe.setAccessible(true);
                 Object unsafe = theUnsafe.get(null);
 
-                Method objectFieldOffset = unsafeClass.getMethod("objectFieldOffset", Field.class);
-                Method putBoolean = unsafeClass.getMethod("putBoolean", Object.class, long.class, boolean.class);
+                // Read MethodHandles.Lookup.IMPL_LOOKUP via Unsafe (bypasses module checks)
+                Field implLookupField = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+                Method staticFieldOffset = unsafeClass.getMethod("staticFieldOffset", Field.class);
+                Method getObject = unsafeClass.getMethod("getObject", Object.class, long.class);
+                long offset = (long) staticFieldOffset.invoke(unsafe, implLookupField);
+                MethodHandles.Lookup trustedLookup =
+                        (MethodHandles.Lookup) getObject.invoke(unsafe, MethodHandles.Lookup.class, offset);
 
-                Field overrideField = AccessibleObject.class.getDeclaredField("override");
-                long offset = (long) objectFieldOffset.invoke(unsafe, overrideField);
-                putBoolean.invoke(unsafe, addURLMethod, offset, true);
+                // Use trusted lookup to get a MethodHandle for addURL
+                addURLHandle = trustedLookup.findVirtual(
+                        URLClassLoader.class, "addURL",
+                        MethodType.methodType(void.class, URL.class)
+                );
+                useMethodHandle = true;
                 return true;
             } catch (Exception e) {
                 logger.severe("Unsafe bypass falhou: " + e.getMessage());
@@ -166,7 +179,11 @@ public class LibraryLoader {
     }
 
     private void addToClasspath(URL url) throws Exception {
-        addURLMethod.invoke(classLoader, url);
+        if (useMethodHandle) {
+            addURLHandle.invoke((URLClassLoader) classLoader, url);
+        } else {
+            addURLMethod.invoke(classLoader, url);
+        }
     }
 
     public void cleanOldLibs() {
