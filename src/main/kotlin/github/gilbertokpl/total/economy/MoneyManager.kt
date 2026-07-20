@@ -68,6 +68,7 @@ object MoneyManager {
 
         val newBalance = currentBalance - amount
         PlayerData.moneyCache[playerName] = newBalance
+        refreshTycoon()
 
         return createSuccessResponse(amount, newBalance)
     }
@@ -91,6 +92,7 @@ object MoneyManager {
 
         val newBalance = currentBalance + amount
         PlayerData.moneyCache[playerName] = newBalance
+        refreshTycoon()
 
         return createSuccessResponse(amount, newBalance)
     }

@@ -9,7 +9,8 @@ import github.gilbertokpl.total.config.files.LangConfig.titleJoinSubtitle
 import github.gilbertokpl.total.config.files.LangConfig.titleJoinTitle
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.DiscordManager
-import github.gilbertokpl.total.login.LoginManager
+import github.gilbertokpl.total.economy.MagnataManager
+import github.gilbertokpl.total.login.VelocityAuthBridge
 import github.gilbertokpl.total.util.ServerUtil
 import github.gilbertokpl.total.util.PermissionUtil
 import github.gilbertokpl.total.util.PlayerUtil
@@ -50,16 +51,19 @@ class PlayerJoin : Listener {
         }
 
         task.async {
-            initializePlayerData(player)
+            ensurePlayerData(player)
             handlePlaytime(player)
-            sendJoinMessages(player)
-            VipManager.checkVip(player.name.lowercase())
 
             if (MainConfig.generalAntiVpn) {
                 PlayerData.playerInfo[player.name, PlayerUtil.checkPlayerIP(address)] = true
             }
 
             task.sync {
+                if (!player.isOnline) return@sync
+                initializePermissionData(player)
+                MagnataManager.sendJoinMessage(player)
+                sendJoinMessages(player)
+                VipManager.checkVip(player.name.lowercase())
                 PlayerData.applyPlayerSettings(player)
             }
         }
@@ -67,19 +71,11 @@ class PlayerJoin : Listener {
 
     private fun handleAuthentication(player: Player, address: String) {
         if (!MainConfig.authActivated) {
-            LoginData.isLoggedIn[player] = true
+            LoginData.markLoggedIn(player)
             return
         }
 
-        LoginData.loginAttempts[player] = 0
-        LoginData.values[player] = 0
-
-        if (LoginData.ipAddress[player] == address) {
-            player.sendMessage(LangConfig.authAutoLogin)
-            LoginData.isLoggedIn[player] = true
-        } else {
-            LoginManager.loginMessage(player)
-        }
+        VelocityAuthBridge.beginAuthentication(player, address)
     }
 
     private fun handlePlaytime(player: Player) {
@@ -88,11 +84,13 @@ class PlayerJoin : Listener {
         PlayerData.playtimeLocal[player.name, System.currentTimeMillis()] = true
     }
 
-    private fun initializePlayerData(player: Player) {
+    private fun ensurePlayerData(player: Player) {
         if (!PlayerData.checkIfPlayerExists(player)) {
             PlayerData.createNewPlayerData(player.name)
         }
+    }
 
+    private fun initializePermissionData(player: Player) {
         try {
             val homeLimit = PermissionUtil.getNumberPermission(
                 player,

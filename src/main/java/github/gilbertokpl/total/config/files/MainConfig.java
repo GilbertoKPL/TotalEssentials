@@ -46,6 +46,13 @@ public class MainConfig implements DefaultConfig {
             }
     )
     public static Boolean generalAutoUpdate = true;
+    @MultiComment(
+            {
+                    @Comment(annotations = "Intervalo, em minutos, para verificar novas releases no GitHub.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "Interval, in minutes, used to check GitHub for new releases.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Integer generalAutoUpdateIntervalMinutes = 30;
 
     @MultiComment(
             {
@@ -1303,6 +1310,44 @@ public class MainConfig implements DefaultConfig {
             }
     )
     public static Boolean addonsColorInChat = true;
+    @MultiComment(
+            {
+                    @Comment(annotations = "Neste recurso, substitui {magnata} no chat nativo pelo prefixo do jogador mais rico.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "In this feature, replaces {magnata} in the native chat with the richest player's prefix.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean addonsMagnataActivated = true;
+    @MultiComment(
+            {
+                    @Comment(annotations = "Prefixo exibido em {magnata} para o jogador mais rico. Placeholders: %player%, %money%, %unity%.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "Prefix shown in {magnata} for the richest player. Placeholders: %player%, %money%, %unity%.", lang = LangTypes.EN_US)
+            }
+    )
+    public static String addonsMagnataPrefix = "&e&lMAGNATA";
+    @MultiComment(
+            {
+                    @Comment(annotations = "Texto exibido em {magnata} para jogadores que nao sao o magnata.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "Text shown in {magnata} for players who are not the tycoon.", lang = LangTypes.EN_US)
+            }
+    )
+    public static String addonsMagnataEmptyPrefix = "";
+    @MultiComment(
+            {
+                    @Comment(annotations = "Se estiver ativado (true), anuncia quando o magnata entrar no servidor.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "If enabled (true), announces when the tycoon joins the server.", lang = LangTypes.EN_US)
+            }
+    )
+    public static Boolean addonsMagnataAnnounceOnJoin = true;
+    @MultiComment(
+            {
+                    @Comment(annotations = "Mensagem enviada quando o magnata entra. Placeholders: %player%, %money%, %unity%.", lang = LangTypes.PT_BR),
+                    @Comment(annotations = "Message sent when the tycoon joins. Placeholders: %player%, %money%, %unity%.", lang = LangTypes.EN_US)
+            }
+    )
+    public static List<String> addonsMagnataJoinMessages = Arrays.asList(
+            "%prefix%&e\u2726 &lO MAGNATA CHEGOU! &e\u2726",
+            "%prefix%&7Fortuna: &a%unity%%money%"
+    );
     @MultiComment(
             {
                     @Comment(annotations = "Neste recurso, evita que o jogador perca XP na morte.", lang = LangTypes.PT_BR),

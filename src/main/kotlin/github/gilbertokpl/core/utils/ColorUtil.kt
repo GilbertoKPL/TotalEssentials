@@ -12,7 +12,7 @@ class ColorUtil() {
     private val colorPermissions = listOf(
         "&1", "&2", "&3", "&4", "&5", "&6", "&7",
         "&8", "&9", "&a", "&b", "&c", "&d", "&e",
-        "&f", "&k", "&r", "&l", "&n"
+        "&f", "&g", "&k", "&r", "&l", "&n"
     )
 
     fun rgbHex(player: Player?, string: String): String {
@@ -26,6 +26,7 @@ class ColorUtil() {
                     matcher = colorPattern.matcher(modifiedString)
                 }
                 modifiedString = ChatColor.translateAlternateColorCodes('&', modifiedString)
+                    .replace("&g", "\u00A7g", ignoreCase = true)
                 modifiedString
             } catch (e: Throwable) {
                 works = false
@@ -42,7 +43,7 @@ class ColorUtil() {
         colorPermissions.forEach { permission ->
             if (hasPlayer) {
                 val permissionNode = "totalessentials.color.$permission"
-                modifiedString = if (player.hasPermission(permissionNode)) {
+                modifiedString = if (hasPermission(player, permissionNode)) {
                     modifiedString.replace(permission, permission.replace("&", "§"))
                 } else {
                     modifiedString.replace(permission, "")
@@ -57,11 +58,19 @@ class ColorUtil() {
     fun list(player: Player): List<String> {
         val colorList = ArrayList<String>()
         colorPermissions.forEach { permission ->
-            if (player.hasPermission("totalessentials.color.$permission")) {
+            if (hasPermission(player, "totalessentials.color.$permission")) {
                 colorList.add("${permission.replace("&", "§")}$permission")
             }
         }
         return colorList
+    }
+
+    private fun hasPermission(player: Player, permission: String): Boolean {
+        return try {
+            player.hasPermission(permission)
+        } catch (_: Throwable) {
+            false
+        }
     }
 
 }

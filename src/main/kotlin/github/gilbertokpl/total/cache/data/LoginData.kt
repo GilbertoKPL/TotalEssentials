@@ -3,6 +3,7 @@ package github.gilbertokpl.total.cache.data
 import github.gilbertokpl.core.cache.interfaces.ICache
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.sql.LoginDataSQL
+import github.gilbertokpl.total.login.VelocityAuthBridge
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.Table
@@ -27,6 +28,11 @@ object LoginData : ICache {
 
     fun isPlayerLoggedIn(player: Player): Boolean {
         return isLoggedIn[player] == true
+    }
+
+    fun markLoggedIn(player: Player, notifyVelocity: Boolean = true) {
+        isLoggedIn[player] = true
+        if (notifyVelocity) VelocityAuthBridge.notifyAuthenticated(player)
     }
 
     fun doesPlayerExist(playerName: String): Boolean {

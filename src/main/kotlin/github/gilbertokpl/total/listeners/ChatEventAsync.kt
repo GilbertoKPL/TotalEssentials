@@ -5,6 +5,7 @@ import github.gilbertokpl.total.cache.data.KitsData
 import github.gilbertokpl.total.cache.data.LoginData
 import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.cache.inventory.Kit
+import github.gilbertokpl.total.chat.ChatManager
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import org.bukkit.entity.Player
@@ -31,6 +32,14 @@ class ChatEventAsync : Listener {
 
         if (MainConfig.kitsActivated) {
             handleKitEdit(event, player)
+        }
+
+        if (event.isCancelled || !ChatManager.isEnabled()) return
+
+        event.isCancelled = true
+        val message = event.message
+        TotalEssentials.getCore().getTask().sync {
+            ChatManager.handleChat(player, message)
         }
     }
 

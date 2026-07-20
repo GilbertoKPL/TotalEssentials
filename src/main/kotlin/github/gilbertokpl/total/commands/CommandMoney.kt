@@ -47,6 +47,7 @@ class CommandMoney : CommandManager("money") {
 
         // show top money players
         if (args[0] == "top") {
+            MoneyManager.refreshTycoon()
             sender.sendMessage(LangConfig.moneyTopMessage)
             var position = 1
             for (i in MoneyManager.tycoonPlayer) {
@@ -126,6 +127,7 @@ class CommandMoney : CommandManager("money") {
             when (args[0]) {
                 "set" -> {
                     PlayerData.moneyCache[args[1]] = value
+                    MoneyManager.refreshTycoon()
                     sender.sendMessage(
                         MoneyManager.replaceMoney(LangConfig.moneySet, value)
                         .replace("%player%", args[1].lowercase()))
@@ -138,6 +140,7 @@ class CommandMoney : CommandManager("money") {
                         return false
                     }
                     PlayerData.moneyCache[args[1]] = otherMoney - value
+                    MoneyManager.refreshTycoon()
                     sender.sendMessage(
                         MoneyManager.replaceMoney(LangConfig.moneyTake, value)
                         .replace("%player%", args[1].lowercase()))
@@ -149,6 +152,7 @@ class CommandMoney : CommandManager("money") {
                 "give" -> {
                     val otherMoney = PlayerData.moneyCache[args[1]] ?: 0.0
                     PlayerData.moneyCache[args[1]] = otherMoney + value
+                    MoneyManager.refreshTycoon()
                     sender.sendMessage(
                         MoneyManager.replaceMoney(LangConfig.moneyAdd, value)
                         .replace("%player%", args[1].lowercase()))

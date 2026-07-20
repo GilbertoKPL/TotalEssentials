@@ -2439,6 +2439,102 @@ public class LangConfig implements DefaultLang {
         return generalPlayerNotOnline;
     }
 
+    // Native chat
+    @MultiValue({
+            @Value(value = "%prefix%&cVocê não tem permissão para usar este canal.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&cYou do not have permission to use this channel.", lang = LangTypes.EN_US)
+    })
+    public static String chatNoPermission;
+    @MultiValue({
+            @Value(value = "%prefix%&cVocê não tem permissão para falar neste canal.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&cYou do not have permission to speak in this channel.", lang = LangTypes.EN_US)
+    })
+    public static String chatNoSpeakPermission;
+    @MultiValue({
+            @Value(value = "%prefix%&cCanal não encontrado. Use /chat para ver os canais.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&cChannel not found. Use /chat to list channels.", lang = LangTypes.EN_US)
+    })
+    public static String chatChannelNotFound;
+    @MultiValue({
+            @Value(value = "%prefix%&aAgora você está falando no canal &f%channel%&a.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&aYou are now speaking in &f%channel%&a.", lang = LangTypes.EN_US)
+    })
+    public static String chatChannelSelected;
+    @MultiValue({
+            @Value(value = "%prefix%&aVocê entrou no canal &f%channel%&a.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&aYou joined &f%channel%&a.", lang = LangTypes.EN_US)
+    })
+    public static String chatChannelJoined;
+    @MultiValue({
+            @Value(value = "%prefix%&eVocê saiu do canal &f%channel%&e.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&eYou left &f%channel%&e.", lang = LangTypes.EN_US)
+    })
+    public static String chatChannelLeft;
+
+    @MultiValue({
+            @Value(value = "%prefix%&cEste canal não pode ser abandonado.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&cThis channel cannot be left.", lang = LangTypes.EN_US)
+    })
+    public static String chatCannotLeave;
+    @MultiValue({
+            @Value(value = "%prefix%&cVocê não está ouvindo este canal.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&cYou are not listening to this channel.", lang = LangTypes.EN_US)
+    })
+    public static String chatNotListening;
+    @MultiValue({
+            @Value(value = "%prefix%&cAguarde %seconds%s para falar novamente neste canal.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&cWait %seconds%s before speaking in this channel again.", lang = LangTypes.EN_US)
+    })
+    public static String chatCooldown;
+    @MultiValue({
+            @Value(value = "%prefix%&eCanais disponíveis: &f%channels%", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&eAvailable channels: &f%channels%", lang = LangTypes.EN_US)
+    })
+    public static String chatListHeader;
+    @MultiValue({
+            @Value(value = "%prefix%&aConfiguração do chat recarregada.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&aChat configuration reloaded.", lang = LangTypes.EN_US)
+    })
+    public static String chatReload;
+
+    // Private messages
+    @MultiValue({
+            @Value(value = "%prefix%&cEsse jogador não está conectado na rede.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&cThat player is not connected to the network.", lang = LangTypes.EN_US)
+    })
+    public static String tellPlayerNotOnline;
+    @MultiValue({
+            @Value(value = "%prefix%&cVocê não pode enviar mensagem para si mesmo.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&cYou cannot message yourself.", lang = LangTypes.EN_US)
+    })
+    public static String tellCannotSelf;
+    @MultiValue({
+            @Value(value = "%prefix%&cVocê não tem ninguém para responder.", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&cYou have nobody to reply to.", lang = LangTypes.EN_US)
+    })
+    public static String tellNoReply;
+    @MultiValue({
+            @Value(value = "&8[&dEu &8-> &d%target%&8] &f%message%", lang = LangTypes.PT_BR),
+            @Value(value = "&8[&dMe &8-> &d%target%&8] &f%message%", lang = LangTypes.EN_US)
+    })
+    public static String tellSenderFormat;
+    @MultiValue({
+            @Value(value = "&8[&d%player% &8-> &dEu&8] &f%message%", lang = LangTypes.PT_BR),
+            @Value(value = "&8[&d%player% &8-> &dMe&8] &f%message%", lang = LangTypes.EN_US)
+    })
+    public static String tellReceiverFormat;
+
+    @MultiValue({
+            @Value(value = "%prefix%&eUse: /tell <jogador> <mensagem>", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&eUse: /tell <player> <message>", lang = LangTypes.EN_US)
+    })
+    public static String tellUsage;
+    @MultiValue({
+            @Value(value = "%prefix%&eUse: /r <mensagem>", lang = LangTypes.PT_BR),
+            @Value(value = "%prefix%&eUse: /r <message>", lang = LangTypes.EN_US)
+    })
+    public static String tellReplyUsage;
+
     @Nullable
     @Override
     public String getGeneralServerPrefix() {

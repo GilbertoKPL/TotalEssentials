@@ -76,6 +76,7 @@ class CommandRegister : CommandManager("register") {
             val info = PlayerData.playerInfo[sender]
 
             LoginData.createNewLoginData(sender.name.lowercase(), encrypt.encrypt(args[0]), playerAddress)
+            LoginData.markLoggedIn(sender)
 
             sender.sendMessage(LangConfig.authRegisterSuccess)
 
@@ -106,7 +107,7 @@ class CommandRegister : CommandManager("register") {
             sender.sendMessage(LangConfig.authOtherRegister.replace("%player%", args[0].lowercase()))
 
             val p = Bukkit.getPlayer(args[0]) ?: return false
-            LoginData.isLoggedIn[p] = true
+            LoginData.markLoggedIn(p)
             p.sendMessage(LangConfig.authLoggedIn)
         }
 

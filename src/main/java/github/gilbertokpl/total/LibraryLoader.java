@@ -21,9 +21,6 @@ import java.util.logging.Logger;
 public class LibraryLoader {
 
     private static final String MAVEN_CENTRAL = "https://repo1.maven.org/maven2";
-    private static final String JITPACK = "https://jitpack.io";
-    private static final String DV8TION = "https://m2.dv8tion.net/releases";
-
     private final Logger logger;
     private final Path libFolder;
     private final ClassLoader classLoader;
@@ -61,7 +58,7 @@ public class LibraryLoader {
         for (Dependency dep : deps) {
             try {
                 loadDependency(dep);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.severe("Falha ao carregar dependencia " + dep.artifactId + "-" + dep.version + ": " + e.getMessage());
                 allLoaded = false;
             }
@@ -74,7 +71,7 @@ public class LibraryLoader {
         return allLoaded;
     }
 
-    private void loadDependency(Dependency dep) throws Exception {
+    private void loadDependency(Dependency dep) throws Throwable {
         String fileName = dep.artifactId + "-" + dep.version + ".jar";
         Path jarPath = libFolder.resolve(fileName);
 
@@ -178,7 +175,7 @@ public class LibraryLoader {
         }
     }
 
-    private void addToClasspath(URL url) throws Exception {
+    private void addToClasspath(URL url) throws Throwable {
         if (useMethodHandle) {
             addURLHandle.invoke((URLClassLoader) classLoader, url);
         } else {
@@ -211,24 +208,24 @@ public class LibraryLoader {
         List<Dependency> deps = new ArrayList<>();
 
         // ===== Kotlin =====
-        deps.add(dep("org.jetbrains.kotlin", "kotlin-stdlib", "2.3.20", MAVEN_CENTRAL));
-        deps.add(dep("org.jetbrains.kotlin", "kotlin-stdlib-jdk7", "2.3.20", MAVEN_CENTRAL));
-        deps.add(dep("org.jetbrains.kotlin", "kotlin-stdlib-jdk8", "2.3.20", MAVEN_CENTRAL));
+        deps.add(dep("org.jetbrains.kotlin", "kotlin-stdlib", "2.4.0", MAVEN_CENTRAL));
+        deps.add(dep("org.jetbrains.kotlin", "kotlin-stdlib-jdk7", "2.4.0", MAVEN_CENTRAL));
+        deps.add(dep("org.jetbrains.kotlin", "kotlin-stdlib-jdk8", "2.4.0", MAVEN_CENTRAL));
         deps.add(dep("org.jetbrains", "annotations", "26.0.2", MAVEN_CENTRAL));
 
         // ===== Kotlinx Coroutines (Exposed dependency) =====
         deps.add(dep("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm", "1.10.2", MAVEN_CENTRAL));
 
         // ===== Exposed ORM =====
-        deps.add(dep("org.jetbrains.exposed", "exposed-core", "1.1.1", MAVEN_CENTRAL));
-        deps.add(dep("org.jetbrains.exposed", "exposed-dao", "1.1.1", MAVEN_CENTRAL));
-        deps.add(dep("org.jetbrains.exposed", "exposed-jdbc", "1.1.1", MAVEN_CENTRAL));
+        deps.add(dep("org.jetbrains.exposed", "exposed-core", "1.3.1", MAVEN_CENTRAL));
+        deps.add(dep("org.jetbrains.exposed", "exposed-dao", "1.3.1", MAVEN_CENTRAL));
+        deps.add(dep("org.jetbrains.exposed", "exposed-jdbc", "1.3.1", MAVEN_CENTRAL));
 
         // ===== H2 Database =====
         deps.add(dep("com.h2database", "h2", "2.2.224", MAVEN_CENTRAL));
 
         // ===== MariaDB Driver =====
-        deps.add(dep("org.mariadb.jdbc", "mariadb-java-client", "3.5.7", MAVEN_CENTRAL));
+        deps.add(dep("org.mariadb.jdbc", "mariadb-java-client", "3.5.9", MAVEN_CENTRAL));
 
         // ===== HikariCP =====
         deps.add(dep("com.zaxxer", "HikariCP", "4.0.3", MAVEN_CENTRAL));
@@ -236,9 +233,6 @@ public class LibraryLoader {
         // ===== SLF4J =====
         deps.add(dep("org.slf4j", "slf4j-api", "2.0.17", MAVEN_CENTRAL));
         deps.add(dep("org.slf4j", "slf4j-nop", "2.0.17", MAVEN_CENTRAL));
-
-        // ===== Simple YAML =====
-        deps.add(dep("me.carleslc.Simple-YAML", "Simple-Yaml", "1.7.3", JITPACK));
 
         // ===== OSHI (Host Info) =====
         deps.add(dep("com.github.oshi", "oshi-core", "6.9.3", MAVEN_CENTRAL));
@@ -249,7 +243,7 @@ public class LibraryLoader {
         deps.add(dep("org.json", "json", "20250517", MAVEN_CENTRAL));
 
         // ===== JDA (Discord) =====
-        deps.add(dep("net.dv8tion", "JDA", "6.3.2", DV8TION));
+        deps.add(dep("net.dv8tion", "JDA", "6.3.2", MAVEN_CENTRAL));
 
         // JDA transitives
         deps.add(dep("com.squareup.okhttp3", "okhttp", "4.12.0", MAVEN_CENTRAL));

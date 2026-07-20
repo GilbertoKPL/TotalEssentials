@@ -89,16 +89,16 @@ class TaskManager(private val plugin: Plugin) : CoroutineScope {
     }
 
     /** Executa no main/region thread seguro */
-    fun sync(block: suspend CoroutineScope.() -> Unit) {
+    fun sync(block: () -> Unit) {
         if (foliaGlobalScheduler != null && foliaGlobalRun != null) {
             // Folia: roda direto na mesma thread do scheduler
             foliaGlobalRun.invoke(foliaGlobalScheduler, plugin, Consumer<Any?> {
-                runBlocking { block() } // não muda de thread
+                block()
             })
         } else {
             // Paper/Spigot: main thread
             Bukkit.getScheduler().runTask(plugin, Runnable {
-                runBlocking { block() }
+                block()
             })
         }
     }

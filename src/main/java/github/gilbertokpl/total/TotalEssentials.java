@@ -6,11 +6,15 @@ import github.gilbertokpl.total.cache.internal.InternalLoader;
 import github.gilbertokpl.total.cache.loop.ClearEntitiesLoop;
 import github.gilbertokpl.total.cache.loop.PluginLoop;
 import github.gilbertokpl.total.cache.sql.*;
+import github.gilbertokpl.total.chat.ChatManager;
 import github.gilbertokpl.total.config.files.LangConfig;
 import github.gilbertokpl.total.config.files.MainConfig;
 import github.gilbertokpl.total.discord.DiscordManager;
 import github.gilbertokpl.total.economy.EconomyHolder;
 import github.gilbertokpl.total.filter.Filter;
+import github.gilbertokpl.total.login.VelocityAuthBridge;
+import github.gilbertokpl.total.placeholder.TotalPlaceholderExpansion;
+import github.gilbertokpl.total.update.SafeUpdateManager;
 import github.gilbertokpl.total.util.*;
 import net.dv8tion.jda.internal.utils.JDALogger;
 import org.bukkit.Bukkit;
@@ -18,9 +22,6 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Objects;
 
@@ -34,9 +35,7 @@ public class TotalEssentials extends JavaPlugin {
 
     // ====== State flags ======
     public static boolean lowVersion = false;
-    public static boolean update = false;
-    public final boolean publicVer = false;
-    public static String jarPath = null;
+    private SafeUpdateManager updateManager;
 
     // ====== Getters ======
     public static TotalEssentials getInstance() {
@@ -65,13 +64,6 @@ public class TotalEssentials extends JavaPlugin {
             getLogger().severe("Falha ao carregar dependencias! O plugin pode nao funcionar corretamente.");
         }
 
-        initUpdateCheck();
-        if (update) {
-            getLogger().severe("Restarting to apply changes...");
-            Bukkit.shutdown();
-            return;
-        }
-
         instance = this;
         totalCore = new TotalCore(this);
 
@@ -90,8 +82,6 @@ public class TotalEssentials extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (update) return;
-
         printConsoleBanner();
 
         Runtime runtime = Runtime.getRuntime();
@@ -100,15 +90,19 @@ public class TotalEssentials extends JavaPlugin {
 
         long before = runtime.totalMemory() - runtime.freeMemory();
 
+        ChatManager.INSTANCE.start();
         startCorePlugin();
+        VelocityAuthBridge.INSTANCE.start();
 
         long after = runtime.totalMemory() - runtime.freeMemory();
 
         initPermissions();
+        initPlaceholders();
         initLoaders();
         initVersionCheck();
         initDiscord();
         initLoops();
+        initUpdateManager();
         instance.getServer().getLogger().setFilter(new Filter());
 
         getLogger().info("The cache is using approximately: " + ((after - before) / 1024 / 1024) + " MB");
@@ -116,7 +110,10 @@ public class TotalEssentials extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (update) return;
+        if (updateManager != null) updateManager.close();
+
+        VelocityAuthBridge.INSTANCE.stop();
+        ChatManager.INSTANCE.stop();
 
         CacheIntegrityChecker.INSTANCE.syncAllCaches();
 
@@ -160,6 +157,14 @@ public class TotalEssentials extends JavaPlugin {
                 LangConfig.deathmessagesEntityReplacer
         );
         ServerUtil.INSTANCE.initializeFeatures();
+    }
+
+    private void initPlaceholders() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) return;
+
+        if (new TotalPlaceholderExpansion(this).register()) {
+            getLogger().info("PlaceholderAPI integration enabled.");
+        }
     }
 
     private void initVersionCheck() {
@@ -207,73 +212,30 @@ public class TotalEssentials extends JavaPlugin {
         }
     }
 
-    public void initUpdateCheck() {
-        boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
+    private void initUpdateManager() {
+        if (!Boolean.TRUE.equals(MainConfig.generalAutoUpdate)) return;
 
-        try {
-            if (publicVer && !isWindows) {
-                String version = getLatestVersion("GilbertoKPL", "TotalEssentials");
-                if (!Objects.equals(version, this.getDescription().getVersion())) {
-                    getLogger().severe("§eNew version available = " + version + ", downloading...");
-                    jarPath = "plugins" + File.separator + "TotalEssentials-" + version + ".jar";
+        updateManager = new SafeUpdateManager(
+                SafeUpdateManager.Platform.BUKKIT,
+                getDescription().getVersion(),
+                TotalEssentials.class,
+                getDataFolder().toPath(),
+                MainConfig.generalAutoUpdateIntervalMinutes == null
+                        ? 30
+                        : MainConfig.generalAutoUpdateIntervalMinutes,
+                new SafeUpdateManager.UpdateLogger() {
+                    @Override
+                    public void info(String message) {
+                        getLogger().info(message);
+                    }
 
-                    boolean archive = downloadArchive(
-                            "https://github.com/GilbertoKPL/TotalEssentials/releases/download/"
-                                    + version + "/TotalEssentials-" + version + ".jar",
-                            jarPath
-                    );
-
-                    if (archive) {
-                        new File("plugins" + File.separator + "TotalEssentials-" + this.getDescription().getVersion() + ".jar")
-                                .deleteOnExit();
-                        update = true;
+                    @Override
+                    public void warning(String message, Throwable error) {
+                        getLogger().warning(message + " " + error.getMessage());
                     }
                 }
-            }
-        } catch (IOException ignored) {
-        }
-    }
-
-    public static boolean downloadArchive(String urlDownload, String path) {
-        try {
-            URL url = new URL(urlDownload);
-            URLConnection connection = url.openConnection();
-
-            try (InputStream inputStream = connection.getInputStream()) {
-                File localArchive = new File(path);
-                localArchive.getParentFile().mkdirs();
-
-                try (FileOutputStream outputStream = new FileOutputStream(localArchive)) {
-                    byte[] buffer = new byte[4096];
-                    int bytesRead;
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, bytesRead);
-                    }
-                }
-            }
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    public static String getLatestVersion(String owner, String repo) throws IOException {
-        String apiUrl = "https://api.github.com/repos/" + owner + "/" + repo + "/releases/latest";
-        URL url = new URL(apiUrl);
-
-        try (InputStream inputStream = url.openStream();
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-
-            StringBuilder jsonContent = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                jsonContent.append(line);
-            }
-
-            int startIndex = jsonContent.indexOf("\"tag_name\":\"") + 12;
-            int endIndex = jsonContent.indexOf("\"", startIndex);
-            return jsonContent.substring(startIndex, endIndex);
-        }
+        );
+        updateManager.start();
     }
 
     private static final String RESET = "\u001B[0m";

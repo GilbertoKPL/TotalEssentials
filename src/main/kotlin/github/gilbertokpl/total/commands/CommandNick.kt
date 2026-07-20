@@ -15,6 +15,8 @@ import org.bukkit.entity.Player
 
 class CommandNick : CommandManager("nick") {
 
+    private val colorCodeRegex = Regex("(?i)&[0-9A-FK-OR]")
+
     override fun commandPattern(): CommandPattern {
         return CommandPattern(
             aliases = listOf("nome"),
@@ -37,13 +39,14 @@ class CommandNick : CommandManager("nick") {
 
         // single argument (self nick)
         if (args.size == 1 && sender is Player) {
+            val plainNick = stripColorCodes(args[0])
 
-            if (ServerUtil.hasSpecialCharacters(args[0])) {
+            if (ServerUtil.hasSpecialCharacters(plainNick)) {
                 sender.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
                 return false
             }
 
-            if (args[0].length > 16) {
+            if (plainNick.length > 16) {
                 sender.sendMessage(LangConfig.nicksNameLength)
                 return false
             }
@@ -59,8 +62,8 @@ class CommandNick : CommandManager("nick") {
                 return false
             }
 
-            val toCheck = args[0].replace(Regex("&[0-9,a-f]"), "").lowercase()
-            if (MainConfig.nicksBlockedNicks.contains(toCheck)) {
+            val toCheck = plainNick.lowercase()
+            if (MainConfig.nicksBlockedNicks.any { it.equals(toCheck, ignoreCase = true) }) {
                 sender.sendMessage(LangConfig.nicksBlocked)
                 return false
             }
@@ -77,13 +80,14 @@ class CommandNick : CommandManager("nick") {
 
         // two arguments (other player)
         if (args.size != 2) return true
+        val plainNick = stripColorCodes(args[1])
 
-        if (ServerUtil.hasSpecialCharacters(args[1])) {
+        if (ServerUtil.hasSpecialCharacters(plainNick)) {
             sender.sendMessage(LangConfig.generalSpecialCaracteresDisabled)
             return false
         }
 
-        if (args[1].length > 16) {
+        if (plainNick.length > 16) {
             sender.sendMessage(LangConfig.kitsNameLength)
             return false
         }
@@ -117,6 +121,10 @@ class CommandNick : CommandManager("nick") {
         p.sendMessage(LangConfig.nicksOtherPlayerSuccess.replace("%nick%", nick))
 
         return false
+    }
+
+    private fun stripColorCodes(nick: String): String {
+        return nick.replace(colorCodeRegex, "")
     }
 
     // set nickname

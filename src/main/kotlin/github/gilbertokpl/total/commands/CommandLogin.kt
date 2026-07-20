@@ -42,7 +42,7 @@ class CommandLogin : CommandManager("login") {
 
             if (password == args[0]) {
                 sender.sendMessage(LangConfig.authLoggedIn)
-                LoginData.isLoggedIn[sender] = true
+                LoginData.markLoggedIn(sender)
 
                 val address = sender.address?.address.toString()
 
@@ -107,7 +107,7 @@ class CommandLogin : CommandManager("login") {
                 return false
             }
 
-            LoginData.isLoggedIn[p] = true
+            LoginData.markLoggedIn(p)
 
             sender.sendMessage(LangConfig.authOtherLogin.replace("%player%", p.name))
             p.sendMessage(LangConfig.authLoggedIn)

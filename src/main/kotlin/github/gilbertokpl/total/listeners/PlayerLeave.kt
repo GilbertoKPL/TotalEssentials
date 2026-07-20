@@ -6,6 +6,7 @@ import github.gilbertokpl.total.cache.data.SpawnData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.discord.DiscordManager
+import github.gilbertokpl.total.login.VelocityAuthBridge
 import github.gilbertokpl.total.util.PlayerUtil.getMojangSkinURL
 import github.gilbertokpl.total.util.ServerUtil
 import org.bukkit.event.EventHandler
@@ -25,6 +26,7 @@ class PlayerLeave : Listener {
 
         val player = event.player
         LoginData.isLoggedIn[player] = false
+        VelocityAuthBridge.clear(player)
 
         if (MainConfig.backActivated) {
             updateBackLocation(event)

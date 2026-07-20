@@ -1,6 +1,5 @@
 package github.gilbertokpl.total.util
 
-import gilbertokpl.mcpctotal.addons.ActionBarAdaptor
 import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.cache.data.ShopData
@@ -85,15 +84,7 @@ object PlayerUtil {
      */
     fun sendAllAction(message: String) {
         TotalEssentials.getCore().getReflection().getPlayers().forEach { player ->
-            try {
-                player.spigot().sendMessage(
-                    net.md_5.bungee.api.ChatMessageType.ACTION_BAR, net.md_5.bungee.api.chat.TextComponent(message)
-                )
-            } catch (e: NoClassDefFoundError) {
-                try {
-                    ActionBarAdaptor.smallTitle(player, message, 20, 100, 20)
-                }catch (e: NoClassDefFoundError) {}
-            }
+            reflectionCache.sendActionBar(player, message)
         }
     }
 
@@ -345,6 +336,8 @@ object PlayerUtil {
      */
     private class ReflectionCache {
         private val teleportAsyncMethod by lazy { findTeleportAsyncMethod() }
+        private val actionBarSupport by lazy { findActionBarSupport() }
+        private val legacyActionBarMethod by lazy { findLegacyActionBarMethod() }
         private var useLegacyDisplayName = false
         private var useLegacyItemInHand = false
 
@@ -367,6 +360,16 @@ object PlayerUtil {
             }
 
             player.teleport(location)
+        }
+
+        fun sendActionBar(player: Player, message: String) {
+            if (actionBarSupport?.send(player, message) == true) return
+
+            // Minecraft 1.5.2 has no native action bar. MCPCTotal provides this
+            // optional adaptor; other legacy servers receive the text in chat.
+            if (sendWithLegacyAdaptor(player, message)) return
+
+            player.sendMessage(message)
         }
 
         fun setPlayerDisplayName(player: Player, displayName: String?) {
@@ -400,6 +403,102 @@ object PlayerUtil {
             Player::class.java.getMethod("teleportAsync", Location::class.java)
         } catch (e: NoSuchMethodException) {
             null
+        }
+
+        private fun findActionBarSupport(): ActionBarSupport? {
+            return try {
+                val spigotMethod = Player::class.java.getMethod("spigot")
+                val chatMessageType = Class.forName("net.md_5.bungee.api.ChatMessageType")
+                val baseComponent = Class.forName("net.md_5.bungee.api.chat.BaseComponent")
+                val textComponent = Class.forName("net.md_5.bungee.api.chat.TextComponent")
+                val actionBar = chatMessageType.enumConstants.first { enumValue ->
+                    (enumValue as Enum<*>).name == "ACTION_BAR"
+                }
+                val textConstructor = textComponent.getConstructor(String::class.java)
+                val sendMethod = spigotMethod.returnType.methods.firstOrNull { method ->
+                    method.name == "sendMessage" &&
+                        method.parameterTypes.size == 2 &&
+                        method.parameterTypes[0] == chatMessageType &&
+                        (method.parameterTypes[1] == baseComponent ||
+                            (method.parameterTypes[1].isArray &&
+                                method.parameterTypes[1].componentType == baseComponent))
+                } ?: return null
+
+                ActionBarSupport(
+                    spigotMethod,
+                    sendMethod,
+                    textConstructor,
+                    actionBar,
+                    baseComponent,
+                    sendMethod.parameterTypes[1].isArray
+                )
+            } catch (e: ReflectiveOperationException) {
+                null
+            } catch (e: LinkageError) {
+                null
+            } catch (e: NoSuchElementException) {
+                null
+            }
+        }
+
+        private fun sendWithLegacyAdaptor(player: Player, message: String): Boolean {
+            val smallTitle = legacyActionBarMethod ?: return false
+
+            return try {
+                smallTitle.invoke(null, player, message, 20, 100, 20)
+                true
+            } catch (e: ReflectiveOperationException) {
+                false
+            } catch (e: LinkageError) {
+                false
+            }
+        }
+
+        private fun findLegacyActionBarMethod(): java.lang.reflect.Method? {
+            return try {
+                Class.forName("gilbertokpl.mcpctotal.addons.ActionBarAdaptor").getMethod(
+                    "smallTitle",
+                    Player::class.java,
+                    String::class.java,
+                    Int::class.javaPrimitiveType,
+                    Int::class.javaPrimitiveType,
+                    Int::class.javaPrimitiveType
+                )
+            } catch (e: ReflectiveOperationException) {
+                null
+            } catch (e: LinkageError) {
+                null
+            }
+        }
+
+        private class ActionBarSupport(
+            private val spigotMethod: java.lang.reflect.Method,
+            private val sendMethod: java.lang.reflect.Method,
+            private val textConstructor: java.lang.reflect.Constructor<*>,
+            private val actionBar: Any,
+            private val baseComponent: Class<*>,
+            private val usesComponentArray: Boolean
+        ) {
+            fun send(player: Player, message: String): Boolean {
+                return try {
+                    val spigot = spigotMethod.invoke(player)
+                    val component = textConstructor.newInstance(message)
+                    val payload = if (usesComponentArray) {
+                        java.lang.reflect.Array.newInstance(baseComponent, 1).also { components ->
+                            java.lang.reflect.Array.set(components, 0, component)
+                        }
+                    } else {
+                        component
+                    }
+
+                    sendMethod.invoke(spigot, actionBar, payload)
+                    true
+                } catch (e: ReflectiveOperationException) {
+                    false
+                } catch (e: LinkageError) {
+                    false
+                }
+            }
         }
 
         private fun findField(clazz: Class<*>, fieldName: String): Field? {

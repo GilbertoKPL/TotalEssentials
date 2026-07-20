@@ -27,15 +27,23 @@ object PermissionUtil {
         if (player == null || !player.isOnline) return defaultValue
 
         return try {
-            val maxPermissionValue = if (TotalEssentials.isLowVersion()) {
-                findMaxPermissionLegacy(player, permissionPrefix)
-            } else {
-                findMaxPermissionModern(player, permissionPrefix)
-            }
+            val maxPermissionValue = findMaxEffectivePermission(player, permissionPrefix)
 
             if (maxPermissionValue > 0) maxPermissionValue else defaultValue
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             logPermissionError(player, ex)
+            defaultValue
+        }
+    }
+
+    /**
+     * Protege permissões dinâmicas contra o retorno nulo do PEX legado.
+     */
+    fun hasPermission(player: Player?, permission: String, defaultValue: Boolean = false): Boolean {
+        if (player == null || !player.isOnline) return defaultValue
+        return try {
+            player.hasPermission(permission)
+        } catch (_: Throwable) {
             defaultValue
         }
     }
@@ -54,28 +62,19 @@ object PermissionUtil {
 
         return when {
             player == null -> colorApi.rgbHex(null, message)
-            player.hasPermission(COLOR_ALL_PERMISSION) -> colorApi.rgbHex(player, message)
+            hasPermission(player, COLOR_ALL_PERMISSION) -> colorApi.rgbHex(player, message)
             else -> colorApi.color(player, message)
         }
     }
 
     /**
-     * Busca a maior permissão numérica em versões antigas
-     * Itera de 0 até MAX_PERMISSION_VALUE procurando permissões
+     * Lê apenas os nós que o provider já calculou. Isso funciona no Bukkit
+     * 1.5.2 e evita consultar 1.001 permissões inexistentes no PEX antigo.
      */
-    private fun findMaxPermissionLegacy(player: Player, permissionPrefix: String): Int {
-        return (0..MAX_PERMISSION_VALUE)
-            .filter { number -> player.hasPermission("$permissionPrefix$number") }
-            .maxOrNull() ?: 0
-    }
-
-    /**
-     * Busca a maior permissão numérica em versões modernas
-     * Usa effectivePermissions para performance melhorada
-     */
-    private fun findMaxPermissionModern(player: Player, permissionPrefix: String): Int {
+    private fun findMaxEffectivePermission(player: Player, permissionPrefix: String): Int {
         return player.effectivePermissions
             .asSequence()
+            .filter { permissionAttachment -> permissionAttachment.value }
             .mapNotNull { permissionAttachment ->
                 extractPermissionNumber(permissionAttachment.permission, permissionPrefix)
             }
@@ -88,7 +87,8 @@ object PermissionUtil {
      * Exemplo: "totalessentials.sethome.10" com prefixo "totalessentials.sethome." → 10
      */
     private fun extractPermissionNumber(permission: String, prefix: String): Int? {
-        if (!permission.startsWith(prefix)) return null
+        if (permission == "*" || permission.equals("$prefix*", true)) return MAX_PERMISSION_VALUE
+        if (!permission.startsWith(prefix, true)) return null
 
         return permission
             .substringAfterLast(".")
@@ -105,7 +105,7 @@ object PermissionUtil {
     /**
      * Registra erro ao verificar permissões
      */
-    private fun logPermissionError(player: Player, exception: Exception) {
+    private fun logPermissionError(player: Player, exception: Throwable) {
         val logger = Bukkit.getLogger()
         logger.severe("[TotalEssentials] Error checking permissions for player ${player.name}")
         logger.severe("[TotalEssentials] Error details: ${exception.message}")

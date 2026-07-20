@@ -6,6 +6,13 @@ api-version: 1.13
 folia-supported: true
 softdepend:
   - Vault
+  - PlaceholderAPI
   - Multiverse-Core
   - EverNifeCore
-  - LegendChat
+permissions:
+  totalessentials.commands.tell:
+    default: true
+  totalessentials.chat.reload:
+    default: op
+  totalessentials.chat.bypass.cooldown:
+    default: op

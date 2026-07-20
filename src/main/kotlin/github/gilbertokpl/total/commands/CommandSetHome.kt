@@ -82,13 +82,11 @@ class CommandSetHome : CommandManager("sethome") {
         }
 
         // update home limit if needed
-        if (!sender.hasPermission("totalessentials.commands.sethome." + PlayerData.homeLimitCache[sender])) {
-            PlayerData.homeLimitCache[sender] = PermissionUtil.getNumberPermission(
-                sender,
-                "totalessentials.commands.sethome.",
-                MainConfig.homesDefaultLimitHomes
-            )
-        }
+        PlayerData.homeLimitCache[sender] = PermissionUtil.getNumberPermission(
+            sender,
+            "totalessentials.commands.sethome.",
+            MainConfig.homesDefaultLimitHomes
+        )
 
         // check if home limit reached
         if (PlayerData.homeCache[sender]!!.size >= PlayerData.homeLimitCache[sender]!! &&
