@@ -7,6 +7,7 @@ import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.internal.DataTeleport
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.FancyChat
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -59,13 +60,18 @@ class CommandTpa : CommandManager("tpa") {
         DataTeleport.createNewTpa(sender, target, timeToAccept)
 
         sender.sendMessage(LangConfig.tpaSuccess.replace("%player%", target.name))
-        target.sendMessage(
-            LangConfig.tpaOtherReceived
-                .replace("%player%", sender.name)
-                .replace("%time%", timeToAccept.toString())
+        val receivedMessage = LangConfig.tpaOtherReceived
+            .replace("%player%", sender.name)
+            .replace("%time%", timeToAccept.toString())
+        val sentFancyMessage = FancyChat.sendActions(
+            target,
+            receivedMessage,
+            listOf(
+                FancyChat.Action("§a§l[/tpaccept]", "/tpaccept"),
+                FancyChat.Action("§c§l[/tpdeny]", "/tpdeny")
+            )
         )
-
-
+        if (!sentFancyMessage) target.sendMessage(receivedMessage)
 
         return false
     }

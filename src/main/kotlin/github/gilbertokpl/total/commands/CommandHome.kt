@@ -6,6 +6,7 @@ import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.FancyChat
 import github.gilbertokpl.total.util.PlayerUtil
 import github.gilbertokpl.total.util.PlayerUtil.teleportSafe
 import org.bukkit.command.CommandSender
@@ -38,12 +39,18 @@ class CommandHome : CommandManager("home") {
         if (!PlayerData.checkIfPlayerExists(p)) return false
 
         if (args.isEmpty()) {
-            p.sendMessage(
-                LangConfig.homesList.replace(
-                    "%list%",
-                    PlayerData.homeCache[p]!!.map { it.key }.toString()
-                )
+            val homes = PlayerData.homeCache[p]!!.keys.toList()
+            val sentFancyMessage = FancyChat.sendCommandList(
+                p,
+                LangConfig.homesList,
+                "%list%",
+                homes.map { home ->
+                    FancyChat.Action("§e$home", "/home $home")
+                }
             )
+            if (!sentFancyMessage) {
+                p.sendMessage(LangConfig.homesList.replace("%list%", homes.toString()))
+            }
             return false
         }
 
@@ -61,10 +68,18 @@ class CommandHome : CommandManager("home") {
             val homes = PlayerData.homeCache[pName]!!
 
             if (split.size < 2) {
-                p.sendMessage(
-                    LangConfig.homesOtherList.replace("%player%", pName)
-                        .replace("%list%", homes.map { it.key }.toString())
+                val template = LangConfig.homesOtherList.replace("%player%", pName)
+                val sentFancyMessage = FancyChat.sendCommandList(
+                    p,
+                    template,
+                    "%list%",
+                    homes.keys.map { home ->
+                        FancyChat.Action("§e$home", "/home $pName:$home")
+                    }
                 )
+                if (!sentFancyMessage) {
+                    p.sendMessage(template.replace("%list%", homes.keys.toString()))
+                }
                 return false
             }
 

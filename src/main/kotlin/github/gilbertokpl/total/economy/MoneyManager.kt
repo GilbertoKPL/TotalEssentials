@@ -14,6 +14,9 @@ object MoneyManager {
 
     val tycoonPlayer = LinkedHashMap<String, Double>(TOP_PLAYERS_LIMIT)
 
+    @Volatile
+    private var rankingInitialized = false
+
     private val numberFormatter: NumberFormat = DecimalFormat("#,##0.00")
 
     /**
@@ -103,8 +106,6 @@ object MoneyManager {
     fun refreshTycoon() {
         if (!MainConfig.moneyActivated) return
 
-        tycoonPlayer.clear()
-
         val topPlayers = PlayerData.moneyCache.getMap()
             .filterValues { it != null }
             .mapValues { it.value!! }
@@ -112,8 +113,26 @@ object MoneyManager {
             .sortedByDescending { it.value }
             .take(TOP_PLAYERS_LIMIT)
 
-        topPlayers.forEach { (playerName, balance) ->
-            tycoonPlayer[playerName] = balance
+        synchronized(tycoonPlayer) {
+            tycoonPlayer.clear()
+            topPlayers.forEach { (playerName, balance) ->
+                tycoonPlayer[playerName] = balance
+            }
+            rankingInitialized = true
+        }
+    }
+
+    /**
+     * Retorna uma posição do ranking global. A posição começa em 1.
+     */
+    fun getTopPlayer(position: Int): Pair<String, Double>? {
+        if (!MainConfig.moneyActivated || position !in 1..TOP_PLAYERS_LIMIT) return null
+        if (!rankingInitialized) refreshTycoon()
+
+        return synchronized(tycoonPlayer) {
+            tycoonPlayer.entries
+                .elementAtOrNull(position - 1)
+                ?.let { it.key to it.value }
         }
     }
 

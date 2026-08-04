@@ -4,6 +4,7 @@ import github.gilbertokpl.total.TotalEssentials
 import github.gilbertokpl.total.cache.data.PlayerData
 import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.config.files.LangConfig
+import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.ItemUtil
 import github.gilbertokpl.total.util.MaterialUtil
 import org.bukkit.Material
@@ -12,6 +13,14 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 object Playtime {
+
+    data class RankedPlayer(val name: String, val time: Long)
+
+    @Volatile
+    private var rankingSnapshot: List<RankedPlayer> = emptyList()
+
+    @Volatile
+    private var rankingInitialized = false
 
     // ────────────────────────────────────────────────────────────────
     //  CONSTANTES
@@ -29,6 +38,7 @@ object Playtime {
 
     private object Limits {
         const val MAX_PLAYERS = 135
+        const val TOP_PLAYERS = 10
     }
 
     // ────────────────────────────────────────────────────────────────
@@ -53,6 +63,11 @@ object Playtime {
 
     fun setup() {
         val sortedPlayers = getSortedPlayers()
+        rankingSnapshot = sortedPlayers
+            .take(Limits.TOP_PLAYERS)
+            .map { (playerName, time) -> RankedPlayer(playerName, time) }
+        rankingInitialized = true
+
         if (sortedPlayers.isEmpty()) {
             Data.playTimeInventoryCache = emptyMap()
             return
@@ -64,7 +79,7 @@ object Playtime {
         var inventory = createPlaytimeInventory(currentPage)
 
         sortedPlayers.forEach { (playerName, time) ->
-            inventory.setItem(currentSlot, createHeadItem(playerName, time ?: 0L))
+            inventory.setItem(currentSlot, createHeadItem(playerName, time))
             currentSlot++
 
             if (currentSlot == Slots.ITEMS_PER_PAGE) {
@@ -86,9 +101,22 @@ object Playtime {
         Data.playTimeInventoryCache = inventoryCache.toMap()
     }
 
-    private fun getSortedPlayers(): List<Pair<String, Long?>> {
+    fun getTopPlayer(position: Int): RankedPlayer? {
+        if (!MainConfig.playtimeActivated || position !in 1..Limits.TOP_PLAYERS) return null
+        if (!rankingInitialized) {
+            rankingSnapshot = getSortedPlayers()
+                .take(Limits.TOP_PLAYERS)
+                .map { (playerName, time) -> RankedPlayer(playerName, time) }
+            rankingInitialized = true
+        }
+        return rankingSnapshot.getOrNull(position - 1)
+    }
+
+    private fun getSortedPlayers(): List<Pair<String, Long>> {
         return PlayerData.playTimeCache.getMap()
-            .toList()
+            .mapNotNull { (playerName, savedTime) ->
+                savedTime?.let { playerName to calculateTotalTime(playerName, it) }
+            }
             .sortedByDescending { it.second }
             .take(Limits.MAX_PLAYERS)
     }
@@ -137,7 +165,7 @@ object Playtime {
         return item.apply {
             itemMeta = itemMeta?.apply {
                 ItemUtil.setDisplayName(this, formatPlayerName(playerName))
-                lore = createTimeLore(playerName, time)
+                lore = createTimeLore(time)
             }
         }
     }
@@ -146,9 +174,8 @@ object Playtime {
         return LangConfig.playtimeInventoryItemsName.replace("%player%", playerName)
     }
 
-    private fun createTimeLore(playerName: String, savedTime: Long): List<String> {
-        val totalTime = calculateTotalTime(playerName, savedTime)
-        val formattedTime = formatTime(totalTime)
+    private fun createTimeLore(time: Long): List<String> {
+        val formattedTime = formatTime(time)
 
         return LangConfig.playtimeInventoryItemsLore.map {
             it.replace("%time%", formattedTime)

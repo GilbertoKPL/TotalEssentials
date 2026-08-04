@@ -8,6 +8,7 @@ import github.gilbertokpl.total.cache.internal.Data
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
 import github.gilbertokpl.total.util.ItemUtil
+import github.gilbertokpl.total.util.FancyChat
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -30,12 +31,23 @@ class CommandKit : CommandManager("kit") {
 
         // if sender is not player or menu kits disabled, show kit list
         if (sender !is Player || (args.isEmpty() && !MainConfig.kitsMenuKit)) {
-            sender.sendMessage(
-                LangConfig.kitsList.replace(
-                    "%kits%",
-                    KitsData.kitTime.getMap().map { it.key }.toString()
-                )
+            val kits = KitsData.kitTime.getMap().keys.toList()
+            val sentFancyMessage = sender is Player && FancyChat.sendCommandList(
+                sender,
+                LangConfig.kitsList,
+                "%kits%",
+                kits.map { kit ->
+                    FancyChat.Action("§e$kit", "/kit $kit")
+                }
             )
+            if (!sentFancyMessage) {
+                sender.sendMessage(
+                    LangConfig.kitsList.replace(
+                        "%kits%",
+                        kits.toString()
+                    )
+                )
+            }
             return false
         }
 
@@ -54,12 +66,23 @@ class CommandKit : CommandManager("kit") {
         // check if kit exists
         val kitName = args[0].lowercase()
         if (!KitsData.checkIfExist(kitName)) {
-            sender.sendMessage(
-                LangConfig.kitsList.replace(
-                    "%kits%",
-                    KitsData.kitTime.getMap().map { it.key }.toString()
-                )
+            val kits = KitsData.kitTime.getMap().keys.toList()
+            val sentFancyMessage = FancyChat.sendCommandList(
+                sender,
+                LangConfig.kitsList,
+                "%kits%",
+                kits.map { kit ->
+                    FancyChat.Action("§e$kit", "/kit $kit")
+                }
             )
+            if (!sentFancyMessage) {
+                sender.sendMessage(
+                    LangConfig.kitsList.replace(
+                        "%kits%",
+                        kits.toString()
+                    )
+                )
+            }
             return false
         }
 

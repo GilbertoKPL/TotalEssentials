@@ -24,6 +24,13 @@ Until login succeeds, Velocity redirects the initial connection to an
 authentication lobby and denies transfers to MCPC. The session is discarded
 when the player disconnects from the proxy.
 
+When a backend starts again, it requests the current session from Velocity as
+the player joins. Therefore a player who already authenticated in the lobby is
+also logged in automatically after being reconnected to the restarted server.
+Every trusted backend can refresh that proxy session, and `/totalconnect`
+reconfirms it before changing servers so the destination never asks for login
+again when the player is already authenticated.
+
 If a backend goes offline or drops the connection, the Velocity/Bungee
 companion redirects the player to the configured lobby and retries the failed
 server until it becomes available. An authenticated player remains logged in
@@ -35,15 +42,22 @@ reconnect-enabled=true
 reconnect-fallback-server=lobby
 reconnect-delay-seconds=3
 reconnect-interval-seconds=5
-reconnect-offline-retention-seconds=60
+reconnect-timeout-seconds=300
 reconnect-waiting-message=&eO servidor caiu. Tentaremos reconectar automaticamente.
 reconnect-success-message=&aO servidor voltou. Reconectado com sucesso.
 ```
 
-Players who remain connected in the lobby keep retrying without a time limit.
-If a waiting player disconnects from the proxy, the reconnect target is retained
-for `reconnect-offline-retention-seconds` (one minute by default) and resumes if
-the player returns before it expires.
+The proxy retries for `reconnect-timeout-seconds` (five minutes by default).
+Only time spent online and waiting in the lobby consumes this limit. If the
+player disconnects, every backend goes offline, or the proxy restarts, the
+destination and remaining time are kept locally in
+`plugins/totalessentials/reconnect-state.properties`. The countdown resumes
+when the player returns; offline time is never added to it. The same behavior
+applies to a normal proxy disconnect: the last playable server is remembered
+and the player is sent back to it after passing through the configured
+authentication lobby.
+Moving to the lobby manually clears that remembered destination, so disconnecting
+from the lobby and joining the network again leaves the player in the lobby.
 
 The same velocity-auth.properties file controls the network MOTD. Multiple
 random entries can be separated by |; it supports color codes, a second line,
@@ -63,6 +77,19 @@ When PlaceholderAPI is installed, channel formats also resolve any player
 placeholder, including `%totalessentials_money%`, `%totalessentials_money_raw%`
 and placeholders supplied by other expansions. The player placeholders
 `%totalessentials_nickname%` and `%totalessentials_vanished%` are also available.
+
+Global ranking placeholders can be used without a player context, including in
+Citizens NPC names and holograms:
+
+- `%totalessentials_money_top_1_name%`
+- `%totalessentials_money_top_1_value%`
+- `%totalessentials_money_top_1_raw%`
+- `%totalessentials_playtime_top_1_name%`
+- `%totalessentials_playtime_top_1_time%`
+- `%totalessentials_playtime_top_1_raw%`
+
+Replace `1` with a position from `1` through `10`. The aliases `moneytop` and
+`playtimetop` (without the underscore before `top`) are also accepted.
 `vanished` returns `yes` or `no`. Placeholder text typed by the player is not
 expanded; only the configured channel format is processed.
 
@@ -119,6 +146,7 @@ and MCPC/Bukkit versions with the legacy 16-character limit. The legacy
 | Command                      | Description                                                         | Permission                             |
 |------------------------------|---------------------------------------------------------------------|----------------------------------------|
 | /total, /system, /essentials | Main command of the plugin.                                         | totalessentials.commands.essentials    |
+| /totalconnect \<servidor\>   | Connect to any server registered in Velocity.                       | totalessentials.commands.totalconnect  |
 | /createkit, /criarkit        | Create a kit using an interface / GUI.                              | totalessentials.commands.createkit     |
 | /delkit                      | Delete a kit by name.                                               | totalessentials.commands.delkit        |
 | /editkit, /editarkit         | Edit an existing kit using an interface / GUI.                      | totalessentials.commands.editkit       |

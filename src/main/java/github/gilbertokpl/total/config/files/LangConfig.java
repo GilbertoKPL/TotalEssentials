@@ -2384,6 +2384,56 @@ public class LangConfig implements DefaultLang {
     )
     public static String colorRemove;
 
+    @MultiValue(
+            {
+                    @Value(value = "%prefix%&eTentando conectar ao servidor &f%server%&e...", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&eTrying to connect to server &f%server%&e...", lang = LangTypes.EN_US)
+            }
+    )
+    public static String totalconnectTrying;
+    @MultiValue(
+            {
+                    @Value(value = "%prefix%&cNome de servidor inválido.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cInvalid server name.", lang = LangTypes.EN_US)
+            }
+    )
+    public static String totalconnectInvalidName;
+    @MultiValue(
+            {
+                    @Value(value = "%prefix%&cO servidor &f%server% &cnão existe ou não está registrado no Velocity.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cServer &f%server% &cdoes not exist or is not registered in Velocity.", lang = LangTypes.EN_US)
+            }
+    )
+    public static String totalconnectServerNotFound;
+    @MultiValue(
+            {
+                    @Value(value = "%prefix%&eVocê já está conectado ao servidor &f%server%&e.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&eYou are already connected to server &f%server%&e.", lang = LangTypes.EN_US)
+            }
+    )
+    public static String totalconnectAlreadyConnected;
+    @MultiValue(
+            {
+                    @Value(value = "%prefix%&eIniciando tentativa de conexão com &f%server%&e...", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&eStarting connection attempt to &f%server%&e...", lang = LangTypes.EN_US)
+            }
+    )
+    public static String totalconnectConnectionAttempt;
+    @MultiValue(
+            {
+                    @Value(value = "%prefix%&aConectado ao servidor &f%server% &acom sucesso.", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&aSuccessfully connected to server &f%server%&a.", lang = LangTypes.EN_US)
+            }
+    )
+    public static String totalconnectSuccess;
+    @MultiValue(
+            {
+                    @Value(value = "%prefix%&cNão foi possível conectar ao servidor &f%server%&c: %reason%", lang = LangTypes.PT_BR),
+                    @Value(value = "%prefix%&cCould not connect to server &f%server%&c: %reason%", lang = LangTypes.EN_US)
+            }
+    )
+    public static String totalconnectFailure;
+
 
     @Nullable
     @Override

@@ -6,6 +6,7 @@ import github.gilbertokpl.core.command.type.CommandTargetType
 import github.gilbertokpl.total.cache.data.WarpData
 import github.gilbertokpl.total.config.files.LangConfig
 import github.gilbertokpl.total.config.files.MainConfig
+import github.gilbertokpl.total.util.FancyChat
 import github.gilbertokpl.total.util.PlayerUtil
 import github.gilbertokpl.total.util.PlayerUtil.teleportSafe
 import org.bukkit.Bukkit
@@ -39,12 +40,23 @@ class CommandWarp : CommandManager("warp") {
         }
 
         if (args.isEmpty()) {
-            sender.sendMessage(
-                LangConfig.warpsList.replace(
-                    "%list%",
-                    WarpData.getWarpList(p).toString()
-                )
+            val warps = WarpData.getWarpList(p)
+            val sentFancyMessage = p != null && FancyChat.sendCommandList(
+                p,
+                LangConfig.warpsList,
+                "%list%",
+                warps.map { warp ->
+                    FancyChat.Action("§e$warp", "/warp $warp")
+                }
             )
+            if (!sentFancyMessage) {
+                sender.sendMessage(
+                    LangConfig.warpsList.replace(
+                        "%list%",
+                        warps.toString()
+                    )
+                )
+            }
             return false
         }
 
@@ -90,12 +102,23 @@ class CommandWarp : CommandManager("warp") {
         val warpName = args[0].lowercase()
 
         if (!WarpData.checkIfWarpExist(warpName)) {
-            p.sendMessage(
-                LangConfig.warpsList.replace(
-                    "%list%",
-                    WarpData.getWarpList(p).toString()
-                )
+            val warps = WarpData.getWarpList(p)
+            val sentFancyMessage = FancyChat.sendCommandList(
+                p,
+                LangConfig.warpsList,
+                "%list%",
+                warps.map { warp ->
+                    FancyChat.Action("§e$warp", "/warp $warp")
+                }
             )
+            if (!sentFancyMessage) {
+                p.sendMessage(
+                    LangConfig.warpsList.replace(
+                        "%list%",
+                        warps.toString()
+                    )
+                )
+            }
             return false
         }
 

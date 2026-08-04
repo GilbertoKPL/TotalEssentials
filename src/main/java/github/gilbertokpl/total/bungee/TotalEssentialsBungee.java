@@ -24,9 +24,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,6 +37,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public final class TotalEssentialsBungee extends Plugin implements Listener {
@@ -49,28 +52,38 @@ public final class TotalEssentialsBungee extends Plugin implements Listener {
     private static final int SESSION_STATE_NAME = 5;
     private static final int PRIVATE_MESSAGE = 6;
     private static final int PRIVATE_REPLY = 7;
+    private static final int RECONNECT_STATE_CHECKPOINT_SECONDS = 5;
+    private static final String RECONNECT_STATE_FILE = "reconnect-state.properties";
     private final Set<UUID> authenticatedPlayers = ConcurrentHashMap.newKeySet();
     private final ConcurrentHashMap<UUID, UUID> privateReplies = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, String> reconnectTargets = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, ScheduledTask> reconnectTasks = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<UUID, ScheduledTask> reconnectRetentionTasks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Long> reconnectRemainingMillis = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Long> reconnectActiveSinceNanos = new ConcurrentHashMap<>();
     private final Set<UUID> reconnectAttempts = ConcurrentHashMap.newKeySet();
+    private final Set<UUID> reconnectAfterServerFailure = ConcurrentHashMap.newKeySet();
+    private final ConcurrentHashMap<UUID, String> lastPlayableServers = new ConcurrentHashMap<>();
+    private final Object reconnectStateLock = new Object();
     private Set<String> authenticationServers = Collections.singleton("lobby");
     private String deniedMessage = "Voce precisa se autenticar no lobby antes de trocar de servidor.";
     private boolean reconnectEnabled = true;
     private String reconnectFallbackServer = "lobby";
     private int reconnectDelaySeconds = 3;
     private int reconnectIntervalSeconds = 5;
-    private int reconnectOfflineRetentionSeconds = 60;
+    private int reconnectTimeoutSeconds = 300;
     private String reconnectWaitingMessage = "&eO servidor caiu. Voce foi enviado ao lobby e tentaremos reconectar automaticamente.";
     private String reconnectSuccessMessage = "&aO servidor voltou. Reconectado com sucesso.";
     private SafeUpdateManager updateManager;
+    private ScheduledTask reconnectStateCheckpointTask;
+    private boolean reconnectStateSaveWarningLogged;
     private boolean autoUpdateEnabled = true;
     private int autoUpdateIntervalMinutes = 30;
 
     @Override
     public void onEnable() {
         loadConfiguration();
+        loadReconnectState();
+        startReconnectStateCheckpoint();
         ProxyServer.getInstance().registerChannel(LEGACY_CHANNEL);
         try {
             ProxyServer.getInstance().registerChannel(MODERN_CHANNEL);
@@ -92,12 +105,17 @@ public final class TotalEssentialsBungee extends Plugin implements Listener {
     @Override
     public void onDisable() {
         if (updateManager != null) updateManager.close();
+        if (reconnectStateCheckpointTask != null) reconnectStateCheckpointTask.cancel();
+        checkpointAllActiveReconnects(false);
+        saveReconnectState();
         reconnectTasks.values().forEach(ScheduledTask::cancel);
         reconnectTasks.clear();
-        reconnectRetentionTasks.values().forEach(ScheduledTask::cancel);
-        reconnectRetentionTasks.clear();
         reconnectTargets.clear();
+        reconnectRemainingMillis.clear();
+        reconnectActiveSinceNanos.clear();
         reconnectAttempts.clear();
+        reconnectAfterServerFailure.clear();
+        lastPlayableServers.clear();
         ProxyServer.getInstance().unregisterChannel(LEGACY_CHANNEL);
         try {
             ProxyServer.getInstance().unregisterChannel(MODERN_CHANNEL);
@@ -161,7 +179,19 @@ public final class TotalEssentialsBungee extends Plugin implements Listener {
 
     @EventHandler
     public void onServerConnect(ServerConnectEvent event) {
-        if (authenticatedPlayers.contains(event.getPlayer().getUniqueId())) return;
+        UUID playerId = event.getPlayer().getUniqueId();
+        String retainedTarget = reconnectTargets.get(playerId);
+        if (reconnectEnabled && retainedTarget == null && event.getPlayer().getServer() == null) {
+            retainedTarget = lastPlayableServers.get(playerId);
+            if (retainedTarget != null) {
+                rememberReconnect(playerId, retainedTarget, false);
+            }
+        }
+        if (retainedTarget != null) {
+            resumeReconnect(event.getPlayer(), retainedTarget);
+        }
+
+        if (authenticatedPlayers.contains(playerId)) return;
 
         String target = event.getTarget().getName().toLowerCase();
         if (authenticationServers.contains(target)) return;
@@ -179,17 +209,29 @@ public final class TotalEssentialsBungee extends Plugin implements Listener {
     @EventHandler
     public void onServerConnected(ServerConnectedEvent event) {
         ProxiedPlayer player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
         String connectedServer = event.getServer().getInfo().getName().toLowerCase();
-        String reconnectTarget = reconnectTargets.get(player.getUniqueId());
+        String reconnectTarget = reconnectTargets.get(playerId);
         if (reconnectTarget != null && reconnectTarget.equals(connectedServer)) {
-            stopReconnect(player.getUniqueId());
-            player.sendMessage(legacyMessage(reconnectSuccessMessage));
+            boolean notifyServerRecovery = reconnectAfterServerFailure.contains(playerId);
+            stopReconnect(playerId);
+            if (notifyServerRecovery) {
+                player.sendMessage(legacyMessage(reconnectSuccessMessage));
+            }
         } else if (reconnectTarget != null
                 && !connectedServer.equals(reconnectFallbackServer)
                 && !authenticationServers.contains(connectedServer)) {
-            stopReconnect(player.getUniqueId());
+            stopReconnect(playerId);
         } else if (reconnectTarget != null) {
             resumeReconnect(player, reconnectTarget);
+        }
+        if (!connectedServer.equals(reconnectFallbackServer)
+                && !authenticationServers.contains(connectedServer)) {
+            lastPlayableServers.put(playerId, connectedServer);
+            saveReconnectState();
+        } else if (reconnectTarget == null) {
+            lastPlayableServers.remove(playerId);
+            saveReconnectState();
         }
 
         boolean authenticated = authenticatedPlayers.contains(player.getUniqueId());
@@ -248,13 +290,18 @@ public final class TotalEssentialsBungee extends Plugin implements Listener {
     private void startReconnect(ProxiedPlayer player, ServerInfo target) {
         UUID playerId = player.getUniqueId();
         stopReconnect(playerId);
-        reconnectTargets.put(playerId, target.getName().toLowerCase());
+        rememberReconnect(playerId, target.getName().toLowerCase(), true);
         scheduleReconnect(playerId, target);
     }
 
     private void scheduleReconnect(UUID playerId, ServerInfo target) {
+        if (reconnectRemainingMillis.getOrDefault(playerId, 0L) <= 0L) {
+            expireReconnect(playerId);
+            return;
+        }
         ScheduledTask previousTask = reconnectTasks.remove(playerId);
         if (previousTask != null) previousTask.cancel();
+        reconnectActiveSinceNanos.put(playerId, System.nanoTime());
         ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(
                 this,
                 () -> attemptReconnect(playerId, target),
@@ -266,13 +313,11 @@ public final class TotalEssentialsBungee extends Plugin implements Listener {
     }
 
     private void resumeReconnect(ProxiedPlayer player, String targetName) {
-        ScheduledTask retentionTask = reconnectRetentionTasks.remove(player.getUniqueId());
-        if (retentionTask != null) retentionTask.cancel();
         if (reconnectTasks.containsKey(player.getUniqueId())) return;
 
         ServerInfo target = ProxyServer.getInstance().getServerInfo(targetName);
         if (target == null) {
-            stopReconnect(player.getUniqueId());
+            pauseReconnect(player.getUniqueId());
             return;
         }
         scheduleReconnect(player.getUniqueId(), target);
@@ -282,6 +327,10 @@ public final class TotalEssentialsBungee extends Plugin implements Listener {
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerId);
         if (player == null) {
             retainReconnectAfterDisconnect(playerId);
+            return;
+        }
+        if (checkpointReconnect(playerId, true) <= 0L) {
+            expireReconnect(playerId);
             return;
         }
 
@@ -305,37 +354,206 @@ public final class TotalEssentialsBungee extends Plugin implements Listener {
     private void stopReconnect(UUID playerId) {
         ScheduledTask task = reconnectTasks.remove(playerId);
         if (task != null) task.cancel();
-        ScheduledTask retentionTask = reconnectRetentionTasks.remove(playerId);
-        if (retentionTask != null) retentionTask.cancel();
         reconnectTargets.remove(playerId);
+        reconnectRemainingMillis.remove(playerId);
+        reconnectActiveSinceNanos.remove(playerId);
         reconnectAttempts.remove(playerId);
+        reconnectAfterServerFailure.remove(playerId);
+        saveReconnectState();
+    }
+
+    private void expireReconnect(UUID playerId) {
+        stopReconnect(playerId);
+        lastPlayableServers.remove(playerId);
+        saveReconnectState();
     }
 
     private void retainReconnectAfterDisconnect(UUID playerId) {
         ScheduledTask task = reconnectTasks.remove(playerId);
         if (task != null) task.cancel();
         reconnectAttempts.remove(playerId);
+        pauseReconnect(playerId);
+    }
 
-        ScheduledTask previousRetention = reconnectRetentionTasks.remove(playerId);
-        if (previousRetention != null) previousRetention.cancel();
-        ScheduledTask[] retentionHolder = new ScheduledTask[1];
-        ScheduledTask retentionTask = ProxyServer.getInstance().getScheduler().schedule(
+    private void rememberReconnect(UUID playerId, String targetName, boolean serverFailure) {
+        synchronized (reconnectStateLock) {
+            reconnectTargets.put(playerId, targetName);
+            reconnectRemainingMillis.put(playerId, reconnectTimeoutMillis());
+            reconnectActiveSinceNanos.remove(playerId);
+            if (serverFailure) {
+                reconnectAfterServerFailure.add(playerId);
+            } else {
+                reconnectAfterServerFailure.remove(playerId);
+            }
+        }
+        saveReconnectState();
+    }
+
+    private void pauseReconnect(UUID playerId) {
+        checkpointReconnect(playerId, false);
+        saveReconnectState();
+    }
+
+    private long checkpointReconnect(UUID playerId, boolean keepRunning) {
+        synchronized (reconnectStateLock) {
+            Long startedAt = reconnectActiveSinceNanos.remove(playerId);
+            long remaining = reconnectRemainingMillis.getOrDefault(playerId, 0L);
+            if (startedAt != null) {
+                long elapsedNanos = Math.max(0L, System.nanoTime() - startedAt);
+                long elapsedMillis = TimeUnit.NANOSECONDS.toMillis(elapsedNanos);
+                remaining = Math.max(0L, remaining - elapsedMillis);
+                reconnectRemainingMillis.put(playerId, remaining);
+            }
+            if (keepRunning && remaining > 0L && reconnectTargets.containsKey(playerId)) {
+                reconnectActiveSinceNanos.put(playerId, System.nanoTime());
+            }
+            return remaining;
+        }
+    }
+
+    private void checkpointAllActiveReconnects(boolean keepRunning) {
+        for (UUID playerId : reconnectActiveSinceNanos.keySet()) {
+            checkpointReconnect(playerId, keepRunning);
+        }
+    }
+
+    private long reconnectTimeoutMillis() {
+        return TimeUnit.SECONDS.toMillis(reconnectTimeoutSeconds);
+    }
+
+    private void startReconnectStateCheckpoint() {
+        reconnectStateCheckpointTask = ProxyServer.getInstance().getScheduler().schedule(
                 this,
                 () -> {
-                    if (!reconnectRetentionTasks.remove(playerId, retentionHolder[0])) return;
-                    ProxiedPlayer onlinePlayer = ProxyServer.getInstance().getPlayer(playerId);
-                    if (onlinePlayer != null) {
-                        String targetName = reconnectTargets.get(playerId);
-                        if (targetName != null) resumeReconnect(onlinePlayer, targetName);
-                    } else {
-                        stopReconnect(playerId);
-                    }
+                    if (reconnectActiveSinceNanos.isEmpty()) return;
+                    checkpointAllActiveReconnects(true);
+                    saveReconnectState();
                 },
-                reconnectOfflineRetentionSeconds,
+                RECONNECT_STATE_CHECKPOINT_SECONDS,
+                RECONNECT_STATE_CHECKPOINT_SECONDS,
                 TimeUnit.SECONDS
         );
-        retentionHolder[0] = retentionTask;
-        reconnectRetentionTasks.put(playerId, retentionTask);
+    }
+
+    private void loadReconnectState() {
+        Path statePath = getDataFolder().toPath().resolve(RECONNECT_STATE_FILE);
+        if (!Files.exists(statePath)) return;
+
+        Properties properties = new Properties();
+        try (Reader reader = Files.newBufferedReader(statePath, StandardCharsets.UTF_8)) {
+            properties.load(reader);
+        } catch (IOException exception) {
+            getLogger().log(Level.WARNING,
+                    "Could not load persistent auto-reconnect state from " + statePath + ".", exception);
+            return;
+        }
+
+        int restoredReconnects = 0;
+        for (String key : properties.stringPropertyNames()) {
+            if (!key.startsWith("reconnect.") || !key.endsWith(".target")) continue;
+
+            String playerIdText = key.substring("reconnect.".length(), key.length() - ".target".length());
+            try {
+                UUID playerId = UUID.fromString(playerIdText);
+                String targetName = properties.getProperty(key, "").trim().toLowerCase();
+                long remainingMillis = Long.parseLong(properties.getProperty(
+                        "reconnect." + playerIdText + ".remaining-millis",
+                        Long.toString(reconnectTimeoutMillis())
+                ));
+                if (!isValidServerName(targetName) || remainingMillis <= 0L) continue;
+
+                reconnectTargets.put(playerId, targetName);
+                reconnectRemainingMillis.put(playerId, Math.min(remainingMillis, reconnectTimeoutMillis()));
+                if (Boolean.parseBoolean(properties.getProperty(
+                        "reconnect." + playerIdText + ".server-failure",
+                        "false"
+                ))) {
+                    reconnectAfterServerFailure.add(playerId);
+                }
+                restoredReconnects++;
+            } catch (IllegalArgumentException ignored) {
+                getLogger().warning("Ignoring an invalid auto-reconnect entry named '" + key + "'.");
+            }
+        }
+
+        for (String key : properties.stringPropertyNames()) {
+            if (!key.startsWith("last-playable.")) continue;
+            try {
+                UUID playerId = UUID.fromString(key.substring("last-playable.".length()));
+                String serverName = properties.getProperty(key, "").trim().toLowerCase();
+                if (isValidServerName(serverName)) lastPlayableServers.put(playerId, serverName);
+            } catch (IllegalArgumentException ignored) {
+                getLogger().warning("Ignoring an invalid last-server entry named '" + key + "'.");
+            }
+        }
+
+        if (restoredReconnects > 0 || !lastPlayableServers.isEmpty()) {
+            getLogger().info(
+                    "Loaded local reconnect state: " + restoredReconnects + " active recoveries and "
+                            + lastPlayableServers.size() + " remembered destinations."
+            );
+        }
+    }
+
+    private void saveReconnectState() {
+        synchronized (reconnectStateLock) {
+            Properties properties = new Properties();
+            for (java.util.Map.Entry<UUID, String> entry : reconnectTargets.entrySet()) {
+                long remainingMillis = reconnectRemainingMillis.getOrDefault(
+                        entry.getKey(),
+                        reconnectTimeoutMillis()
+                );
+                if (remainingMillis <= 0L) continue;
+
+                String prefix = "reconnect." + entry.getKey();
+                properties.setProperty(prefix + ".target", entry.getValue());
+                properties.setProperty(prefix + ".remaining-millis", Long.toString(remainingMillis));
+                properties.setProperty(
+                        prefix + ".server-failure",
+                        Boolean.toString(reconnectAfterServerFailure.contains(entry.getKey()))
+                );
+            }
+            for (java.util.Map.Entry<UUID, String> entry : lastPlayableServers.entrySet()) {
+                if (reconnectTargets.containsKey(entry.getKey())
+                        && reconnectRemainingMillis.getOrDefault(entry.getKey(), 0L) <= 0L) {
+                    continue;
+                }
+                properties.setProperty("last-playable." + entry.getKey(), entry.getValue());
+            }
+
+            Path dataPath = getDataFolder().toPath();
+            Path statePath = dataPath.resolve(RECONNECT_STATE_FILE);
+            Path temporaryPath = dataPath.resolve(RECONNECT_STATE_FILE + ".tmp");
+            try {
+                Files.createDirectories(dataPath);
+                try (Writer writer = Files.newBufferedWriter(temporaryPath, StandardCharsets.UTF_8)) {
+                    properties.store(writer, "TotalEssentials persistent reconnect state");
+                }
+                try {
+                    Files.move(
+                            temporaryPath,
+                            statePath,
+                            StandardCopyOption.ATOMIC_MOVE,
+                            StandardCopyOption.REPLACE_EXISTING
+                    );
+                } catch (AtomicMoveNotSupportedException ignored) {
+                    Files.move(temporaryPath, statePath, StandardCopyOption.REPLACE_EXISTING);
+                }
+                reconnectStateSaveWarningLogged = false;
+            } catch (IOException exception) {
+                if (!reconnectStateSaveWarningLogged) {
+                    getLogger().log(Level.WARNING,
+                            "Could not save persistent auto-reconnect state to " + statePath + ".", exception);
+                    reconnectStateSaveWarningLogged = true;
+                }
+            }
+        }
+    }
+
+    private boolean isValidServerName(String serverName) {
+        return !serverName.isEmpty()
+                && serverName.length() <= 64
+                && serverName.matches("[a-z0-9_.-]+");
     }
 
     private void handlePrivateMessage(ProxiedPlayer sender, DataInputStream input, boolean reply) throws IOException {
@@ -385,10 +603,18 @@ public final class TotalEssentialsBungee extends Plugin implements Listener {
     @EventHandler
     public void onDisconnect(PlayerDisconnectEvent event) {
         UUID playerId = event.getPlayer().getUniqueId();
+        if (reconnectEnabled && !reconnectTargets.containsKey(playerId)) {
+            String lastPlayableServer = lastPlayableServers.get(playerId);
+            if (lastPlayableServer != null) {
+                rememberReconnect(playerId, lastPlayableServer, false);
+            }
+        }
         if (reconnectTargets.containsKey(playerId)) {
             retainReconnectAfterDisconnect(playerId);
         } else {
             stopReconnect(playerId);
+            lastPlayableServers.remove(playerId);
+            saveReconnectState();
         }
         authenticatedPlayers.remove(playerId);
         privateReplies.remove(playerId);
@@ -411,7 +637,7 @@ public final class TotalEssentialsBungee extends Plugin implements Listener {
         properties.setProperty("reconnect-fallback-server", "lobby");
         properties.setProperty("reconnect-delay-seconds", "3");
         properties.setProperty("reconnect-interval-seconds", "5");
-        properties.setProperty("reconnect-offline-retention-seconds", "60");
+        properties.setProperty("reconnect-timeout-seconds", "300");
         properties.setProperty("reconnect-waiting-message", reconnectWaitingMessage);
         properties.setProperty("reconnect-success-message", reconnectSuccessMessage);
         properties.setProperty("auto-update-enabled", "true");
@@ -447,9 +673,9 @@ public final class TotalEssentialsBungee extends Plugin implements Listener {
                 .trim().toLowerCase();
         reconnectDelaySeconds = positiveInteger(properties.getProperty("reconnect-delay-seconds"), 3);
         reconnectIntervalSeconds = positiveInteger(properties.getProperty("reconnect-interval-seconds"), 5);
-        reconnectOfflineRetentionSeconds = positiveInteger(
-                properties.getProperty("reconnect-offline-retention-seconds"),
-                60
+        reconnectTimeoutSeconds = positiveInteger(
+                properties.getProperty("reconnect-timeout-seconds"),
+                300
         );
         reconnectWaitingMessage = properties.getProperty("reconnect-waiting-message", reconnectWaitingMessage);
         reconnectSuccessMessage = properties.getProperty("reconnect-success-message", reconnectSuccessMessage);

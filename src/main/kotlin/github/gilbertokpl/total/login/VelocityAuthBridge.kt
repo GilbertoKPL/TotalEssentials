@@ -38,6 +38,9 @@ object VelocityAuthBridge : PluginMessageListener {
     private const val CHAT_MESSAGE = 3
     private const val PRIVATE_MESSAGE = 6
     private const val PRIVATE_REPLY = 7
+    private const val SESSION_STATE_REQUEST = 8
+    private const val SERVER_CONNECT_REQUEST = 9
+    private const val HANDSHAKE_RETRY_TICKS = 5L
     private const val HANDSHAKE_WAIT_TICKS = 10L
 
     private data class SessionState(
@@ -97,9 +100,20 @@ object VelocityAuthBridge : PluginMessageListener {
         LoginData.values[player] = 0
         LoginData.isLoggedIn[player] = false
 
+        requestSessionState(player)
         val task = TotalEssentials.getCore().getTask()
         task.async {
-            task.waitTicks(HANDSHAKE_WAIT_TICKS)
+            task.waitTicks(HANDSHAKE_RETRY_TICKS)
+            task.sync {
+                if (player.isOnline
+                    && !LoginData.isPlayerLoggedIn(player)
+                    && sessionStates[player.name.lowercase()] == null
+                ) {
+                    requestSessionState(player)
+                }
+            }
+
+            task.waitTicks(HANDSHAKE_WAIT_TICKS - HANDSHAKE_RETRY_TICKS)
             task.sync {
                 if (!player.isOnline || LoginData.isPlayerLoggedIn(player)) return@sync
 
@@ -118,6 +132,17 @@ object VelocityAuthBridge : PluginMessageListener {
                 }
             }
         }
+    }
+
+    private fun requestSessionState(player: Player) {
+        val payload = ByteArrayOutputStream().use { bytes ->
+            DataOutputStream(bytes).use { output ->
+                output.writeByte(SESSION_STATE_REQUEST)
+                output.writeUTF(player.name)
+            }
+            bytes.toByteArray()
+        }
+        sendPayload(player, payload)
     }
 
     fun notifyAuthenticated(player: Player) {
@@ -190,6 +215,24 @@ object VelocityAuthBridge : PluginMessageListener {
                 output.writeUTF(notFoundMessage)
                 output.writeUTF(noReplyMessage)
                 output.writeUTF(selfMessage)
+            }
+            bytes.toByteArray()
+        }
+        sendPayload(player, payload)
+    }
+
+    fun connectServer(player: Player, serverName: String) {
+        val payload = ByteArrayOutputStream().use { bytes ->
+            DataOutputStream(bytes).use { output ->
+                output.writeByte(SERVER_CONNECT_REQUEST)
+                output.writeUTF(player.name)
+                output.writeUTF(serverName)
+                output.writeBoolean(LoginData.isPlayerLoggedIn(player))
+                output.writeUTF(LangConfig.totalconnectServerNotFound)
+                output.writeUTF(LangConfig.totalconnectAlreadyConnected)
+                output.writeUTF(LangConfig.totalconnectConnectionAttempt)
+                output.writeUTF(LangConfig.totalconnectSuccess)
+                output.writeUTF(LangConfig.totalconnectFailure)
             }
             bytes.toByteArray()
         }
